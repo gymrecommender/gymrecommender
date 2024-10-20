@@ -21,6 +21,7 @@ Each anonymous and logged-in user will be able to rate the gym and the congestio
 
 Each gym account will be able to manage data related to the gyms that are attached to it, including membership price and working hours.
 
+Before a certain gym account can have a gym attached to it and receives access to editing its data, an administrator must approve this binding
 
 # Functional requirements
 
