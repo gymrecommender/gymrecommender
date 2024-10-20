@@ -26,30 +26,30 @@ Each gym account will be able to manage data related to the gyms that are attach
 
 
 # Technology
-Google Maps API
-Google Geocode API
-Google Places API
-Google Directions API
-Django
-React
-PostgreSQL
-Firebase
-Firebase Cloud Messaging
+Google Maps API  
+Google Geocode API  
+Google Places API  
+Google Directions API  
+Django  
+React  
+PostgreSQL  
+Firebase  
+Firebase Cloud Messaging  
 
 # Installation
 # Team members
-Nikla Magyar
-Mia Šagovac
-Josipa Jagodić
-Egor Shevtsov
-Ivan Ivica
+Nikla Magyar  
+Mia Šagovac  
+Josipa Jagodić  
+Egor Shevtsov  
+Ivan Ivica  
 
 # Contribution
-Nikla Magyar - Back-end
-Ivan Ivica - Back-end
-Mia Šagovac - Front-end + Design + Layout
-Josipa Jagodić - Front-end
-Egor Shevtsov - Front-end + Database
+Nikla Magyar - Back-end  
+Ivan Ivica - Back-end  
+Mia Šagovac - Front-end + Design + Layout  
+Josipa Jagodić - Front-end  
+Egor Shevtsov - Front-end + Database  
 
 
 
