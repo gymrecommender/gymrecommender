@@ -1,72 +1,70 @@
-# Programsko inženjerstvo
+# Software engineering
+Gyms recommender
 
-> Ime projekta u naslovu ima cilj opisati namjenu projekta te pomoći u podizanju početnog interesa za projekt prezentirajući osnovnu svrhu projekta.
-> Isključivo ovisi o Vama!
-> 
-> Naravno, nijedan predložak nije idealan za sve projekte jer su potrebe i ciljevi različiti. Ne bojte se naglasiti Vaš cilj u ovoj početnoj stranici projekta, podržat ćemo ga bez obzira usredotočili se Vi više na tenologiju ili marketing.
-> 
-> Zašto ovaj dokument? Samo manji dio timova je do sada propoznao potrebu (a i meni je lakše pratiti Vaš rad).  
+# Description of the project
+Our app will help to find the best gym options for people with different priorities
 
-# Opis projekta
-Ovaj projekt je reultat timskog rada u sklopu projeknog zadatka kolegija [Programsko inženjerstvo](https://www.fer.unizg.hr/predmet/proinz) na Fakultetu elektrotehnike i računarstva Sveučilišta u Zagrebu. 
+Since "the best" is extremely vague and unspecific, we have to define the criteria that will make "the best" measurable
+- Each user will be able to choose a specific location for which he/she/them want(s) to receive gyms recommendations both manually and automatically. 
+- Each user will be able to specify a time interval for which the recommendation should be created in order to get the most precise possible travelling time and cost information. This will help users to get the options that are tailored to a specific situation (going to the gym from home, after work, anything imaginable)
+- Each gym in the city will have a rating assigned to it based on the following parameters 
+  - travelling time from the chosen location
+  - travelling cost (public transport only) from the chosen location
+  - membership's price
+  - congestion rating of the gym
+  - overall rating of the gym
+- Each user will be able to define the personal importance of each aforementioned criterion
+- Based on the provided information, the app will recommend the top 5 gyms that satisfy the set criteria the best. Each of these gyms will be shown on a Google Map as a result with respective data for all 5 parameters mentioned above
 
-Kratko opisati cilj Vašeg projekta. Vaša motivacija?  (Napomena: odgovor nije »Zato što je to bio zadatak i nismo imali ideje za drugo.«). Koji problem rješavate?
-> Obzirom da je ovo zadani projekt navedite i što želite/jeste novo  naučili.
+Every user will be able to create his/her/their own user account where all the previous requests will be shown in the history. Besides this, each logged-in user will have an opportunity to bookmark specific gyms in order to get notifications if any information regarding the favoured gyms changes.
+Each anonymous and logged-in user will be able to rate the gym and the congestion of the gym in particular
 
-> Dobro izrađen opis omogućuje vam da pokažete svoj rad drugim programerima, kao i potencijalnim poslodavcima. Ne samo da prvi dojam na stranici opisa često razlikuje dobar projekt od lošeg projekta već i predstavlja dobru praksu koju morate savladati.
-
-# Funkcijski zahtjevi
-> Navedite ključne zahtjeve Vašeg projekta.
-
-
-# Tehnologije
-
-#Instalcija
-# Članovi tima 
-> Popis članova tima/linkovi/ glavni doprinos
->
-
-# Kontribucije
->Pravila ovise o organizaciji tima i su često izdvojena u CONTRIBUTING.md
+Each gym account will be able to manage data related to the gyms that are attached to it, including membership price and working hours.
 
 
+# Functional requirements
 
-# 📝 Kodeks ponašanja [![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-2.1-4baaaa.svg)](CODE_OF_CONDUCT.md)
-Kao studenti sigurno ste upoznati s minimumom prihvatljivog ponašanja definiran u [KODEKS PONAŠANJA STUDENATA FAKULTETA ELEKTROTEHNIKE I RAČUNARSTVA SVEUČILIŠTA U ZAGREBU](https://www.fer.hr/_download/repository/Kodeks_ponasanja_studenata_FER-a_procisceni_tekst_2016%5B1%5D.pdf), te dodatnim naputcima za timski rad na predmetu [Programsko inženjerstvo](https://wwww.fer.hr).
-Očekujemo da ćete poštovati [etički kodeks IEEE-a](https://www.ieee.org/about/corporate/governance/p7-8.html) koji ima važnu obrazovnu funkciju sa svrhom postavljanja najviših standarda integriteta, odgovornog ponašanja i etičkog ponašanja u profesionalnim aktivnosti. Time profesionalna zajednica programskih inženjera definira opća načela koja definiranju  moralni karakter, donošenje važnih poslovnih odluka i uspostavljanje jasnih moralnih očekivanja za sve pripadnike zajenice.
 
-Kodeks ponašanja skup je provedivih pravila koja služe za jasnu komunikaciju očekivanja i zahtjeva za rad zajednice/tima. Njime se jasno definiraju obaveze, prava, neprihvatljiva ponašanja te  odgovarajuće posljedice (za razliku od etičkog kodeksa). U ovom repozitoriju dan je jedan od široko prihvačenih kodeks ponašanja za rad u zajednici otvorenog koda.
->### Poboljšajte funkcioniranje tima:
->* definirajte načina na koji će rad biti podijeljen među članovima grupe
->* dogovorite kako će grupa međusobno komunicirati.
->* ne gubite vrijeme na dogovore na koji će grupa rješavati sporove primjenite standarde!
->* implicitno podrazmijevamo da će svi članovi grupe slijediti kodeks ponašanja.
- 
->###  Prijava problema
->Najgore što se može dogoditi je da netko šuti kad postoje problemi. Postoji nekoliko stvari koje možete učiniti kako biste najbolje riješili sukobe i probleme:
->* Obratite mi se izravno [e-pošta](mailto:vlado.sruk@fer.hr) i  učinit ćemo sve što je u našoj moći da u punom povjerenju saznamo koje korake trebamo poduzeti kako bismo riješili problem.
->* Razgovarajte s vašim asistentom jer ima najbolji uvid u dinamiku tima. Zajedno ćete saznati kako riješiti sukob i kako izbjeći daljnje utjecanje u vašem radu.
->* Ako se osjećate ugodno neposredno razgovarajte o problemu. Manje incidente trebalo bi rješavati izravno. Odvojite vrijeme i privatno razgovarajte s pogođenim članom tima te vjerujte u iskrenost.
+# Technology
+Google Maps API
+Django
+React
+PostgreSQL
 
-# 📝 Licenca
-Važeča (1)
+# Installation
+# Team members 
+
+
+# Contribution
+
+
+
+
+# 📝 Code of Conduct [![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-2.1-4baaaa.svg)](CODE_OF_CONDUCT.md)
+As students, you are surely familiar with the minimum acceptable behaviour defined in [CODE OF CONDUCT FOR STUDENTS OF THE FACULTY OF ELECTRICAL ENGINEERING AND COMPUTER SCIENCES OF THE UNIVERSITY OF ZAGREB](https://www.fer.hr/_download/repository/Kodeks_ponasanja_studenata_FER-a_procisceni_tekst_2016%5B1%5D.pdf), and additional instructions for teamwork in the subject [Program Engineering] (https://www.fer.hr).
+We expect you to abide by the [IEEE Code of Ethics](https://www.ieee.org/about/corporate/governance/p7-8.html) which has an important educational function with the purpose of setting the highest standards of integrity, responsible behaviour and ethical behaviour in professional activities. Thus, the professional community of software engineers defines general principles that define moral character, making important business decisions and establishing clear moral expectations for all members of the community.
+
+A code of conduct is a set of enforceable rules that serve to clearly communicate expectations and requirements for community/teamwork. It clearly defines obligations, rights, unacceptable behaviour and corresponding consequences (in contrast to the code of ethics). One of the widely accepted codes of conduct for working in the open-source community is given in this repository.
+
+# 📝 License
+Valid (1)
 [![CC BY-NC-SA 4.0][cc-by-nc-sa-shield]][cc-by-nc-sa]
 
-Ovaj repozitorij sadrži otvoreni obrazovni sadržaji (eng. Open Educational Resources)  i licenciran je prema pravilima Creative Commons licencije koja omogućava da preuzmete djelo, podijelite ga s drugima uz 
-uvjet da navođenja autora, ne upotrebljavate ga u komercijalne svrhe te dijelite pod istim uvjetima [Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License HR][cc-by-nc-sa].
+This repository contains open educational resources (eng. Open Educational Resources) and is licensed according to the rules of the Creative Commons license, which allows you to download the work, share it with others with
+provided that you mention the author, do not use it for commercial purposes and share it under the same conditions [Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License HR][cc-by-nc-sa].
 >
-> ### Napomena:
+> ### Note:
 >
-> Svi paketi distribuiraju se pod vlastitim licencama.
-> Svi upotrijebleni materijali  (slike, modeli, animacije, ...) distribuiraju se pod vlastitim licencama.
+> All packages are distributed under their own licenses.
+> All materials used (images, models, animations, ...) are distributed under their own licenses.
 
 [![CC BY-NC-SA 4.0][cc-by-nc-sa-image]][cc-by-nc-sa]
 
-[cc-by-nc-sa]: https://creativecommons.org/licenses/by-nc/4.0/deed.hr 
+[cc-by-nc-sa]: https://creativecommons.org/licenses/by-nc/4.0/deed.hr
 [cc-by-nc-sa-image]: https://licensebuttons.net/l/by-nc-sa/4.0/88x31.png
 [cc-by-nc-sa-shield]: https://img.shields.io/badge/License-CC%20BY--NC--SA%204.0-lightgrey.svg
 
-Orginal [![cc0-1.0][cc0-1.0-shield]][cc0-1.0]
+Original [![cc0-1.0][cc0-1.0-shield]][cc0-1.0]
 >
 >COPYING: All the content within this repository is dedicated to the public domain under the CC0 1.0 Universal (CC0 1.0) Public Domain Dedication.
 >
@@ -76,4 +74,4 @@ Orginal [![cc0-1.0][cc0-1.0-shield]][cc0-1.0]
 [cc0-1.0-image]: https://licensebuttons.net/l/by/1.0/88x31.png
 [cc0-1.0-shield]: https://img.shields.io/badge/License-CC0--1.0-lightgrey.svg
 
-### Reference na licenciranje repozitorija
+### Repository Licensing References
