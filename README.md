@@ -65,6 +65,50 @@ Before a certain gym account can have a gym attached to it and receives access t
    - If any information regarding any gym in history has been changed, an appropriate visible note will be shown next to the respective gym
 
 
+
+### Non-Functional Requirements
+
+1. NFR1: Performance
+   - The system should return gym recommendations within 3 seconds after the user makes a request.
+   - Test Case: Measure the time taken to retrieve gym data and verify that it does not exceed 3 seconds under normal conditions.
+
+2. NFR2: Scalability
+   - The system must support up to 10,000 concurrent users without performance degradation.
+   - Test Case: Simulate 10,000 users accessing the application simultaneously and verify that the system maintains responsiveness.
+
+3. NFR3: Availability
+   - The system should maintain 99.9% uptime, allowing users to access the service at any time.
+   - Test Case: Monitor uptime over a month to ensure that downtime does not exceed 0.1%.
+
+4. NFR4: Usability
+   - The application should be intuitive and require no more than 3 steps for users to receive gym recommendations.
+   - Test Case: Conduct a user test to verify that a user can retrieve gym recommendations in 3 steps or fewer, without additional help.
+
+5. NFR5: Security
+   - User data (e.g., account info, location) must be stored securely, with encryption applied to sensitive information.
+   - Test Case: Check that all sensitive data is encrypted at rest and during transmission (e.g., using HTTPS, AES encryption).
+
+6. NFR6: Compatibility
+   - The app should be compatible with modern browsers (Chrome, Firefox, Edge) and mobile devices (iOS, Android).
+   - Test Case: Test the app across different browsers and devices to ensure it displays and functions correctly.
+
+7. NFR7: Maintainability
+   - The system should have modular code to allow new features (such as new recommendation parameters) to be added with minimal changes to the existing codebase.
+   - Test Case: Conduct a code review and ensure the structure allows for easy updates and integration of new modules.
+
+8. NFR8: Data Integrity
+   - All changes to gym data (e.g., working hours, prices) must be logged and versioned for audit purposes.
+   - Test Case: Verify that any updates to gym data are logged and that previous versions can be accessed and restored if needed.
+
+9. NFR9: Localization
+   - The system should support multiple languages, starting with English, but easily extendable to other languages.
+   - Test Case: Verify that language switching works smoothly and that key content is translated correctly.
+
+10. NFR10: Accessibility
+    - The app should adhere to WCAG 2.1 Level AA accessibility guidelines to ensure that users with disabilities can use the app.
+    - Test Case: Run the app through accessibility testing tools to verify compliance with WCAG 2.1 guidelines, ensuring keyboard navigation, text readability, and screen reader support.
+
+
 # Technology
 Google Maps API  
 Google Geocode API  
