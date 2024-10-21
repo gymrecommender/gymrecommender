@@ -27,7 +27,6 @@ Before a certain gym account can have a gym attached to it and receives access t
 1. Authentication
    - Oauth2.0 authentication with the help of Firebase (local accounts + Google only)
    - Email addresses are unique identifiers of the users
-   - Anonymous users are identified by their IP addresses
 2. Accounts
    - Each user has an opportunity to create their own account
    - Each user has an opportunity to bookmark gyms. This way if any parameter of the gym is changed, the user gets a respective notification in his account
@@ -36,7 +35,7 @@ Before a certain gym account can have a gym attached to it and receives access t
    - Each gym account can manage multiple gyms
    - A gym account can indicate that the gym under its management is not available for a set period of time or closed in general. This information will affect the formation of the rating
    - An administrator account has the power to accept or decline the requested attachment of the gym(s) to a certain account. Each gym is accepted or declined separately from all the others
-   - Parameters set via gym's account have a higher priority than the parameters retrieved from Google
+   - Parameters set via the gym's account have a higher priority than the parameters retrieved from Google
 3. Geolocation
    - Automatic retrieval of the user's geolocation upon an explicit request of the user
    - Manual selection of the location via selecting a marker on the map
@@ -55,11 +54,12 @@ Before a certain gym account can have a gym attached to it and receives access t
    - Each of the recommended gyms is depicted on the map via a marker. Each rating has its own marker colour
    - Both of the ratings are shown to the right of the aforementioned map
 7. Ratings
-   - Each user has an opportunity to leave an overall rating of a gym. The discrete rating must be in a [1, 5] range
-   - Each user has an opportunity to rate congestion in the gym. A user will have to choose one of the provided options in each respective field
+   - Each logged-in user has an opportunity to leave an overall rating of a gym. The discrete rating must be in a [1, 5] range
+   - Each logged-in user has an opportunity to rate congestion in the gym. A user will have to choose one of the provided options in each respective field
      - average waiting time for a machine or space (5 options to choose from)
      - how crowded the gym feels (5 options to choose from)
      - time of visit (a time field)
+   - Only logged-in users can leave both congestion and overall ratings
 8. History
    - Each user’s account has a history of requests that he/she/them can rename and browse through at any time
    - If any information regarding any gym in history has been changed, an appropriate visible note will be shown next to the respective gym
