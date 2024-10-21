@@ -24,6 +24,45 @@ Each gym account will be able to manage data related to the gyms that are attach
 Before a certain gym account can have a gym attached to it and receives access to editing its data, an administrator must approve this binding
 
 # Functional requirements
+1. Authentication
+   - Oauth2.0 authentication with the help of Firebase (local accounts + Google only)
+   - Email addresses are unique identifiers of the users
+   - Anonymous users are identified by their IP addresses
+2. Accounts
+   - Each user has an opportunity to create their own account
+   - Each user has an opportunity to bookmark gyms. This way if any parameter of the gym is changed, the user gets a respective notification in his account
+   - Gym accounts request the "ownership" of particular gyms in order to change/set the respective data (membership price, working hours, etc). Any type of managing of the data is allowed only after the "ownership" is approved by an administrator account.
+   - Each gym can be managed only by one gym account
+   - Each gym account can manage multiple gyms
+   - A gym account can indicate that the gym under its management is not available for a set period of time or closed in general. This information will affect the formation of the rating
+   - An administrator account has the power to accept or decline the requested attachment of the gym(s) to a certain account. Each gym is accepted or declined separately from all the others
+   - Parameters set via gym's account have a higher priority than the parameters retrieved from Google
+3. Geolocation
+   - Automatic retrieval of the user's geolocation upon an explicit request of the user
+   - Manual selection of the location via selecting a marker on the map
+   - Manual selection of the location via providing the address to the respective search bar
+4. Setting parameters of the requests
+   - Each user has an opportunity to specify a desired time period during which he is expected to travel to the gym
+   - Travelling time (from the selected location), travelling price (public transport from the selected location), gym membership price, user's overall rating and user's congestion rating are the criteria based on which the recommendation is made. Each user has an opportunity to assign importance to each of the aforementioned criteria via a respective slider.
+5. Gyms retrieval
+   - Retrieval of the gyms is triggered explicitly by the user, not automatically upon selection of the marker
+   - Each user is allowed to make only one request per minute. After that the request-triggering button becomes hidden and the respective loader-counter showing the time until the next request is possible appears on its place 
+   - All the gyms of the city are retrieved alongside their information if available (price, rating, working hours, etc)
+6. Comprising gyms recommendation
+   - Based on the aforementioned criteria and parameters of the request, each user gets the top 5 gyms
+   - Congestion rating is calculated based on the estimated arrival time if the time parameter provided by the user in the request. Otherwise, an average congestion is used as an estimate
+   - If some gyms do not have information for some criteria, they form another top 3 (if possible) rating that is shown separately from the regular rating with undefined criteria highlighted
+   - Each of the recommended gyms is depicted on the map via a marker. Each rating has its own marker colour
+   - Both of the ratings are shown to the right of the aforementioned map
+7. Ratings
+   - Each user has an opportunity to leave an overall rating of a gym. The discrete rating must be in a [1, 5] range
+   - Each user has an opportunity to rate congestion in the gym. A user will have to choose one of the provided options in each respective field
+     - average waiting time for a machine or space (5 options to choose from)
+     - how crowded the gym feels (5 options to choose from)
+     - time of visit (a time field)
+8. History
+   - Each user’s account has a history of requests that he/she/them can rename and browse through at any time
+   - If any information regarding any gym in history has been changed, an appropriate visible note will be shown next to the respective gym
 
 
 # Technology
@@ -47,7 +86,7 @@ Ivan Ivica
 
 # Contribution
 Nikla Magyar - Back-end  
-Ivan Ivica - Back-end  
+Ivan Ivica - Back-end + UML
 Mia Šagovac - Front-end + Design + Layout  
 Josipa Jagodić - Front-end  
 Egor Shevtsov - Front-end + Database  
