@@ -24,46 +24,56 @@ Each gym account will be able to manage data related to the gyms that are attach
 Before a certain gym account can have a gym attached to it and receives access to editing its data, an administrator must approve this binding
 
 # Functional requirements
-1. Authentication
-   - Oauth2.0 authentication with the help of Firebase (local accounts + Google only)
-   - Email addresses are unique identifiers of the users
-2. Accounts
-   - Each user has an opportunity to create their own account
-   - Each user has an opportunity to bookmark gyms. This way if any parameter of the gym is changed, the user gets a respective notification in his account
-   - Gym accounts request the "ownership" of particular gyms in order to change/set the respective data (membership price, working hours, etc). Any type of managing of the data is allowed only after the "ownership" is approved by an administrator account.
-   - Each gym can be managed only by one gym account
-   - Each gym account can manage multiple gyms
-   - A gym account can indicate that the gym under its management is not available for a set period of time or closed in general. This information will affect the formation of the rating
-   - An administrator account has the power to accept or decline the requested attachment of the gym(s) to a certain account. Each gym is accepted or declined separately from all the others
-   - Parameters set via the gym's account have a higher priority than the parameters retrieved from Google
-3. Geolocation
-   - Automatic retrieval of the user's geolocation upon an explicit request of the user
-   - Manual selection of the location via selecting a marker on the map
-   - Manual selection of the location via providing the address to the respective search bar
-4. Setting parameters of the requests
-   - Each user has an opportunity to specify a desired time period during which he is expected to travel to the gym
-   - Travelling time (from the selected location), travelling price (public transport from the selected location), gym membership price, user's overall rating and user's congestion rating are the criteria based on which the recommendation is made. Each user has an opportunity to assign importance to each of the aforementioned criteria via a respective slider.
-5. Gyms retrieval
-   - Retrieval of the gyms is triggered explicitly by the user, not automatically upon selection of the marker
-   - Each user is allowed to make only one request per minute. After that the request-triggering button becomes hidden and the respective loader-counter showing the time until the next request is possible appears on its place 
-   - All the gyms of the city are retrieved alongside their information if available (price, rating, working hours, etc)
-6. Comprising gyms recommendation
-   - Based on the aforementioned criteria and parameters of the request, each user gets the top 5 gyms
-   - Congestion rating is calculated based on the estimated arrival time if the time parameter provided by the user in the request. Otherwise, an average congestion is used as an estimate
-   - If some gyms do not have information for some criteria, they form another top 3 (if possible) rating that is shown separately from the regular rating with undefined criteria highlighted
-   - Each of the recommended gyms is depicted on the map via a marker. Each rating has its own marker colour
-   - Both of the ratings are shown to the right of the aforementioned map
-7. Ratings
-   - Each logged-in user has an opportunity to leave an overall rating of a gym. The discrete rating must be in a [1, 5] range
-   - Each logged-in user has an opportunity to rate congestion in the gym. A user will have to choose one of the provided options in each respective field
-     - average waiting time for a machine or space (5 options to choose from)
-     - how crowded the gym feels (5 options to choose from)
-     - time of visit (a time field)
-   - Only logged-in users can leave both congestion and overall ratings
-8. History
-   - Each user’s account has a history of requests that he/she/them can rename and browse through at any time
-   - If any information regarding any gym in history has been changed, an appropriate visible note will be shown next to the respective gym
-
+Users = both authenticated and anonymous users (if not specified in the context)
+| Code | Description | Priority |
+| ---- | ----------- | -------- |
+|  F1    |  The system must support OAuth 2.0 authentication using Firebase           |  Medium        |
+|  F2    |  Anonymous users must have access to all the functionalities that are not bound to specific account type functionalities          |  High        |
+|  F3    |  Users must be able to create a local account           |  Medium     |   
+|  F4    |  Users must be able to delete their account           |  Low        |
+|  F5    |  Users must be able to log in with local accounts or Google accounts           | Medium         |
+|  F6    |  Users must be able to log in only with the type of account (local or Google) they signed up with           |  Medium        |
+|  F7    |  Username must serve as a unique identifier of a user           |  Medium        |
+|  F8    |  Users must be able to manage their own accounts           | Medium         |
+|  F9    |  Each user must have the ability to bookmark gyms regardless of their attachment status to a Gym account           |  Medium        |
+|  F10   |  When a bookmarked gym's information changes, all the users that have this gym bookmarked must receive a notification in their accounts          |  Medium        |
+|  F11   |  Users must have a personal dashboard displaying bookmarked gyms, the history of requests and notifications           |  Medium        |
+|  F12   |  Gym owners must be able to request "ownership" of specific gyms           |  High        |
+|  F13   |  Gym accounts must be able to manage the requested gyms only after approval from an administrator           |  Medium        |
+|  F14   |  It must be possible to create new gym accounts           |  High        |
+|  F15   |  Gym accounts must be uniquely identified by their respective usernames         |  High        |
+|  F16   |  Each gym must be managed by at most one account           |  High        |
+|  F17   |  Each gym account must be able to manage multiple gyms           |  High        |
+|  F18   |  Each gym account must be able to delete its account           |  Low        |
+|  F19   |  Gym accounts must not be able to delete any gyms from the system regardless of the ownership status           |  High        |
+|  F20   |  Gym accounts must be able to mark a gym as temporarily or permanently unavailable           |  Low        |
+|  F21   |  Gym account-managed data must override Google-provided data for the gym except for the overall and congestion ratings          |  High        |
+|  F22   |  Overall and congestion ratings of a gym retrieved from Google must be combined with the respective local ratings           |  High        |
+|  F23   |  It must not be possible to create an administrator account through UI           |  High        |
+|  F24   |  Administrator accounts must be able to approve or decline gym ownership requests on a per-gym basis          |  Medium        |
+|  F25   |  Each user, gym or administrator account has access only to the openly available information and information specific to his/her/their personal account          |  High        |
+|  F26   |  Users must have the option to have their geolocation automatically retrieved           |  High        |
+|  F27   |  Geolocation of users must be retrieved only upon explicit request           | High         |
+|  F28   |  Users must be able to choose the location by manually selecting a marker on a map           |  High        |
+|  F29   |  User must be able to choose the location by searching via providing a search bar with a specific address           |  High        |
+|  F30   |  Users must be able to specify a desired travelling time period for which they want to receive recommendations           |   Medium       |
+|  F31   |  The recommendation of the gyms must be based on the following **criteria**: travelling time from the chosen location, travelling price from the selected location, gym overall rating, gym congestion rating and gym's membership price|    High |
+|  F32   |  Users must be able to adjust the importance of all the recommendation-based-on criteria via a respective slider           |  High        |
+|  F33   |  Users must explicitly trigger the search for gyms to be retrieved and recommendations to be formed       |  High        |
+|  F34   |  Each user must be able to submit only one request per 2 minutes           |  High        |
+|  F35   |  The request button becomes hidden until the next request is available and a countdown timer appears in its place           |  Medium        |
+|  F36   |  The system must analyze all gyms in the implicitly (via a marker) selected city          |  High        |
+|  F37   |  The system must generate a list of the top 5 gyms taking into account the importance of each criterion specified by the user           |  High        |
+|  F38   |  Congestion ratings should be calculated based on the estimated arrival time if provided, otherwise, an average congestion rate must be used           |  Medium        |
+|  F39   |  A separate top 3 recommendation list must be formed if there are gyms that lack information for certain criteria and the missing criteria must be highlighted           |  Low        |
+|  F40   |  Each recommended gym must be displayed on a map         |  High        |
+|  F41   |  Regular and alternate (top 3) recommended gyms must be displayed on a map in different colours with respect to each other         |  High        |
+|  F42   |  Both regular and alternate (top 3) gym ratings must be displayed next to the resulting map           |   High       |
+|  F43   |  Only authenticated users can contribute to the overall and congestion ratings           |  High        |
+|  F44   |  Gym congestion must be rated by selecting an appropriate category for two parameters (average waiting time for machines or spaces and how crowded the gym feels) and specifying the user's time of visit in order for the review to be submitted         |   High       |
+|  F45   |  Authenticated users must be able to rename and browse through previous requests at any time        |  Medium        |
+|  F46   |  When browsing through the result of the requests (including the ones in the history) the parameters of the request and the respective values of each of the criteria alongside with all information available for the gym must be visible        |  High        |
+|  F47   |  If any gym in the history changes its information after the recommendation has been composed, an appropriate note must be displayed next to the respective gym upon selection of the request it belongs to          |  Medium        |
 
 # Technology
 Google Maps API  
@@ -86,7 +96,7 @@ Ivan Ivica
 
 # Contribution
 Nikla Magyar - Back-end  
-Ivan Ivica - Back-end + UML
+Ivan Ivica - Back-end + UML  
 Mia Šagovac - Front-end + Design + Layout  
 Josipa Jagodić - Front-end  
 Egor Shevtsov - Front-end + Database  
