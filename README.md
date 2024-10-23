@@ -67,47 +67,20 @@ Before a certain gym account can have a gym attached to it and receives access t
 
 
 ### Non-Functional Requirements
-
-1. NFR1: Performance
-   - The system should return gym recommendations within 3 seconds after the user makes a request.
-   - Test Case: Measure the time taken to retrieve gym data and verify that it does not exceed 3 seconds under normal conditions.
-
-2. NFR2: Scalability
-   - The system must support up to 10,000 concurrent users without performance degradation.
-   - Test Case: Simulate 10,000 users accessing the application simultaneously and verify that the system maintains responsiveness.
-
-3. NFR3: Availability
-   - The system should maintain 99.9% uptime, allowing users to access the service at any time.
-   - Test Case: Monitor uptime over a month to ensure that downtime does not exceed 0.1%.
-
-4. NFR4: Usability
-   - The application should be intuitive and require no more than 3 steps for users to receive gym recommendations.
-   - Test Case: Conduct a user test to verify that a user can retrieve gym recommendations in 3 steps or fewer, without additional help.
-
-5. NFR5: Security
-   - User data (e.g., account info, location) must be stored securely, with encryption applied to sensitive information.
-   - Test Case: Check that all sensitive data is encrypted at rest and during transmission (e.g., using HTTPS, AES encryption).
-
-6. NFR6: Compatibility
-   - The app should be compatible with modern browsers (Chrome, Firefox, Edge) and mobile devices (iOS, Android).
-   - Test Case: Test the app across different browsers and devices to ensure it displays and functions correctly.
-
-7. NFR7: Maintainability
-   - The system should have modular code to allow new features (such as new recommendation parameters) to be added with minimal changes to the existing codebase.
-   - Test Case: Conduct a code review and ensure the structure allows for easy updates and integration of new modules.
-
-8. NFR8: Data Integrity
-   - All changes to gym data (e.g., working hours, prices) must be logged and versioned for audit purposes.
-   - Test Case: Verify that any updates to gym data are logged and that previous versions can be accessed and restored if needed.
-
-9. NFR9: Localization
-   - The system should support multiple languages, starting with English, but easily extendable to other languages.
-   - Test Case: Verify that language switching works smoothly and that key content is translated correctly.
-
-10. NFR10: Accessibility
-    - The app should adhere to WCAG 2.1 Level AA accessibility guidelines to ensure that users with disabilities can use the app.
-    - Test Case: Run the app through accessibility testing tools to verify compliance with WCAG 2.1 guidelines, ensuring keyboard navigation, text readability, and screen reader support.
-
+| Code | Description |
+| ---- | ----------- |
+|NF1| The system should return gym recommendations within 5 seconds after the user makes a request provided the internet connection of the user is reliable |
+|NF2| The system should update gym information (e.g. membership price of the bookmarked gym) and deliver notifications within 10 seconds of the change |
+|NF3| User data must be encrypted during transition. Sensitive data like passwords must also be stored encrypted. |
+|NF4| Authentication tokens must expire after 30 minutes of inactivity and users must be required to re-authenticate |
+|NF5| Only authorized administrators should be able to manage gym ownership requests or create administrator accounts (via secure backend processes) |
+|NF6| Notifications regarding gym updates must be reliably delivered to at least 99.5% of subscribed users |
+|NF7| The user interface must be intuitive and responsive, with page load times not exceeding 2 seconds under normal conditions |
+|NF8| The system must be accessible to users with disabilities, complying with WCAG 2.1 AA standards |
+|NF9| The system codebase must follow standard design patterns and be modular to facilitate future updates and maintenance |
+|NF10| The system must provide comprehensive logging of errors and events for system administrators to troubleshoot effectively |
+|NF11| The system must have clear documentation for all APIs and user-facing features to support future development and debugging |
+|NF12| Any changes to gym or user data must be reflected consistently across all views upon the next request of the gym's information |
 
 # Technology
 Google Maps API  
@@ -130,7 +103,7 @@ Ivan Ivica
 
 # Contribution
 Nikla Magyar - Back-end  
-Ivan Ivica - Back-end + UML
+Ivan Ivica - Back-end + UML  
 Mia Šagovac - Front-end + Design + Layout  
 Josipa Jagodić - Front-end  
 Egor Shevtsov - Front-end + Database  
