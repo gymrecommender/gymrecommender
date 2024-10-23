@@ -104,6 +104,8 @@ Firebase
 Firebase Cloud Messaging  
 
 # Installation
+The application will be deployed at Render (https://render.com/)
+
 # Team members
 Nikla Magyar  
 Mia Šagovac  
