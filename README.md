@@ -75,6 +75,23 @@ Users = both authenticated and anonymous users (if not specified in the context)
 |  F46   |  When browsing through the result of the requests (including the ones in the history) the parameters of the request and the respective values of each of the criteria alongside with all information available for the gym must be visible        |  High        |
 |  F47   |  If any gym in the history changes its information after the recommendation has been composed, an appropriate note must be displayed next to the respective gym upon selection of the request it belongs to          |  Medium        |
 
+
+### Non-Functional Requirements
+| Code | Description |
+| ---- | ----------- |
+|NF1| The system should return gym recommendations within 5 seconds after the user makes a request provided the internet connection of the user is reliable |
+|NF2| The system should update gym information (e.g. membership price of the bookmarked gym) and deliver notifications within 10 seconds of the change |
+|NF3| User data must be encrypted during transition. Sensitive data like passwords must also be stored encrypted. |
+|NF4| Authentication tokens must expire after 30 minutes of inactivity and users must be required to re-authenticate |
+|NF5| Only authorized administrators should be able to manage gym ownership requests or create administrator accounts (via secure backend processes) |
+|NF6| Notifications regarding gym updates must be reliably delivered to at least 99.5% of subscribed users |
+|NF7| The user interface must be intuitive and responsive, with page load times not exceeding 2 seconds under normal conditions |
+|NF8| The system must be accessible to users with disabilities, complying with WCAG 2.1 AA standards |
+|NF9| The system codebase must follow standard design patterns and be modular to facilitate future updates and maintenance |
+|NF10| The system must provide comprehensive logging of errors and events for system administrators to troubleshoot effectively |
+|NF11| The system must have clear documentation for all APIs and user-facing features to support future development and debugging |
+|NF12| Any changes to gym or user data must be reflected consistently across all views upon the next request of the gym's information |
+
 # Technology
 Google Maps API  
 Google Geocode API  
