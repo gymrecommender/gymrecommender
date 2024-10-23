@@ -49,7 +49,7 @@ Users = both authenticated and anonymous users (if not specified in the context)
 |  F20   |  Gym accounts must be able to mark a gym as temporarily or permanently unavailable           |  Low        |
 |  F21   |  Gym account-managed data must override Google-provided data for the gym except for the overall and congestion ratings          |  High        |
 |  F22   |  Overall and congestion ratings of a gym retrieved from Google must be combined with the respective local ratings           |  High        |
-|  F23   |  It must not be possible to create an administrator account through UI           |  High        |
+|  F23   |  Administrator accounts must be created only by other administrators (a respective section in the administrator's account)           |  Medium        |
 |  F24   |  Administrator accounts must be able to approve or decline gym ownership requests on a per-gym basis          |  Medium        |
 |  F25   |  Each user, gym or administrator account has access only to the openly available information and information specific to his/her/their personal account          |  High        |
 |  F26   |  Users must have the option to have their geolocation automatically retrieved           |  High        |
