@@ -80,7 +80,7 @@ Before a certain gym account can have a gym attached to it and receives access t
 |NF9| The system codebase must follow standard design patterns and be modular to facilitate future updates and maintenance |
 |NF10| The system must provide comprehensive logging of errors and events for system administrators to troubleshoot effectively |
 |NF11| The system must have clear documentation for all APIs and user-facing features to support future development and debugging |
-|NF12| Any changes to gym or user data must be reflected consistently across all views upon the next request of the gym's information |
+|NF12| Any changes to gym or user data must be reflected consistently across all views upon the next request of the gym's information. |
 
 # Technology
 Google Maps API  
