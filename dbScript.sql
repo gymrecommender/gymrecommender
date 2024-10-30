@@ -23,11 +23,11 @@ CREATE TABLE if not exists Working_hours
 (
   id uuid NOT null DEFAULT uuid_generate_v4(),
   open_from TIME NOT NULL,
-  open_to TIME NOT NULL,
+  open_until TIME NOT NULL,
   PRIMARY KEY (id),
   UNIQUE (open_from),
-  UNIQUE (open_to),
-  check (open_to > open_from)
+  UNIQUE (open_until),
+  check (open_until > open_from)
 );
 
 CREATE TABLE if not exists Currency
