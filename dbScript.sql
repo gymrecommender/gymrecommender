@@ -22,8 +22,8 @@ END $$;
 CREATE TABLE if not exists Working_hours
 (
   id uuid NOT null DEFAULT uuid_generate_v4(),
-  open_from TIMESTAMP NOT NULL,
-  open_to TIMESTAMP NOT NULL,
+  open_from TIME NOT NULL,
+  open_to TIME NOT NULL,
   PRIMARY KEY (id),
   UNIQUE (open_from),
   UNIQUE (open_to),
