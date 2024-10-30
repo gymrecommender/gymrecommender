@@ -1,4 +1,4 @@
-https://maps.googleapis.com/maps/api/directions/json?destination=45.8089382,15.9733021&origin=45.800526244992554,15.971377297096797&mode=transit&departure_time=1730448000&key=
+https://maps.googleapis.com/maps/api/directions/json?destination=45.8089382,15.9733021&origin=45.800526244992554,15.971377297096797&mode=transit&departure_time=1730448000&key=API_KEY
 {
     "geocoded_waypoints": [
         {
