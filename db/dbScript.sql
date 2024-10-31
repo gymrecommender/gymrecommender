@@ -1,7 +1,6 @@
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp"; --it is needed for uuid generator (uuid_generate_v4()) to be available
 
---Basically, we dynamically create enums. It needs to be done dynamically in order to check the exsitence of the enum types
-DO $$
+--Basically, we dynamically create enums if they do not exist
 BEGIN
     IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'provider_type') THEN
         CREATE TYPE provider_type AS ENUM ('local', 'google');
