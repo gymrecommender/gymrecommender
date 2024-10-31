@@ -64,6 +64,28 @@ create index if not exists idx_account_username on Account(username);
 create index if not exists idx_account_email on Account(email);
 create index if not exists idx_account_type on Account("type");
 
+create table if not exists Country
+(
+	id uuid not null default uuid_generate_v4(),
+	name varchar(56) not null,
+	primary key(id),
+	UNIQUE (name)
+);
+create index if not exists idx_country_name on Country("name");
+
+create table if not exists City
+(
+	id uuid not null default uuid_generate_v4(),
+	nelatitude FLOAT NOT null check (nelatitude between -90 and 90), --rectangular approximation of the area of the city
+    nelongitude FLOAT NOT null check (nelongitude between -180 and 180),
+    swlatitude FLOAT NOT null check (swlatitude between -90 and 90),
+    swlongitude FLOAT NOT null check (swlongitude between -180 and 180),
+	name varchar(100) not null,
+	country_id uuid not null,
+	primary key(id),
+	foreign key (country_id) references Country(id)
+);
+create index if not exists idx_city_name_country_id on City("name", country_id);
 
 CREATE TABLE if not exists Gym
 (
@@ -88,16 +110,18 @@ CREATE TABLE if not exists Gym
   congestion_rating_number INT NOT null check (congestion_rating_number >= 0),
   owned_by uuid, --a gym account that manages information about this gym
   currency_id uuid NOT NULL,
+  city_id uuid not null,
   PRIMARY KEY (id),
   FOREIGN KEY (owned_by) REFERENCES Account(id),
   FOREIGN KEY (currency_id) REFERENCES Currency(id),
+  foreign key (city_id) references City(id),
   UNIQUE (external_place_id)
 );
 create index if not exists idx_gym_external_place_id on Gym(external_place_id);
 create index if not exists idx_gym_lat_lon on Gym(latitude, longitude);
 create index if not exists idx_gym_price_changed_at on Gym(price_changed_at);
 create index if not exists idx_gym_owned_by on Gym(owned_by);
-
+create index if not exists idx_gym_city_id on Gym(city_id);
 
 CREATE TABLE if not exists Ownership
 (
@@ -366,4 +390,6 @@ BEGIN
   END IF;
 
 END $$;
+
+
 
