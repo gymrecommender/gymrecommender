@@ -1,8 +1,60 @@
-https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=45.815399,15.966568&radius=5000&type=gym&key=API_KEY
+https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=45.815399,15.966568&radius=5000&type=gym&keyword=gym&key=API_KEY
 {
     "html_attributions": [],
-    "next_page_token": "AdCG2DOX8kSw6zHUelhCy3yznteDtnkLHhBLU-DQaTfqqS1WP66CeWBJkfLeKuaLylJN9xzvzgrkFf9edumQZ6M_6V5QKCor9RZJcD8hD6qTDGYvcmvZilZ4Wa1XYVSsPOspX7wVyChsaqj_l-7MSMTlutEtIqMe2QVPemTWKsFkiWONWGanCUQw4sBPPmYn9uBC0z4NlLBUlrVXGncBAjlQrrsSExjDGNSALr5cDucg0u9COdxucvxM9WkRnbcf4es-qDRrSYyz8zVZB_1GQEBru9ZlgQkye-j7IdAqRUgwhWSk47b4oIiGy0kIJTjKUsEvtJ1ybufdi6yDKj6Lj4STHak3Rlgkyz1x7zFiN-IU-HxABJlwP_TmsdPkGyctOOseWOTbylt2-pWnAZuqFTYHsBJXN68e0Va5_xsjFFHorNSi0XIN8uI",
+    "next_page_token": "AdCG2DMvDwTVDslPmAtm3SBiR615rumenuFd3lS841oNn3vDbTkuiC-iheHXnOcqCF7754L3Yx-XzFd1kLrDkF6TxtCEaWZNeo92xPAQlVPl7GGD6JsLGNmKTUHGQHDMTVegL2yAygMObV1lOVteskBafLbrXQPWR1TIpSB51AKJAqHYY8y8176WAZahTKcDOwhkLR_YNHL0J8rA4wMpupH4EnDF8kt6YEvQq8BCKFvCwz7I7yoRtc69WPxj4AXv8xCx9I1cJl4wvnKsRsoaAHKJqCdoU1Vc07qXMNYvKsJUnCbkIkNAvLogKjd1ZMFLmI6L8W52wH8_ArG_NapfUEZDkXNCHwJ62zCMmzuWsSdC92hr1ilGMukXJYTb3EgPLf_4YkKpHN3jjti9Fp7dbMdTL6RlGrWA7hy4He4P3ZNCBiPhXNCIfjXG-mzPYQ",
     "results": [
+        {
+            "business_status": "OPERATIONAL",
+            "geometry": {
+                "location": {
+                    "lat": 45.7794227,
+                    "lng": 16.0055274
+                },
+                "viewport": {
+                    "northeast": {
+                        "lat": 45.78075617989271,
+                        "lng": 16.00671797989272
+                    },
+                    "southwest": {
+                        "lat": 45.77805652010727,
+                        "lng": 16.00401832010727
+                    }
+                }
+            },
+            "icon": "https://maps.gstatic.com/mapfiles/place_api/icons/v1/png_71/generic_business-71.png",
+            "icon_background_color": "#7B9EB0",
+            "icon_mask_base_uri": "https://maps.gstatic.com/mapfiles/place_api/icons/v2/generic_pinlet",
+            "name": "Gymnasium fitness studio",
+            "opening_hours": {
+                "open_now": true
+            },
+            "photos": [
+                {
+                    "height": 1440,
+                    "html_attributions": [
+                        "<a href=\"https://maps.google.com/maps/contrib/115183984805709078744\">A Google User</a>"
+                    ],
+                    "photo_reference": "AdCG2DOJZpFMOJeNScZHDCtlFL1y1OP8leLN9pgpWPrhjR1Uap3eSU_i7x5Tw-QuQJDywNQkCAjoh7GIHSGrGeZmH1jmYM0roLgbGNGrx3r4f6LpltWRK3uNcRGPrSw5IZQsEvdXC-h5vdKty3qwc4Otf-LeTJrvVFuuideW0kKU5odvdnNG",
+                    "width": 1920
+                }
+            ],
+            "place_id": "ChIJ03saYAXWZUcRdUY_5tGGvOo",
+            "plus_code": {
+                "compound_code": "Q2H4+Q6 Zagreb",
+                "global_code": "8FQRQ2H4+Q6"
+            },
+            "rating": 4.8,
+            "reference": "ChIJ03saYAXWZUcRdUY_5tGGvOo",
+            "scope": "GOOGLE",
+            "types": [
+                "gym",
+                "point_of_interest",
+                "health",
+                "establishment"
+            ],
+            "user_ratings_total": 276,
+            "vicinity": "Sajmišna cesta 4, Zagreb"
+        },
         {
             "business_status": "OPERATIONAL",
             "geometry": {
@@ -12,12 +64,12 @@ https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=45.815399,
                 },
                 "viewport": {
                     "northeast": {
-                        "lat": 45.81030518029149,
-                        "lng": 15.9746503802915
+                        "lat": 45.81030602989272,
+                        "lng": 15.97465122989272
                     },
                     "southwest": {
-                        "lat": 45.80760721970849,
-                        "lng": 15.9719524197085
+                        "lat": 45.80760637010727,
+                        "lng": 15.97195157010728
                     }
                 }
             },
@@ -30,17 +82,17 @@ https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=45.815399,
             },
             "photos": [
                 {
-                    "height": 533,
+                    "height": 1520,
                     "html_attributions": [
-                        "<a href=\"https://maps.google.com/maps/contrib/112208863945901017545\">Fitness centar Forma</a>"
+                        "<a href=\"https://maps.google.com/maps/contrib/118128521877639805130\">Vilim Stresec</a>"
                     ],
-                    "photo_reference": "AdCG2DNDBQgS4FZPdXe3ymqOjM6hPiL-uoVjmQr8IwAeDtvPefyawJM6rzLVBjT0DIRBxcriOsMIsoWHb9IUQQb5XdbRcGNm080fsDcPjfo1Zm3gNXQZnX68qLC-8WFVY-ogegEMZcdkwGRoi7yqEAphu4ts8dQFThVX8tNWQyPLP6KKsps",
-                    "width": 800
+                    "photo_reference": "AdCG2DNh076jpPfGldbiG0HKF2Vv72yBraMqHwE9IQbOX8EVz3pQ_7Ivl3QEnuQXmpJj63q-aqwnD6PnOAdcJJUOMy4cIxtcm9o67gU-kN9R5h40JI5Le-VwiqOwiqxwHwOMOhWWeFXYSmoJ7pQYuCoFucyfZHd7y1dQvYA_xwnGXMs6GMrm",
+                    "width": 2688
                 }
             ],
             "place_id": "ChIJL8CZmPvWZUcRQKKO2HHNF_I",
             "plus_code": {
-                "compound_code": "RX5F+H8 Zagreb, Croatia",
+                "compound_code": "RX5F+H8 Zagreb",
                 "global_code": "8FQQRX5F+H8"
             },
             "rating": 4.6,
@@ -48,160 +100,160 @@ https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=45.815399,
             "scope": "GOOGLE",
             "types": [
                 "gym",
-                "school",
                 "point_of_interest",
                 "health",
+                "school",
                 "establishment"
             ],
             "user_ratings_total": 188,
-            "vicinity": "Hebrangova ulica 21, Zagreb"
+            "vicinity": "Hebrangova ul. 21, Zagreb"
         },
         {
             "business_status": "OPERATIONAL",
             "geometry": {
                 "location": {
-                    "lat": 45.8037856,
-                    "lng": 15.953696
+                    "lat": 45.8206443,
+                    "lng": 16.0104684
                 },
                 "viewport": {
                     "northeast": {
-                        "lat": 45.80526743029151,
-                        "lng": 15.9550599302915
+                        "lat": 45.82200822989271,
+                        "lng": 16.01188237989272
                     },
                     "southwest": {
-                        "lat": 45.80256946970851,
-                        "lng": 15.9523619697085
-                    }
-                }
-            },
-            "icon": "https://maps.gstatic.com/mapfiles/place_api/icons/v1/png_71/school-71.png",
-            "icon_background_color": "#7B9EB0",
-            "icon_mask_base_uri": "https://maps.gstatic.com/mapfiles/place_api/icons/v2/school_pinlet",
-            "name": "Pilates Studio Tao",
-            "opening_hours": {
-                "open_now": true
-            },
-            "photos": [
-                {
-                    "height": 4480,
-                    "html_attributions": [
-                        "<a href=\"https://maps.google.com/maps/contrib/118329987648705190302\">Pilates Studio Tao</a>"
-                    ],
-                    "photo_reference": "AdCG2DOl6WWlmA_8m29BECxcabOJuzd3athHaHQgiqgHXyn0qH2Dku9A9D1SxJAH0wlMaioxD1Yd3FGUxgTBSRlcX5LtsNU5LDXv5h0ai_HyenJFc0BNEj7adyM3loRFw_9ALoCheZu04AvSK2LWOJkzqFFA-fNc5gcyz7VpudNlrAHu-Lq3",
-                    "width": 6720
-                }
-            ],
-            "place_id": "ChIJSR5OUvPWZUcR-Y-JDccIRVs",
-            "plus_code": {
-                "compound_code": "RX33+GF Zagreb, Croatia",
-                "global_code": "8FQQRX33+GF"
-            },
-            "rating": 4.1,
-            "reference": "ChIJSR5OUvPWZUcR-Y-JDccIRVs",
-            "scope": "GOOGLE",
-            "types": [
-                "gym",
-                "point_of_interest",
-                "health",
-                "establishment"
-            ],
-            "user_ratings_total": 17,
-            "vicinity": "Kranjčevićeva ulica 54, Zagreb"
-        },
-        {
-            "business_status": "OPERATIONAL",
-            "geometry": {
-                "location": {
-                    "lat": 45.8075134,
-                    "lng": 15.9807815
-                },
-                "viewport": {
-                    "northeast": {
-                        "lat": 45.8089305302915,
-                        "lng": 15.9821265802915
-                    },
-                    "southwest": {
-                        "lat": 45.8062325697085,
-                        "lng": 15.9794286197085
-                    }
-                }
-            },
-            "icon": "https://maps.gstatic.com/mapfiles/place_api/icons/v1/png_71/school-71.png",
-            "icon_background_color": "#7B9EB0",
-            "icon_mask_base_uri": "https://maps.gstatic.com/mapfiles/place_api/icons/v2/school_pinlet",
-            "name": "Pink Elephant Yoga House",
-            "opening_hours": {
-                "open_now": false
-            },
-            "photos": [
-                {
-                    "height": 363,
-                    "html_attributions": [
-                        "<a href=\"https://maps.google.com/maps/contrib/117864684511336724287\">Pink Elephant Yoga House</a>"
-                    ],
-                    "photo_reference": "AdCG2DMSxg-PlU2bIgkXFORd8uKbWLNMhV5mpF3OqMeSf5t4jN9GIszAgUeYaoIkJddzrGkK0bFvJ5-gig4cfI_F2dS6vPC3mD-3ZXjt1fiVLQ3M7ajD8uPfJU08Kqn3PfxWDuwU6pi0jxNn7PVkINADx7xRXJm8a8n_jeisWDCak-t3QWDN",
-                    "width": 550
-                }
-            ],
-            "place_id": "ChIJV4Brc_rWZUcRjt_qA94zr_Y",
-            "plus_code": {
-                "compound_code": "RX5J+28 Zagreb, Croatia",
-                "global_code": "8FQQRX5J+28"
-            },
-            "rating": 4.5,
-            "reference": "ChIJV4Brc_rWZUcRjt_qA94zr_Y",
-            "scope": "GOOGLE",
-            "types": [
-                "gym",
-                "point_of_interest",
-                "health",
-                "establishment"
-            ],
-            "user_ratings_total": 15,
-            "vicinity": "Ulica Pavla Hatza 10, Zagreb"
-        },
-        {
-            "business_status": "OPERATIONAL",
-            "geometry": {
-                "location": {
-                    "lat": 45.8054758,
-                    "lng": 15.9239999
-                },
-                "viewport": {
-                    "northeast": {
-                        "lat": 45.8067795802915,
-                        "lng": 15.9253542802915
-                    },
-                    "southwest": {
-                        "lat": 45.80408161970851,
-                        "lng": 15.9226563197085
+                        "lat": 45.81930857010727,
+                        "lng": 16.00918272010728
                     }
                 }
             },
             "icon": "https://maps.gstatic.com/mapfiles/place_api/icons/v1/png_71/generic_business-71.png",
             "icon_background_color": "#7B9EB0",
             "icon_mask_base_uri": "https://maps.gstatic.com/mapfiles/place_api/icons/v2/generic_pinlet",
-            "name": "Anatomska centrala",
+            "name": "Gyms4you Zagreb (Maksimir)",
             "opening_hours": {
                 "open_now": true
             },
             "photos": [
                 {
-                    "height": 4000,
+                    "height": 500,
                     "html_attributions": [
-                        "<a href=\"https://maps.google.com/maps/contrib/105626224370843108960\">Anatomska centrala</a>"
+                        "<a href=\"https://maps.google.com/maps/contrib/109102557330669683972\">A Google User</a>"
                     ],
-                    "photo_reference": "AdCG2DNRN2GSIO0FJh6v5gXmDFKEsg4Zp5P9RUPLTG3RdE_z6HxGyA9TDVMyJtkXR9WJXrjr5Uzh9SNnarenTYLfWersew_nU-E6QXGLXaOPVHRxFtuImBDsgIcrT8qsDA2M_O503q3cyNfyw38A_KQvdNhwCh632pULU0pbcEuZHkGrZvny",
-                    "width": 6000
+                    "photo_reference": "AdCG2DN3zh9YBV8dVm2DvkXntgGU_CxKvidGEkbx9ktbQAm_SMyOxeKezLZUAK_xMKD_WamkHjCmfptbZk8_9R5l29HkRyH_WLju1puFBZGW3yWU29QITs2gRBOOnTPxN40_feivN23k7YpVk76HVxGp7xDlwbPPzRtjq_GlfWeFXj74Jntp",
+                    "width": 900
                 }
             ],
-            "place_id": "ChIJVd3nWjTRZUcR4Lxj0drKxIw",
+            "place_id": "ChIJefr1yhnXZUcRdw7AH57Nt1k",
             "plus_code": {
-                "compound_code": "RW4F+5H Zagreb, Croatia",
-                "global_code": "8FQQRW4F+5H"
+                "compound_code": "R2C6+77 Zagreb",
+                "global_code": "8FQRR2C6+77"
+            },
+            "rating": 4.3,
+            "reference": "ChIJefr1yhnXZUcRdw7AH57Nt1k",
+            "scope": "GOOGLE",
+            "types": [
+                "gym",
+                "point_of_interest",
+                "health",
+                "establishment"
+            ],
+            "user_ratings_total": 286,
+            "vicinity": "Ulica Miroslava Kraljevića 26, Zagreb"
+        },
+        {
+            "business_status": "OPERATIONAL",
+            "geometry": {
+                "location": {
+                    "lat": 45.7914469,
+                    "lng": 15.913806
+                },
+                "viewport": {
+                    "northeast": {
+                        "lat": 45.79286277989272,
+                        "lng": 15.91503537989272
+                    },
+                    "southwest": {
+                        "lat": 45.79016312010728,
+                        "lng": 15.91233572010728
+                    }
+                }
+            },
+            "icon": "https://maps.gstatic.com/mapfiles/place_api/icons/v1/png_71/generic_business-71.png",
+            "icon_background_color": "#7B9EB0",
+            "icon_mask_base_uri": "https://maps.gstatic.com/mapfiles/place_api/icons/v2/generic_pinlet",
+            "name": "Invictus Fitness",
+            "opening_hours": {
+                "open_now": true
+            },
+            "photos": [
+                {
+                    "height": 3456,
+                    "html_attributions": [
+                        "<a href=\"https://maps.google.com/maps/contrib/113601333666260948661\">alen000</a>"
+                    ],
+                    "photo_reference": "AdCG2DOCB9pCIxPA7ZMmHrx5tKZH4EKb1fHNFb5VozoLWuZknYPPWjZcoXektGxeIBMy97njyLW-D7wm8pB33cw7PU8MLpAPyCL4yLbzoXSHZzrbHpZpiHz6n7GGfc3WxN5cbYiO38gGFRwvlfIauWpllxyQXOCoyd-hNeN5QSwsVmuA6mPF",
+                    "width": 4608
+                }
+            ],
+            "place_id": "ChIJ91-MuFPRZUcRYbvsklSqpdw",
+            "plus_code": {
+                "compound_code": "QWR7+HG Zagreb",
+                "global_code": "8FQQQWR7+HG"
+            },
+            "rating": 4.6,
+            "reference": "ChIJ91-MuFPRZUcRYbvsklSqpdw",
+            "scope": "GOOGLE",
+            "types": [
+                "gym",
+                "point_of_interest",
+                "health",
+                "establishment"
+            ],
+            "user_ratings_total": 245,
+            "vicinity": "Rudeška cesta 169, Zagreb"
+        },
+        {
+            "business_status": "OPERATIONAL",
+            "geometry": {
+                "location": {
+                    "lat": 45.8106464,
+                    "lng": 16.0167289
+                },
+                "viewport": {
+                    "northeast": {
+                        "lat": 45.81192902989271,
+                        "lng": 16.01829662989272
+                    },
+                    "southwest": {
+                        "lat": 45.80922937010727,
+                        "lng": 16.01559697010728
+                    }
+                }
+            },
+            "icon": "https://maps.gstatic.com/mapfiles/place_api/icons/v1/png_71/generic_business-71.png",
+            "icon_background_color": "#7B9EB0",
+            "icon_mask_base_uri": "https://maps.gstatic.com/mapfiles/place_api/icons/v2/generic_pinlet",
+            "name": "Beta fitness",
+            "opening_hours": {
+                "open_now": true
+            },
+            "photos": [
+                {
+                    "height": 960,
+                    "html_attributions": [
+                        "<a href=\"https://maps.google.com/maps/contrib/109704983247436710419\">Amalija Gašpar</a>"
+                    ],
+                    "photo_reference": "AdCG2DNlCofPfeOlaFdB2ysiJgWHIUvodSfMwzYWk1N6yVeklkhUFrqLxePsp3Xv6URLOmnSF13wpf8kPAMTODPHme6X41GCpODayeHilzNSqUo6aQcqnwY2TyDT7VAXdJz6jA6RCeS3xww6jSuKTJV9mJrds35GAP0rhWs3F5mmP7KQrMxX",
+                    "width": 1280
+                }
+            ],
+            "place_id": "ChIJyQgGcMvXZUcR-BBVynwkuKw",
+            "plus_code": {
+                "compound_code": "R268+7M Zagreb",
+                "global_code": "8FQRR268+7M"
             },
             "rating": 4.8,
-            "reference": "ChIJVd3nWjTRZUcR4Lxj0drKxIw",
+            "reference": "ChIJyQgGcMvXZUcR-BBVynwkuKw",
             "scope": "GOOGLE",
             "types": [
                 "gym",
@@ -210,91 +262,50 @@ https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=45.815399,
                 "establishment"
             ],
             "user_ratings_total": 205,
-            "vicinity": "Zagrebačka cesta 143A, Zagreb"
+            "vicinity": "Trg Volovčica, Zagreb"
         },
         {
             "business_status": "OPERATIONAL",
             "geometry": {
                 "location": {
-                    "lat": 45.8095049,
-                    "lng": 15.9960573
+                    "lat": 45.8130652,
+                    "lng": 15.9969856
                 },
                 "viewport": {
                     "northeast": {
-                        "lat": 45.81083383029149,
-                        "lng": 15.9973137302915
+                        "lat": 45.81436272989271,
+                        "lng": 15.99836072989272
                     },
                     "southwest": {
-                        "lat": 45.8081358697085,
-                        "lng": 15.9946157697085
-                    }
-                }
-            },
-            "icon": "https://maps.gstatic.com/mapfiles/place_api/icons/v1/png_71/school-71.png",
-            "icon_background_color": "#7B9EB0",
-            "icon_mask_base_uri": "https://maps.gstatic.com/mapfiles/place_api/icons/v2/school_pinlet",
-            "name": "Društvo sportske rekreacije Dvoranica",
-            "opening_hours": {
-                "open_now": false
-            },
-            "photos": [
-                {
-                    "height": 1440,
-                    "html_attributions": [
-                        "<a href=\"https://maps.google.com/maps/contrib/117043007636002016906\">Društvo sportske rekreacije Dvoranica</a>"
-                    ],
-                    "photo_reference": "AdCG2DPFNI7Jax-6sIwbc8iATTW2TyEU3-J-0d1BvMZOBl08n9_Ut0SSSecSSBc7llpkUgvJ8RbOmv6RHDIF3q1MhzSF-o5HVP73ctKoK5rMgwKoBkUiUt2w4n16nINw3DWR4yk0ZT3OypiSC1aC8F_twfwRQimVOvqTL7t2Y7J1zyQ67cbx",
-                    "width": 3200
-                }
-            ],
-            "place_id": "ChIJObQ_h1LWZUcRn-GuRIjqoLs",
-            "plus_code": {
-                "compound_code": "RX5W+RC Zagreb, Croatia",
-                "global_code": "8FQQRX5W+RC"
-            },
-            "rating": 4.5,
-            "reference": "ChIJObQ_h1LWZUcRn-GuRIjqoLs",
-            "scope": "GOOGLE",
-            "types": [
-                "gym",
-                "point_of_interest",
-                "health",
-                "establishment"
-            ],
-            "user_ratings_total": 11,
-            "vicinity": "Ulica Natka Nodila 13, Zagreb"
-        },
-        {
-            "business_status": "OPERATIONAL",
-            "geometry": {
-                "location": {
-                    "lat": 45.82187109999999,
-                    "lng": 15.9770219
-                },
-                "viewport": {
-                    "northeast": {
-                        "lat": 45.8232069302915,
-                        "lng": 15.9784205302915
-                    },
-                    "southwest": {
-                        "lat": 45.8205089697085,
-                        "lng": 15.9757225697085
+                        "lat": 45.81166307010727,
+                        "lng": 15.99566107010727
                     }
                 }
             },
             "icon": "https://maps.gstatic.com/mapfiles/place_api/icons/v1/png_71/generic_business-71.png",
             "icon_background_color": "#7B9EB0",
             "icon_mask_base_uri": "https://maps.gstatic.com/mapfiles/place_api/icons/v2/generic_pinlet",
-            "name": "V Shape",
+            "name": "XXL fitness and aerobics center Kvatrić",
             "opening_hours": {
                 "open_now": true
             },
-            "place_id": "ChIJv6sOKgXXZUcRnau8ULPC0jU",
+            "photos": [
+                {
+                    "height": 2992,
+                    "html_attributions": [
+                        "<a href=\"https://maps.google.com/maps/contrib/103739070031692318000\">Vedran Lucic</a>"
+                    ],
+                    "photo_reference": "AdCG2DPRRhJvCNVmXj828sBFFRQtiZVzVATqqFhqMYKuyX7ewfsldhdpYQNhBbpEnWPSsClD4srUymrI_6wOiF-aaMTTccocO4-eA8ahEraEFWhOLqkrRe51Uo6AJL9VnlVRfvVv46pFXn7vXIWfDtCuP9lVrFUXx5Z--fPV2QF_Yv0XNfwf",
+                    "width": 4000
+                }
+            ],
+            "place_id": "ChIJ66dVE63XZUcR_uiTPrvgG1Y",
             "plus_code": {
-                "compound_code": "RXCG+PR Zagreb, Croatia",
-                "global_code": "8FQQRXCG+PR"
+                "compound_code": "RX7W+6Q Zagreb",
+                "global_code": "8FQQRX7W+6Q"
             },
-            "reference": "ChIJv6sOKgXXZUcRnau8ULPC0jU",
+            "rating": 4.6,
+            "reference": "ChIJ66dVE63XZUcR_uiTPrvgG1Y",
             "scope": "GOOGLE",
             "types": [
                 "gym",
@@ -302,105 +313,103 @@ https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=45.815399,
                 "health",
                 "establishment"
             ],
-            "vicinity": "Medvedgradska ulica 5, Zagreb"
+            "user_ratings_total": 231,
+            "vicinity": "Martićeva ul. 67, Zagreb"
         },
         {
             "business_status": "OPERATIONAL",
             "geometry": {
                 "location": {
-                    "lat": 45.8096316,
-                    "lng": 15.9562066
+                    "lat": 45.8198387,
+                    "lng": 16.0066507
                 },
                 "viewport": {
                     "northeast": {
-                        "lat": 45.8109822302915,
-                        "lng": 15.9575343802915
+                        "lat": 45.82115832989272,
+                        "lng": 16.00786922989272
                     },
                     "southwest": {
-                        "lat": 45.8082842697085,
-                        "lng": 15.9548364197085
+                        "lat": 45.81845867010728,
+                        "lng": 16.00516957010728
                     }
                 }
             },
             "icon": "https://maps.gstatic.com/mapfiles/place_api/icons/v1/png_71/generic_business-71.png",
             "icon_background_color": "#7B9EB0",
             "icon_mask_base_uri": "https://maps.gstatic.com/mapfiles/place_api/icons/v2/generic_pinlet",
-            "name": "POSITIVO STUDIO",
+            "name": "Fitness centar Jump",
             "opening_hours": {
                 "open_now": true
             },
             "photos": [
                 {
-                    "height": 5713,
+                    "height": 3315,
                     "html_attributions": [
-                        "<a href=\"https://maps.google.com/maps/contrib/115452148713846469995\">POSITIVO STUDIO</a>"
+                        "<a href=\"https://maps.google.com/maps/contrib/115389933427654919700\">Nenad Medak</a>"
                     ],
-                    "photo_reference": "AdCG2DPmELN-jshYtKKrOAZRtzED37ZhnzpieCm657rfhO_RsoSRlD3IzQnEX4eKJUAQrntayL7wAWzWDL6VmfWwla4XlO8VYgL04eIvbiOKj_bX1rhqmcO7jw57AUKXfP_5KWRJ6Mkrw62uPkAX2o0NNo_cRzHDPT-Un2lEtdDReei7FKZS",
-                    "width": 3809
+                    "photo_reference": "AdCG2DP8fFe0q9OgjM3lyc8ZXpD_I7r99at5vjXHRtZAN4o31e23KBNztaqi0-Adp-qdTCdKspAZ0qk2jRl8M4pQSDtL0J_Ks_ucymIfUq11Zuegvnqc0NKtAsBlzLAfv2To5a3NL___hzIv6gIGQl8hUQJ3T9DmvbD8Bdo-qmAj4KlyMcV7",
+                    "width": 4973
                 }
             ],
-            "place_id": "ChIJKwFNfd3WZUcRmdYfdzbcA7A",
+            "place_id": "ChIJixDceLrXZUcRyPwg56XpvVY",
             "plus_code": {
-                "compound_code": "RX54+VF Zagreb, Croatia",
-                "global_code": "8FQQRX54+VF"
+                "compound_code": "R294+WM Zagreb",
+                "global_code": "8FQRR294+WM"
             },
-            "rating": 4.9,
-            "reference": "ChIJKwFNfd3WZUcRmdYfdzbcA7A",
+            "rating": 4.6,
+            "reference": "ChIJixDceLrXZUcRyPwg56XpvVY",
             "scope": "GOOGLE",
             "types": [
-                "beauty_salon",
                 "gym",
-                "hair_care",
-                "store",
                 "point_of_interest",
                 "health",
                 "establishment"
             ],
-            "user_ratings_total": 54,
-            "vicinity": "Hanuševa ulica 6, Zagreb"
+            "user_ratings_total": 184,
+            "vicinity": "Jordanovac ul. 8, Zagreb"
         },
         {
             "business_status": "OPERATIONAL",
             "geometry": {
                 "location": {
-                    "lat": 45.8125729,
-                    "lng": 15.9792771
+                    "lat": 45.796166,
+                    "lng": 15.9402377
                 },
                 "viewport": {
                     "northeast": {
-                        "lat": 45.8135522302915,
-                        "lng": 15.9800549302915
+                        "lat": 45.79750347989272,
+                        "lng": 15.94149552989272
                     },
                     "southwest": {
-                        "lat": 45.8108542697085,
-                        "lng": 15.9773569697085
+                        "lat": 45.79480382010728,
+                        "lng": 15.93879587010727
                     }
                 }
             },
-            "icon": "https://maps.gstatic.com/mapfiles/place_api/icons/v1/png_71/school-71.png",
+            "icon": "https://maps.gstatic.com/mapfiles/place_api/icons/v1/png_71/generic_business-71.png",
             "icon_background_color": "#7B9EB0",
-            "icon_mask_base_uri": "https://maps.gstatic.com/mapfiles/place_api/icons/v2/school_pinlet",
-            "name": "Association of Sri Dip Ashram",
+            "icon_mask_base_uri": "https://maps.gstatic.com/mapfiles/place_api/icons/v2/generic_pinlet",
+            "name": "Gyms4you Zagreb (Remiza)",
             "opening_hours": {
                 "open_now": true
             },
             "photos": [
                 {
-                    "height": 745,
+                    "height": 1200,
                     "html_attributions": [
-                        "<a href=\"https://maps.google.com/maps/contrib/118060544961830497638\">Udruga Sri Dip Ashram</a>"
+                        "<a href=\"https://maps.google.com/maps/contrib/116304561735344089695\">A Google User</a>"
                     ],
-                    "photo_reference": "AdCG2DOcnPArGrg1Hb6MDh2CG2PmxaodJqCBFBYKD5z4On4zY9mub1CoHdqEpqZ4Iykw9EtKRSFn1U3I_C_Zmz-NAQ6ukcLK7gQ4cDMY0otK91-sAgN-x2iAW75BomXpy5OWgl5NEHn-I7B_-SrGwhCm-lsUMxuzkUXjl27tQ7yiGGNgk9OO",
-                    "width": 960
+                    "photo_reference": "AdCG2DOnhssdkPpp9VvFDemYwcUqhgVnXov2P4F2uUFM21na_uXfUAAE4W-_ES-0mmyE3UfEpEMsOU51eqEwngAnsE0t4TuzgvhZUgjJjkY2dJrRWU1lWKQCc7GciP_B_pXAbQsMKY4smCmYEZA0fgsU3ptIoJX7PsPaijHw8mLE7L8UXVvF",
+                    "width": 1600
                 }
             ],
-            "place_id": "ChIJB7B9EvzWZUcRPTXvVLveH7Q",
+            "place_id": "ChIJIdrTqCPXZUcRlb3mF5b7b0Y",
             "plus_code": {
-                "compound_code": "RX7H+2P Zagreb, Croatia",
-                "global_code": "8FQQRX7H+2P"
+                "compound_code": "QWWR+F4 Zagreb",
+                "global_code": "8FQQQWWR+F4"
             },
-            "rating": 5,
-            "reference": "ChIJB7B9EvzWZUcRPTXvVLveH7Q",
+            "rating": 4,
+            "reference": "ChIJIdrTqCPXZUcRlb3mF5b7b0Y",
             "scope": "GOOGLE",
             "types": [
                 "gym",
@@ -408,201 +417,8 @@ https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=45.815399,
                 "health",
                 "establishment"
             ],
-            "user_ratings_total": 3,
-            "vicinity": "Jurišićeva ulica 3, Zagreb"
-        },
-        {
-            "business_status": "OPERATIONAL",
-            "geometry": {
-                "location": {
-                    "lat": 45.813173,
-                    "lng": 15.9691083
-                },
-                "viewport": {
-                    "northeast": {
-                        "lat": 45.81457788029149,
-                        "lng": 15.9704530302915
-                    },
-                    "southwest": {
-                        "lat": 45.8118799197085,
-                        "lng": 15.96775506970849
-                    }
-                }
-            },
-            "icon": "https://maps.gstatic.com/mapfiles/place_api/icons/v1/png_71/school-71.png",
-            "icon_background_color": "#7B9EB0",
-            "icon_mask_base_uri": "https://maps.gstatic.com/mapfiles/place_api/icons/v2/school_pinlet",
-            "name": "Zenyoga centar",
-            "opening_hours": {
-                "open_now": false
-            },
-            "photos": [
-                {
-                    "height": 2383,
-                    "html_attributions": [
-                        "<a href=\"https://maps.google.com/maps/contrib/100456570137509474427\">Zenyoga centar</a>"
-                    ],
-                    "photo_reference": "AdCG2DMxR08Cuq4RLqV1ly1u44NOrnAP6GvBOo_L7cVZYLcACTfMoPl-LbcX8AghjpbfeT0jtk6Ffzg_hfWCvrlJWoJ_ppKJhx-3YHrW3fkEMqH8H1uJvGo5tzwtQYOyW2PUp6bcxSTPoGRXOH2E8N5tPWeUOJWOmQz3UB9FGXJVfXfOi1Dd",
-                    "width": 3461
-                }
-            ],
-            "place_id": "ChIJu1E7jPnWZUcRaXYguWMV6iQ",
-            "plus_code": {
-                "compound_code": "RX79+7J Zagreb, Croatia",
-                "global_code": "8FQQRX79+7J"
-            },
-            "rating": 5,
-            "reference": "ChIJu1E7jPnWZUcRaXYguWMV6iQ",
-            "scope": "GOOGLE",
-            "types": [
-                "gym",
-                "point_of_interest",
-                "health",
-                "establishment"
-            ],
-            "user_ratings_total": 10,
-            "vicinity": "Ilica 43, Zagreb"
-        },
-        {
-            "business_status": "OPERATIONAL",
-            "geometry": {
-                "location": {
-                    "lat": 45.8135973,
-                    "lng": 15.9703696
-                },
-                "viewport": {
-                    "northeast": {
-                        "lat": 45.81492628029149,
-                        "lng": 15.9717783302915
-                    },
-                    "southwest": {
-                        "lat": 45.8122283197085,
-                        "lng": 15.9690803697085
-                    }
-                }
-            },
-            "icon": "https://maps.gstatic.com/mapfiles/place_api/icons/v1/png_71/school-71.png",
-            "icon_background_color": "#7B9EB0",
-            "icon_mask_base_uri": "https://maps.gstatic.com/mapfiles/place_api/icons/v2/school_pinlet",
-            "name": "Medical Yoga Centar - Centar",
-            "place_id": "ChIJP-RR3eLWZUcRSdFnieGGPsE",
-            "plus_code": {
-                "compound_code": "RX7C+C4 Zagreb, Croatia",
-                "global_code": "8FQQRX7C+C4"
-            },
-            "rating": 5,
-            "reference": "ChIJP-RR3eLWZUcRSdFnieGGPsE",
-            "scope": "GOOGLE",
-            "types": [
-                "gym",
-                "point_of_interest",
-                "health",
-                "establishment"
-            ],
-            "user_ratings_total": 16,
-            "vicinity": "Mesnička ulica 3, Zagreb"
-        },
-        {
-            "business_status": "OPERATIONAL",
-            "geometry": {
-                "location": {
-                    "lat": 45.8102585,
-                    "lng": 15.97476440000001
-                },
-                "viewport": {
-                    "northeast": {
-                        "lat": 45.8116649302915,
-                        "lng": 15.97610488029151
-                    },
-                    "southwest": {
-                        "lat": 45.8089669697085,
-                        "lng": 15.9734069197085
-                    }
-                }
-            },
-            "icon": "https://maps.gstatic.com/mapfiles/place_api/icons/v1/png_71/school-71.png",
-            "icon_background_color": "#7B9EB0",
-            "icon_mask_base_uri": "https://maps.gstatic.com/mapfiles/place_api/icons/v2/school_pinlet",
-            "name": "Andrea's Room Training Center",
-            "opening_hours": {
-                "open_now": false
-            },
-            "photos": [
-                {
-                    "height": 3500,
-                    "html_attributions": [
-                        "<a href=\"https://maps.google.com/maps/contrib/101387089562961502026\">Andrea&#39;s Room Training Center</a>"
-                    ],
-                    "photo_reference": "AdCG2DMG-U7Rpig2T-R0zwGz2V9pqwgb5exHG3AoDE55FYg08MA9AoGAGhATb_f208D8tNjD2LyIxFWyPS7kHJ9Nl913EBABLY_RNeJyIr-IVWRQ98dZ3peWCdJKg6BKvmepiEgkiGhk3m_Ng1GICqjAlCXXYbjBGtZKtuZk1d3yuakS8CEn",
-                    "width": 2800
-                }
-            ],
-            "place_id": "ChIJ-z5wGOTWZUcRqE0OKsC4u5A",
-            "plus_code": {
-                "compound_code": "RX6F+4W Zagreb, Croatia",
-                "global_code": "8FQQRX6F+4W"
-            },
-            "rating": 4.7,
-            "reference": "ChIJ-z5wGOTWZUcRqE0OKsC4u5A",
-            "scope": "GOOGLE",
-            "types": [
-                "gym",
-                "point_of_interest",
-                "health",
-                "establishment"
-            ],
-            "user_ratings_total": 15,
-            "vicinity": "Berislavićeva Ulica 21, Zagreb"
-        },
-        {
-            "business_status": "CLOSED_TEMPORARILY",
-            "geometry": {
-                "location": {
-                    "lat": 45.813953,
-                    "lng": 15.9556753
-                },
-                "viewport": {
-                    "northeast": {
-                        "lat": 45.81527493029149,
-                        "lng": 15.9569861302915
-                    },
-                    "southwest": {
-                        "lat": 45.81257696970849,
-                        "lng": 15.9542881697085
-                    }
-                }
-            },
-            "icon": "https://maps.gstatic.com/mapfiles/place_api/icons/v1/png_71/school-71.png",
-            "icon_background_color": "#7B9EB0",
-            "icon_mask_base_uri": "https://maps.gstatic.com/mapfiles/place_api/icons/v2/school_pinlet",
-            "name": "Velvet Pepper Studio",
-            "permanently_closed": true,
-            "photos": [
-                {
-                    "height": 3489,
-                    "html_attributions": [
-                        "<a href=\"https://maps.google.com/maps/contrib/113618020123822106714\">Velvet Pepper Studio</a>"
-                    ],
-                    "photo_reference": "AdCG2DNOh-ebpS7Z1Isg2vEmBVDI8dAXA1UULP2IICAtdzqNrz_YWz0cT0K0xnHHZWP8-CToRhe4Gndr0N5_O5188xgGXN1o8bwkixKS8US5HwFHhDOaj6jbIKVtZ255i6zOKbL0isuSej8Ryak9Pw8lkl4rE0IaMJ7AhAAeITGTp65u4V9r",
-                    "width": 4113
-                }
-            ],
-            "place_id": "ChIJa0Vox2fXZUcRw2lrbnTufXU",
-            "plus_code": {
-                "compound_code": "RX74+H7 Zagreb, Croatia",
-                "global_code": "8FQQRX74+H7"
-            },
-            "rating": 5,
-            "reference": "ChIJa0Vox2fXZUcRw2lrbnTufXU",
-            "scope": "GOOGLE",
-            "types": [
-                "gym",
-                "point_of_interest",
-                "health",
-                "establishment"
-            ],
-            "user_ratings_total": 25,
-            "vicinity": "Vinogradska cesta 6, Zagreb"
+            "user_ratings_total": 309,
+            "vicinity": "Puljska ul. 3, Zagreb"
         },
         {
             "business_status": "OPERATIONAL",
@@ -613,12 +429,12 @@ https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=45.815399,
                 },
                 "viewport": {
                     "northeast": {
-                        "lat": 45.81304198029149,
-                        "lng": 15.9787659802915
+                        "lat": 45.81304282989272,
+                        "lng": 15.97876682989272
                     },
                     "southwest": {
-                        "lat": 45.8103440197085,
-                        "lng": 15.9760680197085
+                        "lat": 45.81034317010728,
+                        "lng": 15.97606717010728
                     }
                 }
             },
@@ -635,13 +451,13 @@ https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=45.815399,
                     "html_attributions": [
                         "<a href=\"https://maps.google.com/maps/contrib/111424144211064593793\">Synergy Fitness Centar</a>"
                     ],
-                    "photo_reference": "AdCG2DOJXzzxjqGYcz7kGzAudKEyS-eH9oNa39uYRy3vPqVdkJcPX54Msnd5STmxdngMt8Hqnf4HYjLYcGJtRbX55mBecCgkIZhTW0lFkserM7xPPZ3o8-nYxB8ZU-egPheO-DMbixFF7Kc_cXZxoN0b45o_2V9mliWquzelzuV95WHiPyBO",
+                    "photo_reference": "AdCG2DOUOR3BZ1CXHj8P0JhQym3URbidQqMZPVUw_1JPRifBv38pjaK6IOWJzeubjupZOMJj49XJpSI2jyb3qoEg_qm-U_sYGFqkfXKlJj2dDq_zDb1UwZLCnfJ8vymBUR8T4E51gsbKxesQos5Amz6odW5wDaw3OQFCEzE0KDN0U22TT5w_",
                     "width": 3999
                 }
             ],
             "place_id": "ChIJvx11KfzWZUcRfdHyOm11OoE",
             "plus_code": {
-                "compound_code": "RX6G+MW Zagreb, Croatia",
+                "compound_code": "RX6G+MW Zagreb",
                 "global_code": "8FQQRX6G+MW"
             },
             "rating": 5,
@@ -654,102 +470,50 @@ https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=45.815399,
                 "establishment"
             ],
             "user_ratings_total": 23,
-            "vicinity": "Praška ulica 10, Zagreb"
+            "vicinity": "Praška ul. 10, Zagreb"
         },
         {
             "business_status": "OPERATIONAL",
             "geometry": {
                 "location": {
-                    "lat": 45.806465,
-                    "lng": 15.964603
+                    "lat": 45.7797395,
+                    "lng": 15.9694557
                 },
                 "viewport": {
                     "northeast": {
-                        "lat": 45.8079156302915,
-                        "lng": 15.9659656302915
+                        "lat": 45.78109162989272,
+                        "lng": 15.97090232989272
                     },
                     "southwest": {
-                        "lat": 45.8052176697085,
-                        "lng": 15.96326766970849
+                        "lat": 45.77839197010728,
+                        "lng": 15.96820267010728
                     }
                 }
             },
             "icon": "https://maps.gstatic.com/mapfiles/place_api/icons/v1/png_71/generic_business-71.png",
             "icon_background_color": "#7B9EB0",
             "icon_mask_base_uri": "https://maps.gstatic.com/mapfiles/place_api/icons/v2/generic_pinlet",
-            "name": "Jačaona",
-            "opening_hours": {
-                "open_now": false
-            },
-            "photos": [
-                {
-                    "height": 633,
-                    "html_attributions": [
-                        "<a href=\"https://maps.google.com/maps/contrib/104960681396244110463\">Jačaona</a>"
-                    ],
-                    "photo_reference": "AdCG2DMsNzlms3XkhbqJ23gYUNlBqpWUe95JLQydJWnc1ZEIjQMoASkc3orq8BF_4rVRaly28Jhc9ZEksX2O_aZu2Bbbcf-fYQeR4sLxMPRYVhfQIDOEbvPs3SSDRcFUtQJbPKLVWcxR71jpzVYEBjh6kTZ5aUbsDfiuYnT5-M8juglwwJ0s",
-                    "width": 1131
-                }
-            ],
-            "place_id": "ChIJzYMigO_WZUcRkFRFKqT0fac",
-            "plus_code": {
-                "compound_code": "RX47+HR Zagreb, Croatia",
-                "global_code": "8FQQRX47+HR"
-            },
-            "rating": 4.9,
-            "reference": "ChIJzYMigO_WZUcRkFRFKqT0fac",
-            "scope": "GOOGLE",
-            "types": [
-                "gym",
-                "point_of_interest",
-                "health",
-                "establishment"
-            ],
-            "user_ratings_total": 9,
-            "vicinity": "Pierottijeva ulica 11, Zagreb"
-        },
-        {
-            "business_status": "OPERATIONAL",
-            "geometry": {
-                "location": {
-                    "lat": 45.8201015,
-                    "lng": 15.9776844
-                },
-                "viewport": {
-                    "northeast": {
-                        "lat": 45.8212543302915,
-                        "lng": 15.9791980302915
-                    },
-                    "southwest": {
-                        "lat": 45.8185563697085,
-                        "lng": 15.9765000697085
-                    }
-                }
-            },
-            "icon": "https://maps.gstatic.com/mapfiles/place_api/icons/v1/png_71/generic_business-71.png",
-            "icon_background_color": "#7B9EB0",
-            "icon_mask_base_uri": "https://maps.gstatic.com/mapfiles/place_api/icons/v2/generic_pinlet",
-            "name": "THE Fitness Kaptol",
+            "name": "XXL 1",
             "opening_hours": {
                 "open_now": true
             },
             "photos": [
                 {
-                    "height": 768,
+                    "height": 3264,
                     "html_attributions": [
-                        "<a href=\"https://maps.google.com/maps/contrib/100536217971317077545\">THE Fitness Kaptol</a>"
+                        "<a href=\"https://maps.google.com/maps/contrib/114958091249854344521\">Mr. Darnex</a>"
                     ],
-                    "photo_reference": "AdCG2DMgP1RsAICKWL_XOS6SYVTdPzzwlXJUwF86Vl39bETTGY5p_VKstlzCm0XS5Acrx4-gbf4IKKYEjUZZXZxdYpqwkvIipxnBjzEoMtMZ4nyQG-TM_H_gejlkHvsTAjVvpPqAmocJenY7zYdrGLzCy11MHpAE37-8-YomWJK4ljBMfivq",
-                    "width": 1024
+                    "photo_reference": "AdCG2DNrQzAwzYTZAWwclo60iem836sZezQUypTy16faonBuVTiIbAGTQFrfMZgvscka9BT4OKtEdKWdP8QBst1EHwhXB4g2TSc2PP9G0fSa7xjz0IiijTuFK9W8hetBD9pl_WlkBQ2-DNSq5QjnYsrQVkLievdcH0hSWTKfYm4SWDcUxi_a",
+                    "width": 1836
                 }
             ],
-            "place_id": "ChIJtckblQTXZUcRd85RhqqsSWo",
+            "place_id": "ChIJi7yM937WZUcR4-SceCuyEvk",
             "plus_code": {
-                "compound_code": "RXCH+23 Zagreb, Croatia",
-                "global_code": "8FQQRXCH+23"
+                "compound_code": "QXH9+VQ Zagreb",
+                "global_code": "8FQQQXH9+VQ"
             },
             "rating": 4.6,
-            "reference": "ChIJtckblQTXZUcRd85RhqqsSWo",
+            "reference": "ChIJi7yM937WZUcR4-SceCuyEvk",
             "scope": "GOOGLE",
             "types": [
                 "gym",
@@ -757,99 +521,51 @@ https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=45.815399,
                 "health",
                 "establishment"
             ],
-            "user_ratings_total": 183,
-            "vicinity": "Nova Ves 17, Zagreb"
+            "user_ratings_total": 605,
+            "vicinity": "Novi Zagreb - zapad, Zagreb"
         },
         {
             "business_status": "OPERATIONAL",
             "geometry": {
                 "location": {
-                    "lat": 45.8125298,
-                    "lng": 15.9793572
+                    "lat": 45.8110019,
+                    "lng": 16.0016446
                 },
                 "viewport": {
                     "northeast": {
-                        "lat": 45.8134224302915,
-                        "lng": 15.9807646302915
+                        "lat": 45.81230597989272,
+                        "lng": 16.00291157989272
                     },
                     "southwest": {
-                        "lat": 45.8107244697085,
-                        "lng": 15.9780666697085
-                    }
-                }
-            },
-            "icon": "https://maps.gstatic.com/mapfiles/place_api/icons/v1/png_71/school-71.png",
-            "icon_background_color": "#7B9EB0",
-            "icon_mask_base_uri": "https://maps.gstatic.com/mapfiles/place_api/icons/v2/school_pinlet",
-            "name": "Sri Devpuriji Ashram - Zagreb",
-            "photos": [
-                {
-                    "height": 732,
-                    "html_attributions": [
-                        "<a href=\"https://maps.google.com/maps/contrib/114389187073524879122\">Sri Devpuriji Ashram - Zagreb</a>"
-                    ],
-                    "photo_reference": "AdCG2DNJdxPtWAM0DuZ3Ke8asuLeEhn9V3uIsR5HhD4W3VfpFlxCp4vlZNIDmdT-7S8c7696RdRNKY2Mm-nRHfPsOyEBT_ZnEEr1vH_hZuM1_r6GvXhdH-13h0kucrYS3EgqiTAF7-k_5_3Vr3AbtidFCcbAjEL1kEnDk8-If-LBJZ2ppyb3",
-                    "width": 1008
-                }
-            ],
-            "place_id": "ChIJO4Iuaf7WZUcRQ4PTwGo2k6M",
-            "plus_code": {
-                "compound_code": "RX7H+2P Zagreb, Croatia",
-                "global_code": "8FQQRX7H+2P"
-            },
-            "rating": 5,
-            "reference": "ChIJO4Iuaf7WZUcRQ4PTwGo2k6M",
-            "scope": "GOOGLE",
-            "types": [
-                "gym",
-                "point_of_interest",
-                "health",
-                "establishment"
-            ],
-            "user_ratings_total": 7,
-            "vicinity": "Jurišićeva ulica 3, Zagreb"
-        },
-        {
-            "business_status": "OPERATIONAL",
-            "geometry": {
-                "location": {
-                    "lat": 45.80726019999999,
-                    "lng": 15.9732581
-                },
-                "viewport": {
-                    "northeast": {
-                        "lat": 45.80870123029149,
-                        "lng": 15.9746005802915
-                    },
-                    "southwest": {
-                        "lat": 45.80600326970849,
-                        "lng": 15.9719026197085
+                        "lat": 45.80960632010728,
+                        "lng": 16.00021192010728
                     }
                 }
             },
             "icon": "https://maps.gstatic.com/mapfiles/place_api/icons/v1/png_71/generic_business-71.png",
             "icon_background_color": "#7B9EB0",
             "icon_mask_base_uri": "https://maps.gstatic.com/mapfiles/place_api/icons/v2/generic_pinlet",
-            "name": "NavaPowerYogaPilates - Zagreb",
+            "name": "Gyms4you Zagreb (Heinzelova)",
             "opening_hours": {
                 "open_now": true
             },
             "photos": [
                 {
-                    "height": 300,
+                    "height": 599,
                     "html_attributions": [
-                        "<a href=\"https://maps.google.com/maps/contrib/117196060944012007787\">NavaPowerYogaPilates - Zagreb</a>"
+                        "<a href=\"https://maps.google.com/maps/contrib/105069308738198283832\">A Google User</a>"
                     ],
-                    "photo_reference": "AdCG2DO2macFgsAVfPc_ZtT-Z05KMoBOlHnMwxsLmECak0KeJNzl1UDAeU1LnaeAG-ZzEVcWzOmy_j5HoNqmI_3_X-MJ8w2871QraHZrDtyFYJWZOCHLjUZQ8EGf31Zwt-HAB8n5o_mqVv-q3j8SQSNWCJaD9wsxGgoIaIOOgwmQ4okD5YY4",
-                    "width": 400
+                    "photo_reference": "AdCG2DOOqudtzhv55cq6RGxYP_rwOSitp4HoAO79VcnqwlsxxXLMeTPUtAZSwBNzLXawc_JldrMaxi6Y5v1kQtEITHjB0llCAy__Aj6HOSIbyzZ12OHw3L4U2DNC0aFwk4CiM4q0fhCDkeXX2trpaoVI7DzuUb3C-fxxNphpkICC7Ov-FTZr",
+                    "width": 900
                 }
             ],
-            "place_id": "ChIJFU6H6irXZUcRvEWXZZEeo7M",
+            "place_id": "ChIJuwrPY2jXZUcRS6fokvH9GU4",
             "plus_code": {
-                "compound_code": "RX4F+W8 Zagreb, Croatia",
-                "global_code": "8FQQRX4F+W8"
+                "compound_code": "R262+CM Zagreb",
+                "global_code": "8FQRR262+CM"
             },
-            "reference": "ChIJFU6H6irXZUcRvEWXZZEeo7M",
+            "rating": 4.2,
+            "reference": "ChIJuwrPY2jXZUcRS6fokvH9GU4",
             "scope": "GOOGLE",
             "types": [
                 "gym",
@@ -857,50 +573,51 @@ https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=45.815399,
                 "health",
                 "establishment"
             ],
-            "vicinity": "℅ IDM Music & Associates, Ulica Jurja Žerjavića 5, Zagreb"
+            "user_ratings_total": 278,
+            "vicinity": "Ul. Vjekoslava Heinzela 33, Zagreb"
         },
         {
             "business_status": "OPERATIONAL",
             "geometry": {
                 "location": {
-                    "lat": 45.8150454,
-                    "lng": 15.9820407
+                    "lat": 45.8065923,
+                    "lng": 15.9517652
                 },
                 "viewport": {
                     "northeast": {
-                        "lat": 45.8163843802915,
-                        "lng": 15.9833528802915
+                        "lat": 45.80803037989272,
+                        "lng": 15.95308277989272
                     },
                     "southwest": {
-                        "lat": 45.8136864197085,
-                        "lng": 15.9806549197085
+                        "lat": 45.80533072010728,
+                        "lng": 15.95038312010728
                     }
                 }
             },
-            "icon": "https://maps.gstatic.com/mapfiles/place_api/icons/v1/png_71/school-71.png",
+            "icon": "https://maps.gstatic.com/mapfiles/place_api/icons/v1/png_71/generic_business-71.png",
             "icon_background_color": "#7B9EB0",
-            "icon_mask_base_uri": "https://maps.gstatic.com/mapfiles/place_api/icons/v2/school_pinlet",
-            "name": "Yoga Studio Sun Salutation",
+            "icon_mask_base_uri": "https://maps.gstatic.com/mapfiles/place_api/icons/v2/generic_pinlet",
+            "name": "DG fitness centar za žene",
             "opening_hours": {
-                "open_now": false
+                "open_now": true
             },
             "photos": [
                 {
-                    "height": 424,
+                    "height": 3456,
                     "html_attributions": [
-                        "<a href=\"https://maps.google.com/maps/contrib/110168869259556850791\">Joga studio Pozdrav Suncu</a>"
+                        "<a href=\"https://maps.google.com/maps/contrib/111632303804191585297\">A Google User</a>"
                     ],
-                    "photo_reference": "AdCG2DPHTY4YVvzvEwykMh69hMumaQmIqjcWXIXYQH8tSHms4m1BNOdThvl3tbuOy36CSk3Y2FCY8-a_2JpkmRXXqmrSASFxRh6OlwV6mS2UJTSkFZiPVNwWY6HHZ3zvvGTK32-Emz8uagUHACjtamlh2nZiuyqkWwEf-rBbmQSxoj37QRss",
-                    "width": 412
+                    "photo_reference": "AdCG2DPoB9M4BH0GLvSUPei3MIIAu8PEB55kfYzGMLfByKstqkkEZJWCG79BqpMUPEERlpBfDFR1obKT-wdmQH8m5gMQqxtWrQeRsCR2u_Q38siH1s9DY0tZ7Eig533jK7fQwxVAZVWHWaCZw2R9CEQkflHCERHY4AIkwSNyru5IPRqceV9w",
+                    "width": 4608
                 }
             ],
-            "place_id": "ChIJN-MylLHXZUcRiGBgnzFD4Y8",
+            "place_id": "ChIJD8fmvcDXZUcRQ_17GoX14vc",
             "plus_code": {
-                "compound_code": "RX8J+2R Zagreb, Croatia",
-                "global_code": "8FQQRX8J+2R"
+                "compound_code": "RX42+JP Zagreb",
+                "global_code": "8FQQRX42+JP"
             },
-            "rating": 5,
-            "reference": "ChIJN-MylLHXZUcRiGBgnzFD4Y8",
+            "rating": 4.9,
+            "reference": "ChIJD8fmvcDXZUcRQ_17GoX14vc",
             "scope": "GOOGLE",
             "types": [
                 "gym",
@@ -908,50 +625,259 @@ https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=45.815399,
                 "health",
                 "establishment"
             ],
-            "user_ratings_total": 2,
-            "vicinity": "Zagreb"
+            "user_ratings_total": 63,
+            "vicinity": "Trg Krešimira Ćosića 10, Zagreb"
         },
         {
             "business_status": "OPERATIONAL",
             "geometry": {
                 "location": {
-                    "lat": 45.81112639999999,
-                    "lng": 15.9816201
+                    "lat": 45.7798042,
+                    "lng": 16.0056095
                 },
                 "viewport": {
                     "northeast": {
-                        "lat": 45.81247773029149,
-                        "lng": 15.9830427302915
+                        "lat": 45.78113397989272,
+                        "lng": 16.00672537989272
                     },
                     "southwest": {
-                        "lat": 45.80977976970849,
-                        "lng": 15.9803447697085
+                        "lat": 45.77843432010728,
+                        "lng": 16.00402572010728
                     }
                 }
             },
-            "icon": "https://maps.gstatic.com/mapfiles/place_api/icons/v1/png_71/school-71.png",
+            "icon": "https://maps.gstatic.com/mapfiles/place_api/icons/v1/png_71/generic_business-71.png",
             "icon_background_color": "#7B9EB0",
-            "icon_mask_base_uri": "https://maps.gstatic.com/mapfiles/place_api/icons/v2/school_pinlet",
-            "name": "colorful Studio",
+            "icon_mask_base_uri": "https://maps.gstatic.com/mapfiles/place_api/icons/v2/generic_pinlet",
+            "name": "Core Gym",
             "opening_hours": {
-                "open_now": false
+                "open_now": true
             },
             "photos": [
                 {
-                    "height": 1365,
+                    "height": 2381,
                     "html_attributions": [
-                        "<a href=\"https://maps.google.com/maps/contrib/102701764165728950353\">ŠARENI STUDIO</a>"
+                        "<a href=\"https://maps.google.com/maps/contrib/118226494792016855405\">A Google User</a>"
                     ],
-                    "photo_reference": "AdCG2DMbSB1kLyWNOOoeh71eqNcbhkxI4r5e_D7aZj1AG9naR4cEW8QsXVx30qbsj6lqSWUqSbxY-lNZUtDOepV-BVwLa2OzBsrAK05kAT9dWEZ5UNoSn0ocNKW3jQ4yEbjSqBrDBC-7HSR--uIac-cdQn-ZYrGD-SmwYiNNfkrWZiW2zkU3",
-                    "width": 2048
+                    "photo_reference": "AdCG2DNvnIqVitX5l77DraFxfTJaW5G928gMJtIU3NWut1AQjPCo-HvPree8ESwB0tJXkVRJQ2qLJu9QaFeLCGHggJJX0dBVjOQMPF7CcE4jhYE5-foktQ5sdOjkPFW4mABay6D0ATxZmrV0-3SXIQQxbKqb_SX9YK-W-qcPisUXRf0Lw53c",
+                    "width": 3680
                 }
             ],
-            "place_id": "ChIJoS3OCP_WZUcR2A56e_sLc9o",
+            "place_id": "ChIJ03saYAXWZUcR1brd5IvDuOM",
             "plus_code": {
-                "compound_code": "RX6J+FJ Zagreb, Croatia",
-                "global_code": "8FQQRX6J+FJ"
+                "compound_code": "Q2H4+W6 Zagreb",
+                "global_code": "8FQRQ2H4+W6"
             },
-            "reference": "ChIJoS3OCP_WZUcR2A56e_sLc9o",
+            "rating": 4.9,
+            "reference": "ChIJ03saYAXWZUcR1brd5IvDuOM",
+            "scope": "GOOGLE",
+            "types": [
+                "gym",
+                "point_of_interest",
+                "health",
+                "establishment"
+            ],
+            "user_ratings_total": 156,
+            "vicinity": "Sajmišna cesta 4, Zagreb"
+        },
+        {
+            "business_status": "OPERATIONAL",
+            "geometry": {
+                "location": {
+                    "lat": 45.8151534,
+                    "lng": 15.9304285
+                },
+                "viewport": {
+                    "northeast": {
+                        "lat": 45.81643437989272,
+                        "lng": 15.93189797989272
+                    },
+                    "southwest": {
+                        "lat": 45.81373472010728,
+                        "lng": 15.92919832010728
+                    }
+                }
+            },
+            "icon": "https://maps.gstatic.com/mapfiles/place_api/icons/v1/png_71/generic_business-71.png",
+            "icon_background_color": "#7B9EB0",
+            "icon_mask_base_uri": "https://maps.gstatic.com/mapfiles/place_api/icons/v2/generic_pinlet",
+            "name": "Kondicijski centar 4allGym",
+            "opening_hours": {
+                "open_now": true
+            },
+            "photos": [
+                {
+                    "height": 3120,
+                    "html_attributions": [
+                        "<a href=\"https://maps.google.com/maps/contrib/101885227687299728620\">Tina Tomaskovic</a>"
+                    ],
+                    "photo_reference": "AdCG2DOt4QaaVUiRkI0CtUcSN__dvZYQG7RM9FnE8U2zBSjjeNnTcw1620nj5C-gRKHckdzpiUw-nQ70ztbKB5xpOPsoQm_p5lcmK9ifV5tJJ60HBQ3K4IZHHGU6tljN4U1dmZx9dhyC3z_fOz_xczO7YHtC3ouyve2NAPKeqx19NZWIyVk6",
+                    "width": 4160
+                }
+            ],
+            "place_id": "ChIJLaR5xizRZUcR3rWygs4cuME",
+            "plus_code": {
+                "compound_code": "RW8J+35 Zagreb",
+                "global_code": "8FQQRW8J+35"
+            },
+            "rating": 4.9,
+            "reference": "ChIJLaR5xizRZUcR3rWygs4cuME",
+            "scope": "GOOGLE",
+            "types": [
+                "gym",
+                "point_of_interest",
+                "health",
+                "establishment"
+            ],
+            "user_ratings_total": 194,
+            "vicinity": "Ilica 288 - zgrada stara Ciglana, 10000, Zagreb"
+        },
+        {
+            "business_status": "OPERATIONAL",
+            "geometry": {
+                "location": {
+                    "lat": 45.7822661,
+                    "lng": 15.9813307
+                },
+                "viewport": {
+                    "northeast": {
+                        "lat": 45.78353692989273,
+                        "lng": 15.98270022989272
+                    },
+                    "southwest": {
+                        "lat": 45.78083727010728,
+                        "lng": 15.98000057010728
+                    }
+                }
+            },
+            "icon": "https://maps.gstatic.com/mapfiles/place_api/icons/v1/png_71/generic_business-71.png",
+            "icon_background_color": "#7B9EB0",
+            "icon_mask_base_uri": "https://maps.gstatic.com/mapfiles/place_api/icons/v2/generic_pinlet",
+            "name": "Gyms4you Zagreb (Bundek)",
+            "opening_hours": {
+                "open_now": true
+            },
+            "photos": [
+                {
+                    "height": 500,
+                    "html_attributions": [
+                        "<a href=\"https://maps.google.com/maps/contrib/103199121744382744805\">A Google User</a>"
+                    ],
+                    "photo_reference": "AdCG2DPTU7GcHBIKu5rEzHkMpT3aKVfX_-dnBBX-jlMILljYg6YcofTPvz3zM6nWF52SDPd4s3OvGPVE_gcR5LOjvDyCEyvaPXp-z9kRVc212T6B-4uigrAfAWNck-IDiMAbVFAzXoZKJpoadvwQa-OanigVsfM_GKCoFahb_L2vieeZ8j0N",
+                    "width": 900
+                }
+            ],
+            "place_id": "ChIJVa_jfXDWZUcRMm42fRslAYs",
+            "plus_code": {
+                "compound_code": "QXJJ+WG Zagreb",
+                "global_code": "8FQQQXJJ+WG"
+            },
+            "rating": 4.2,
+            "reference": "ChIJVa_jfXDWZUcRMm42fRslAYs",
+            "scope": "GOOGLE",
+            "types": [
+                "gym",
+                "point_of_interest",
+                "health",
+                "establishment"
+            ],
+            "user_ratings_total": 462,
+            "vicinity": "Ul. Damira Tomljanovića 11, Zagreb"
+        },
+        {
+            "business_status": "OPERATIONAL",
+            "geometry": {
+                "location": {
+                    "lat": 45.8592688,
+                    "lng": 15.9723653
+                },
+                "viewport": {
+                    "northeast": {
+                        "lat": 45.86063047989271,
+                        "lng": 15.97371587989272
+                    },
+                    "southwest": {
+                        "lat": 45.85793082010727,
+                        "lng": 15.97101622010728
+                    }
+                }
+            },
+            "icon": "https://maps.gstatic.com/mapfiles/place_api/icons/v1/png_71/generic_business-71.png",
+            "icon_background_color": "#7B9EB0",
+            "icon_mask_base_uri": "https://maps.gstatic.com/mapfiles/place_api/icons/v2/generic_pinlet",
+            "name": "Monster Gym",
+            "opening_hours": {
+                "open_now": true
+            },
+            "photos": [
+                {
+                    "height": 2336,
+                    "html_attributions": [
+                        "<a href=\"https://maps.google.com/maps/contrib/114141921206154836840\">Monster Gym</a>"
+                    ],
+                    "photo_reference": "AdCG2DOatjcwaieh_0mMAvgFZHngeVtjJ2VsDLCkKdu27AfB2jYi55i6tTUbwrePyHZSawjMiggPb_BRokwV7O_p_JwOcp-FiTNkEhPdtLj_ac3tAB0Wzab0QPQfliPDugoz74wyQkhzKdPCTr3vtUl9rvW831iNhEK0A38F3MZRcsjtxuLl",
+                    "width": 4160
+                }
+            ],
+            "place_id": "ChIJRzcHo-TZZUcR6C3px2J9yBQ",
+            "plus_code": {
+                "compound_code": "VX5C+PW Zagreb",
+                "global_code": "8FQQVX5C+PW"
+            },
+            "rating": 4.8,
+            "reference": "ChIJRzcHo-TZZUcR6C3px2J9yBQ",
+            "scope": "GOOGLE",
+            "types": [
+                "gym",
+                "point_of_interest",
+                "health",
+                "establishment"
+            ],
+            "user_ratings_total": 53,
+            "vicinity": "Gračec 21A, Zagreb"
+        },
+        {
+            "business_status": "OPERATIONAL",
+            "geometry": {
+                "location": {
+                    "lat": 45.8017774,
+                    "lng": 16.0121158
+                },
+                "viewport": {
+                    "northeast": {
+                        "lat": 45.80307272989273,
+                        "lng": 16.01336487989272
+                    },
+                    "southwest": {
+                        "lat": 45.80037307010728,
+                        "lng": 16.01066522010728
+                    }
+                }
+            },
+            "icon": "https://maps.gstatic.com/mapfiles/place_api/icons/v1/png_71/generic_business-71.png",
+            "icon_background_color": "#7B9EB0",
+            "icon_mask_base_uri": "https://maps.gstatic.com/mapfiles/place_api/icons/v2/generic_pinlet",
+            "name": "Fitness Facility",
+            "opening_hours": {
+                "open_now": true
+            },
+            "photos": [
+                {
+                    "height": 3379,
+                    "html_attributions": [
+                        "<a href=\"https://maps.google.com/maps/contrib/117090968860850601265\">A Google User</a>"
+                    ],
+                    "photo_reference": "AdCG2DMKPota7FAEadoY4D2Ympyb_2T2OFShl_URNKj5vK7SviTXtGBSlF63JQN35_jBSP6n9btleadfYtmVQziZ29zRKZClKYkb2WknNEFn97c8tzHexpJF-dMt3CZNynGRE1yjebl1xsrebFw5vmN4j2xonbpuvQq6kpTXKTI04uD74hQ",
+                    "width": 5200
+                }
+            ],
+            "place_id": "ChIJVzloES3XZUcRVXcpw4BS-r4",
+            "plus_code": {
+                "compound_code": "R226+PR Zagreb",
+                "global_code": "8FQRR226+PR"
+            },
+            "rating": 4.9,
+            "reference": "ChIJVzloES3XZUcRVXcpw4BS-r4",
             "scope": "GOOGLE",
             "types": [
                 "gym",
@@ -960,50 +886,51 @@ https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=45.815399,
                 "health",
                 "establishment"
             ],
-            "vicinity": "Ulica Junija Palmotića 22, Tratinska 49, Zagreb"
+            "user_ratings_total": 153,
+            "vicinity": "Ul. grada Vukovara 284, Zagreb"
         },
         {
             "business_status": "OPERATIONAL",
             "geometry": {
                 "location": {
-                    "lat": 45.8098219,
-                    "lng": 15.9847631
+                    "lat": 45.803004,
+                    "lng": 15.9760083
                 },
                 "viewport": {
                     "northeast": {
-                        "lat": 45.8112037802915,
-                        "lng": 15.9861093802915
+                        "lat": 45.80437182989272,
+                        "lng": 15.97744042989272
                     },
                     "southwest": {
-                        "lat": 45.8085058197085,
-                        "lng": 15.9834114197085
+                        "lat": 45.80167217010727,
+                        "lng": 15.97474077010728
                     }
                 }
             },
             "icon": "https://maps.gstatic.com/mapfiles/place_api/icons/v1/png_71/generic_business-71.png",
             "icon_background_color": "#7B9EB0",
             "icon_mask_base_uri": "https://maps.gstatic.com/mapfiles/place_api/icons/v2/generic_pinlet",
-            "name": "DSR Centar za sport i rekreaciju Zagreb",
+            "name": "Fitness centar One on One",
             "opening_hours": {
                 "open_now": true
             },
             "photos": [
                 {
-                    "height": 1855,
+                    "height": 3024,
                     "html_attributions": [
-                        "<a href=\"https://maps.google.com/maps/contrib/111366918017976057628\">Damir Kasap</a>"
+                        "<a href=\"https://maps.google.com/maps/contrib/113397147736305107904\">A Google User</a>"
                     ],
-                    "photo_reference": "AdCG2DN_bm3uVWPlegJbmC1LXbfW8C_p_mKcBoNRVngtvxIVO6tUxT9DjXtB1CyntePwcuoidg4W3xHJwm7_Gxizci2-BLdMqokPDFrFavewTB8OI6xEe4WSI5P9h-LMn6OnfUnnVICvLqhaA87iRHOCi5IzW-YSS9E55_m-WnsOCOmyINQw",
-                    "width": 3175
+                    "photo_reference": "AdCG2DNB0sELZJurVgz2bmpUSbZwyYTIHX6QSR49pN4cHjRaZucmTh5CTlPKosd-eLNYtuiPniJear3iDJkYKGC84fXVwXKIomumoJ1JoEJYn0b4Wk7GJEyHXhZeCqCYNnz75ZyKiQMbgEEAMriko63fQU_hsYr8OELBJWNgAdbwG4HrRWmd",
+                    "width": 4032
                 }
             ],
-            "place_id": "ChIJWfgWlVXWZUcR-__d-wLucvc",
+            "place_id": "ChIJt6__B_fWZUcR9nCZp0Edzx0",
             "plus_code": {
-                "compound_code": "RX5M+WW Zagreb, Croatia",
-                "global_code": "8FQQRX5M+WW"
+                "compound_code": "RX3G+6C Zagreb",
+                "global_code": "8FQQRX3G+6C"
             },
-            "rating": 4.8,
-            "reference": "ChIJWfgWlVXWZUcR-__d-wLucvc",
+            "rating": 5,
+            "reference": "ChIJt6__B_fWZUcR9nCZp0Edzx0",
             "scope": "GOOGLE",
             "types": [
                 "gym",
@@ -1011,8 +938,112 @@ https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=45.815399,
                 "health",
                 "establishment"
             ],
-            "user_ratings_total": 11,
-            "vicinity": "Ulica kralja Držislava 6, Zagreb"
+            "user_ratings_total": 40,
+            "vicinity": "Miramarska Cesta 13A, Zagreb"
+        },
+        {
+            "business_status": "OPERATIONAL",
+            "geometry": {
+                "location": {
+                    "lat": 45.8057442,
+                    "lng": 15.9407218
+                },
+                "viewport": {
+                    "northeast": {
+                        "lat": 45.80710087989272,
+                        "lng": 15.94201927989272
+                    },
+                    "southwest": {
+                        "lat": 45.80440122010727,
+                        "lng": 15.93931962010728
+                    }
+                }
+            },
+            "icon": "https://maps.gstatic.com/mapfiles/place_api/icons/v1/png_71/generic_business-71.png",
+            "icon_background_color": "#7B9EB0",
+            "icon_mask_base_uri": "https://maps.gstatic.com/mapfiles/place_api/icons/v2/generic_pinlet",
+            "name": "QUANTUM Premium Gym Trešnjevka",
+            "opening_hours": {
+                "open_now": true
+            },
+            "photos": [
+                {
+                    "height": 2368,
+                    "html_attributions": [
+                        "<a href=\"https://maps.google.com/maps/contrib/114128819946111076002\">Hrvoje Hladnik</a>"
+                    ],
+                    "photo_reference": "AdCG2DM4ClNz5AJgjD2lMOiq4obeN5WBUFWMvjLPIS5DXuMtttt0O0ULsOnNl4Hica0X6JmcGpYZfgpknE-vTlb7hoR09_3Tc-wrmpOurxwC-m1LQJ4oFbIh-aU_NK-KpF6fFQ4yRqaBeBM_UgSdTSv8Gtx21bcNszQIS5cv5UoQNNh9zCmW",
+                    "width": 4208
+                }
+            ],
+            "place_id": "ChIJL3bi98XWZUcRb66LxqBbgvY",
+            "plus_code": {
+                "compound_code": "RW4R+77 Zagreb",
+                "global_code": "8FQQRW4R+77"
+            },
+            "rating": 4.6,
+            "reference": "ChIJL3bi98XWZUcRb66LxqBbgvY",
+            "scope": "GOOGLE",
+            "types": [
+                "gym",
+                "point_of_interest",
+                "health",
+                "establishment"
+            ],
+            "user_ratings_total": 72,
+            "vicinity": "Ul. Zagorska II 3A, Zagreb"
+        },
+        {
+            "business_status": "OPERATIONAL",
+            "geometry": {
+                "location": {
+                    "lat": 45.8058845,
+                    "lng": 15.9875026
+                },
+                "viewport": {
+                    "northeast": {
+                        "lat": 45.80712532989272,
+                        "lng": 15.98886472989272
+                    },
+                    "southwest": {
+                        "lat": 45.80442567010728,
+                        "lng": 15.98616507010728
+                    }
+                }
+            },
+            "icon": "https://maps.gstatic.com/mapfiles/place_api/icons/v1/png_71/generic_business-71.png",
+            "icon_background_color": "#7B9EB0",
+            "icon_mask_base_uri": "https://maps.gstatic.com/mapfiles/place_api/icons/v2/generic_pinlet",
+            "name": "Gyms4you Zagreb (Park Kneževa)",
+            "opening_hours": {
+                "open_now": true
+            },
+            "photos": [
+                {
+                    "height": 3468,
+                    "html_attributions": [
+                        "<a href=\"https://maps.google.com/maps/contrib/107939463623159976278\">Jurica Maricic</a>"
+                    ],
+                    "photo_reference": "AdCG2DPnx37G-cDdwa_MScosR5N-e8Co_UAGouPNyzsl9FoMMdWG1BmBOwhwYHOnZvqvMs7MriZk_2BFH7IjeT-LVjd6odFXJSwpgJ9lGf-T2gOziyQPKODOKxtaB9A_so6d4kMBB7UD49xpdWTKLjiusxrmY-omy4FMFt4vCtE3jQOQJr7x",
+                    "width": 3468
+                }
+            ],
+            "place_id": "ChIJg6wUG-F5ZkcRWHriD3SNBak",
+            "plus_code": {
+                "compound_code": "RX4Q+92 Zagreb",
+                "global_code": "8FQQRX4Q+92"
+            },
+            "rating": 4.2,
+            "reference": "ChIJg6wUG-F5ZkcRWHriD3SNBak",
+            "scope": "GOOGLE",
+            "types": [
+                "gym",
+                "point_of_interest",
+                "health",
+                "establishment"
+            ],
+            "user_ratings_total": 166,
+            "vicinity": "Ul. kneza Branimira 41, Zagreb"
         }
     ],
     "status": "OK"
