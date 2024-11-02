@@ -73,14 +73,14 @@ body {
   gap: 70px;
   padding: 10px;
   border: solid;
-  border-color: #001f3f;
+  border-color: #003366;
   border-radius: 10px;
   padding-top: 40px;
 }
 
 .logo img:hover, .nav-links a:hover {
   cursor: pointer;
-  color:rgb(124, 176, 225);
+  color:#ebcd25;
 }
 
 .nav-links .nav-links-item {
@@ -119,7 +119,7 @@ body {
 }
 
 .auth-button button:hover {
-  background-color:rgb(124, 176, 225);
+  background-color:#ebcd25;
 }
 
 .info-section {
@@ -217,9 +217,53 @@ button.button-request {
   cursor: pointer;
   border-radius: 5px;
 }
-button.button-request:hover {
-  background-color: rgb(124, 176, 225);
+
+
+.time-inputs {
+  margin-bottom: 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
 }
+
+.time-inputs label {
+  color: #4f8cff; /* Blue color */
+  font-weight: bold;
+}
+
+.time-inputs input[type="time"] {
+  background-color: #ebcd25; /* Light yellow background */
+  border: 1px solid #003366; /* Dark blue border */
+  color: #333; /* Darker text */
+  padding: 8px;
+  border-radius: 5px;
+  font-size: 1rem;
+  transition: border-color 0.3s, background-color 0.3s;
+}
+
+.time-inputs input[type="time"]:focus {
+  border-color: #4f8cff; /* Blue border on focus */
+  background-color: #fff8e1; /* Slightly brighter yellow */
+}
+
+.time-inputs input[type="time"]::placeholder {
+  color: #999; /* Placeholder color */
+}
+
+button[type="submit"] {
+  background-color: #4f8cff; /* Primary blue */
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+button[type="submit"]:hover {
+  background-color: #ffd54f; /* Yellow hover effect */
+}
+
 
 input[type="range"] {
   width: 100%;
@@ -238,7 +282,7 @@ input[type="range"]::-webkit-slider-thumb {
   width: 16px;
   height: 16px;
   border-radius: 50%;
-  background-color: #4f8cff;
+  background-color: #c9bc92;
   cursor: pointer;
 }
 
@@ -313,7 +357,7 @@ input[type="range"]::-moz-range-thumb {
 
 
 .location-controls button:hover {
-  background-color:rgb(124, 176, 225);
+  background-color:#ebcd25;
 }
 
 .location-controls input[type="text"] {

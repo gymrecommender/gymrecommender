@@ -1,6 +1,6 @@
 import Menu from "./simple/Menu.jsx";
 import Button from "./simple/Button.jsx";
-import InfoSection from "./InfoSection.jsx";
+import InfoSection_acc from "../components/simple/InfoSection_acc.jsx";
 import {useNavigate, useLocation} from "react-router-dom";
 import logo from "../logo.png";
 import React from "react";
@@ -50,7 +50,7 @@ const Header = ({username}) => {
 			<div className="auth-button">
 				{authButton}
 			</div>
-			<InfoSection/>
+			<InfoSection_acc/>
 		</header>
 	)
 }

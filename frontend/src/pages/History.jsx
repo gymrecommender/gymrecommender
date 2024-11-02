@@ -1,11 +1,15 @@
-import {useParams} from "react-router-dom";
+import BodyHistory from '../components/simple/BodyHistory.jsx';
+import Footer from '../components/Footer.jsx';
+import Header from "../components/Header.jsx";
+import '../styles_history.css'
 
 const History = () => {
-	const { username } = useParams();
 	return (
-		<>
-			History page of {username}
-		</>
+		<div className="container">
+			<Header/>
+			<BodyHistory/>
+			<Footer/>
+		</div>
 	)
 }
 

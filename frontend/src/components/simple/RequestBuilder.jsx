@@ -30,7 +30,15 @@ const RequestBuilder = () => {
 				        onChange={handleChange} isSplit={true}/>
 
 				<h3>Tell us your preferences!</h3>
-				{/*#TODO range for membership must be formed based on meaningful data*/ }
+				<div className="time-inputs">
+					<label htmlFor="dTime">Preferred departure time</label>
+					<input type="time" name="dTime" value={formValue["dTime"]} onChange={(e) => handleChange("dTime", e.target.value)} />
+				</div>
+				<div className="time-inputs">
+					<label htmlFor="aTime">Preferred arrival time</label>
+					<input type="time" name="aTime" value={formValue["aTime"]} onChange={(e) => handleChange("aTime", e.target.value)} />
+				</div>
+
 				<Slider type={"range"} label={"Min membership price"} name="mPrice" min={0} max={100} step={5}
 				        value={formValue["mPrice"]}
 				        onChange={handleChange}/>

@@ -1,8 +1,11 @@
+import LoginForm from '../components/simple/LoginForm';
+import '../styles_login.css'
+
 const LogIn = () => {
 	return (
-		<>
-			Log in page
-		</>
+		<div className="login-container">
+            <LoginForm />
+        </div>
 	)
 }
 
