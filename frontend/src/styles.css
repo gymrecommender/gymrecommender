@@ -35,6 +35,10 @@ body {
       "info-section info-section info-section"
 }
 
+.header .tile {
+  text-transform: uppercase;
+}
+
 .logo {
   grid-area: logo;
   display: flex;
@@ -72,20 +76,20 @@ body {
   border-color: #001f3f;
   border-radius: 10px;
   padding-top: 40px;
- 
 }
 
-.nav-links a:hover {
+.logo img:hover, .nav-links a:hover {
+  cursor: pointer;
   color:rgb(124, 176, 225);
 }
 
-.nav-links a {
+.nav-links .nav-links-item {
   color:#4f8cff;
-  text-decoration: none;
   font-weight: bold;
   font-size: 2em;
   transition: color 0.3s;
   text-decoration: underline;
+  text-transform: capitalize;
 }
 
 .auth-button {
