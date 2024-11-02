@@ -1,14 +1,14 @@
 import Input from "./Input.jsx";
 
-const Slider = (props) => {
+const Slider = ({minText, maxText, isSplit, ...rest}) => {
 	return (
-		<Input {...props}>
+		<Input {...rest}>
 			<div className={'input-field-slider-range'}>
-				<span className={"slider-min"}>{props.minText ?? props.min}</span>
+				<span className={"slider-min"}>{minText ?? rest.min}</span>
 				<span className={"slider-current"}>
-					{props.isSplit ? `${props.max - props.value} / ${props.value}` : props.value }
+					{isSplit ? `${rest.max - rest.value} / ${rest.value}` : rest.value }
 				</span>
-				<span className={"slider-max"}>{props.maxText ?? props.max}</span>
+				<span className={"slider-max"}>{maxText ?? rest.max}</span>
 			</div>
 		</Input>
 	)

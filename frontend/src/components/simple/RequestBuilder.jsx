@@ -5,9 +5,11 @@ import Button from "./Button.jsx";
 const RequestBuilder = () => {
 	const [formValue, setFormValue] = useState({
 		tpPriority: 50,
-		mPrice: 50,
+		mPrice: 40,
 		rating: 3,
-		cRating: 3
+		cRating: 3,
+		dTime: null,
+		aTime: null
 	})
 
 	const handleChange = (name, value) => {
@@ -29,7 +31,7 @@ const RequestBuilder = () => {
 
 				<h3>Tell us your preferences!</h3>
 				{/*#TODO range for membership must be formed based on meaningful data*/ }
-				<Slider type={"range"} label={"Min membership price"} name="mPrice" min={0} max={300}
+				<Slider type={"range"} label={"Min membership price"} name="mPrice" min={0} max={100} step={5}
 				        value={formValue["mPrice"]}
 				        onChange={handleChange}/>
 				<Slider type={"range"} label={"Min overall rating"} name="rating" min={1} max={5} step={0.5}

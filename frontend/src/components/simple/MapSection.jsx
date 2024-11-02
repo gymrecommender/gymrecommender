@@ -1,9 +1,25 @@
+import LocationControls from "./LocationControls.jsx";
+import Map from "./Map.jsx";
+import {useState} from "react";
+
 const MapSection = () => {
-  return (
-    <section className="map-section">
-      <div className="map">Google Maps</div>
-    </section>
-  );
+	//#TODO these variables must be within the Map component
+	const [lon, setLon] = useState(0)
+	const [lat, setLat] = useState(0)
+
+	const handleSubmitSearch = (value) => {
+		console.log(value)
+	}
+	const handleGetLocation = () => {
+		console.log("Get location")
+		//#TODO call the function that will retrieve current location
+	}
+	return (
+		<>
+			<LocationControls onSubmitSearch={handleSubmitSearch} onGetLocation={handleGetLocation}/>
+			<Map coordinates={{lon, lat}}/>
+		</>
+	);
 };
 
 export default MapSection;

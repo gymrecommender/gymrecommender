@@ -9,7 +9,6 @@ const Index = () => {
 		<div className="container">
 			<Header/>
 			<RequestBuilder/>
-			<LocationControls/>
 			<MapSection/>
 			<Footer/>
 		</div>
