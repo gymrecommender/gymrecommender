@@ -1,4 +1,4 @@
-import NavBar from "./simple/NavBar.jsx";
+import Menu from "./simple/Menu.jsx";
 import Button from "./simple/Button.jsx";
 import InfoSection from "./InfoSection.jsx";
 import {useNavigate, useLocation} from "react-router-dom";
@@ -10,7 +10,7 @@ const Header = ({username}) => {
 	const location = useLocation();
 
 	const navigationHandler = (path) => {
-		//we do not want to register multiple instances of the same page in row in the browser's history
+		//we do not want to register multiple instances of the same page in row in the navigation's history
 		//so we use navigate only when we want to redirect to another page
 		if (!location.pathname.startsWith(path)) {
 			navigate(path);
@@ -24,7 +24,7 @@ const Header = ({username}) => {
 		...username ? [
 			{name: "Account", onClick: () => navigationHandler(`/account/${username}`)},
 			{name: "History", onClick: () => navigationHandler(`/account/${username}/history`)}
-		] : [] //conditional adding of the elements to the menu array. ... unpacks all the elements of the subarray and "merges" it with the main (menu) array
+		] : [] //conditional adding of the elements to the menu array. ... extracts all the elements of the subarray and adds them to the main (menu) array
 	]
 
 	//conditional rendering of the button - if we are logged in, we need a "Log out" button, not a "Sign up" one
@@ -46,7 +46,7 @@ const Header = ({username}) => {
 			<div className="title">
 				GYM FINDER
 			</div>
-			<NavBar data={menu}/>
+			<Menu data={menu}/>
 			<div className="auth-button">
 				{authButton}
 			</div>

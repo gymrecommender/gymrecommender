@@ -1,5 +1,3 @@
-import React from 'react';
-
 const LocationControls = () => {
   return (
     <div className="location-controls">

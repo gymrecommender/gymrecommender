@@ -1,6 +1,4 @@
-import React from 'react';
-
-const NavBar = ({data}) => {
+const Menu = ({data}) => {
 	const menu = data.map(({name, onClick}) => {
 		return (
 			<a key={name} className={"nav-links-item"} onClick={onClick}>
@@ -16,4 +14,4 @@ const NavBar = ({data}) => {
 	);
 };
 
-export default NavBar;
+export default Menu;

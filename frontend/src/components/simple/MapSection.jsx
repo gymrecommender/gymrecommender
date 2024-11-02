@@ -1,5 +1,3 @@
-import React from 'react';
-
 const MapSection = () => {
   return (
     <section className="map-section">

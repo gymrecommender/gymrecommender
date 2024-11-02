@@ -1,4 +1,4 @@
-import Sliders from '../components/simple/Sliders';
+import RequestBuilder from '../components/simple/RequestBuilder.jsx';
 import LocationControls from '../components/simple/LocationControls';
 import MapSection from '../components/simple/MapSection';
 import Footer from '../components/Footer.jsx';
@@ -8,7 +8,7 @@ const Index = () => {
 	return (
 		<div className="container">
 			<Header/>
-			<Sliders/>
+			<RequestBuilder/>
 			<LocationControls/>
 			<MapSection/>
 			<Footer/>

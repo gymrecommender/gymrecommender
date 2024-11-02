@@ -149,10 +149,11 @@ body {
   color: #b0c4de;
 }
 
-
-
 .sliders {
   grid-area: sliders;
+}
+
+.sliders form {
   background-color:#ccc;
   padding: 20px;
   border: 1px solid #ccc;
@@ -161,23 +162,38 @@ body {
   gap: 20px;
 }
 
-.sliders h3 {
+.sliders form h3 {
   color: #001f3f;
   font-size: 1.2em;
 }
 
-.sliders label {
+.sliders form label {
   font-weight: bold;
   color: #333;
 }
 
-.sliders input[type="range"] {
+.sliders form input[type="range"] {
   width: 100%;
 }
 
-.sliders select, 
-.sliders input[type="text"],
-.sliders input[type="number"] {
+.input-field-slider-range {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  font-family: SansSerif, sans-serif;
+  font-weight: bold;
+  font-size: 0.8em;
+}
+
+.input-field-slider-range .slider-max {
+  text-align: end;
+}
+.input-field-slider-range .slider-current {
+  text-align: center;
+}
+
+.sliders form select,
+.sliders form input[type="text"],
+.sliders form input[type="number"] {
   width: calc(100% - 20px);
   padding: 10px;
   border: 1px solid #004080; /* Blue border */
@@ -187,13 +203,13 @@ body {
   transition: border-color 0.3s;
 }
 
-.sliders select:focus, 
-.sliders input[type="text"]:focus, 
-.sliders input[type="number"]:focus {
+.sliders form select:focus,
+.sliders form input[type="text"]:focus,
+.sliders form input[type="number"]:focus {
   border-color: #003366; /* Darker blue on focus */
 }
 
-.sliders button {
+button.button-request {
   padding: 10px;
   background-color: #001f3f;
   color: white;
@@ -201,7 +217,7 @@ body {
   cursor: pointer;
   border-radius: 5px;
 }
-.sliders button:hover {
+button.button-request:hover {
   background-color: rgb(124, 176, 225);
 }
 
@@ -233,7 +249,6 @@ input[type="range"]::-moz-range-thumb {
   background-color: #4f8cff;
   cursor: pointer;
 }
-
 
 .map-section {
   display: flex;
