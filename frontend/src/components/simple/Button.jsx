@@ -2,7 +2,7 @@ const Button = ({children, className, type, name, id, onSubmit, onClick}) => {
 	return (
 		<button
 			type={type}
-			className={`${className} custom-class-names` }
+			className={`${className}` }
 			name={name}
 			onSubmit={onSubmit}
 			onClick={onClick}

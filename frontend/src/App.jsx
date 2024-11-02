@@ -3,6 +3,7 @@ import Index from "./pages/Index";
 import Account from "./pages/Account.jsx";
 import NotFound from "./pages/NotFound.jsx";
 import History from "./pages/History.jsx";
+import LogIn from "./pages/LogIn.jsx";
 
 const App = () => {
 	//#TODO implement permissions for the page for different roles
@@ -11,9 +12,10 @@ const App = () => {
 			<Routes>
 				<Route path="/">
 					<Route index element={<Index/>}/>
-					<Route path={"/account/:username"}>
+					<Route path={"login"} element={<LogIn/>}/>
+					<Route path={"account/:username"}>
 						<Route index element={<Account/>}/>
-						<Route path={"/account/:username/history"} element={<History/>}/>
+						<Route path={"history"} element={<History/>}/>
 					</Route>
 					<Route path={"*"} element={<NotFound/>}/>
 				</Route>
