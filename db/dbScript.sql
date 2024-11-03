@@ -149,7 +149,7 @@ CREATE TABLE if not exists Request
   weekday INT check (weekday between 0 and 6), --day of the week for which the user wants to receive the recommendations 
   arrival_time TIME check (arrival_time > departure_time), --preferred arrival time specified by user
   time_priority INT NOT null check (time_priority between 0 and 100), --the value of the travelling time slider on the frontend
-  tcost_priority INT NOT null check (tcost_priority between 0 and 100) CHECK (tcost_priority + time_priority = 100),
+  tcost_priority INT NOT null check (tcost_priority between 0 and 100 and tcost_priority + time_priority = 100),
   min_congestion_rating NUMERIC(4,2) NOT null check (min_congestion_rating between 1 and 5),
   min_rating NUMERIC(4,2) NOT null check (min_rating between 1 and 5),
   min_membership_price INT NOT null check (min_membership_price >= 0),
