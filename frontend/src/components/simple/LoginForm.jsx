@@ -1,10 +1,14 @@
 import React, { useState } from 'react';
 import {useNavigate} from "react-router-dom";
+import Button from "./Button.jsx";
+import Input from "./Input.jsx";
 
 const LoginForm = () => {
-    const [username, setUsername] = useState("");
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
+    const [formValues, setFormValues] = useState({
+        username: '',
+        email: '',
+        password: ''
+    })
     const navigate = useNavigate();
 
     const handleSubmit = (e) => {
@@ -14,44 +18,42 @@ const LoginForm = () => {
         navigate(`/account/${username}`);
     };
 
+    const handleChange = (name, value) => {
+        setFormValues({...formValues, [name]: value});
+    }
+
     return (
-        <div className="login-form">
+        <div className="form-login">
             <h2>Login</h2>
             <form onSubmit={handleSubmit}>
-                <div className="form-group">
-                    <label htmlFor="username">Username</label>
-                    <input
-                        type="text"
-                        id="username"
-                        name="username"
-                        required
-                        value={username}
-                        onChange={(e) => setUsername(e.target.value)} // Update state on input change
-                    />
-                </div>
-                <div className="form-group">
-                    <label htmlFor="email">Email</label>
-                    <input
-                        type="email"
-                        id="email"
-                        name="email"
-                        required
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)} // Update state on input change
-                    />
-                </div>
-                <div className="form-group">
-                    <label htmlFor="password">Password</label>
-                    <input
-                        type="password"
-                        id="password"
-                        name="password"
-                        required
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)} // Update state on input change
-                    />
-                </div>
-                <button type="submit">Log in</button>
+                <Input type="text"
+                       label={"Username"}
+                       name="username"
+                       required
+                       value={formValues["username"]}
+                       wClassName={"form-group"}
+                       className={"input-login"}
+                       onChange={handleChange}/>
+
+                <Input type="email"
+                       label={"Email"}
+                       name="email"
+                       required
+                       value={formValues["email"]}
+                       wClassName={"form-group"}
+                       className={"input-login"}
+                       onChange={handleChange}/>
+
+                <Input type="password"
+                       label={"Password"}
+                       name="password"
+                       required
+                       value={formValues["password"]}
+                       wClassName={"form-group"}
+                       className={"input-login"}
+                       onChange={handleChange}/>
+
+                <Button className={"button-login"} type={"submit"} onSubmit={handleSubmit}>Log in</Button>
             </form>
         </div>
     );

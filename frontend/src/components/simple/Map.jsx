@@ -1,6 +1,6 @@
 const Map = ({coordinates}) => {
 	return (
-		<section className="map-section">
+		<section className="section section-map">
 			<div className="map">Google Maps</div>
 		</section>
 	)

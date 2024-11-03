@@ -1,6 +1,6 @@
 const InfoSection = () => {
   return (
-    <section className="info-section">
+    <section className="section section-info">
       <div>
         <h3>About Us</h3>
         <p>Gym Finder is dedicated to helping fitness enthusiasts find the perfect gym that meets their needs and preferences, from location to pricing and atmosphere.</p>

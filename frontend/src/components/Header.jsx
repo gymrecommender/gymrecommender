@@ -1,6 +1,6 @@
 import Menu from "./simple/Menu.jsx";
 import Button from "./simple/Button.jsx";
-import InfoSection_acc from "../components/simple/InfoSection_acc.jsx";
+import InfoSection from "./InfoSection.jsx";
 import {useNavigate, useLocation} from "react-router-dom";
 import logo from "../logo.png";
 import React from "react";
@@ -12,7 +12,7 @@ const Header = ({username}) => {
 	const navigationHandler = (path) => {
 		//we do not want to register multiple instances of the same page in row in the navigation's history
 		//so we use navigate only when we want to redirect to another page
-		if (!location.pathname.startsWith(path)) {
+		if ((path === '/' && path !== location.pathname) || !location.pathname.startsWith(path)) {
 			navigate(path);
 		}
 		//scroll to the top of the page if the requested page is the same as the current one
@@ -31,10 +31,11 @@ const Header = ({username}) => {
 	//#TODO the condition should be different once we implement logging in (the one that can't be changed through React Dev panel or in any other way)
 	const authButton = username ?
 		<Button type={"button"}
-		        className={"button-logout"}
+		        className={"auth-button button-logout"}
 		        onClick={() => alert('Logged out')} //#TODO this should be substituted with respective logic
 		> Log out </Button> :
 		<Button type={"button"}
+		        className={"auth-button"}
 		        onClick={() => navigationHandler("/login")}
 		> Sign Up / Login </Button>
 
@@ -47,10 +48,10 @@ const Header = ({username}) => {
 				GYM FINDER
 			</div>
 			<Menu data={menu}/>
-			<div className="auth-button">
+			<div className="authentication">
 				{authButton}
 			</div>
-			<InfoSection_acc/>
+			<InfoSection/>
 		</header>
 	)
 }

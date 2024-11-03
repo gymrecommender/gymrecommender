@@ -1,10 +1,11 @@
 import React, {useState} from 'react';
 import Slider from "./Slider.jsx";
 import Button from "./Button.jsx";
+import Input from "./Input.jsx";
 
 const RequestBuilder = () => {
 	const [formValue, setFormValue] = useState({
-		tpPriority: 50,
+		pPriority: 50,
 		mPrice: 40,
 		rating: 3,
 		cRating: 3,
@@ -22,23 +23,32 @@ const RequestBuilder = () => {
 	}
 
 	return (
-		<section className="sliders">
+		<aside className="sliders">
 			<form onSubmit={handleSubmit}>
 				<h3>What is your priority?</h3>
-				<Slider type={"range"} name="tpPriority"
-				        step={5} min={0} max={100} minText={"Time"} maxText={"Price"} value={formValue["tpPriority"]}
+				<Slider type={"range"} name="pPriority"
+				        step={5} min={0} max={100} minText={"Time"} maxText={"Price"} value={formValue["pPriority"]}
 				        onChange={handleChange} isSplit={true}/>
 
 				<h3>Tell us your preferences!</h3>
-				<div className="time-inputs">
-					<label htmlFor="dTime">Preferred departure time</label>
-					<input type="time" name="dTime" value={formValue["dTime"]} onChange={(e) => handleChange("dTime", e.target.value)} />
-				</div>
-				<div className="time-inputs">
-					<label htmlFor="aTime">Preferred arrival time</label>
-					<input type="time" name="aTime" value={formValue["aTime"]} onChange={(e) => handleChange("aTime", e.target.value)} />
-				</div>
 
+
+				<Input
+					type="time"
+					name="dTime"
+					wClassName={"time"}
+					label={"Preferred departure time"}
+					value={formValue["dTime"] ?? ''}
+					onChange={handleChange}
+				/>
+				<Input
+					type="time"
+					name="aTime"
+					wClassName={"time"}
+					label={"Preferred arrival time"}
+					value={formValue["aTime"] ?? ''}
+					onChange={handleChange}
+				/>
 				<Slider type={"range"} label={"Min membership price"} name="mPrice" min={0} max={100} step={5}
 				        value={formValue["mPrice"]}
 				        onChange={handleChange}/>
@@ -47,9 +57,9 @@ const RequestBuilder = () => {
 				<Slider type={"range"} label={"Min congestion rating"} name="cRating" min={1} max={5} step={0.5}
 				        value={formValue["cRating"]} onChange={handleChange}/>
 
-				<Button type={"submit"} className={"button-request"} onSubmit={handleSubmit}>Apply</Button>
+				<Button type={"submit"} className={"button-submit"} onSubmit={handleSubmit}>Apply</Button>
 			</form>
-		</section>
+		</aside>
 	);
 };
 

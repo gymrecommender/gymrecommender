@@ -1,5 +1,5 @@
-const Select = ({className, id, data, value, name, onChange}) => {
-	const options = data.map((item, index) => {
+const Select = ({className, id, data, label, value, name, onChange}) => {
+	const options = data?.map((item, index) => {
 		return (
 			<option value={item.value} key={index}>
 				{item.label}
@@ -7,14 +7,18 @@ const Select = ({className, id, data, value, name, onChange}) => {
 		);
 	})
 	return (
-		<select
-			value={value ?? ""}
-			name={name}
-			className={className}
-			id={id}
-			onChange={(e) => onChange(name, e.target.value)}>
-			{options ?? ""}
-		</select>
+		<div className={"selector"}>
+			<label>{label}</label>
+			<select
+				value={value ?? ""}
+				name={name}
+				{...(className && {className})}
+				id={id}
+				onChange={(e) => onChange(name, e.target.value)}
+			>
+				{options ?? ""}
+			</select>
+		</div>
 	)
 }
 

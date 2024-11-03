@@ -1,9 +1,9 @@
-const Input = ({children, onChange, label, className, value, ...rest}) => {
+const Input = ({children, wClassName, onChange, label, className, value, ...rest}) => {
 	return (
-		<div className={"input-field"}>
-			<label className={"input-field-label"} htmlFor={rest.name}>
+		<div className={`input-field ${wClassName ?? ''}`}>
+			{label ? <label className={`input-field-label`} htmlFor={rest.name}>
 				{label}
-			</label>
+			</label> : null}
 			{children}
 			<input
 				{...rest}

@@ -3,7 +3,7 @@ import Map from "./Map.jsx";
 import {useState} from "react";
 
 const MapSection = () => {
-	//#TODO these variables must be within the Map component
+	//#TODO these variables must be within the Map component (use context to share these variables with each other)
 	const [lon, setLon] = useState(0)
 	const [lat, setLat] = useState(0)
 
