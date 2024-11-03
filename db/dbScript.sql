@@ -149,10 +149,10 @@ CREATE TABLE if not exists Request
   weekday INT check (weekday between 0 and 6), --day of the week for which the user wants to receive the recommendations 
   arrival_time TIME check (arrival_time > departure_time), --preferred arrival time specified by user
   time_priority INT NOT null check (time_priority between 0 and 100), --the value of the travelling time slider on the frontend
-  tcost_priority INT NOT null check (tcost_priority between 0 and 100),
-  price_priority INT NOT null check (price_priority between 0 and 100),
-  rating_priority INT NOT null check (rating_priority between 0 and 100),
-  congestion_rating_priority INT NOT null check (congestion_rating_priority between 0 and 100),
+  tcost_priority INT NOT null check (tcost_priority between 0 and 100) CHECK (tcost_priority + time_priority = 100),
+  min_congestion_rating NUMERIC(4,2) NOT null check (min_congestion_rating between 1 and 5),
+  min_rating NUMERIC(4,2) NOT null check (min_rating between 1 and 5),
+  min_membership_price INT NOT null check (min_membership_price >= 0),
   name VARCHAR(50),--each user can specify the name of the request 
   user_id uuid NOT NULL,
   PRIMARY KEY (id),
@@ -168,8 +168,7 @@ CREATE TABLE if not exists Recommendation
   tcost NUMERIC(4,2) NOT null check (tcost >= 0), --total travelling cost to get to the gym
   time TIME NOT NULL, --total travelling time to the gym
   time_score NUMERIC(4,2) NOT null check (time_score between 0 and 10), --calculated score for the travelling time
-  tcost_score NUMERIC(4,2) NOT null check (tcost_score between 0 and 10), --calculated score for the travelling cost
-  price_score NUMERIC(4,2) check (price_score between 0 and 10),
+  tcost_score NUMERIC(4,2) NOT null check (tcost_score between 0 and 10), --calculated score for the total price
   congestion_score NUMERIC(4,2) check (congestion_score between 0 and 10),
   rating_score NUMERIC(4,2) check (rating_score between 0 and 10),
   total_score NUMERIC(4,2) NOT null check (total_score between 0 and 10),
