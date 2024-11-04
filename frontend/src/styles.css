@@ -44,6 +44,18 @@ body {
     grid-template-areas: "section-body";
 }
 
+.container .content.content-account-gym{
+    display: grid;
+    grid-template-columns: 100%;
+    grid-template-areas: "section-body";
+}
+
+.content .content.content-account-admin{
+    display: grid;
+    grid-template-columns: 100%;
+    grid-template-areas: "section-body";
+}
+
 .logo {
     grid-area: logo;
     display: flex;
@@ -148,6 +160,15 @@ nav.nav-links .nav-links-item:hover {
     text-align: left;
 }
 
+.section-body h2 {
+    color: #f8f8f8;
+    font-weight: bold;
+    margin: 20px;
+    padding: 15px;
+    text-align: center;
+    text-decoration: underline;
+}
+
 .section-info div {
     width: 30%;
     color: #b0c4de;
@@ -163,6 +184,11 @@ nav.nav-links .nav-links-item:hover {
     font-size: 1em;
     color: #b0c4de;
 }
+
+.request-form, .update-form, .unavailable-form {
+    color: #4f8cff;
+    font-weight: bold;
+  }
 
 .sliders {
     grid-area: sliders;
@@ -233,7 +259,7 @@ nav.nav-links .nav-links-item:hover {
 }
 
 .time label {
-    color: #4f8cff; /* Blue color */
+    color: #4f8cff;
     font-weight: bold;
 }
 
@@ -345,6 +371,7 @@ input[type="range"]::-moz-range-thumb {
     cursor: pointer;
     font-size: 0.9em;
     transition: background-color 0.3s;
+    margin-top: 20px;
 }
 
 .location-controls button:hover {
@@ -360,6 +387,128 @@ input[type="range"]::-moz-range-thumb {
     max-width: 100%;
     box-sizing: border-box;
 }
+
+.section-body input{
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 1em;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    margin-top: 20px;
+}
+
+.accordion {
+    margin-top: 20px;
+}
+
+.accordion-item {
+    background-color: #032c54;
+    border: 1px solid #4f8cff;
+    border-radius: 5px;
+    margin-bottom: 10px;
+    padding: 10px;
+    color: #b0c4de;
+    margin-left: 20px;
+}
+
+.accordion-button {
+    background-color: #4f8cff;
+    color: white;
+    border: none;
+    width: 100%;
+    text-align: left;
+    padding: 10px;
+    cursor: pointer;
+    border-radius: 5px;
+    font-size: 1.1em;
+}
+
+.accordion-content {
+    display: none;
+    padding: 15px;
+    background-color: #003366;
+    color: #b0c4de;
+}
+
+.accordion-button:focus + .accordion-content,
+.accordion-button:hover + .accordion-content {
+    display: block;
+}
+
+.form-row {
+    display: grid;
+    justify-content: space-between;
+    gap: 50px;
+    margin-bottom: 20px;
+    margin-left: 50px;
+    grid-template-columns: 1fr 4fr;
+  }
+
+.unavailable-form{
+    display: grid;
+    justify-content: space-between;
+    gap: 50px;
+    margin-bottom: 20px;
+    margin-left: 50px;
+    grid-template-columns: 1fr 1fr;
+}
+
+.unavailable-form .input-box{
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 1em;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+.create-admin, .gym-requests {
+    margin-bottom: 30px;
+    padding: 15px;
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.pagination {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 15px;
+}
+
+.section-body {
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.recommendation-list {
+    list-style-type: none;
+    padding: 0;
+}
+
+.recommendation-item {
+    margin-bottom: 15px;
+    padding: 15px;
+    background-color: #86b8f0;
+    border-radius: 5px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.recommendation-item h4 {
+    margin: 0;
+    font-size: 1.2em;
+}
+
+.recommendation-item p {
+    margin: 5px 0;
+    color: #666;
+}
+
 
 .footer {
     display: flex;

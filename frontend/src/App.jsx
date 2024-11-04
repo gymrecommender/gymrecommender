@@ -1,10 +1,12 @@
 import {BrowserRouter, Routes, Route} from "react-router-dom";
 import Index from "./pages/Index";
-import Account from "./pages/Account.jsx";
+import AccountUser from "./pages/AccountUser.jsx";
 import NotFound from "./pages/NotFound.jsx";
 import History from "./pages/History.jsx";
 import LogIn from "./pages/LogIn.jsx";
 import Main from "./layouts/Main.jsx";
+import AccountGym from "./pages/AccountGym.jsx";
+import AccountAdmin from "./pages/AccountAdmin.jsx";
 
 const App = () => {
 	//#TODO implement permissions for the page for different roles
@@ -14,8 +16,10 @@ const App = () => {
 				<Route path="/" element={<Main/>}>
 					<Route index element={<Index/>}/>
 					<Route path={"account/:username"}>
-						<Route index element={<Account/>}/>
+						<Route index element={<AccountUser/>}/>
 						<Route path={"history"} element={<History/>}/>
+						<Route path={"gym"} element={<AccountGym/>}/>
+						<Route path={"admin"} element={<AccountAdmin/>}/>
 					</Route>
 					<Route path={"*"} element={<NotFound/>}/>
 				</Route>
