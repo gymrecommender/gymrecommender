@@ -9,8 +9,8 @@ BEGIN
 	IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'account_type') THEN
         CREATE TYPE account_type AS ENUM ('user', 'gym', 'admin');
     END IF;
-	IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'own_status') THEN
-        CREATE TYPE own_status AS ENUM ('pending', 'approved', 'rejected');
+	IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'own_decision') THEN
+        CREATE TYPE own_decision AS ENUM ('approved', 'rejected');
     END IF;
 	IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'rec_type') THEN
         CREATE TYPE rec_type AS ENUM ('main', 'alternative');
@@ -50,7 +50,7 @@ CREATE TABLE if not exists account
   email VARCHAR(60) not NULL,
   first_name VARCHAR(60) NOT NULL,
   last_name VARCHAR(60) NOT NULL,
-  created_at TIMESTAMP NOT null check (created_at <= NOW()),
+  created_at TIMESTAMPTZ NOT null check (created_at <= NOW()),
   provider provider_type NOT NULL, --we want to differentiate between google accounts and local accounts
   password_hash CHAR(60) NOT NULL, --we are storing hash of the password that we got from bycrypt
   type account_type NOT NULL, --we want to differentate between user, admin and gym accounts
@@ -101,9 +101,9 @@ CREATE TABLE if not exists gym
   website VARCHAR(255),
   is_wheelchair_accessible BOOL NOT NULL,
   membership_price NUMERIC(5,2) check (membership_price >= 0),
-  created_at TIMESTAMP NOT null check (created_at <= NOW()),
-  price_changed_at TIMESTAMP check (price_changed_at >= changed_at and price_changed_at > created_at),
-  changed_at TIMESTAMP check (changed_at > created_at and changed_at <= NOW()),
+  created_at TIMESTAMPTZ NOT null check (created_at <= NOW()),
+  price_changed_at TIMESTAMPTZ check (price_changed_at >= changed_at and price_changed_at > created_at),
+  changed_at TIMESTAMPTZ check (changed_at > created_at and changed_at <= NOW()),
   internal_rating NUMERIC(4,2) NOT null check (internal_rating between 0 and 5), --local rating by local users
   internal_rating_number INT NOT null check (internal_rating_number >= 0), --number of accounts that contributed to the local rating
   congestion_rating NUMERIC(4,2) NOT null check (congestion_rating between 0 and 5),
@@ -126,9 +126,9 @@ create index if not exists idx_gym_city_id on gym(city_id);
 CREATE TABLE if not exists ownership
 (
   id uuid NOT null DEFAULT uuid_generate_v4(),
-  requested_at TIMESTAMP NOT null check (requested_at <= NOW()), --time at which a gym account requested the ownership
-  responded_at TIMESTAMP check (responded_at > requested_at and responded_at <= NOW()), --time at which an admin made a decision regarding the ownership
-  status own_status NOT NULL, --status of the requested ownership: pending, approved, rejected
+  requested_at TIMESTAMPTZ NOT null check (requested_at <= NOW()), --time at which a gym account requested the ownership
+  responded_at TIMESTAMPTZ check (responded_at > requested_at and responded_at <= NOW()), --time at which an admin made a decision regarding the ownership
+  decision own_decision NOT NULL, --decision on the requested ownership: approved, rejected
   message text, --message the admin might write in order to explain his/her decision
   responded_by uuid, --the admin account that made the decision
   requested_by uuid NOT NULL, --the gym account that made the ownership request
@@ -137,13 +137,13 @@ CREATE TABLE if not exists ownership
   FOREIGN KEY (responded_by) REFERENCES account(id),
   FOREIGN KEY (requested_by) REFERENCES account(id),
   FOREIGN KEY (gym_id) REFERENCES gym(id),
-  UNIQUE (gym_id, requested_by, status)
+  UNIQUE (gym_id, requested_by, decision)
 );
 
 CREATE TABLE if not exists request
 (
   id uuid NOT null DEFAULT uuid_generate_v4(),
-  requested_at TIMESTAMP NOT null check (requested_at <= NOW()), --time of the request
+  requested_at TIMESTAMPTZ NOT null check (requested_at <= NOW()), --time of the request
   origin_latitude FLOAT NOT null check (origin_latitude between -90 and 90), --latitude of the starting location
   origin_longitude FLOAT NOT null check (origin_longitude between -180 and 180),
   time_priority INT NOT null check (time_priority between 0 and 100), --the value of the travelling time slider on the frontend
@@ -198,7 +198,8 @@ create index if not exists idx_recommendation_request_id on recommendation(reque
 
 CREATE TABLE if not exists rating
 (
-  created_at TIMESTAMP NOT null check (created_at <= NOW()),
+  created_at TIMESTAMPTZ NOT null check (created_at <= NOW()),
+  changed_at TIMESTAMPTZ NOT null check (changed_at > created_at and changed_at <= NOW()),
   rating INT NOT null check (rating between 0 and 5),
   user_id uuid NOT NULL,
   gym_id uuid NOT NULL,
@@ -210,8 +211,8 @@ create index if not exists idx_rating_gym_id on rating(gym_id);
 
 CREATE TABLE if not exists congestion_rating
 (
-  created_at TIMESTAMP NOT null check (created_at <= NOW()),
-  changed_at TIMESTAMP NOT null check (changed_at > created_at and changed_at <= NOW()),
+  created_at TIMESTAMPTZ NOT null check (created_at <= NOW()),
+  changed_at TIMESTAMPTZ NOT null check (changed_at > created_at and changed_at <= NOW()),
   visit_time TIME NOT NULL, --time of the account's owner visit
   weekday INT NOT null check (weekday between 0 and 6),
   avg_waiting_time INT NOT null check (avg_waiting_time between 1 and 5),
@@ -227,7 +228,7 @@ create index if not exists idx_congestion_rating_gym_id on congestion_rating(gym
 CREATE TABLE if not exists gym_working_hours
 (
   weekday INT NOT null check (weekday between 0 and 6),
-  changed_at TIMESTAMP check (changed_at <= NOW()),
+  changed_at TIMESTAMPTZ check (changed_at <= NOW()),
   gym_id uuid NOT NULL,
   working_hours_id uuid NOT NULL,
   PRIMARY KEY (weekday, gym_id, working_hours_id),
@@ -238,7 +239,7 @@ create index if not exists idx_gym_working_hours_gym_id on gym_working_hours(gym
 
 CREATE TABLE if not exists bookmark
 (
-  created_at TIMESTAMP NOT null check(created_at <= NOW()),
+  created_at TIMESTAMPTZ NOT null check(created_at <= NOW()),
   user_id uuid NOT NULL,
   gym_id uuid NOT NULL,
   PRIMARY KEY (user_id, gym_id),
@@ -251,8 +252,8 @@ CREATE TABLE if not exists notification
   id uuid NOT null DEFAULT uuid_generate_v4(),
   type not_type NOT NULL,--more of an expansion for the potential future elaboration. for now we need just the 'message' type
   message TEXT NOT NULL,
-  created_at TIMESTAMP NOT null check (created_at <= NOW()),
-  read_at DATE check (read_at > created_at and read_at <= NOW()), --time at which the user read/opened the notification
+  created_at TIMESTAMPTZ NOT null check (created_at <= NOW()),
+  read_at TIMESTAMPTZ check (read_at > created_at and read_at <= NOW()), --time at which the user read/opened the notification
   user_id uuid NOT NULL,
   PRIMARY KEY (id),
   FOREIGN KEY (user_id) REFERENCES account(id)
@@ -262,10 +263,10 @@ create index if not exists idx_notification_user_id on notification(user_id);
 --gyms can mark unavailability of the gyms for a certain time period
 CREATE table if not exists availability
 (
-  created_at TIMESTAMP NOT null check (created_at <= NOW()),
-  start_time TIMESTAMP NOT NULL,
-  end_time timestamp check (end_time > start_time and end_time > NOW()),
-  changed_at TIMESTAMP check (changed_at > created_at and changed_at <= NOW()),
+  created_at TIMESTAMPTZ NOT null check (created_at <= NOW()),
+  start_time TIMESTAMPTZ NOT NULL,
+  end_time TIMESTAMPTZ check (end_time > start_time and end_time > NOW()),
+  changed_at TIMESTAMPTZ check (changed_at > created_at and changed_at <= NOW()),
   gym_id uuid NOT NULL,
   marked_by uuid NOT NULL,
   PRIMARY KEY (gym_id, marked_by),
@@ -401,6 +402,7 @@ BEGIN
   END IF;
 
 END $$;
+
 
 
 
