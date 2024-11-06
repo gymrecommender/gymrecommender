@@ -15,10 +15,10 @@ const MapSection = () => {
 		//#TODO call the function that will retrieve current location
 	}
 	return (
-		<>
+		<div className={"main"}>
 			<LocationControls onSubmitSearch={handleSubmitSearch} onGetLocation={handleGetLocation}/>
 			<Map coordinates={{lon, lat}}/>
-		</>
+		</div>
 	);
 };
 
