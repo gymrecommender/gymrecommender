@@ -1,4 +1,4 @@
-import BodyAdmin from '../components/simple/BodyAdmin';
+import BodyAdmin from '../components/BodyAdmin.jsx';
 
 const AccountAdmin = () => {
     return (

@@ -15,6 +15,7 @@ const App = () => {
 			<Routes>
 				<Route path="/" element={<Main/>}>
 					<Route index element={<Index/>}/>
+					{/*TODO make the route the same for all the components + add conditional rendering of Account pages*/}
 					<Route path={"account/:username"}>
 						<Route index element={<AccountUser/>}/>
 						<Route path={"history"} element={<History/>}/>

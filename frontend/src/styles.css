@@ -16,7 +16,9 @@ body {
     gap: 10px;
     background-color: #003366;
     box-sizing: border-box;
-    margin: 0;
+
+    width: 90%;
+    margin: auto;
 }
 
 .container .header {
@@ -38,7 +40,7 @@ body {
     "sliders map map";
 }
 
-.container .content.content-history {
+.container .content.content-single-column {
     display: grid;
     grid-template-columns: 100%;
     grid-template-areas: "section-body";
@@ -245,6 +247,7 @@ button[type="submit"].button-submit {
     border-radius: 5px;
     cursor: pointer;
     transition: background-color 0.3s;
+    width: 100%;
 }
 
 button[type="submit"].button-submit:hover {
@@ -332,7 +335,6 @@ input[type="range"]::-moz-range-thumb {
     cursor: pointer;
     font-size: 0.9em;
     transition: background-color 0.3s;
-    margin-top: 20px;
 }
 
 .location-controls button:hover {
@@ -379,7 +381,7 @@ input[type="range"]::-moz-range-thumb {
 }
 
 
-/*History, Gym and Admin body*/
+/*History, GymEdit and Admin body*/
 .section-body {
     grid-area: section-body;
     align-items: flex-start;
@@ -442,47 +444,14 @@ input[type="range"]::-moz-range-thumb {
 }
 
 
-
-/*AccountGym accordion style*/
-.accordion {
-    margin-top: 20px;
-}
-
-.accordion-item {
-    background-color: #cad1d8;
-    border: 1px solid #4f8cff;
-    border-radius: 5px;
-    margin-bottom: 10px;
-    padding: 10px;
-    color: #b0c4de;
-    margin-left: 20px;
-}
-
-.accordion-button {
-    background-color: #4f8cff;
-    color: white;
-    border: none;
-    width: 100%;
-    text-align: left;
-    padding: 10px;
-    cursor: pointer;
-    border-radius: 5px;
-    font-size: 1.1em;
-}
-
 .accordion-content {
-    display: none;
     padding: 15px;
     background-color: #003366;
     color: #b0c4de;
 }
 
-.accordion-button:focus + .accordion-content,
-.accordion-button:hover + .accordion-content {
-    display: block;
-}
 
-.section-request, .section-managed-gyms, .section-unavailable{
+.section-request, .section-unavailable{
     background-color:rgb(185, 183, 193);
     margin: 10px;
 }
@@ -544,7 +513,7 @@ input[type="range"]::-moz-range-thumb {
     align-items: center;
     justify-content: center;
     text-align: center;
-    background-color: #003366;
+    background-color: #032c54;
     color: rgb(187, 185, 185);
     flex-direction: column;
     grid-area: footer;

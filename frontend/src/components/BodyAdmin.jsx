@@ -1,6 +1,6 @@
 import React from 'react';
-import Input from './Input.jsx';
-import Button from './Button.jsx';
+import Input from './simple/Input.jsx';
+import Button from './simple/Button.jsx';
 
 const BodyAdmin = () => {
     return (

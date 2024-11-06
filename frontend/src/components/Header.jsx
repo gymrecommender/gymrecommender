@@ -42,7 +42,7 @@ const Header = ({username}) => {
 	return (
 		<header className={"header"}>
 			<div className="logo">
-				<img src={logo} onClick={() => navigationHandler("/")} alt="Gym Finder Logo"/>
+				<img src={logo} onClick={() => navigationHandler("/")} alt="GymEdit Finder Logo"/>
 			</div>
 			<div className="title">
 				GYM FINDER

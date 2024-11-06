@@ -1,5 +1,5 @@
 import LocationControls from "./LocationControls.jsx";
-import Map from "./Map.jsx";
+import Map from "./simple/Map.jsx";
 import {useState} from "react";
 
 const MapSection = () => {

@@ -1,5 +1,5 @@
-import RequestBuilder from '../components/simple/RequestBuilder.jsx';
-import MapSection from '../components/simple/MapSection';
+import RequestBuilder from '../components/RequestBuilder.jsx';
+import MapSection from '../components/MapSection.jsx';
 
 const Index = () => {
 	return (

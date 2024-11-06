@@ -1,4 +1,4 @@
-import BodyGym from '../components/simple/BodyGym';
+import BodyGym from '../components/BodyGym.jsx';
 
 const AccountGym = () => {
     return (

@@ -1,4 +1,4 @@
-import BodyHistory from '../components/simple/BodyHistory.jsx';
+import BodyHistory from '../components/BodyHistory.jsx';
 
 const History = () => {
 	return (

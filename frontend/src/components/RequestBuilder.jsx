@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
-import Slider from "./Slider.jsx";
-import Button from "./Button.jsx";
-import Input from "./Input.jsx";
+import Slider from "./simple/Slider.jsx";
+import Button from "./simple/Button.jsx";
+import Input from "./simple/Input.jsx";
 
 const RequestBuilder = () => {
 	const [formValue, setFormValue] = useState({

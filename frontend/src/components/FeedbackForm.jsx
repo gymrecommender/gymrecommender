@@ -1,8 +1,8 @@
 import React, {useState} from 'react';
-import Select from "./Select.jsx";
-import Button from "./Button.jsx";
-import Input from "./Input.jsx";
-import Slider from "./Slider.jsx";
+import Select from "./simple/Select.jsx";
+import Button from "./simple/Button.jsx";
+import Input from "./simple/Input.jsx";
+import Slider from "./simple/Slider.jsx";
 
 const FeedbackForm = () => {
 	const [formValue, setFormValue] = useState({

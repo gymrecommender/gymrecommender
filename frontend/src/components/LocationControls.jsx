@@ -1,5 +1,5 @@
-import Input from "./Input.jsx";
-import Button from "./Button.jsx";
+import Input from "./simple/Input.jsx";
+import Button from "./simple/Button.jsx";
 import {useState} from "react";
 
 const LocationControls = ({onGetLocation, onSubmitSearch}) => {

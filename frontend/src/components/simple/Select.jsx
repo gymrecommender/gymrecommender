@@ -8,7 +8,7 @@ const Select = ({className, id, data, label, value, name, onChange}) => {
 	})
 	return (
 		<div className={"selector"}>
-			<label>{label}</label>
+			{label ? (<label>{label}</label>) : ''}
 			<select
 				value={value ?? ""}
 				name={name}

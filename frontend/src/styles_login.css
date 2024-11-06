@@ -72,3 +72,7 @@ button.button-login {
     transition: background-color 0.3s;
 }
 
+button[type="submit"].button-login:hover {
+    background-color: #ffd54f;
+}
+
