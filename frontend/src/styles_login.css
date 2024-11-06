@@ -4,24 +4,16 @@
     box-sizing: border-box;
 }
 
-html, body {
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: #003366; /* Dark blue background */
-    font-family: Arial, sans-serif;
-}
-
 .container-login {
     display: flex;
     align-items: center;
     justify-content: center;
     width: 100%;
+    height: 100vh;
 }
 
 .form-login {
-    background-color: #032c54; /* Slightly lighter blue for the form */
+    background-color: #091057; /* Slightly lighter blue for the form */
     padding: 20px;
     border-radius: 10px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
@@ -66,7 +58,7 @@ button.button-login {
     border: none;
     border-radius: 5px;
     background-color: #4f8cff; /* Bright blue for button */
-    color: white;
+    color: #FFF4B7;
     font-size: 1.2em;
     cursor: pointer;
     transition: background-color 0.3s;

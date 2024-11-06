@@ -38,6 +38,7 @@
     border: none;
 }
 .gym-data-header button.button-icon:hover {
+    color: #ebcd25;
     cursor: pointer;
 }
 
@@ -91,7 +92,7 @@
 
 .gym-data table {
     width: 100%;
-    color: #c9bc92;
+    color: #00BFFF;
     font-size: 1.1rem;
 }
 .gym-data .gym-data-title {

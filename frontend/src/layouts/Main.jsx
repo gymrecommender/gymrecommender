@@ -5,9 +5,8 @@ import Footer from "../components/Footer.jsx";
 const Main = () => {
     const location = useLocation();
     const params = useParams()
-    
-    // Determine if the path is for history or AccountGym to apply specific CSS classes
-    const match = params.username && location.pathname !== '/';
+
+    const match = params.username && location.pathname !== `/account/${params.username}`;
 
     return (
         <div className="container">

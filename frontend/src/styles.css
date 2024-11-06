@@ -4,7 +4,9 @@
     box-sizing: border-box;
 }
 
-body {
+html, body {
+    height: 100%;
+    background-color: #024CAA;
     font-family: Arial, sans-serif;
 }
 
@@ -13,23 +15,12 @@ body {
     display: flex;
     flex-direction: column;
     height: 100vh;
-    gap: 10px;
-    background-color: #003366;
+    background-color: inherit;
     box-sizing: border-box;
 
     width: 90%;
     margin: auto;
-}
-
-.container .header {
-    display: grid;
-    grid-column: 1 / -1;
-    grid-template-rows: auto auto auto;
-    grid-template-columns: 25% 50% 25%;
-    grid-template-areas:
-      "logo title authentication"
-      "logo nav-links authentication"
-      "section-info section-info section-info"
+    border-collapse: collapse;
 }
 
 .container .content {
@@ -38,6 +29,9 @@ body {
     grid-template-areas:
     "sliders location-controls location-controls"
     "sliders map map";
+
+    background-color: #091057;
+    padding: 20px;
 }
 
 .container .content.content-single-column {
@@ -58,96 +52,10 @@ body {
     grid-template-areas: "section-body";
 }
 
-/*Header style*/
-.logo {
-    grid-area: logo;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 10px;
-    border: solid #001f3f;
-    border-radius: 10px;
-}
-
-.logo img {
-    width: 220px;
-    height: auto;
-}
-
-header .title {
-    grid-area: title;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 3em;
-    font-weight: bold;
-    color: #4f8cff;
-    background-color: #032c54;
-    text-transform: uppercase;
-}
-
-nav.nav-links {
-    grid-area: nav-links;
-    display: flex;
-    justify-content: center;
-    gap: 70px;
-    border: solid #003366;
-    border-radius: 10px;
-    padding: 40px 10px 10px;
-}
-
-.logo img:hover, .nav-links a:hover {
-    cursor: pointer;
-    color: #ebcd25;
-}
-
-nav.nav-links .nav-links-item {
-    color: #4f8cff;
-    font-weight: bold;
-    font-size: 2em;
-    transition: color 0.3s;
-    text-decoration: underline;
-    text-transform: capitalize;
-}
-
-nav.nav-links .nav-links-item:hover {
-    color: rgb(124, 176, 225);
-}
-
-.authentication {
-    grid-area: authentication;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border: solid #001f3f;
-    border-radius: 10px;
-    padding: 10px;
-    box-sizing: border-box;
-}
-
-.authentication button.auth-button {
-    background-color: #4f8cff;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    font-size: 2em;
-    font-weight: bold;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s;
-    height: 60%;
-    width: 80%;
-}
-
-.authentication button.auth-button:hover {
-    background-color: #ebcd25;
-}
-
-
 /*Info section style*/
 .section {
     display: flex;
-    background-color: #032c54;
+    background-color: #091057;
     padding: 20px;
     border-radius: 5px;
 }
@@ -235,7 +143,7 @@ nav.nav-links .nav-links-item:hover {
 .sliders form select:focus,
 .sliders form input[type="text"]:focus,
 .sliders form input[type="number"]:focus {
-    border-color: #003366;
+    border-color: #024CAA;
 }
 
 /*styles for all buttons*/
@@ -297,7 +205,7 @@ input[type="range"]::-moz-range-thumb {
 
 .time input[type="time"] {
     background-color: #ebcd25;
-    border: 1px solid #003366;
+    border: 1px solid #024CAA;
     color: #333;
     padding: 8px;
     border-radius: 5px;
@@ -329,7 +237,7 @@ input[type="range"]::-moz-range-thumb {
 .location-controls button {
     padding: 12px 20px;
     background-color: #4f8cff;
-    color: white;
+    color: #FFF4B7;
     border: none;
     border-radius: 5px;
     cursor: pointer;
@@ -386,10 +294,6 @@ input[type="range"]::-moz-range-thumb {
     grid-area: section-body;
     align-items: flex-start;
     text-align: left;
-    padding: 20px;
-    background-color: #032c54;
-    border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
 .section-body h2 {
@@ -446,7 +350,7 @@ input[type="range"]::-moz-range-thumb {
 
 .accordion-content {
     padding: 15px;
-    background-color: #003366;
+    background-color: #024CAA;
     color: #b0c4de;
 }
 
@@ -513,15 +417,15 @@ input[type="range"]::-moz-range-thumb {
     align-items: center;
     justify-content: center;
     text-align: center;
-    background-color: #032c54;
+    background-color: #091057;
     color: rgb(187, 185, 185);
     flex-direction: column;
     grid-area: footer;
-    padding: 10px;
-    margin-top: 0;
+    padding: 30px 10px;
+    margin-top: 10px;
 }
 
 .footer-note {
     font-size: 0.8em;
-    color: #b0c4de;
+    color: white;
 }
