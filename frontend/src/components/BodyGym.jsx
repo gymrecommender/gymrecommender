@@ -1,11 +1,11 @@
 import React, {useState, useEffect, createContext} from 'react';
-import "../gyms.css";
+import "../styles/gyms.css";
 import Input from './simple/Input.jsx';
 import Button from './simple/Button.jsx';
 import LocationControls from './LocationControls.jsx';
 import Map from './simple/Map.jsx';
 import GymsList from "./gym/GymsList.jsx";
-import "../modal.css";
+import "../styles/modal.css";
 
 const BodyGym = () => {
 	const [gyms, setGyms] = useState([]);

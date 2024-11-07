@@ -1,4 +1,4 @@
-import "../header.css"
+import "../styles/header.css"
 import Button from "./simple/Button.jsx";
 import InfoSection from "./InfoSection.jsx";
 import {useNavigate, useLocation} from "react-router-dom";

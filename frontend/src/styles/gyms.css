@@ -13,6 +13,11 @@
     background-color: #540032;
 
     width: 540px;
+    min-height: 540px;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
 }
 .section-mg-hd {
     display: grid;
@@ -46,10 +51,11 @@
 
 .gym-data-header {
     display: flex;
+    column-gap: 20px;
     justify-content: end;
 }
 .gym-data-header.left {
-    justify-content: start;
+    justify-content: space-between;
 }
 
 .gym-data .input-field, .gym-data select, .gym-whs-wd {
@@ -193,4 +199,26 @@
 .gym-own td.gym-own-req-item:last-child  {
     border: none;
     background-color: #540032;
+}
+
+.gym-marked {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    gap: 15px;
+}
+
+.gym-marked .gym-marked-title {
+    text-align: center;
+    font-weight: bold;
+    color: white;
+    font-size: 1.3em;
+    text-transform: uppercase;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    flex-basis: 22%;
 }
