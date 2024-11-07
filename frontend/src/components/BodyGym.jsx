@@ -10,7 +10,6 @@ import "../modal.css";
 const BodyGym = () => {
 	const [gyms, setGyms] = useState([]);
 	const [currencies, setCurrencies] = useState([]);
-	const [isModalOpen, setIsModalOpen] = useState(true);
 
 	useEffect(() => {
 		//TODO logic to retrieve gyms
@@ -248,7 +247,6 @@ const BodyGym = () => {
 	return (
 		<div className="section-body">
 			<GymsList data={gyms} currencies={currencies}/>
-			{/*<h2>Manage Your GymEdit Account: </h2>*/}
 
 			{/*/!* Request to Own a GymEdit Form *!/*/}
 			{/*<div className="section section-request">*/}

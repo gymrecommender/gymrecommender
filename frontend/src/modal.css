@@ -49,6 +49,8 @@
     background-color: inherit;
     -ms-overflow-style: none;
     scrollbar-width: none;
+
+    height: 100%;
 }
 
 .modal-content .modal-body::-webkit-scrollbar {

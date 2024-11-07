@@ -150,3 +150,47 @@
     display: flex;
     justify-content: space-between;
 }
+
+.gym-own {
+    background-color: #540032;
+    height: 100%;
+    padding: 20px;
+
+    color: white;
+}
+
+.gym-own table {
+    width: 80vw;
+    border-collapse: collapse;
+
+    table-layout: auto;
+}
+
+.gym-own td.gym-own-req-item, .gym-own th.gym-own-hd-item {
+    border: 1px solid #540032;
+    padding: 5px 10px;
+
+    color: #540032;
+    font-size: 1.3em;
+    font-weight: bold;
+    text-align: center;
+}
+.gym-own td.gym-own-req-item.left {
+    text-align: left;
+}
+
+.gym-own th.gym-own-hd-item {
+    text-align: center;
+    text-transform: uppercase;
+    background-color: #A6AEBF;
+}
+.gym-own tr.gym-own-req:nth-child(odd) {
+    background-color: #C5D3E8;
+}
+.gym-own tr.gym-own-req:nth-child(even) {
+    background-color: white;
+}
+.gym-own td.gym-own-req-item:last-child  {
+    border: none;
+    background-color: #540032;
+}
