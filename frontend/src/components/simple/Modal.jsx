@@ -8,8 +8,8 @@ const Modal = ({children, onClick, headerText}) => {
 			<div className={"modal"}>
 				<div className={"modal-header"}>
 					<span className={"modal-title"}>{headerText}</span>
-					<Button className={"button-icon"} type={"button"} onClick={onClick}>
-						<FontAwesomeIcon className={"icon"} icon={faClose} size="2x"/>
+					<Button className={"btn-icon"} type={"button"} onClick={onClick}>
+						<FontAwesomeIcon className={"icon"} icon={faClose} size="lg"/>
 					</Button>
 				</div>
 				<div className={"modal-body"}>

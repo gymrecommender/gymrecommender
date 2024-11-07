@@ -9,7 +9,8 @@ import {
 	faRightToBracket,
 	faCircleUser,
 	faHome,
-	faClockRotateLeft
+	faClockRotateLeft,
+	faBell
 } from "@fortawesome/free-solid-svg-icons";
 
 const Header = ({username}) => {
@@ -30,20 +31,26 @@ const Header = ({username}) => {
 	//#TODO the condition should be different once we implement logging in (the one that can't be changed through React Dev panel or in any other way)
 	const authButton = username ? (
 			<>
-				<Button type={"button"}
-				        className={"panel-button"}
+				<Button type={"btn"}
+				        className={"btn-panel btn-icon"}
 				        onClick={() => navigationHandler(`/account/${username}`)} //#TODO this should be substituted with respective logic
 				>
 					<FontAwesomeIcon className={"icon"} size={"lg"} icon={faCircleUser}/>
 				</Button>
+				<Button type={"btn"}
+				        className={"btn-panel btn-icon"}
+				        onClick={() => alert("Notifications")} //#TODO this should be substituted with respective logic
+				>
+					<FontAwesomeIcon className={"icon"} size={"lg"} icon={faBell}/>
+				</Button>
 				<Button type={"button"}
-				        className={"panel-button"}
+				        className={"btn-panel btn-icon"}
 				        onClick={() => navigationHandler(`/account/${username}/history`)} //#TODO this should be substituted with respective logic
 				>
 					<FontAwesomeIcon className={"icon"} size={"lg"} icon={faClockRotateLeft}/>
 				</Button>
 				<Button type={"button"}
-				        className={"panel-button button-logout"}
+				        className={"btn-panel btn-icon btn-logout"}
 				        onClick={() => alert('Logged out')} //#TODO this should be substituted with respective logic
 				>
 					<FontAwesomeIcon className={"icon"} size={"lg"} icon={faRightFromBracket}/>
@@ -51,7 +58,7 @@ const Header = ({username}) => {
 			</>
 		) :
 		<Button type={"button"}
-		        className={"panel-button"}
+		        className={"btn-panel btn-icon"}
 		        onClick={() => navigationHandler("/login")}
 		><FontAwesomeIcon className={"icon"} size={"lg"} icon={faRightToBracket}/></Button>
 
@@ -60,7 +67,7 @@ const Header = ({username}) => {
 			<div className={"header-top"}>
 				<div className="home">
 					<Button type={"button"}
-					        className={"panel-button"}
+					        className={"btn-panel btn-icon"}
 					        onClick={() => navigationHandler(`/`)}
 					>
 						<FontAwesomeIcon className={"icon"} size={"lg"} icon={faHome}/>

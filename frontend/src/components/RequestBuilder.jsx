@@ -57,7 +57,7 @@ const RequestBuilder = () => {
 				<Slider type={"range"} label={"Min congestion rating"} name="cRating" min={1} max={5} step={0.5}
 				        value={formValue["cRating"]} onChange={handleChange}/>
 
-				<Button type={"submit"} className={"button-submit"} onSubmit={handleSubmit}>Apply</Button>
+				<Button type={"submit"} className={"btn-submit"} onSubmit={handleSubmit}>Apply</Button>
 			</form>
 		</aside>
 	);

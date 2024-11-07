@@ -53,7 +53,7 @@ const LoginForm = () => {
                        className={"input-login"}
                        onChange={handleChange}/>
 
-                <Button className={"button-login"} type={"submit"} onSubmit={handleSubmit}>Log in</Button>
+                <Button className={"btn-login"} type={"submit"} onSubmit={handleSubmit}>Log in</Button>
             </form>
         </div>
     );

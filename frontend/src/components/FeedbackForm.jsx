@@ -77,7 +77,7 @@ const FeedbackForm = () => {
 					onChange={handleSelectChange}
 				/>
 
-				<Button className={"button-submit"} type={"submit"} onClick={handleSubmit}>Apply</Button>
+				<Button className={"btn-submit"} type={"submit"} onClick={handleSubmit}>Apply</Button>
 			</form>
 		</aside>
 	);

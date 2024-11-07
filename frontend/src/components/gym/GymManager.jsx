@@ -13,11 +13,11 @@ const GymManager = ({weekdays, currencies, data}) => {
 		<>
 			<div className={"gym-data"}>
 				<div className={`gym-data-header`}>
-					<Button className={"button-icon"} type={"button"} onClick={() => {
+					<Button className={"btn-icon"} type={"btn"} onClick={() => {
 						setIsEdit(!isEdit)
 						document.body.style.overflowY = 'hidden';
 					}}>
-						<FontAwesomeIcon className={"icon"} size={"2x"} icon={faPenToSquare}/>
+						<FontAwesomeIcon className={"icon"} size={"lg"} icon={faPenToSquare}/>
 					</Button>
 				</div>
 				<Gym weekdays={weekdays} currencies={currencies} data={data}/>

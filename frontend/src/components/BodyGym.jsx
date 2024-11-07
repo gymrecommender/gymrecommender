@@ -269,7 +269,7 @@ const BodyGym = () => {
 			{/*              <label htmlFor="gym-location">GymEdit Location:</label>*/}
 			{/*              <LocationControls onGetLocation={handleGetLocation} onSubmitSearch={handleSubmitSearch} />*/}
 			{/*              <Map coordinates={{ lon, lat }} />*/}
-			{/*              <Button type="submit" className="button-submit">Submit Request</Button>*/}
+			{/*              <Button type="submit" className="btn-submit">Submit Request</Button>*/}
 			{/*          </div>*/}
 			{/*      </div>*/}
 			{/*      */}
@@ -278,10 +278,10 @@ const BodyGym = () => {
 			{/*</div>*/}
 
 			{/*/!* List of Managed Gyms *!/*/}
-			{/*<div className="section section-managed-gyms">*/}
+			{/*<div className="section section-mg">*/}
 			{/*  <h3>List of Managed Gyms:</h3>*/}
 			{/*  <div className="accordion-item">*/}
-			{/*    <button className="accordion-button">GymEdit 1</button>*/}
+			{/*    <button className="accordion-btn">GymEdit 1</button>*/}
 			{/*    <div className="accordion-content">*/}
 			{/*      <p>Details about GymEdit 1...</p>*/}
 			{/*      <form className="update-form">*/}
@@ -292,19 +292,19 @@ const BodyGym = () => {
 			{/*          placeholder="Update details"*/}
 			{/*          className="input-box"*/}
 			{/*        />*/}
-			{/*        <Button type="submit" className="button-submit">Update</Button>*/}
+			{/*        <Button type="submit" className="btn-submit">Update</Button>*/}
 			{/*      </form>*/}
 			{/*    </div>*/}
 			{/*  </div>*/}
 
 			{/*  <div className="accordion-item">*/}
-			{/*    <button className="accordion-button">GymEdit 2</button>*/}
+			{/*    <button className="accordion-btn">GymEdit 2</button>*/}
 			{/*    <div className="accordion-content">*/}
 			{/*      <p>Details about GymEdit 2...</p>*/}
 			{/*      <form>*/}
 			{/*        <label htmlFor="update-info-2">Update GymEdit Information:</label>*/}
 			{/*        <input type="text" id="update-info-2" name="update-info-2" placeholder="Update details" />*/}
-			{/*        <button type="submit" className="button-submit">Update</button>*/}
+			{/*        <button type="submit" className="btn-submit">Update</button>*/}
 			{/*      </form>*/}
 			{/*    </div>*/}
 			{/*  </div>*/}
@@ -328,7 +328,7 @@ const BodyGym = () => {
 			{/*      <Input type="time" id="unavailable-to" name="unavailable-to" className="input-box" required />*/}
 			{/*    </div>*/}
 
-			{/*    <Button type="submit" className="button-submit">Mark as Unavailable</Button>*/}
+			{/*    <Button type="submit" className="btn-submit">Mark as Unavailable</Button>*/}
 			{/*  </form>*/}
 			{/*</div>*/}
 

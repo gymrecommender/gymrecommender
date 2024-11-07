@@ -28,7 +28,7 @@ const BodyAdmin = () => {
                             required
                         />
                     </div>
-                    <Button type="submit" className="button-submit">Create Admin</Button>
+                    <Button type="submit" className="btn-submit">Create Admin</Button>
                 </form>
             </section>
             <section className="gym-requests">

@@ -157,7 +157,7 @@ body::-webkit-scrollbar {
 }
 
 /*styles for all buttons*/
-button[type="submit"].button-submit {
+button[type="submit"].btn-submit {
     background-color: #4f8cff;
     color: #fff;
     border: none;
@@ -168,7 +168,7 @@ button[type="submit"].button-submit {
     width: 100%;
 }
 
-button[type="submit"].button-submit:hover {
+button[type="submit"].btn-submit:hover {
     background-color: #ffd54f;
 }
 
@@ -424,18 +424,42 @@ input[type="range"]::-moz-range-thumb {
 label.input-field-label {
     color: black;
 }
-button.button-icon {
+button.btn-icon {
     border: none;
     background-color: inherit;
+
+    color: white;
+    font-size: 1.4em;
+    text-transform: uppercase;
+    font-weight: bold;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
 }
 
-button.button-icon .icon {
+button.btn-icon .icon {
+    color: inherit;
     background-color: inherit;
 }
 
-button.button-icon .icon:hover {
+button.btn-icon .icon:not(:first-child) {
+    margin-left: 10px;
+}
+button.btn-icon .icon:not(:last-child) {
+    margin-right: 10px;
+}
+
+button.btn-icon:hover {
+    border-color: #ebcd25;
     color: #ebcd25;
     cursor: pointer;
+}
+
+button.btn-action {
+    border: 4px solid white;
+    padding: 5px;
+    border-radius: 15px;
 }
 
 

@@ -49,19 +49,12 @@ header .title {
     margin-left: 10px;
 }
 
-.authentication button.panel-button, .home button.panel-button {
-    background-color: inherit;
-    color: white;
-    border: none;
+button.btn-panel {
     padding: 10px 20px;
     font-size: 2em;
-    font-weight: bold;
     border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s;
-    width: fit-content;
 }
 
-.authentication button.panel-button:hover, .home button.panel-button:hover {
+button.btn-panel:hover {
     color: #ebcd25;
 }

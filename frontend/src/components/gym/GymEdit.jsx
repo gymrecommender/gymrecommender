@@ -100,7 +100,7 @@ const GymEdit = ({data, currencies, weekdays}) => {
 					})
 				}
 			</div>
-			<Button className={"button-submit gym-edit-save"} type={"submit"} onSubmit={handleSubmit}>Save</Button>
+			<Button className={"btn-submit gym-edit-save"} type={"submit"} onSubmit={handleSubmit}>Save</Button>
 		</form>
 	)
 }

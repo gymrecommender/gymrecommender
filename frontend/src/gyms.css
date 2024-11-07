@@ -1,11 +1,11 @@
-.section-managed-gyms-list {
+.section-mg-list {
     display: flex;
     justify-content: space-evenly;
     flex-wrap: wrap;
     column-gap: 40px;
     row-gap: 20px;
 }
-.section-managed-gyms-list .gym-data {
+.section-mg-list .gym-data {
     margin-top: 20px;
     padding: 20px 40px;
     border: 3px solid #ccc;
@@ -14,16 +14,34 @@
 
     width: 540px;
 }
-.section-managed-gyms-title {
+.section-mg-hd {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    width: 100%;
+}
+
+.section-mg-hd-title {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    color: white;
+    font-weight: bold;
+    font-size: 1.9em;
     text-transform: uppercase;
     text-decoration: none !important;
+
+    text-align: center;
+    grid-column: 2;
 }
-.section-managed-gyms-list .icon {
-    color: white;
-    background-color: #540032;
-}
-.section-managed-gyms-list .icon:hover {
-    color: #ccc;
+
+.section-mg-hd-btns {
+    grid-column: 3;
+
+    display: flex;
+    justify-content: end;
+    column-gap: 10px;
+    margin: 0 15px;
 }
 
 .gym-data-header {
