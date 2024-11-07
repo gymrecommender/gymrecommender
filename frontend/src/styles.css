@@ -8,6 +8,12 @@ html, body {
     height: 100%;
     background-color: #024CAA;
     font-family: Arial, sans-serif;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+body::-webkit-scrollbar {
+    display: none;
 }
 
 /*Layout*/
@@ -417,6 +423,19 @@ input[type="range"]::-moz-range-thumb {
 
 label.input-field-label {
     color: black;
+}
+button.button-icon {
+    border: none;
+    background-color: inherit;
+}
+
+button.button-icon .icon {
+    background-color: inherit;
+}
+
+button.button-icon .icon:hover {
+    color: #ebcd25;
+    cursor: pointer;
 }
 
 

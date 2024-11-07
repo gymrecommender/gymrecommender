@@ -33,7 +33,7 @@ const GymEdit = ({data, currencies, weekdays}) => {
 			<Input
 				label={'name'}
 				type={"text"}
-				name={"text"}
+				name={"name"}
 				value={formFields.name}
 				onChange={handleChange}
 			/>

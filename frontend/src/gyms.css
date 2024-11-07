@@ -2,7 +2,6 @@
     display: flex;
     justify-content: space-evenly;
     flex-wrap: wrap;
-    align-items: flex-start;
     column-gap: 40px;
     row-gap: 20px;
 }
@@ -34,13 +33,6 @@
 .gym-data-header.left {
     justify-content: start;
 }
-.gym-data-header button.button-icon {
-    border: none;
-}
-.gym-data-header button.button-icon:hover {
-    color: #ebcd25;
-    cursor: pointer;
-}
 
 .gym-data .input-field, .gym-data select, .gym-whs-wd {
     margin: 10px 0;
@@ -65,6 +57,11 @@
     padding: 10px;
     border-radius: 5px;
     background-color: white;
+}
+.modal .gym-data {
+    border: none;
+    margin: 0;
+    border-radius: unset;
 }
 .gym-whs-wd {
     display: grid;

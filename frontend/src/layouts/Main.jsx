@@ -6,8 +6,7 @@ const Main = () => {
     const location = useLocation();
     const params = useParams()
 
-    const match = params.username && location.pathname !== `/account/${params.username}`;
-
+    const match = params.username && location.pathname !== `/account/${params.username}/`;
     return (
         <div className="container">
             <Header username={params.username} />

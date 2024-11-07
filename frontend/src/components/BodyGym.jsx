@@ -1,14 +1,16 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, createContext} from 'react';
 import "../gyms.css";
 import Input from './simple/Input.jsx';
 import Button from './simple/Button.jsx';
 import LocationControls from './LocationControls.jsx';
 import Map from './simple/Map.jsx';
 import GymsList from "./gym/GymsList.jsx";
+import "../modal.css";
 
 const BodyGym = () => {
 	const [gyms, setGyms] = useState([]);
 	const [currencies, setCurrencies] = useState([]);
+	const [isModalOpen, setIsModalOpen] = useState(true);
 
 	useEffect(() => {
 		//TODO logic to retrieve gyms
@@ -27,7 +29,7 @@ const BodyGym = () => {
 		]);
 		setGyms([
 			{
-				id:"uuid1",
+				id: "uuid1",
 				name: "Maplewood gym",
 				latitude: 39.7817,
 				longitude: -89.6501,
@@ -66,7 +68,7 @@ const BodyGym = () => {
 				]
 			},
 			{
-				id:"uuid2",
+				id: "uuid2",
 				name: "Riverside Fitness Center",
 				latitude: 34.0522,
 				longitude: -118.2437,
@@ -110,7 +112,7 @@ const BodyGym = () => {
 				]
 			},
 			{
-				id:"uuid3",
+				id: "uuid3",
 				name: "Summit Wellness Center",
 				latitude: 40.7128,
 				longitude: -74.0060,
@@ -154,7 +156,7 @@ const BodyGym = () => {
 				]
 			},
 			{
-				id:"uuid4",
+				id: "uuid4",
 				name: "Maplewood gym",
 				latitude: 39.7817,
 				longitude: -89.6501,
@@ -193,7 +195,7 @@ const BodyGym = () => {
 				]
 			},
 			{
-				id:"uuid5",
+				id: "uuid5",
 				name: "Maplewood gym",
 				latitude: 39.7817,
 				longitude: -89.6501,
