@@ -254,7 +254,7 @@ const AccountGym = () => {
 	const list = gyms?.map((item) => <GymManager weekdays={weekdays} key={item.id} data={item}
 	                                             currencies={currencies}/>)
 	return (
-		<div className="section-body">
+		<div className="section">
 			<section className={"section-mg"}>
 				<div className={"section-mg-hd"}>
 					<span className={"section-mg-hd-title"}>Gyms under your management</span>

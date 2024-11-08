@@ -18,19 +18,12 @@ const AccountGymRequest = () => {
 	};
 
 	return (
-		<div className="section section-request">
+		<div className="section">
 			<h3>Request to Own a GymEdit:</h3>
 			<form className="request-form">
 				<div className="form-row">
 					<div className="form-item">
-						<label htmlFor="gym-name">GymEdit Name:</label>
-						<Input
-							type="text"
-							name="gym-name"
-							placeholder="Enter gym name"
-							className="input-box"
-							required
-						/>
+
 					</div>
 					<div className="form-item">
 						<label htmlFor="gym-location">GymEdit Location:</label>

@@ -1,6 +1,6 @@
 const InfoSection = () => {
 	return (
-		<section className="section section-info">
+		<section className="section">
 			<div className="how-it-works">
 				<h3>How It Works</h3>
 				<p>On this page, you can recommend gyms and provide ratings based on your experience. Pinpoint your

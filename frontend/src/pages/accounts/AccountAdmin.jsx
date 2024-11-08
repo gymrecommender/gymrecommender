@@ -4,7 +4,7 @@ import React from "react";
 
 const AccountAdmin = () => {
 	return (
-		<div className="section-body">
+		<div className="section">
 			<h2>Create Admin Account</h2>
 			<section className="create-admin">
 				<form>
