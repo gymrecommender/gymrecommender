@@ -100,7 +100,9 @@ CREATE TABLE if not exists gym
   address TEXT NOT NULL,
   website VARCHAR(255),
   is_wheelchair_accessible BOOL NOT NULL,
-  membership_price NUMERIC(5,2) check (membership_price >= 0),
+  monthly_mprice NUMERIC(5,2) check (monthly_mprice >= 0),
+  yearly_mprice NUMERIC(5,2) check (yearly_mprice >= 0),
+  six_months_mprice NUMERIC(5,2) check (six_months_mprice >= 0),
   created_at TIMESTAMPTZ NOT null check (created_at <= NOW()),
   price_changed_at TIMESTAMPTZ check (price_changed_at >= changed_at and price_changed_at > created_at),
   changed_at TIMESTAMPTZ check (changed_at > created_at and changed_at <= NOW()),
@@ -402,8 +404,3 @@ BEGIN
   END IF;
 
 END $$;
-
-
-
-
-
