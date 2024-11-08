@@ -2,15 +2,22 @@ import React, {useState} from 'react';
 import Slider from "./simple/Slider.jsx";
 import Button from "./simple/Button.jsx";
 import Input from "./simple/Input.jsx";
+import Select from "./simple/Select.jsx";
 
 const RequestBuilder = () => {
+	const membershipTypes = [
+		{value: "1-month", label: "1 month"},
+		{value: "6-months", label: "6 months"},
+		{value: "year", label: "Year"},
+	]
 	const [formValue, setFormValue] = useState({
 		pPriority: 50,
 		mPrice: 40,
 		rating: 3,
 		cRating: 3,
 		dTime: null,
-		aTime: null
+		aTime: null,
+		membershipType: membershipTypes[0].value
 	})
 
 	const handleChange = (name, value) => {
@@ -29,7 +36,13 @@ const RequestBuilder = () => {
 				<Slider type={"range"} name="pPriority"
 				        step={5} min={0} max={100} minText={"Time"} maxText={"Price"} value={formValue["pPriority"]}
 				        onChange={handleChange} isSplit={true}/>
-
+				<Select
+						label={"Membership length"}
+						data={membershipTypes}
+						value={formValue.membershipType}
+						onChange={handleChange}
+				        name="membershipType"
+				/>
 				<h3>Tell us your preferences!</h3>
 
 

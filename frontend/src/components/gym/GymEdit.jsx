@@ -61,11 +61,41 @@ const GymEdit = ({data, currencies, weekdays}) => {
 				/>
 				<div className={"gym-price"}>
 					<Input
-						label={'membership price'}
+						label={'Monthly membership'}
 						type={"number"}
 						min={0}
-						name={"membershipPrice"}
-						value={formFields.membershipPrice}
+						name={"monthlyMprice"}
+						value={formFields.monthlyMprice}
+						onChange={handleChange}
+					/>
+					<Select data={currencies}
+					        value={formFields.currency}
+					        name={"currency"}
+					        onChange={handleChange}
+					/>
+				</div>
+				<div className={"gym-price"}>
+					<Input
+						label={'6-months membership'}
+						type={"number"}
+						min={0}
+						name={"sixMonthsMprice"}
+						value={formFields.sixMonthsMprice}
+						onChange={handleChange}
+					/>
+					<Select data={currencies}
+					        value={formFields.currency}
+					        name={"currency"}
+					        onChange={handleChange}
+					/>
+				</div>
+				<div className={"gym-price"}>
+					<Input
+						label={'Yearly membership'}
+						type={"number"}
+						min={0}
+						name={"yearlyMprice"}
+						value={formFields.yearlyMprice}
 						onChange={handleChange}
 					/>
 					<Select data={currencies}

@@ -13,7 +13,7 @@
     background-color: #540032;
 
     width: 540px;
-    min-height: 540px;
+    min-height: 590px;
 
     display: flex;
     flex-direction: column;
@@ -74,7 +74,10 @@
     display: flex;
     align-items: end;
 }
-.gym-data .gym-price select, .gym-data .gym-price input {
+.gym-data .gym-price .input-field {
+    margin-top: 0;
+}
+.gym-data select, .gym-data input {
     height: 45px;
 }
 .gym-data .gym-price select {

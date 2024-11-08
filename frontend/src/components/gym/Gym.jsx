@@ -13,22 +13,30 @@ const Gym = ({weekdays, currencies, data}) => {
 			<h2 className={"gym-data-title"}>{data.name}</h2>
 			<table>
 				<tbody>
-				<tr className={"gym-data-row"}>
+				{data.phoneNumber ? <tr className={"gym-data-row"}>
 					<td className={"gym-data-row-attr-name"}>Phone number</td>
 					<td className={"gym-data-row-attr-value"}>{data.phoneNumber}</td>
-				</tr>
+				</tr> : ''}
 				<tr className={"gym-data-row"}>
 					<td className={"gym-data-row-attr-name"}>Address</td>
 					<td className={"gym-data-row-attr-value"}>{data.address}</td>
 				</tr>
-				<tr className={"gym-data-row"}>
+				{data.website ? <tr className={"gym-data-row"}>
 					<td className={"gym-data-row-attr-name"}>Website</td>
 					<td className={"gym-data-row-attr-value"}>{data.website}</td>
-				</tr>
-				<tr className={"gym-data-row"}>
-					<td className={"gym-data-row-attr-name"}>Membership price</td>
-					<td className={"gym-data-row-attr-value"}>{data.membershipPrice} {currency}</td>
-				</tr>
+				</tr> : ''}
+				{data.monthlyMprice ? <tr className={"gym-data-row"}>
+					<td className={"gym-data-row-attr-name"}>Monthly membership</td>
+					<td className={"gym-data-row-attr-value"}>{data.monthlyMprice} {currency}</td>
+				</tr> : ''}
+				{data.sixMonthsMprice ? <tr className={"gym-data-row"}>
+					<td className={"gym-data-row-attr-name"}>6-months membership</td>
+					<td className={"gym-data-row-attr-value"}>{data.sixMonthsMprice} {currency}</td>
+				</tr> : ''}
+				{data.yearlyMprice ? <tr className={"gym-data-row"}>
+					<td className={"gym-data-row-attr-name"}>Yearly membership</td>
+					<td className={"gym-data-row-attr-value"}>{data.yearlyMprice} {currency}</td>
+				</tr> : ''}
 				</tbody>
 			</table>
 			<div className={"gym-data-row gym-data-row-whs"}>

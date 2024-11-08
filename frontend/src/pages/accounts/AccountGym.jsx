@@ -42,7 +42,9 @@ const AccountGym = () => {
 				address: "1234 Maplewood Avenue Springfield, IL 62701, United States",
 				website: "www.maplewoodmarketplace.com",
 				currency: "currency uuid",
-				membershipPrice: 54,
+				monthlyMprice: 54,
+				yearlyMprice: 400,
+				sixMonthsMprice: 250,
 				isWheelchairAccessible: true,
 				workingHours: [
 					{
@@ -81,7 +83,9 @@ const AccountGym = () => {
 				address: "4567 Riverside Drive, Los Angeles, CA 90012, United States",
 				website: "www.riversidefitnessla.com",
 				currency: "currency uuid",
-				membershipPrice: 65,
+				monthlyMprice: 65,
+				yearlyMprice: 500,
+				sixMonthsMprice: 350,
 				isWheelchairAccessible: true,
 				workingHours: [
 					{
@@ -125,7 +129,9 @@ const AccountGym = () => {
 				address: "789 Summit Street, New York, NY 10001, United States",
 				website: "www.summitwellnessnyc.com",
 				currency: "currency uuid",
-				membershipPrice: 72,
+				monthlyMprice: 72,
+				yearlyMprice: 450,
+				sixMonthsMprice: 330,
 				isWheelchairAccessible: false,
 				workingHours: [
 					{
@@ -169,7 +175,9 @@ const AccountGym = () => {
 				address: "1234 Maplewood Avenue Springfield, IL 62701, United States",
 				website: "www.maplewoodmarketplace.com",
 				currency: "currency uuid",
-				membershipPrice: 54,
+				monthlyMprice: 54,
+				yearlyMprice: 450,
+				sixMonthsMprice: 330,
 				isWheelchairAccessible: true,
 				workingHours: [
 					{
@@ -208,7 +216,9 @@ const AccountGym = () => {
 				address: "1234 Maplewood Avenue Springfield, IL 62701, United States",
 				website: "www.maplewoodmarketplace.com",
 				currency: "currency uuid",
-				membershipPrice: 54,
+				monthlyMprice: 54,
+				yearlyMprice: 450,
+				sixMonthsMprice: 330,
 				isWheelchairAccessible: true,
 				workingHours: [
 					{
