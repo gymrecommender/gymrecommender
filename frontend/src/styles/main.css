@@ -338,6 +338,7 @@ input[type="range"]::-moz-range-thumb {
 .recommendation-list {
     list-style-type: none;
     padding: 0;
+    width: 100%;
 }
 
 .recommendation-item {
