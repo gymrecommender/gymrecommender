@@ -250,7 +250,13 @@ input[type="range"]::-moz-range-thumb {
 
 .location-controls input {
     font-size: inherit;
-    /*font-size: 1em;*/
+    border: 2px solid #4f8cff;
+}
+
+.location-controls input[type="text"]:focus {
+    border-color: #ffd54f;
+    box-shadow: 0 0 10px rgba(255, 213, 79, 0.5);
+    outline: none;
 }
 
 /*Map section for all the pages that need it*/
@@ -311,6 +317,7 @@ input[type="range"]::-moz-range-thumb {
 .recommendation-list {
     list-style-type: none;
     padding: 0;
+    width: 100%;
 }
 
 .recommendation-item {
@@ -335,7 +342,8 @@ input[type="range"]::-moz-range-thumb {
 .request-form, .update-form, .unavailable-form {
     color: #4f8cff;
     font-weight: bold;
-}
+    margin-top: 10px;
+  }
 
 /*AccountGym and AccountAdmin forms*/
 .form-row {
@@ -366,19 +374,20 @@ input[type="range"]::-moz-range-thumb {
     box-sizing: border-box;
 }
 
-/*AccountAdmin style*/
-.create-admin, .gym-requests {
-    margin-bottom: 30px;
-    padding: 15px;
-    background-color: #ffffff;
+/*Input gym name box*/
+.input-box {
+    padding: 12px;
+    border: 2px solid #4f8cff;
     border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    font-size: 1em;
+    background-color: #f1f5ff;
+    transition: border-color 0.3s, box-shadow 0.3s;
 }
 
-.pagination {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 15px;
+.input-box:focus {
+    border-color: #ffd54f;
+    box-shadow: 0 0 10px rgba(255, 213, 79, 0.5);
+    outline: none;
 }
 
 label.input-field-label {
@@ -431,6 +440,7 @@ button.btn-action {
 .section.section-info > div {
     flex: 1 1 0;
 }
+
 
 
 /*Footer*/
