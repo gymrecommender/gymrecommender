@@ -26,8 +26,16 @@ const Gym = ({weekdays, currencies, data}) => {
 					<td className={"gym-data-row-attr-value"}>{data.website}</td>
 				</tr>
 				<tr className={"gym-data-row"}>
-					<td className={"gym-data-row-attr-name"}>Membership price</td>
-					<td className={"gym-data-row-attr-value"}>{data.membershipPrice} {currency}</td>
+					<td className={"gym-data-row-attr-name"}>Monthly membership</td>
+					<td className={"gym-data-row-attr-value"}>{data.monthlyMprice} {currency}</td>
+				</tr>
+				<tr className={"gym-data-row"}>
+					<td className={"gym-data-row-attr-name"}>6-months membership</td>
+					<td className={"gym-data-row-attr-value"}>{data.sixMonthsMprice} {currency}</td>
+				</tr>
+				<tr className={"gym-data-row"}>
+					<td className={"gym-data-row-attr-name"}>Yearly membership</td>
+					<td className={"gym-data-row-attr-value"}>{data.yearlyMprice} {currency}</td>
 				</tr>
 				</tbody>
 			</table>
