@@ -259,7 +259,7 @@ input[type="range"]::-moz-range-thumb {
     outline: none;
 }
 
-/*Map section for all the pages that need it*/
+/*GoogleMap section for all the pages that need it*/
 .section-map {
     flex-direction: column;
     align-items: start;

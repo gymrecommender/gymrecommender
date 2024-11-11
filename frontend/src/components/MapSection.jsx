@@ -1,10 +1,10 @@
 import LocationControls from "./LocationControls.jsx";
-import Map from "./simple/Map.jsx";
+import GoogleMap from "./simple/GoogleMap.jsx";
 import {useState} from "react";
 import {getLocation} from "../services/helpers.jsx";
 
 const MapSection = () => {
-	//#TODO these variables must be within the Map component (use context to share these variables with each other)
+	//#TODO these variables must be within the GoogleMap component (use context to share these variables with each other)
 	const [coordinates, setCoordinates] = useState({
 		lat: null,
 		lng: null,
@@ -29,7 +29,7 @@ const MapSection = () => {
 	return (
 		<div className={"section main"}>
 			<LocationControls onSubmitSearch={handleSubmitSearch} onGetLocation={handleGetLocation}/>
-			<Map coordinates={coordinates}/>
+			<GoogleMap coordinates={coordinates}/>
 		</div>
 	);
 };

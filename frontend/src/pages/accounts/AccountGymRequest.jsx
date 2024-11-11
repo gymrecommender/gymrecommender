@@ -1,6 +1,6 @@
 import {useState} from "react";
 import Input from "../../components/simple/Input.jsx";
-import Map from "../../components/simple/Map.jsx";
+import GoogleMap from "../../components/simple/GoogleMap.jsx";
 import LocationControls from "../../components/LocationControls.jsx";
 import Button from "../../components/simple/Button.jsx";
 
