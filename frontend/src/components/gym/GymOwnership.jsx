@@ -42,7 +42,6 @@ const GymOwnership = ({}) => {
 					"address": "789 Downtown St, New York, NY"
 				}
 			}
-
 		])
 	}, []);
 

@@ -33,8 +33,8 @@ const AccountAdmin = () => {
 						<td>requester1@example.com</td>
 						<td>7 Nov 2024, 9:15:30 CET</td>
 						<td>
-							<Button className="icon-button approve" aria-label="Approve">✓</Button>
-							<Button className="icon-button reject" aria-label="Reject">✗</Button>
+							<Button className="btn-icon approve" aria-label="Approve">✓</Button>
+							<Button className="btn-icon reject" aria-label="Reject">✗</Button>
 						</td>
 					</tr>
 					<tr>
@@ -42,8 +42,8 @@ const AccountAdmin = () => {
 						<td>requester2@example.com</td>
 						<td>6 Nov 2024, 10:15:00 CET</td>
 						<td>
-							<Button className="icon-button approve" aria-label="Approve">✓</Button>
-							<Button className="icon-button reject" aria-label="Reject">✗</Button>
+							<Button className="btn-icon approve" aria-label="Approve">✓</Button>
+							<Button className="btn-icon reject" aria-label="Reject">✗</Button>
 						</td>
 					</tr>
 					<tr>
@@ -51,8 +51,8 @@ const AccountAdmin = () => {
 						<td>requester3@example.com</td>
 						<td>7 Nov 2024, 7:10:15 CET</td>
 						<td>
-							<Button className="icon-button approve" aria-label="Approve">✓</Button>
-							<Button className="icon-button reject" aria-label="Reject">✗</Button>
+							<Button className="btn-icon approve" aria-label="Approve">✓</Button>
+							<Button className="btn-icon reject" aria-label="Reject">✗</Button>
 						</td>
 					</tr>
 					</tbody>

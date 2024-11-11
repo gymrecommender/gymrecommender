@@ -1,4 +1,4 @@
-const displayTimestamp = (timestamp) => {
+const displayTimestamp = (timestamp, isShort=false) => {
 	if (!timestamp) {
 		return null;
 	}
@@ -8,10 +8,12 @@ const displayTimestamp = (timestamp) => {
 		year: 'numeric',
 		month: 'short',
 		day: 'numeric',
-		hour: 'numeric',
-		minute: '2-digit',
-		second: '2-digit',
-		timeZoneName: 'short'
+		...(isShort ? {} : {
+			hour: 'numeric',
+			minute: '2-digit',
+			second: '2-digit',
+			timeZoneName: 'short'
+		})
 	});
 }
 

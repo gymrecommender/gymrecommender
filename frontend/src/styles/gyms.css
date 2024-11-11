@@ -226,3 +226,68 @@
 
     flex-basis: 22%;
 }
+
+.container .gyms-req {
+    display: flex;
+    flex-direction: column;
+    justify-content: stretch;
+
+    background-color: #FF6F61;
+
+    border-radius: 5px;
+    padding: 15px;
+
+    gap: 20px;
+    max-height: 500px;
+
+    overflow-y: scroll;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+
+    flex: 0.5;
+}
+
+.gyms-req::-webkit-scrollbar {
+    display: none;
+}
+
+.gyms-req .gym-req {
+    border-radius: 15px;
+    padding: 10px 15px 25px 15px;
+
+    background-color: #540032;
+    color: white;
+}
+.gyms-req .gym-req:hover {
+    cursor: pointer;
+}
+.gyms-req .gym-req-selected {
+    background-color: #001f3f;
+}
+
+.gym-req .gym-req-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    margin-bottom: 20px;
+}
+.gym-req .gym-req-reqtime {
+    color: #00BFFF;
+    font-weight: bold;
+    font-size: 0.9em;
+}
+.gym-req-header .btn-icon {
+    padding: 0;
+    margin: 0;
+}
+
+.gym-req .gym-req-body {
+    display: flex;
+    flex-direction: column;
+}
+.gym-req .gym-req-title {
+    font-size: 1.3em;
+    font-weight: bold;
+    text-transform: capitalize;
+}

@@ -1,39 +1,19 @@
 import {useState} from "react";
-import Input from "../../components/simple/Input.jsx";
-import GoogleMap from "../../components/simple/GoogleMap.jsx";
-import LocationControls from "../../components/LocationControls.jsx";
-import Button from "../../components/simple/Button.jsx";
+import MapSection from "../../components/MapSection.jsx";
+import GymRequested from "../../components/gym/GymRequested.jsx";
+import {useCoordinates} from "../../components/context/CoordinatesContext.jsx";
 
 const AccountGymRequest = () => {
-	const [lat, setLat] = useState(0);
-	const [lon, setLon] = useState(0);
+	const { setCoordinates } = useCoordinates();
 
-	const handleSubmitSearch = (value) => {
-		console.log(value);
-	};
-
-	const handleGetLocation = () => {
-		console.log("Get location");
-		// Add logic to get current location here
-	};
-
+	const showMarker = (coordinates) => {
+		setCoordinates(coordinates);
+	}
 	return (
-		<div className="section">
-			<h3>Request to Own a GymEdit:</h3>
-			<form className="request-form">
-				<div className="form-row">
-					<div className="form-item">
-
-					</div>
-					<div className="form-item">
-						<label htmlFor="gym-location">GymEdit Location:</label>
-						<LocationControls onGetLocation={handleGetLocation} onSubmitSearch={handleSubmitSearch}/>
-						<Map coordinates={{lon, lat}}/>
-						<Button type="submit" className="btn-submit">Submit Request</Button>
-					</div>
-				</div>
-			</form>
-		</div>
+		<>
+			<GymRequested showMarker={showMarker}/>
+			<MapSection/>
+		</>
 	)
 }
 
