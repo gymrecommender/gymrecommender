@@ -1,9 +1,10 @@
 const Input = ({children, wClassName, onChange, label, className, value, ...rest}) => {
 	return (
 		<div className={`input-field ${wClassName ?? ''}`}>
-			{label ? <label className={`input-field-label`} htmlFor={rest.name}>
-				{label}
-			</label> : null}
+			{label ?
+				<label className={`input-field-label`} htmlFor={rest.name}>
+					{label}{rest.required ? <span>*</span> : ''}
+				</label> : null}
 			{children}
 			<input
 				{...rest}

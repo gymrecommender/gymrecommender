@@ -461,3 +461,8 @@ button.btn-action {
     font-size: 0.8em;
     color: white;
 }
+
+.input-field-label span {
+    margin-left: 3px;
+    color: red;
+}
