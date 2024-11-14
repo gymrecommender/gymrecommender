@@ -1,7 +1,7 @@
 import {Outlet, useLocation, matchPath, useParams} from "react-router-dom";
 import Header from "../components/Header.jsx";
 import Footer from "../components/Footer.jsx";
-import {CoordinatesProvider} from "../components/context/CoordinatesContext.jsx";
+import {CoordinatesProvider} from "../context/CoordinatesProvider.jsx";
 
 const Main = () => {
 	const params = useParams()

@@ -32,24 +32,28 @@ const Header = ({username}) => {
 	const authButton = username ? (
 			<>
 				<Button type={"btn"}
+				        title={"Account"}
 				        className={"btn-panel btn-icon"}
 				        onClick={() => navigationHandler(`/account/${username}`)} //#TODO this should be substituted with respective logic
 				>
 					<FontAwesomeIcon className={"icon"} size={"lg"} icon={faCircleUser}/>
 				</Button>
 				<Button type={"btn"}
+				        title={"Notification"}
 				        className={"btn-panel btn-icon"}
 				        onClick={() => alert("Notifications")} //#TODO this should be substituted with respective logic
 				>
 					<FontAwesomeIcon className={"icon"} size={"lg"} icon={faBell}/>
 				</Button>
 				<Button type={"button"}
+				        title={"History"}
 				        className={"btn-panel btn-icon"}
 				        onClick={() => navigationHandler(`/account/${username}/history`)} //#TODO this should be substituted with respective logic
 				>
 					<FontAwesomeIcon className={"icon"} size={"lg"} icon={faClockRotateLeft}/>
 				</Button>
 				<Button type={"button"}
+				        title={"Log out"}
 				        className={"btn-panel btn-icon btn-logout"}
 				        onClick={() => alert('Logged out')} //#TODO this should be substituted with respective logic
 				>
@@ -59,6 +63,7 @@ const Header = ({username}) => {
 		) :
 		<Button type={"button"}
 		        className={"btn-panel btn-icon"}
+		        title={"Log in"}
 		        onClick={() => navigationHandler("/login")}
 		><FontAwesomeIcon className={"icon"} size={"lg"} icon={faRightToBracket}/></Button>
 
@@ -67,6 +72,7 @@ const Header = ({username}) => {
 			<div className={"header-top"}>
 				<div className="home">
 					<Button type={"button"}
+					        title={"Go to home page"}
 					        className={"btn-panel btn-icon"}
 					        onClick={() => navigationHandler(`/`)}
 					>

@@ -1,12 +1,8 @@
-const Button = ({children, className, type, name, id, onSubmit, onClick}) => {
+const Button = ({children, className, ...rest}) => {
 	return (
 		<button
-			type={type}
 			{...(className && {className})}
-			name={name}
-			onSubmit={onSubmit}
-			onClick={onClick}
-			id={id}
+			{...rest}
 		>
 			{children}
 		</button>

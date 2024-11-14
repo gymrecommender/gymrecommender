@@ -3,7 +3,7 @@ import Button from "../simple/Button.jsx";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faClose} from "@fortawesome/free-solid-svg-icons";
 import {displayTimestamp} from "../../services/helpers.jsx";
-import {useCoordinates} from "../context/CoordinatesContext.jsx";
+import {useCoordinates} from "../../context/CoordinatesProvider.jsx";
 
 const GymRequested = ({showMarker}) => {
 	const {coordinates} = useCoordinates();

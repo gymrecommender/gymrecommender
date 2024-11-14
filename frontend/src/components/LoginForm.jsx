@@ -1,62 +1,99 @@
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import {useNavigate} from "react-router-dom";
 import Button from "./simple/Button.jsx";
 import Input from "./simple/Input.jsx";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faUserPlus} from "@fortawesome/free-solid-svg-icons";
 
-const LoginForm = () => {
-    const [formValues, setFormValues] = useState({
-        username: '',
-        email: '',
-        password: ''
-    })
-    const navigate = useNavigate();
+const LoginForm = ({isLogin}) => {
+	const [formValues, setFormValues] = useState({
+		email: '',
+		password: '',
+		...(!isLogin ? {
+			username: '',
+			passwordRepeat: '',
+			firstName: '',
+			lastName: ''
+		} : {})
+	})
+	const navigate = useNavigate();
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        // TODO: Handle login logic here
+	const handleSubmit = (e) => {
+		e.preventDefault();
+		// TODO: Handle login logic here
 
-        navigate(`/account/${username}`);
-    };
+		navigate(`/account/${username}`);
+	};
 
-    const handleChange = (name, value) => {
-        setFormValues({...formValues, [name]: value});
-    }
+	const handleChange = (name, value) => {
+		setFormValues({...formValues, [name]: value});
+	}
 
-    return (
-        <div className="form-login">
-            <h2>Login</h2>
-            <form onSubmit={handleSubmit}>
-                <Input type="text"
-                       label={"Username"}
-                       name="username"
-                       required
-                       value={formValues["username"]}
-                       wClassName={"form-group"}
-                       className={"input-login"}
-                       onChange={handleChange}/>
+	return (
+		<form onSubmit={handleSubmit}>
+			{!isLogin ?
+				<>
+					<Input type="text"
+					       label={"First Name"}
+					       name="firstName"
+					       required
+					       value={formValues["firstName"]}
+					       wClassName={"form-group"}
+					       className={"input-login"}
+					       onChange={handleChange}/>
 
-                <Input type="email"
-                       label={"Email"}
-                       name="email"
-                       required
-                       value={formValues["email"]}
-                       wClassName={"form-group"}
-                       className={"input-login"}
-                       onChange={handleChange}/>
+					<Input type="text"
+					       label={"Last name"}
+					       name="lastName"
+					       required
+					       value={formValues["lastName"]}
+					       wClassName={"form-group"}
+					       className={"input-login"}
+					       onChange={handleChange}/>
 
-                <Input type="password"
-                       label={"Password"}
-                       name="password"
-                       required
-                       value={formValues["password"]}
-                       wClassName={"form-group"}
-                       className={"input-login"}
-                       onChange={handleChange}/>
+					<Input type="text"
+					       label={"Username"}
+					       name="username"
+					       required
+					       value={formValues["username"]}
+					       wClassName={"form-group"}
+					       className={"input-login"}
+					       onChange={handleChange}/>
+				</> : ''}
 
-                <Button className={"btn-login"} type={"submit"} onSubmit={handleSubmit}>Log in</Button>
-            </form>
-        </div>
-    );
+			<Input type="email"
+			       label={"Email"}
+			       name="email"
+			       required
+			       value={formValues["email"]}
+			       wClassName={"form-group"}
+			       className={"input-login"}
+			       onChange={handleChange}/>
+
+			<Input type="password"
+			       label={"Password"}
+			       name="password"
+			       required
+			       value={formValues["password"]}
+			       wClassName={"form-group"}
+			       className={"input-login"}
+			       onChange={handleChange}/>
+
+			{!isLogin ?
+				<>
+					<Input type="password"
+					       label={"Repeat Password"}
+					       name="passwordRepeat"
+					       required
+					       value={formValues["passwordRepeat"]}
+					       wClassName={"form-group"}
+					       className={"input-login"}
+					       onChange={handleChange}/>
+				</> : ''}
+
+			<Button className={"btn-login"} type={"submit"} onSubmit={handleSubmit}>Log in</Button>
+		</form>
+	);
 };
 
 export default LoginForm;

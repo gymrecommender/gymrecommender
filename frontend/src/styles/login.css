@@ -14,16 +14,31 @@
 
 .form-login {
     background-color: #091057; /* Slightly lighter blue for the form */
-    padding: 20px;
+    padding: 40px;
     border-radius: 10px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-    width: 300px; /* Set a fixed width */
+    width: 500px;
 }
+.login-header {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+}
+.login-header .btn-icon {
+    grid-column: 3;
+    font-size: 0.9em;
 
-.form-login h2 {
-    text-align: center;
-    color: #4f8cff; /* Bright blue for headings */
-    margin-bottom: 10px;
+    width: fit-content;
+}
+.login-header .login-title {
+    grid-column: 2;
+    text-transform: uppercase;
+    margin-bottom: 0;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    color: white;
 }
 
 .form-group {

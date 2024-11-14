@@ -1,5 +1,5 @@
 import {APIProvider, Map} from "@vis.gl/react-google-maps";
-import {useCoordinates} from "../context/CoordinatesContext.jsx";
+import {useCoordinates} from "../../context/CoordinatesProvider.jsx";
 
 const GoogleMap = () => {
 	const {coordinates, setCoordinates} = useCoordinates();

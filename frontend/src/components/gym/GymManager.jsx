@@ -17,14 +17,14 @@ const GymManager = ({weekdays, currencies, data}) => {
 				<div className={`gym-data-header ${isMarked ? 'left' : ''}`}>
 					{
 						!isMarked ?
-							<Button className={"btn-icon"} type={"btn"} onClick={() => setIsMarked(true)}>
+							<Button title={"Mark gym as unavailable"} className={"btn-icon"} type={"btn"} onClick={() => setIsMarked(true)}>
 								<FontAwesomeIcon className={"icon"} size={"lg"} icon={faLock}/>
 							</Button> :
-							<Button className={"btn-icon"} type={"btn"} onClick={() => setIsMarked(false)}>
+							<Button title={"Back"} className={"btn-icon"} type={"btn"} onClick={() => setIsMarked(false)}>
 								<FontAwesomeIcon className={"icon"} size={"lg"} icon={faCircleArrowLeft}/>
 							</Button>
 					}
-					<Button className={"btn-icon"} type={"btn"} onClick={() => {
+					<Button title={"Edit"} className={"btn-icon"} type={"btn"} onClick={() => {
 						setIsMarked(false)
 						setIsEdit(true)
 					}}>

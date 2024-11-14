@@ -28,7 +28,8 @@ const App = () => {
 					</Route>
 					<Route path={"*"} element={<NotFound/>}/>
 				</Route>
-				<Route path={"/login"} element={<LogIn/>}/>
+				<Route path={"/login"} element={<LogIn login={true}/>}/>
+				<Route path={"/signup"} element={<LogIn login={false}/>}/>
 			</Routes>
 		</BrowserRouter>
 	)

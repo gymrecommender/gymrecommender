@@ -1,7 +1,7 @@
 import LocationControls from "./LocationControls.jsx";
 import GoogleMap from "./simple/GoogleMap.jsx";
 import {getLocation} from "../services/helpers.jsx";
-import {useCoordinates} from "./context/CoordinatesContext.jsx";
+import {useCoordinates} from "../context/CoordinatesProvider.jsx";
 
 const MapSection = () => {
 	//#TODO these variables must be within the GoogleMap component (use context to share these variables with each other)

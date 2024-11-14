@@ -99,7 +99,7 @@ const GymOwnership = ({}) => {
 						<td className={"gym-own-req-item "}>
 							{
 								!item.decision ? (
-									<Button className={"btn-icon"} onClick={() => handleDelete(item.id)}>
+									<Button title={"Delete the row"} className={"btn-icon"} onClick={() => handleDelete(item.id)}>
 										<FontAwesomeIcon className={"icon"} size={"xs"} icon={faTrashCan}/>
 									</Button>
 								) : ''
