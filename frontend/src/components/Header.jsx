@@ -12,8 +12,11 @@ import {
 	faClockRotateLeft,
 	faBell
 } from "@fortawesome/free-solid-svg-icons";
+import {useFirebase} from "../context/FirebaseProvider.jsx";
 
 const Header = ({username}) => {
+	const {getUser, logout} = useFirebase();
+	const user = getUser();
 	const navigate = useNavigate();
 	const location = useLocation();
 
@@ -29,12 +32,12 @@ const Header = ({username}) => {
 
 	//conditional rendering of the button - if we are logged in, we need a "Log out" button, not a "Sign up" one
 	//#TODO the condition should be different once we implement logging in (the one that can't be changed through React Dev panel or in any other way)
-	const authButton = username ? (
+	const authButton = user ? (
 			<>
 				<Button type={"btn"}
 				        title={"Account"}
 				        className={"btn-panel btn-icon"}
-				        onClick={() => navigationHandler(`/account/${username}`)} //#TODO this should be substituted with respective logic
+				        onClick={() => navigationHandler(`/account/${user.username}`)} //#TODO this should be substituted with respective logic
 				>
 					<FontAwesomeIcon className={"icon"} size={"lg"} icon={faCircleUser}/>
 				</Button>
@@ -48,14 +51,14 @@ const Header = ({username}) => {
 				<Button type={"button"}
 				        title={"History"}
 				        className={"btn-panel btn-icon"}
-				        onClick={() => navigationHandler(`/account/${username}/history`)} //#TODO this should be substituted with respective logic
+				        onClick={() => navigationHandler(`/account/${user.username}/history`)} //#TODO this should be substituted with respective logic
 				>
 					<FontAwesomeIcon className={"icon"} size={"lg"} icon={faClockRotateLeft}/>
 				</Button>
 				<Button type={"button"}
 				        title={"Log out"}
 				        className={"btn-panel btn-icon btn-logout"}
-				        onClick={() => alert('Logged out')} //#TODO this should be substituted with respective logic
+				        onClick={logout}
 				>
 					<FontAwesomeIcon className={"icon"} size={"lg"} icon={faRightFromBracket}/>
 				</Button>

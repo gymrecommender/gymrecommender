@@ -5,14 +5,21 @@ import {faUserPlus, faRightToBracket} from "@fortawesome/free-solid-svg-icons";
 import React from "react";
 import {useLocation, useNavigate} from "react-router-dom";
 import Form from "../components/simple/Form.jsx";
+import {useFirebase} from "../context/FirebaseProvider.jsx";
 
 const LogIn = () => {
 	const location = useLocation();
 	const navigate = useNavigate();
 	const isLogin = location.pathname === "/login";
+	const {signUp, signIn} = useFirebase();
+	const functor = isLogin ? signIn : signUp;
 
-	const getFormValues = (values) => {
-		console.log(values)
+	const getFormValues = async (values) => {
+		const result = await functor(values);
+		//TODO the error should be added to the specific area of the form
+		if (result.error) {
+			alert(result.error);
+		}
 	}
 
 	const data = {
@@ -26,7 +33,7 @@ const LogIn = () => {
 				] : []),
 			{pos: 4, type: "email", required: true, label: "Email", name: "email"},
 			{pos: 5, type: "password", required: true, label: "Password", name: "password"},
-		],
+		].sort(function(a, b) {return a.pos - b.pos;}),
 		fieldClass: "input-login",
 		wClassName: "form-group",
 		button: {

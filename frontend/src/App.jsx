@@ -8,30 +8,29 @@ import Main from "./layouts/Main.jsx";
 import AccountGym from "./pages/accounts/AccountGym.jsx";
 import AccountAdmin from "./pages/accounts/AccountAdmin.jsx";
 import AccountGymRequest from "./pages/accounts/AccountGymRequest.jsx";
+import PrivateRoute from "./PrivateRoute.jsx";
 
 const App = () => {
 	//#TODO implement permissions for the page for different roles
 	return (
-		<BrowserRouter>
-			<Routes>
-				<Route path="/" element={<Main/>}>
-					<Route index element={<Index/>}/>
-					{/*TODO make the route the same for all the components + add conditional rendering of Account pages*/}
-					<Route path={"account/:username"}>
-						<Route index element={<AccountUser/>}/>
-						<Route path={"history"} element={<History/>}/>
-						<Route path={"gym"}>
-							<Route index element={<AccountGym/>}/>
-							<Route path={"add"} element={<AccountGymRequest/>}/>
-						</Route>
-						<Route path={"admin"} element={<AccountAdmin/>}/>
+		<Routes>
+			<Route path="/" element={<Main/>}>
+				<Route index element={<Index/>}/>
+				{/*TODO make the route the same for all the components + add conditional rendering of Account pages*/}
+				<Route path={"account/:username"}>
+					<Route index element={<AccountUser/>}/>
+					<Route path={"history"} element={<History/>}/>
+					<Route path={"gym"}>
+						<Route index element={<AccountGym/>}/>
+						<Route path={"add"} element={<AccountGymRequest/>}/>
 					</Route>
-					<Route path={"*"} element={<NotFound/>}/>
+					<Route path={"admin"} element={<AccountAdmin/>}/>
 				</Route>
-				<Route path={"/login"} element={<LogIn login={true}/>}/>
-				<Route path={"/signup"} element={<LogIn login={false}/>}/>
-			</Routes>
-		</BrowserRouter>
+				<Route path={"*"} element={<NotFound/>}/>
+			</Route>
+			<Route path={"/login"} element={<LogIn login={true}/>}/>
+			<Route path={"/signup"} element={<LogIn login={false}/>}/>
+		</Routes>
 	)
 }
 
