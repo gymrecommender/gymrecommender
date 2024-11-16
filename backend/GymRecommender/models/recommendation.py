@@ -3,9 +3,10 @@ from .gym import Gym
 from .request import Request
 from .currency import Currency
 from ..enums.rec_type import RecType
+import uuid
 
 class Recommendation(models.Model):
-    id = models.UUIDField(primary_key=True)
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     tcost = models.DecimalField(max_digits=4, decimal_places=2)
     time = models.TimeField()
     time_score = models.DecimalField(max_digits=4, decimal_places=2)

@@ -1,9 +1,10 @@
 from django.db import models
 from .account import Account
 from .gym import Gym
+import uuid
 
 class Availability(models.Model):
-    id = models.UUIDField(primary_key=True)
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     created_at = models.DateTimeField()
     start_time = models.DateTimeField()
     end_time = models.DateTimeField(blank=True, null=True)

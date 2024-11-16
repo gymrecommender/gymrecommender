@@ -2,9 +2,10 @@ from django.db import models
 from .currency import Currency
 from .account import Account
 from .city import City
+import uuid
 
 class Gym(models.Model):
-    id = models.UUIDField(primary_key=True)
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     latitude = models.FloatField()
     longitude = models.FloatField()
     name = models.CharField(max_length=80)

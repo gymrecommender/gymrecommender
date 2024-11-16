@@ -2,19 +2,19 @@ from rest_framework import serializers
 
 from .models import *
 
-class RecursiveField(serializers.Serializer):
+class RecursiveField(serializers.ModelSerializer):
     def to_representation(self, value):
         serializer = self.parent.__class__(value, context=self.context)
         return serializer.data
 
-class AccountSerializer(serializers.Serializer):
+class AccountSerializer(serializers.ModelSerializer):
     created_by = RecursiveField("created_by")
 
     class Meta:
         model = Account
         fields = '__all__'
 
-class AvailabilitySerializer(serializers.Serializer):
+class AvailabilitySerializer(serializers.ModelSerializer):
     gym = RecursiveField("gym")
     marked_by = RecursiveField("marked_by")
 
@@ -22,7 +22,7 @@ class AvailabilitySerializer(serializers.Serializer):
         model = Availability
         fields = '__all__'
 
-class BookmarkSerializer(serializers.Serializer):
+class BookmarkSerializer(serializers.ModelSerializer):
     user = RecursiveField("user")
     gym = RecursiveField("gym")
 
@@ -30,14 +30,14 @@ class BookmarkSerializer(serializers.Serializer):
         model = Bookmark
         fields = '__all__'
 
-class CitySerializer(serializers.Serializer):
+class CitySerializer(serializers.ModelSerializer):
     country = RecursiveField("country")
 
     class Meta:
         model = City
         fields = '__all__'
 
-class CongestionRatingSerializer(serializers.Serializer):
+class CongestionRatingSerializer(serializers.ModelSerializer):
     gym = RecursiveField("gym")
     user = RecursiveField("user")
 
@@ -45,17 +45,17 @@ class CongestionRatingSerializer(serializers.Serializer):
         model = CongestionRating
         fields = '__all__'
 
-class CountrySerializer(serializers.Serializer):
+class CountrySerializer(serializers.ModelSerializer):
     class Meta:
         model = Country
         fields = '__all__'
 
-class CurrencySerializer(serializers.Serializer):
+class CurrencySerializer(serializers.ModelSerializer):
     class Meta:
         model = Currency
         fields = '__all__'
 
-class GymSerializer(serializers.Serializer):
+class GymSerializer(serializers.ModelSerializer):
     owned_by = RecursiveField("owned_by")
     city = RecursiveField("city")
     currency = RecursiveField("currency")
@@ -64,7 +64,7 @@ class GymSerializer(serializers.Serializer):
         model = Currency
         fields = '__all__'
 
-class GymWorkingHoursSerializer(serializers.Serializer):
+class GymWorkingHoursSerializer(serializers.ModelSerializer):
     gym = RecursiveField("gym")
     working_hours = RecursiveField("working_hours")
 
@@ -72,14 +72,14 @@ class GymWorkingHoursSerializer(serializers.Serializer):
         model = GymWorkingHours
         fields = '__all__'
 
-class NotificationSerializer(serializers.Serializer):
+class NotificationSerializer(serializers.ModelSerializer):
     user = RecursiveField("user")
 
     class Meta:
         model = Notification
         fields = '__all__'
 
-class OwnershipSerializer(serializers.Serializer):
+class OwnershipSerializer(serializers.ModelSerializer):
     responded_by = RecursiveField("responded_by")
     requested_by = RecursiveField("requested_by")
     gym = RecursiveField("gym")
@@ -88,7 +88,7 @@ class OwnershipSerializer(serializers.Serializer):
         model = Ownership
         fields = '__all__'
 
-class RatingSerializer(serializers.Serializer):
+class RatingSerializer(serializers.ModelSerializer):
     user = RecursiveField("user")
     gym = RecursiveField("gym")
 
@@ -96,7 +96,7 @@ class RatingSerializer(serializers.Serializer):
         model = Rating
         fields = '__all__'
 
-class RecommendationSerializer(serializers.Serializer):
+class RecommendationSerializer(serializers.ModelSerializer):
     gym = RecursiveField("gym")
     request = RecursiveField("request")
     currency = RecursiveField("currency")
@@ -105,35 +105,35 @@ class RecommendationSerializer(serializers.Serializer):
         model = Recommendation
         fields = '__all__'
 
-class RequestSerializer(serializers.Serializer):
+class RequestSerializer(serializers.ModelSerializer):
     user = RecursiveField("user")
 
     class Meta:
         model = Request
         fields = '__all__'
 
-class RequestPauseSerializer(serializers.Serializer):
+class RequestPauseSerializer(serializers.ModelSerializer):
     user = RecursiveField("user")
 
     class Meta:
         model = RequestPause
         fields = '__all__'
 
-class RequestPeriodSerializer(serializers.Serializer):
+class RequestPeriodSerializer(serializers.ModelSerializer):
     request = RecursiveField("request")
 
     class Meta:
         model = RequestPeriod
         fields = '__all__'
 
-class UserTokenSerializer(serializers.Serializer):
+class UserTokenSerializer(serializers.ModelSerializer):
     user = RecursiveField("user")
 
     class Meta:
         model = UserToken
         fields = '__all__'
 
-class WorkingHoursSerializer(serializers.Serializer):
+class WorkingHoursSerializer(serializers.ModelSerializer):
     class Meta:
         model = WorkingHours
         fields = '__all__'

@@ -1,8 +1,9 @@
 from django.db import models
 from .account import Account
+import uuid
 
 class Request(models.Model):
-    id = models.UUIDField(primary_key=True)
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     requested_at = models.DateTimeField()
     origin_latitude = models.FloatField()
     origin_longitude = models.FloatField()

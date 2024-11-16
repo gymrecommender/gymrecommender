@@ -1,9 +1,10 @@
 from django.db import models
 from .gym import Gym
 from .working_hours import WorkingHours
+import uuid
 
 class GymWorkingHours(models.Model):
-    id = models.UUIDField(primary_key=True)
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     weekday = models.IntegerField()
     changed_at = models.DateTimeField(blank=True, null=True)
     gym = models.ForeignKey(Gym, models.DO_NOTHING)

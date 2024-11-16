@@ -12,8 +12,11 @@ class CongestionRatingView(APIView):
         except CongestionRating.DoesNotExist:
             raise Http404
 
-    def get(self, request, pk, format=None):
-        return Response(CongestionRatingSerializer(self.get_object(pk)).data)
+    def get(self, request, pk=None, format=None):
+        serializer = CongestionRatingSerializer(CongestionRating.objects.all(), many=True) if not pk else CongestionRatingSerializer(
+            self.get_object(pk))
+
+        return Response(serializer.data)
 
     def post(self, request, format=None):
         serializer = CongestionRatingSerializer(data=request.data)
@@ -22,15 +25,13 @@ class CongestionRatingView(APIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    def put(self, request, pk, format=None):
-        snippet = self.get_object(pk)
-        serializer = CongestionRatingSerializer(snippet, data=request.data)
+    def patch(self, request, pk, format=None):
+        serializer = CongestionRatingSerializer(self.get_object(pk), data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, pk, format=None):
-        snippet = self.get_object(pk)
-        snippet.delete()
+        self.get_object(pk).delete()
         return Response(status=status.HTTP_204_NO_CONTENT)

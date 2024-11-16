@@ -1,12 +1,13 @@
 from django.db import models
 from django.utils.timezone import now
 from django.db.models import CheckConstraint, Q, F
+import uuid
 
 from ..enums.provider import Provider
 from ..enums.account_type import AccountType
 
 class Account(models.Model):
-    id = models.UUIDField(primary_key=True)
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     username = models.CharField(unique=True, max_length=40)
     outer_uid = models.CharField(unique=True, max_length=128)
     email = models.TextField(unique=True)

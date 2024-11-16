@@ -1,9 +1,10 @@
 from django.db import models
 from .gym import Gym
 from .account import Account
+import uuid
 
 class CongestionRating(models.Model):
-    id = models.UUIDField(primary_key=True)
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     created_at = models.DateTimeField()
     changed_at = models.DateTimeField()
     visit_time = models.TimeField()

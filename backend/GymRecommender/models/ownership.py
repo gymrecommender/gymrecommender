@@ -2,9 +2,10 @@ from django.db import models
 from .account import Account
 from .gym import Gym
 from ..enums.own_decision import OwnDecision
+import uuid
 
 class Ownership(models.Model):
-    id = models.UUIDField(primary_key=True)
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     requested_at = models.DateTimeField()
     responded_at = models.DateTimeField(blank=True, null=True)
     decision = models.TextField(choices=OwnDecision)
