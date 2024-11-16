@@ -1,0 +1,115 @@
+https://maps.googleapis.com/maps/api/place/details/json?place_id=ChIJL8CZmPvWZUcRQKKO2HHNF_I&fields=user_ratings_total,utc_offset,website,wheelchair_accessible_entrance,rating,name,opening_hours,formatted_address,formatted_phone_number,geometry&key=API_KEY
+{
+    "html_attributions": [],
+    "result": {
+        "formatted_address": "Hebrangova ul. 21, 10000, Zagreb, Croatia",
+        "formatted_phone_number": "01 4856 450",
+        "geometry": {
+            "location": {
+                "lat": 45.8089382,
+                "lng": 15.9733021
+            },
+            "viewport": {
+                "northeast": {
+                    "lat": 45.81030518029149,
+                    "lng": 15.9746503802915
+                },
+                "southwest": {
+                    "lat": 45.80760721970849,
+                    "lng": 15.9719524197085
+                }
+            }
+        },
+        "name": "Forma Fitness Center",
+        "opening_hours": {
+            "open_now": true,
+            "periods": [
+                {
+                    "close": {
+                        "day": 0,
+                        "time": "2000"
+                    },
+                    "open": {
+                        "day": 0,
+                        "time": "1600"
+                    }
+                },
+                {
+                    "close": {
+                        "day": 1,
+                        "time": "2200"
+                    },
+                    "open": {
+                        "day": 1,
+                        "time": "0630"
+                    }
+                },
+                {
+                    "close": {
+                        "day": 2,
+                        "time": "2200"
+                    },
+                    "open": {
+                        "day": 2,
+                        "time": "0630"
+                    }
+                },
+                {
+                    "close": {
+                        "day": 3,
+                        "time": "2200"
+                    },
+                    "open": {
+                        "day": 3,
+                        "time": "0630"
+                    }
+                },
+                {
+                    "close": {
+                        "day": 4,
+                        "time": "2200"
+                    },
+                    "open": {
+                        "day": 4,
+                        "time": "0630"
+                    }
+                },
+                {
+                    "close": {
+                        "day": 5,
+                        "time": "2200"
+                    },
+                    "open": {
+                        "day": 5,
+                        "time": "0630"
+                    }
+                },
+                {
+                    "close": {
+                        "day": 6,
+                        "time": "2000"
+                    },
+                    "open": {
+                        "day": 6,
+                        "time": "0900"
+                    }
+                }
+            ],
+            "weekday_text": [
+                "Monday: 6:30 AM – 10:00 PM",
+                "Tuesday: 6:30 AM – 10:00 PM",
+                "Wednesday: 6:30 AM – 10:00 PM",
+                "Thursday: 6:30 AM – 10:00 PM",
+                "Friday: 6:30 AM – 10:00 PM",
+                "Saturday: 9:00 AM – 8:00 PM",
+                "Sunday: 4:00 – 8:00 PM"
+            ]
+        },
+        "rating": 4.6,
+        "user_ratings_total": 188,
+        "utc_offset": 60,
+        "website": "http://www.fitness-forma.com/",
+        "wheelchair_accessible_entrance": true
+    },
+    "status": "OK"
+}

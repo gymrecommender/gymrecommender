@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GymEdit Finder</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    <div class="logo">
+      <img src="logo.png" alt="GymEdit Finder Logo">
+    </div>
+    <div class="title">GYM FINDER</div>
+    <nav class="nav-links">
+      <a href="#">Home</a>
+      <a href="#">Account</a>
+      <a href="#">History</a>
+    </nav>
+    <div class="auth-button">
+      <button>Sign Up / Login</button>
+    </div>
+
+    <section class="info-section">
+      <div class="about-us">
+        <h3>About Us</h3>
+        <p>GymEdit Finder is dedicated to helping fitness enthusiasts find the perfect gym that meets their needs and preferences, from location to pricing and atmosphere.</p>
+      </div>
+      <div class="contact-info">
+        <h3>Contact Us</h3>
+        <p>Email: support@gymfinder.com</p>
+        <p>Phone: (385) 456-7890</p>
+      </div>
+      <div class="how-it-works">
+        <h3>How It Works</h3>
+        <p>Simply adjust your preferences using the sliders, search for a location, and let us recommend the best gyms for you!</p>
+      </div>
+    </section>
+
+    <aside class="sliders">
+      <h3>Tell us your preferences!</h3>
+
+      <!-- Traveling Time Slider -->
+      <label>Traveling Time: max <span id="time-value">30 min</span></label>
+      <input type="range" id="time-slider" min="1" max="120" value="30" oninput="updateValue('time', 'min')">
+
+      <label>Traveling Price: max <span id="tprice-value">25 €</span></label>
+      <input type="range" id="tprice-slider" min="0" max="50" value="25" oninput="updateValue('tprice', '€')">
+
+      <!-- Membership Price Slider -->
+      <label>Membership Price: max <span id="mprice-value">50 €</span></label>
+      <input type="range" id="mprice-slider" min="0" max="300" value="50" oninput="updateValue('mprice', '€')">
+
+      <!-- Overall Rating Slider -->
+      <label>Overall Rating: min <span id="rating-value">3 *</span></label>
+      <input type="range" id="rating-slider" min="1" max="5" value="3" step="0.5" oninput="updateValue('rating', '*')">
+
+      <!-- Congestion Rating Slider -->
+      <label>Congestion Rating: min <span id="congestion-value">3 *</span></label>
+      <input type="range" id="congestion-slider" min="1" max="5" value="3" step="0.5" oninput="updateValue('congestion', '*')">
+
+      <button>Apply</button>
+    </aside>
+
+    <div class="location-controls">
+      <button>Find my location</button>
+      <input type="text" placeholder="Search for location">
+    </div>
+
+    <section class="map-section">
+      <div class="map">Google Maps</div>
+    </section>
+
+    
+
+    <footer class="footer">
+      <p class="footer-note">© 2024 GymEdit Finder - All rights reserved.</p>
+    </footer>
+  </div>
+
+  <script>
+    function updateValue(id, unit) {
+      const slider = document.getElementById(`${id}-slider`);
+      const display = document.getElementById(`${id}-value`);
+      display.textContent = `${slider.value} ${unit}`;
+    }
+    
+    // Initial call to set the default values
+    updateValue('time', 'min');
+    updateValue('tprice', '€');
+    updateValue('mprice', '€');
+    updateValue('rating', '');
+    updateValue('congestion', '');
+  </script>
+</body>
+</html>

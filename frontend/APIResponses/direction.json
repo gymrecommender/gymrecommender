@@ -1,0 +1,368 @@
+https://maps.googleapis.com/maps/api/directions/json?destination=45.8089382,15.9733021&origin=45.800526244992554,15.971377297096797&mode=transit&departure_time=1730448000&key=API_KEY
+{
+    "geocoded_waypoints": [
+        {
+            "geocoder_status": "OK",
+            "place_id": "ChIJX_nr__PWZUcR4oz6MIpTu3w",
+            "types": [
+                "premise"
+            ]
+        },
+        {
+            "geocoder_status": "OK",
+            "place_id": "ChIJH3KEovvWZUcRa4N8sMYB3pk",
+            "types": [
+                "street_address"
+            ]
+        }
+    ],
+    "routes": [
+        {
+            "bounds": {
+                "northeast": {
+                    "lat": 45.80898970000001,
+                    "lng": 15.97384
+                },
+                "southwest": {
+                    "lat": 45.79979729999999,
+                    "lng": 15.9627601
+                }
+            },
+            "copyrights": "Map data ©2024",
+            "fare": {
+                "currency": "EUR",
+                "text": "€0.53",
+                "value": 0.53
+            },
+            "legs": [
+                {
+                    "arrival_time": {
+                        "text": "9:21 AM",
+                        "time_zone": "Europe/Zagreb",
+                        "value": 1730449263
+                    },
+                    "departure_time": {
+                        "text": "9:03 AM",
+                        "time_zone": "Europe/Zagreb",
+                        "value": 1730448201
+                    },
+                    "distance": {
+                        "text": "2.5 km",
+                        "value": 2513
+                    },
+                    "duration": {
+                        "text": "18 mins",
+                        "value": 1062
+                    },
+                    "end_address": "Hebrangova ul. 21, 10000, Zagreb, Croatia",
+                    "end_location": {
+                        "lat": 45.8089877,
+                        "lng": 15.9733001
+                    },
+                    "start_address": "A zgrada, Unska ul., 10000, Zagreb, Croatia",
+                    "start_location": {
+                        "lat": 45.8005791,
+                        "lng": 15.971803
+                    },
+                    "steps": [
+                        {
+                            "distance": {
+                                "text": "0.2 km",
+                                "value": 208
+                            },
+                            "duration": {
+                                "text": "3 mins",
+                                "value": 172
+                            },
+                            "end_location": {
+                                "lat": 45.8000972,
+                                "lng": 15.9738368
+                            },
+                            "html_instructions": "Walk to Miramarska",
+                            "polyline": {
+                                "points": "slpvGwnn`B?[LAfAGAq@M_G@OBIBGDCHM?K"
+                            },
+                            "start_location": {
+                                "lat": 45.8005791,
+                                "lng": 15.971803
+                            },
+                            "steps": [
+                                {
+                                    "distance": {
+                                        "text": "11 m",
+                                        "value": 11
+                                    },
+                                    "duration": {
+                                        "text": "1 min",
+                                        "value": 9
+                                    },
+                                    "end_location": {
+                                        "lat": 45.80058349999999,
+                                        "lng": 15.9719445
+                                    },
+                                    "html_instructions": "Head <b>east</b> toward <b>Zelinska ul.</b>",
+                                    "polyline": {
+                                        "points": "slpvGwnn`B?["
+                                    },
+                                    "start_location": {
+                                        "lat": 45.8005791,
+                                        "lng": 15.971803
+                                    },
+                                    "travel_mode": "WALKING"
+                                },
+                                {
+                                    "distance": {
+                                        "text": "48 m",
+                                        "value": 48
+                                    },
+                                    "duration": {
+                                        "text": "1 min",
+                                        "value": 41
+                                    },
+                                    "end_location": {
+                                        "lat": 45.8001535,
+                                        "lng": 15.9719921
+                                    },
+                                    "html_instructions": "Turn <b>right</b> onto <b>Zelinska ul.</b>",
+                                    "maneuver": "turn-right",
+                                    "polyline": {
+                                        "points": "slpvGson`BLAfAG"
+                                    },
+                                    "start_location": {
+                                        "lat": 45.80058349999999,
+                                        "lng": 15.9719445
+                                    },
+                                    "travel_mode": "WALKING"
+                                },
+                                {
+                                    "distance": {
+                                        "text": "0.1 km",
+                                        "value": 145
+                                    },
+                                    "duration": {
+                                        "text": "2 mins",
+                                        "value": 118
+                                    },
+                                    "end_location": {
+                                        "lat": 45.8000963,
+                                        "lng": 15.9737841
+                                    },
+                                    "html_instructions": "Turn <b>left</b> toward <b>Ul. grada Vukovara</b>",
+                                    "maneuver": "turn-left",
+                                    "polyline": {
+                                        "points": "}ipvG}on`BAq@M_G@OBIBGDCHM"
+                                    },
+                                    "start_location": {
+                                        "lat": 45.8001535,
+                                        "lng": 15.9719921
+                                    },
+                                    "travel_mode": "WALKING"
+                                },
+                                {
+                                    "distance": {
+                                        "text": "4 m",
+                                        "value": 4
+                                    },
+                                    "duration": {
+                                        "text": "1 min",
+                                        "value": 4
+                                    },
+                                    "end_location": {
+                                        "lat": 45.8000972,
+                                        "lng": 15.9738368
+                                    },
+                                    "html_instructions": "Turn <b>left</b> onto <b>Ul. grada Vukovara</b><div style=\"font-size:0.9em\">Destination will be on the right</div>",
+                                    "maneuver": "turn-left",
+                                    "polyline": {
+                                        "points": "sipvGc{n`B?K"
+                                    },
+                                    "start_location": {
+                                        "lat": 45.8000963,
+                                        "lng": 15.9737841
+                                    },
+                                    "travel_mode": "WALKING"
+                                }
+                            ],
+                            "travel_mode": "WALKING"
+                        },
+                        {
+                            "distance": {
+                                "text": "1.9 km",
+                                "value": 1933
+                            },
+                            "duration": {
+                                "text": "10 mins",
+                                "value": 575
+                            },
+                            "end_location": {
+                                "lat": 45.80878,
+                                "lng": 15.96866
+                            },
+                            "html_instructions": "Tram towards Kvat. trg",
+                            "polyline": {
+                                "points": "aipvGo{n`Bh@bZ@\\e@|\\MfJcQ_KoScM}NwI"
+                            },
+                            "start_location": {
+                                "lat": 45.80001,
+                                "lng": 15.97384
+                            },
+                            "transit_details": {
+                                "arrival_stop": {
+                                    "location": {
+                                        "lat": 45.80878,
+                                        "lng": 15.96866
+                                    },
+                                    "name": "Trg Rep. Hrvatske"
+                                },
+                                "arrival_time": {
+                                    "text": "9:15 AM",
+                                    "time_zone": "Europe/Zagreb",
+                                    "value": 1730448949
+                                },
+                                "departure_stop": {
+                                    "location": {
+                                        "lat": 45.80001,
+                                        "lng": 15.97384
+                                    },
+                                    "name": "Miramarska"
+                                },
+                                "departure_time": {
+                                    "text": "9:06 AM",
+                                    "time_zone": "Europe/Zagreb",
+                                    "value": 1730448374
+                                },
+                                "headsign": "Kvat. trg",
+                                "line": {
+                                    "agencies": [
+                                        {
+                                            "name": "Zagreb Electric Tram",
+                                            "phone": "011 385 72 500 400",
+                                            "url": "http://www.zet.hr/"
+                                        }
+                                    ],
+                                    "color": "#ad9ba7",
+                                    "name": "Žitnjak - Kvater.trg",
+                                    "short_name": "13",
+                                    "text_color": "#000000",
+                                    "vehicle": {
+                                        "icon": "//maps.gstatic.com/mapfiles/transit/iw2/6/tram2.png",
+                                        "name": "Tram",
+                                        "type": "TRAM"
+                                    }
+                                },
+                                "num_stops": 5
+                            },
+                            "travel_mode": "TRANSIT"
+                        },
+                        {
+                            "distance": {
+                                "text": "0.4 km",
+                                "value": 372
+                            },
+                            "duration": {
+                                "text": "5 mins",
+                                "value": 310
+                            },
+                            "end_location": {
+                                "lat": 45.8089877,
+                                "lng": 15.9733001
+                            },
+                            "html_instructions": "Walk to Hebrangova ul. 21, 10000, Zagreb, Croatia",
+                            "polyline": {
+                                "points": "}_rvG{zm`BIEQM?W?kAAwAAoAAoAAyA?W?EAkBAuA?Q?QBW?cAAe@AoA?G"
+                            },
+                            "start_location": {
+                                "lat": 45.808792,
+                                "lng": 15.9686235
+                            },
+                            "steps": [
+                                {
+                                    "distance": {
+                                        "text": "17 m",
+                                        "value": 17
+                                    },
+                                    "duration": {
+                                        "text": "1 min",
+                                        "value": 14
+                                    },
+                                    "end_location": {
+                                        "lat": 45.8089255,
+                                        "lng": 15.9687242
+                                    },
+                                    "html_instructions": "Head <b>northeast</b> on <b>Rooseveltov trg</b>/<wbr/><b>Trg Franklina Roosevelta</b> toward <b>Ul. Vjekoslava Klaića</b>",
+                                    "polyline": {
+                                        "points": "}_rvG{zm`BIEQM"
+                                    },
+                                    "start_location": {
+                                        "lat": 45.808792,
+                                        "lng": 15.9686235
+                                    },
+                                    "travel_mode": "WALKING"
+                                },
+                                {
+                                    "distance": {
+                                        "text": "0.2 km",
+                                        "value": 170
+                                    },
+                                    "duration": {
+                                        "text": "2 mins",
+                                        "value": 140
+                                    },
+                                    "end_location": {
+                                        "lat": 45.80896560000001,
+                                        "lng": 15.9709126
+                                    },
+                                    "html_instructions": "Turn <b>right</b> onto <b>Trg Republike Hrvatske</b>",
+                                    "maneuver": "turn-right",
+                                    "polyline": {
+                                        "points": "y`rvGo{m`B?W?kAAwAAoAAoAAyA"
+                                    },
+                                    "start_location": {
+                                        "lat": 45.8089255,
+                                        "lng": 15.9687242
+                                    },
+                                    "travel_mode": "WALKING"
+                                },
+                                {
+                                    "distance": {
+                                        "text": "0.2 km",
+                                        "value": 185
+                                    },
+                                    "duration": {
+                                        "text": "3 mins",
+                                        "value": 156
+                                    },
+                                    "end_location": {
+                                        "lat": 45.8089877,
+                                        "lng": 15.9733001
+                                    },
+                                    "html_instructions": "Continue onto <b>Hebrangova ul.</b>/<wbr/><b>Ul. Andrije Hebranga</b><div style=\"font-size:0.9em\">Destination will be on the right</div>",
+                                    "polyline": {
+                                        "points": "aarvGein`B?W?EAkBAuA?Q?QBW?cAAe@AoA?G"
+                                    },
+                                    "start_location": {
+                                        "lat": 45.80896560000001,
+                                        "lng": 15.9709126
+                                    },
+                                    "travel_mode": "WALKING"
+                                }
+                            ],
+                            "travel_mode": "WALKING"
+                        }
+                    ],
+                    "traffic_speed_entry": [],
+                    "via_waypoint": []
+                }
+            ],
+            "overview_polyline": {
+                "points": "slpvGwnn`B?[LAfAGAq@KoGFQNQ?KP?h@bZc@z]MfJcQ_KoScM}NwIAFIEQM?WAcDC_DCcFAgBBi@CaE"
+            },
+            "summary": "",
+            "warnings": [
+                "Walking directions are in beta. Use caution – This route may be missing sidewalks or pedestrian paths."
+            ],
+            "waypoint_order": []
+        }
+    ],
+    "status": "OK"
+}

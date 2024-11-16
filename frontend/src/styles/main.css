@@ -1,0 +1,468 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html, body {
+    height: 100%;
+    background-color: #024CAA;
+    font-family: Arial, sans-serif;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+body::-webkit-scrollbar {
+    display: none;
+}
+
+/*Layout*/
+.container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    background-color: inherit;
+    box-sizing: border-box;
+
+    width: 90%;
+    margin: auto;
+    border-collapse: collapse;
+}
+
+.container .content {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+
+    background-color: #091057;
+    padding: 20px;
+}
+.content > :first-child {
+    flex: 1;
+}
+.content > :nth-child(2) {
+    flex: 3;
+}
+
+.content .main {
+    display: flex;
+    flex-direction: column;
+    row-gap: 20px;
+    padding: 0;
+
+    height: fit-content;
+}
+
+.section {
+    display: flex;
+    flex-direction: column;
+    background-color: #091057;
+    padding: 20px;
+    border-radius: 5px;
+}
+
+.section h3 {
+    font-size: 1.3em;
+    color: #4f8cff;
+    margin-bottom: 10px;
+}
+
+.section p {
+    font-size: 1em;
+    color: #b0c4de;
+}
+
+.sliders {
+    background-color: #ccc;
+    height: fit-content;
+}
+
+.sliders form {
+    display: flex;
+    flex-direction: column;
+
+    padding: 20px;
+    gap: 20px;
+}
+
+.sliders form h3 {
+    font-size: 1.2em;
+}
+
+.sliders form label {
+    font-weight: bold;
+}
+
+.sliders form input[type="range"] {
+    width: 100%;
+}
+
+.input-field {
+    width: 100%;
+}
+.selector > select, .input-field > input:not([type="range"]) {
+    width: 100%;
+    height: 45px;
+}
+
+.input-field-slider-range {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    font-family: SansSerif, sans-serif;
+    font-weight: bold;
+    font-size: 0.8em;
+}
+
+.input-field-slider-range .slider-max {
+    text-align: end;
+}
+
+.input-field-slider-range .slider-current {
+    text-align: center;
+}
+
+.sliders form select,
+.sliders form input[type="text"],
+.sliders form input[type="number"] {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #004080; /* Blue border */
+    border-radius: 5px;
+    margin-bottom: 15px;
+    font-size: 1rem;
+    transition: border-color 0.3s;
+}
+
+.sliders form select:focus,
+.sliders form input[type="text"]:focus,
+.sliders form input[type="number"]:focus {
+    border-color: #024CAA;
+}
+
+/*styles for all buttons*/
+button[type="submit"].btn-submit {
+    background-color: #4f8cff;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    width: 100%;
+}
+
+button[type="submit"].btn-submit:hover {
+    background-color: #ffd54f;
+}
+
+/*Index sliders style*/
+input[type="range"] {
+    width: 100%;
+    -webkit-appearance: none;
+    appearance: none;
+    outline: none;
+    border-radius: 5px;
+    background: #ddd linear-gradient(to right, aqua, blue);
+}
+
+input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background-color: #c9bc92;
+    cursor: pointer;
+}
+
+input[type="range"]::-moz-range-thumb {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background-color: #4f8cff;
+    cursor: pointer;
+}
+
+/*time input for AccountUser and AccountGym*/
+.time {
+    margin-bottom: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.time label {
+    color: #4f8cff;
+    font-weight: bold;
+}
+
+.time input[type="time"] {
+    background-color: #ebcd25;
+    border: 1px solid #024CAA;
+    color: #333;
+    padding: 8px;
+    border-radius: 5px;
+    font-size: 1rem;
+    transition: border-color 0.3s, background-color 0.3s;
+}
+
+.time input[type="time"]:focus {
+    border-color: #4f8cff;
+    background-color: #fff8e1;
+}
+
+.time input[type="time"]::placeholder {
+    color: #999
+}
+
+/*locations controls for map section*/
+.location-controls {
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
+    gap: 10px;
+    box-sizing: border-box;
+
+    margin-bottom: 10px;
+    height: 45px;
+    font-size: 1.0em;
+}
+.location-controls > :last-child {
+    flex-grow: 1;
+}
+
+.location-controls button {
+    padding: 12px 20px;
+    background-color: #4f8cff;
+    color: #FFF4B7;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.9em;
+    transition: background-color 0.3s;
+    height: 100%;
+    font-weight: bold;
+}
+
+.location-controls button:hover {
+    background-color: #ebcd25;
+}
+
+.location-controls input {
+    font-size: inherit;
+    border: 2px solid #4f8cff;
+}
+
+.location-controls input[type="text"]:focus {
+    border-color: #ffd54f;
+    box-shadow: 0 0 10px rgba(255, 213, 79, 0.5);
+    outline: none;
+}
+
+/*GoogleMap section for all the pages that need it*/
+.section-map {
+    flex-direction: column;
+    align-items: start;
+    gap: 10px;
+    overflow: hidden;
+    margin-bottom: 0;
+    background-color: inherit;
+    padding: 0;
+}
+
+.map {
+    width: 100%;
+    height: 400px;
+    background-color: #e6e6e6;
+    display: flex;
+    padding: 10px;
+    justify-content: center;
+    align-items: center;
+    font-size: 2em;
+    color: #666;
+    border: 1px solid #ccc;
+}
+
+.map-account {
+    height: 870px;
+}
+
+
+/*History, GymEdit and Admin body*/
+.section h2 {
+    color: #f8f8f8;
+    font-weight: bold;
+    margin: 20px;
+    padding: 15px;
+    text-align: center;
+}
+
+.section h3 {
+    font-size: 1.3em;
+    color: #4f8cff;
+    margin-bottom: 10px;
+}
+
+.section input {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 1em;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+/*History list style*/
+.recommendation-list {
+    list-style-type: none;
+    padding: 0;
+    width: 100%;
+}
+
+.recommendation-item {
+    margin-bottom: 15px;
+    padding: 15px;
+    background-color: #86b8f0;
+    border-radius: 5px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.recommendation-item h4 {
+    margin: 0;
+    font-size: 1.2em;
+}
+
+.recommendation-item p {
+    margin: 5px 0;
+    color: #666;
+}
+
+/*AccountGym forms*/
+.request-form, .update-form, .unavailable-form {
+    color: #4f8cff;
+    font-weight: bold;
+    margin-top: 10px;
+  }
+
+/*AccountGym and AccountAdmin forms*/
+.form-row {
+    display: grid;
+    justify-content: space-between;
+    gap: 50px;
+    margin-bottom: 20px;
+    margin-left: 50px;
+    grid-template-columns: 1fr 4fr;
+}
+
+.unavailable-form {
+    display: grid;
+    justify-content: space-between;
+    gap: 50px;
+    margin-bottom: 20px;
+    margin-left: 50px;
+    grid-template-columns: 1fr 1fr;
+}
+
+.unavailable-form .input-box {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 1em;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+/*Input gym name box*/
+.input-box {
+    padding: 12px;
+    border: 2px solid #4f8cff;
+    border-radius: 8px;
+    font-size: 1em;
+    background-color: #f1f5ff;
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.input-box:focus {
+    border-color: #ffd54f;
+    box-shadow: 0 0 10px rgba(255, 213, 79, 0.5);
+    outline: none;
+}
+
+label.input-field-label {
+    color: black;
+}
+
+button.btn-icon {
+    border: none;
+    background-color: inherit;
+
+    color: white;
+    font-size: 1.4em;
+    text-transform: uppercase;
+    font-weight: bold;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+button.btn-icon .icon {
+    color: inherit;
+    background-color: inherit;
+}
+
+button.btn-icon .icon:not(:first-child) {
+    margin-left: 10px;
+}
+
+button.btn-icon .icon:not(:last-child) {
+    margin-right: 10px;
+}
+
+button.btn-icon:hover {
+    border-color: #ebcd25;
+    color: #ebcd25;
+    cursor: pointer;
+}
+
+button.btn-action {
+    border: 4px solid white;
+    padding: 5px;
+    border-radius: 15px;
+}
+
+.section.section-info {
+    flex-direction: row;
+    padding: 30px 40px;
+}
+.section.section-info > div {
+    flex: 1 1 0;
+}
+
+
+
+/*Footer*/
+.footer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    background-color: #091057;
+    color: rgb(187, 185, 185);
+    flex-direction: column;
+    padding: 30px 10px;
+    margin-top: 10px;
+    row-gap: 10px;
+}
+
+.footer-note {
+    font-size: 0.8em;
+    color: white;
+}
+
+.input-field-label span {
+    margin-left: 3px;
+    color: red;
+}
