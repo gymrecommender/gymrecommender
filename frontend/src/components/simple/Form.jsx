@@ -43,9 +43,13 @@ const Form = ({data, onSubmit}) => {
 		));
 	}, []);
 
+	const flushFields = () => {
+		setValues({})
+	}
+
 	const handleSubmit = (e) => {
 		e.preventDefault();
-		onSubmit(values);
+		onSubmit(values, flushFields);
 	}
 	const {text: buttonText, ...buttonRest} = data.button;
 

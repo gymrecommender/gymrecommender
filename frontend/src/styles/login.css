@@ -24,13 +24,11 @@
     grid-template-columns: 1fr 1fr 1fr;
 }
 .login-header .btn-icon {
-    grid-column: 3;
     font-size: 0.9em;
 
     width: fit-content;
 }
 .login-header .login-title {
-    grid-column: 2;
     text-transform: uppercase;
     margin-bottom: 0;
 
@@ -39,6 +37,10 @@
     align-items: center;
 
     color: white;
+}
+
+.login-header {
+    margin-bottom: 20px;
 }
 
 .form-group {

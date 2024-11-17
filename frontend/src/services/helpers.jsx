@@ -41,5 +41,21 @@ const getLocation = async () => {
 	});
 }
 
-export {displayTimestamp, getLocation}
+const firebaseErrors = (code) => {
+	let message = ''
+	switch (code) {
+		case "auth/email-already-in-use":
+			message = "The provided email is already in use."
+			break;
+		case "auth/invalid-credential":
+			message = "The provided login and/or password is/are invalid."
+			break;
+		default:
+			message = null;
+			break;
+	}
+	return message;
+}
+
+export {displayTimestamp, getLocation, firebaseErrors}
 

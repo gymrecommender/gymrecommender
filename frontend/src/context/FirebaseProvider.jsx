@@ -1,7 +1,8 @@
 import { useEffect, useState, createContext, useContext } from "react";
 import {auth, provider} from "../Firebase.jsx";
-import {signInWithPopup, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut} from "firebase/auth";
+import {signInWithPopup, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut, updateProfile, deleteUser, sendEmailVerification} from "firebase/auth";
 import {useNavigate} from "react-router-dom";
+import {accountSignUp} from "../services/accountHelpers.jsx";
 
 const FirebaseContext = createContext();
 const useFirebase = () => useContext(FirebaseContext);
@@ -16,7 +17,7 @@ const firebaseErrors = (code) => {
 			message = "The provided login and/or password is/are invalid."
 			break;
 		default:
-			message = "Unknown error occurred";
+			message = null;
 			break;
 	}
 	return message;
@@ -33,9 +34,10 @@ const FirebaseProvider = ({children}) => {
 		b) retrieve the login status upon the reloading of the page, for example
 		*/
 		const unsubscribe = onAuthStateChanged(auth, (user) => {
+			//TODO handle updates of the email verification status
+			//TODO handle changes of the token (propagate it to the db)
 			if (user) {
-				setUser({uid: user.uid, email: user.email});
-				navigate("/");
+				setUser({username: user.displayName});
 			} else {
 				setUser(null);
 			}
@@ -47,23 +49,17 @@ const FirebaseProvider = ({children}) => {
 	}, [])
 
 	const signUp = async (values) => {
-		const result = {error: null}
-		try {
-			const result = await createUserWithEmailAndPassword(auth, values.email, values.password);
-			//TODO store the data to the database plus user's uid
-			setUser({uid: result.user.uid, username: values.username, email: result.user.email});
-		} catch (e) {
-			result.error = firebaseErrors(e.code);
+		const result = await accountSignUp(values)
+		if (!result.error) {
+			navigate('/login')
 		}
-		return result;
 
+		return result
 	}
 	const signIn = async (values) => {
 		const result = {error: null}
 		try {
 			const result = await signInWithEmailAndPassword(auth, values.email, values.password);
-			//TODO retrieve the username of the user by email and add the username to the user state
-			setUser({uid: result.user.uid, email: result.user.email});
 		} catch (e) {
 			result.error = firebaseErrors(e.code);
 			console.log(e)

@@ -14,8 +14,8 @@ const entityMapping = {
 }
 
 const axiosInternal = async (method, endpoint, id = null, data = {}, queryParams={}) => {
-	const uri = id ? `/api/${endpoint}/${id}` : `/api/${endpoint}`;
-	const requestConfig = {method, url: uri, data, queryParams}
+	const uri = id ? `/api/${endpoint}/${id}/` : `/api/${endpoint}/`;
+	const requestConfig = {method, url: uri, data, params: queryParams}
 	const result = {data: null, error: null}
 
 	try {
@@ -35,8 +35,8 @@ const axiosGoogleAPI = async (entity, queryParams={}) => {
 		return result;
 	}
 
-	const uri = `https://maps.googleapis.com/maps/api/${entityMapping[entity]}`;
-	const requestConfig = {method: 'GET', url: uri, queryParams: {...queryParams, key: import.meta.env.VITE_GOOGLE_API_KEY}}
+	const url = `https://maps.googleapis.com/maps/api/${entityMapping[entity]}`;
+	const requestConfig = {method: 'GET', url, params: {...queryParams, key: import.meta.env.VITE_GOOGLE_API_KEY}}
 
 	try {
 		const {data} = await instance(requestConfig);
@@ -48,7 +48,7 @@ const axiosGoogleAPI = async (entity, queryParams={}) => {
 	return result;
 }
 
-const errorParser = ({request, response, message}) => {
+const errorsParser = ({request, response, message}) => {
 	const errorDetails = {
 		status: null,
 		statusText: null,
@@ -72,4 +72,4 @@ const errorParser = ({request, response, message}) => {
 	return errorDetails;
 }
 
-export default {axiosInternal, axiosGoogleAPI};
+export {axiosInternal, axiosGoogleAPI};
