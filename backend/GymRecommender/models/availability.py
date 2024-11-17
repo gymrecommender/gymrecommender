@@ -1,11 +1,12 @@
 from django.db import models
 from .account import Account
 from .gym import Gym
+from django.utils.timezone import now
 import uuid
 
 class Availability(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    created_at = models.DateTimeField()
+    created_at = models.DateTimeField(default=now)
     start_time = models.DateTimeField()
     end_time = models.DateTimeField(blank=True, null=True)
     changed_at = models.DateTimeField(blank=True, null=True)
