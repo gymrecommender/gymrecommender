@@ -22,7 +22,7 @@ public partial class Recommendation
 
     public decimal TotalScore { get; set; }
     
-    public RecommendationType Type { get; set; }
+    public ReccomendationType Type { get; set; }
 
     public Guid GymId { get; set; }
 

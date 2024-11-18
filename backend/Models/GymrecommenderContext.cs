@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using backend.Enums;
 using Microsoft.EntityFrameworkCore;
 
 namespace backend.Models;
@@ -54,11 +55,11 @@ public partial class GymrecommenderContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder
-            .HasPostgresEnum("account_type", new[] { "user", "gym", "admin" })
-            .HasPostgresEnum("not_type", new[] { "message", "alert", "reminder" })
-            .HasPostgresEnum("own_decision", new[] { "approved", "rejected" })
-            .HasPostgresEnum("provider_type", new[] { "local", "google" })
-            .HasPostgresEnum("rec_type", new[] { "main", "alternative" })
+            .HasPostgresEnum<AccountType>("account_type")
+            .HasPostgresEnum<NotificationType>("not_type")
+            .HasPostgresEnum<OwnershipDecision>("own_decision")
+            .HasPostgresEnum<ProviderType>("provider_type")
+            .HasPostgresEnum<ReccomendationType>("rec_type")
             .HasPostgresExtension("uuid-ossp");
 
         modelBuilder.Entity<Account>(entity =>

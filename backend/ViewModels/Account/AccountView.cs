@@ -23,10 +23,10 @@ public class AccountViewModel
     public DateTime? LastSignIn { get; set; }
     
     public string PasswordHash { get; set; } = null!;
+
+    public string Type { get; set; } = null!;
+
+    public string Provider { get; set; } = null!;
     
-    public AccountType Type { get; set; }
-    
-    public ProviderType Provider { get; set; }
-    
-    public ICollection<AccountViewModel> CreatedBy { get; set; } = new List<AccountViewModel>();
+    public AccountViewModel? CreatedBy { get; set; }
 }
