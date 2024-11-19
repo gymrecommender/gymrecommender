@@ -46,9 +46,10 @@
 .modal .modal-body {
     overflow-y: scroll;
 
-    background-color: inherit;
+    background-color: #540032;
     -ms-overflow-style: none;
     scrollbar-width: none;
+    color:white;
 
     height: 100%;
 }

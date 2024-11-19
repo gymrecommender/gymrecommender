@@ -6,7 +6,7 @@
 
 html, body {
     height: 100%;
-    background-color: #024CAA;
+    background-color: #000000;
     font-family: Arial, sans-serif;
     -ms-overflow-style: none;
     scrollbar-width: none;
@@ -34,7 +34,7 @@ body::-webkit-scrollbar {
     justify-content: center;
     gap: 20px;
 
-    background-color: #091057;
+    background-color: #0D3B66;
     padding: 20px;
 }
 .content > :first-child {
@@ -56,20 +56,20 @@ body::-webkit-scrollbar {
 .section {
     display: flex;
     flex-direction: column;
-    background-color: #091057;
+    background-color: #0D3B66;
     padding: 20px;
     border-radius: 5px;
 }
 
 .section h3 {
     font-size: 1.3em;
-    color: #4f8cff;
+    color: #00E5FF;
     margin-bottom: 10px;
 }
 
 .section p {
     font-size: 1em;
-    color: #b0c4de;
+    color: #477bdb;
 }
 
 .sliders {
@@ -141,8 +141,8 @@ body::-webkit-scrollbar {
 
 /*styles for all buttons*/
 button[type="submit"].btn-submit {
-    background-color: #4f8cff;
-    color: #fff;
+    background-color: #024CAA;
+    color:#F5F5F5;
     border: none;
     padding: 10px 20px;
     border-radius: 5px;
@@ -152,7 +152,7 @@ button[type="submit"].btn-submit {
 }
 
 button[type="submit"].btn-submit:hover {
-    background-color: #ffd54f;
+    background-color: #8d446a;
 }
 
 /*Index sliders style*/
@@ -171,7 +171,7 @@ input[type="range"]::-webkit-slider-thumb {
     width: 16px;
     height: 16px;
     border-radius: 50%;
-    background-color: #c9bc92;
+    background-color: #e07ca5;
     cursor: pointer;
 }
 
@@ -197,7 +197,7 @@ input[type="range"]::-moz-range-thumb {
 }
 
 .time input[type="time"] {
-    background-color: #ebcd25;
+    background-color: #f1bad1;
     border: 1px solid #024CAA;
     color: #333;
     padding: 8px;
@@ -245,7 +245,7 @@ input[type="range"]::-moz-range-thumb {
 }
 
 .location-controls button:hover {
-    background-color: #ebcd25;
+    background-color: #8d446a;
 }
 
 .location-controls input {
@@ -449,7 +449,7 @@ button.btn-action {
     align-items: center;
     justify-content: center;
     text-align: center;
-    background-color: #091057;
+    background-color: #0D3B66;
     color: rgb(187, 185, 185);
     flex-direction: column;
     padding: 30px 10px;
@@ -462,7 +462,3 @@ button.btn-action {
     color: white;
 }
 
-.input-field-label span {
-    margin-left: 3px;
-    color: red;
-}

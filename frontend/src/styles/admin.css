@@ -8,7 +8,7 @@
 /* Header styling */
 h2 {
 	font-size: 1.8em;
-	color: #024CAA;
+	color: #ffffff;
 	margin-bottom: 10px;
     justify-content: center;
 }
@@ -23,7 +23,7 @@ h2 {
 
 /* Button styling for + New Admin */
 .btn-show-modal {
-    background-color: #a8325a;
+    background-color: #4f8cff;
     color: #fff;
     padding: 20px 30px;
     font-weight: bold;
@@ -35,7 +35,7 @@ h2 {
 }
 
 .btn-show-modal:hover {
-    background-color: #8a284a;
+    background-color: #8d446a;
 }
 
 /* Gym Ownership Requests Section */
@@ -54,7 +54,7 @@ h2 {
     border-collapse: collapse;
     margin-top: 15px;
     background-color: #540032;
-    color: #fff;
+    color: #000000;
     border: 1px solid #ddd;
     text-align: left;
 }
@@ -76,7 +76,6 @@ h2 {
 
 .requests-table tr:nth-child(even) td {
     background-color: #e6e6fa;
-    color: #540032;
 }
 
 /* Approve/Reject buttons in request rows */
