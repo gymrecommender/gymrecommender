@@ -10,134 +10,17 @@ using Microsoft.EntityFrameworkCore.Query;
 namespace backend.Controllers;
 
 [ApiController]
-[Route("api/[controller]")]
-public class AccountController : Controller {
-    private readonly GymrecommenderContext context;
-    private readonly AppSettings appData;
-
-    public AccountController(GymrecommenderContext context, IOptions<AppSettings> appSettings) {
-        this.context = context;
-        appData = appSettings.Value;
-    }
+[Route("/api/[controller]")]
+public class AccountController : AccountControllerTemplate {
+    public AccountController(GymrecommenderContext context, IOptions<AppSettings> appSettings) : base(context, appSettings) {}
 
     [HttpGet]
-    public async Task<IActionResult> Get(int page = 1, int sort = 1, bool ascending = true) {
-        int pagesize = appData.PageSize;
-        var query = context.Accounts.AsNoTracking();
-        int count = await query.CountAsync();
-
-        var pagingInfo = new PagingInfo {
-            CurrentPage = page,
-            Sort = sort,
-            Ascending = ascending,
-            ItemsPerPage = pagesize,
-            TotalItems = count
-        };
-
-        var accounts = await query
-            .Select(p => new AccountViewModel {
-                Id = p.Id,
-                Username = p.Username,
-                Email = p.Email,
-                FirstName = p.FirstName,
-                LastName = p.LastName,
-                IsEmailVerified = p.IsEmailVerified,
-                OuterUid = p.OuterUid,
-                CreatedAt = p.CreatedAt,
-                LastSignIn = p.LastSignIn,
-                PasswordHash = p.PasswordHash,
-                Type = p.Type.ToString(),
-                Provider = p.Provider.ToString(),
-                // TODO deal with the CreatedBy field
-            })
-            .OrderBy(b => b.Username)
-            .Skip((page - 1) * pagesize)
-            .Take(pagesize)
-            .AsSplitQuery()
-            .ToListAsync();
-
-        return Ok(new { accounts = accounts, paging = pagingInfo });
-    }
-
-    [HttpPost("{accountType}")]
-    public async Task<IActionResult> Post(string accountType, AccountDto accountDto) {
-        //check that the provided account type in the url is actually a type of account
-        if (!Enum.TryParse(accountType, true, out AccountType type)) {
-            return BadRequest(new {
-                success = false,
-                error = new {
-                    message = $"Invalid account type: {accountType}"
-                }
-            });
-        }
-
-        return await PostHandler(accountDto, type);
+    public async Task<IActionResult> GetAccounts(int page = 1, int sort = 1, bool ascending = true) {
+        return await base.GetData(page, sort, ascending);
     }
     
-    private async Task<IActionResult> PostHandler(AccountDto accountDto, AccountType type) {
-        if (ModelState.IsValid) {
-            try {
-                var errors = new Dictionary<string, string[]> { };
-                if (!Enum.TryParse<ProviderType>(accountDto.Provider, out var provider)) {
-                    errors["Provider"] = new[] { $"Provider {accountDto.Provider} is not supported" };
-                }
-
-                if (errors.Count > 0) {
-                    return BadRequest(new {
-                        success = false,
-                        error = errors
-                    });
-                }
-
-                var account = new Account {
-                    Username = accountDto.Username,
-                    Email = accountDto.Email,
-                    FirstName = accountDto.FirstName,
-                    LastName = accountDto.LastName,
-                    Type = type,
-                    Provider = provider,
-                    OuterUid = accountDto.OuterUid,
-                    CreatedAt = DateTime.UtcNow,
-                    PasswordHash = BCrypt.Net.BCrypt.HashPassword(accountDto.Password),
-                    IsEmailVerified = accountDto.IsEmailVerified
-                };
-                context.Add(account);
-                await context.SaveChangesAsync();
-
-                var result = new AccountViewModel {
-                    Id = account.Id,
-                    Username = account.Username,
-                    Email = account.Email,
-                    FirstName = account.FirstName,
-                    LastName = account.LastName,
-                    IsEmailVerified = account.IsEmailVerified,
-                    Type = account.Type.ToString(),
-                    Provider = account.Provider.ToString(),
-                    OuterUid = account.OuterUid,
-                    CreatedAt = account.CreatedAt,
-                    LastSignIn = account.LastSignIn,
-                    PasswordHash = account.PasswordHash,
-                };
-
-                return Ok(result);
-            }
-            catch (Exception e) {
-                return StatusCode(500, new {
-                    success = false,
-                    error = new {
-                        message = e.Message
-                    }
-                });
-            }
-        }
-
-        return BadRequest(new {
-            success = false,
-            error = new {
-                code = "ValidationError",
-                message = "Invalid data",
-                details = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage)
-            }
-        });
+    [HttpGet("{username}")]
+    public async Task<IActionResult> GetByUsername(string username) {
+        return await base.GetByUsername(username);
     }
 }

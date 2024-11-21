@@ -26,6 +26,4 @@ public class AccountViewModel {
     public string Type { get; set; } = null!;
 
     public string Provider { get; set; } = null!;
-
-    public AccountViewModel? CreatedBy { get; set; }
 }
