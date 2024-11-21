@@ -1,7 +1,6 @@
 namespace backend.Enums;
 
-public enum ProviderType
-{
+public enum ProviderType {
     local,
     google
 }

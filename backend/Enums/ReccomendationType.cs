@@ -1,7 +1,6 @@
 namespace backend.Enums;
 
-public enum ReccomendationType
-{
+public enum ReccomendationType {
     main,
     rlternative
 }

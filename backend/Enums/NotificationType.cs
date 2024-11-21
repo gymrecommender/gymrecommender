@@ -1,7 +1,6 @@
 namespace backend.Enums;
 
-public enum NotificationType
-{
+public enum NotificationType {
     message,
     alert,
     reminder

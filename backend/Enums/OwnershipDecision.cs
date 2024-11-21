@@ -1,7 +1,6 @@
 namespace backend.Enums;
 
-public enum OwnershipDecision
-{
+public enum OwnershipDecision {
     approved,
     rejected
 }

@@ -11,26 +11,22 @@ namespace backend.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class AccountController : Controller
-{
+public class AccountController : Controller {
     private readonly GymrecommenderContext context;
     private readonly AppSettings appData;
 
-    public AccountController(GymrecommenderContext context, IOptions<AppSettings> appSettings)
-    {
+    public AccountController(GymrecommenderContext context, IOptions<AppSettings> appSettings) {
         this.context = context;
         appData = appSettings.Value;
     }
 
     [HttpGet]
-    public async Task<IActionResult> Get(int page = 1, int sort = 1, bool ascending = true)
-    {
+    public async Task<IActionResult> Get(int page = 1, int sort = 1, bool ascending = true) {
         int pagesize = appData.PageSize;
         var query = context.Accounts.AsNoTracking();
         int count = await query.CountAsync();
 
-        var pagingInfo = new PagingInfo
-        {
+        var pagingInfo = new PagingInfo {
             CurrentPage = page,
             Sort = sort,
             Ascending = ascending,
@@ -39,8 +35,7 @@ public class AccountController : Controller
         };
 
         var accounts = await query
-            .Select(p => new AccountViewModel
-            {
+            .Select(p => new AccountViewModel {
                 Id = p.Id,
                 Username = p.Username,
                 Email = p.Email,
@@ -60,25 +55,47 @@ public class AccountController : Controller
             .Take(pagesize)
             .AsSplitQuery()
             .ToListAsync();
-        
+
         return Ok(new { accounts = accounts, paging = pagingInfo });
     }
 
-    [HttpPost]
-    public async Task<IActionResult> Post(AccountDto accountDto)
-    {
-        if (ModelState.IsValid)
-        {
-            try
-            {
-                var account = new Account
-                {
+    [HttpPost("{accountType}")]
+    public async Task<IActionResult> Post(string accountType, AccountDto accountDto) {
+        //check that the provided account type in the url is actually a type of account
+        if (!Enum.TryParse(accountType, true, out AccountType type)) {
+            return BadRequest(new {
+                success = false,
+                error = new {
+                    message = $"Invalid account type: {accountType}"
+                }
+            });
+        }
+
+        return await PostHandler(accountDto, type);
+    }
+    
+    private async Task<IActionResult> PostHandler(AccountDto accountDto, AccountType type) {
+        if (ModelState.IsValid) {
+            try {
+                var errors = new Dictionary<string, string[]> { };
+                if (!Enum.TryParse<ProviderType>(accountDto.Provider, out var provider)) {
+                    errors["Provider"] = new[] { $"Provider {accountDto.Provider} is not supported" };
+                }
+
+                if (errors.Count > 0) {
+                    return BadRequest(new {
+                        success = false,
+                        error = errors
+                    });
+                }
+
+                var account = new Account {
                     Username = accountDto.Username,
                     Email = accountDto.Email,
                     FirstName = accountDto.FirstName,
                     LastName = accountDto.LastName,
-                    Type = AccountType.user,
-                    Provider = ProviderType.local,
+                    Type = type,
+                    Provider = provider,
                     OuterUid = accountDto.OuterUid,
                     CreatedAt = DateTime.UtcNow,
                     PasswordHash = BCrypt.Net.BCrypt.HashPassword(accountDto.Password),
@@ -87,8 +104,7 @@ public class AccountController : Controller
                 context.Add(account);
                 await context.SaveChangesAsync();
 
-                var result = new AccountViewModel
-                {
+                var result = new AccountViewModel {
                     Id = account.Id,
                     Username = account.Username,
                     Email = account.Email,
@@ -105,24 +121,19 @@ public class AccountController : Controller
 
                 return Ok(result);
             }
-            catch (Exception e)
-            {
-                return StatusCode(500, new
-                {
+            catch (Exception e) {
+                return StatusCode(500, new {
                     success = false,
-                    error = new
-                    {
+                    error = new {
                         message = e.Message
                     }
                 });
             }
         }
-        
-        return BadRequest(new
-        {
+
+        return BadRequest(new {
             success = false,
-            error = new
-            {
+            error = new {
                 code = "ValidationError",
                 message = "Invalid data",
                 details = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage)

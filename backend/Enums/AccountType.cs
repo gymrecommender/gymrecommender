@@ -4,12 +4,8 @@ using Google.Apis.Util;
 
 namespace backend.Enums;
 
-public enum AccountType
-{
-    [Description("user")]
+public enum AccountType {
     user,
-    [Description("gym")]
     gym,
-    [Description("admin")]
     admin
 }

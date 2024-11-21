@@ -2,14 +2,13 @@ using backend.Enums;
 
 namespace backend.DTO;
 
-public class AccountDto
-{
-    public string Username { get; set; }
-    public string Password { get; set; }
-    public string Email { get; set; }
-    public string FirstName { get; set; }
-    public string LastName { get; set; }
-    public string Provider { get; set; }
-    public string OuterUid { get; set; }
+public class AccountDto {
+    public required string Username { get; set; }
+    public required string Password { get; set; }
+    public required string Email { get; set; }
+    public required string FirstName { get; set; }
+    public required string LastName { get; set; }
+    public required string Provider { get; set; }
+    public required string OuterUid { get; set; }
     public bool IsEmailVerified { get; set; }
 }
