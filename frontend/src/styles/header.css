@@ -1,5 +1,5 @@
 header {
-    background-color: #0D3B66;
+    background: #002147;
     margin-bottom: 10px;
 }
 
@@ -51,11 +51,11 @@ button.btn-panel {
     padding: 10px 20px;
     font-size: 2em;
     border-radius: 5px;
-    background-color: #ffffff;
-    color: #e07ca5;
+    background-color: #aacae6;
+    color: #9f60b5;
     
 }
 
 button.btn-panel:hover {
-    color: #989898;
+    color: #cba5d7;
 }

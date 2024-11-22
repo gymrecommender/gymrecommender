@@ -10,7 +10,7 @@
     padding: 20px 40px;
     border: 3px solid #ccc;
     border-radius: 15px;
-    background-color: #540032;
+    background-color:#a377b3;
 
     width: 540px;
     min-height: 590px;
@@ -116,7 +116,7 @@
 
 .gym-data table {
     width: 100%;
-    color: #00BFFF;
+    color: #002147;
     font-size: 1.1rem;
 }
 .gym-data .gym-data-title {
@@ -162,25 +162,24 @@
 }
 
 .gym-own {
-    background-color: #540032;
+    background-color: #c8b7ef;
     height: 100%;
     padding: 20px;
-
     color: white;
 }
 
 .gym-own table {
-    width: 80vw;
+    width: 100%;
     border-collapse: collapse;
-
+    margin-left: 20px;
     table-layout: auto;
 }
 
 .gym-own td.gym-own-req-item, .gym-own th.gym-own-hd-item {
-    border: 1px solid #540032;
+    border: 1px solid #c8b7ef;
     padding: 5px 10px;
 
-    color: #540032;
+    color: #000000;
     font-size: 1.3em;
     font-weight: bold;
     text-align: center;
@@ -192,17 +191,17 @@
 .gym-own th.gym-own-hd-item {
     text-align: center;
     text-transform: uppercase;
-    background-color: #A6AEBF;
+    background-color: #8fa8df;
 }
 .gym-own tr.gym-own-req:nth-child(odd) {
-    background-color: #C5D3E8;
+    background-color: #C5D7ED;
 }
 .gym-own tr.gym-own-req:nth-child(even) {
-    background-color: white;
+    background-color: #cacafa;
 }
 .gym-own td.gym-own-req-item:last-child  {
     border: none;
-    background-color: #540032;
+    background-color: #c8b7ef;
 }
 
 .gym-marked {
@@ -232,7 +231,7 @@
     flex-direction: column;
     justify-content: stretch;
 
-    background-color: #FF6F61;
+    background-color: #024CAA;
 
     border-radius: 5px;
     padding: 15px;
@@ -255,14 +254,14 @@
     border-radius: 15px;
     padding: 10px 15px 25px 15px;
 
-    background-color: #540032;
+    background-color: #7C5DC6;
     color: white;
 }
 .gyms-req .gym-req:hover {
     cursor: pointer;
 }
 .gyms-req .gym-req-selected {
-    background-color: #001f3f;
+    background-color: #7C5DC6;
 }
 
 .gym-req .gym-req-header {

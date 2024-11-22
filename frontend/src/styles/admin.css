@@ -23,7 +23,7 @@ h2 {
 
 /* Button styling for + New Admin */
 .btn-show-modal {
-    background-color: #4f8cff;
+    background-color: #00338e;
     color: #fff;
     padding: 20px 30px;
     font-weight: bold;
@@ -35,12 +35,12 @@ h2 {
 }
 
 .btn-show-modal:hover {
-    background-color: #8d446a;
+    background-color: #9325b2;
 }
 
 /* Gym Ownership Requests Section */
 .gym-requests {
-	background-color: #540032;
+	background-color: #7C5DC6;
     width: 95%;
 	border: 1px solid #ddd;
 	border-radius: 8px;
@@ -53,7 +53,7 @@ h2 {
     margin: 0 auto;
     border-collapse: collapse;
     margin-top: 15px;
-    background-color: #540032;
+    background-color: #7C5DC6;
     color: #000000;
     border: 1px solid #ddd;
     text-align: left;
@@ -65,17 +65,17 @@ h2 {
 }
 
 .requests-table th {
-    background-color: #666;
+    background-color: #00338e;
     color: #fff;
     font-weight: bold;
 }
 
 .requests-table td {
-    background-color: #c398b2;
+    background-color: #C5D7ED;
 }
 
 .requests-table tr:nth-child(even) td {
-    background-color: #e6e6fa;
+    background-color: #cacafa;
 }
 
 /* Approve/Reject buttons in request rows */

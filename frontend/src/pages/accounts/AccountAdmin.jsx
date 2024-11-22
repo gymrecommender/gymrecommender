@@ -22,7 +22,11 @@ const AccountAdmin = () => {
 					<tr>
 						<th>Gym Name / ID</th>
 						<th>Requester Email</th>
+						<th>Address</th>
+						<th>Status</th>
+						<th>Message</th>
 						<th>Request Time</th>
+						<th>Response Time</th>
 						<th>Actions</th>
 					</tr>
 					</thead>
@@ -31,7 +35,11 @@ const AccountAdmin = () => {
 					<tr>
 						<td>Mountain Valley / ID 123</td>
 						<td>requester1@example.com</td>
+						<td>Mountain Valley / ID 123</td>
+						<td>approved</td>
+						<td>No message</td>
 						<td>7 Nov 2024, 9:15:30 CET</td>
+						<td>13 Nov 2024, 10:15:30 CET</td>
 						<td>
 							<Button className="btn-icon approve" aria-label="Approve">✓</Button>
 							<Button className="btn-icon reject" aria-label="Reject">✗</Button>
@@ -40,7 +48,11 @@ const AccountAdmin = () => {
 					<tr>
 						<td>Lakeside Fitness / ID 456</td>
 						<td>requester2@example.com</td>
+						<td>Mountain Valley / ID 123</td>
+						<td>approved</td>
+						<td>No message</td>
 						<td>6 Nov 2024, 10:15:00 CET</td>
+						<td>13 Nov 2024, 10:15:30 CET</td>
 						<td>
 							<Button className="btn-icon approve" aria-label="Approve">✓</Button>
 							<Button className="btn-icon reject" aria-label="Reject">✗</Button>
@@ -49,7 +61,11 @@ const AccountAdmin = () => {
 					<tr>
 						<td>Urban Core Gym / ID 789</td>
 						<td>requester3@example.com</td>
+						<td>Mountain Valley / ID 123</td>
+						<td>approved</td>
+						<td>No message</td>
 						<td>7 Nov 2024, 7:10:15 CET</td>
+						<td>13 Nov 2024, 10:15:30 CET</td>
 						<td>
 							<Button className="btn-icon approve" aria-label="Approve">✓</Button>
 							<Button className="btn-icon reject" aria-label="Reject">✗</Button>

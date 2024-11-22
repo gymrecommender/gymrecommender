@@ -6,7 +6,7 @@
 
 html, body {
     height: 100%;
-    background-color: #000000;
+    background-color: #aacae6;
     font-family: Arial, sans-serif;
     -ms-overflow-style: none;
     scrollbar-width: none;
@@ -34,7 +34,7 @@ body::-webkit-scrollbar {
     justify-content: center;
     gap: 20px;
 
-    background-color: #0D3B66;
+    background-color: #002147;
     padding: 20px;
 }
 .content > :first-child {
@@ -56,24 +56,23 @@ body::-webkit-scrollbar {
 .section {
     display: flex;
     flex-direction: column;
-    background-color: #0D3B66;
+    background-color: #002147;
     padding: 20px;
     border-radius: 5px;
 }
 
 .section h3 {
     font-size: 1.3em;
-    color: #00E5FF;
     margin-bottom: 10px;
 }
 
 .section p {
     font-size: 1em;
-    color: #477bdb;
+    color: #aacae6;
 }
 
 .sliders {
-    background-color: #ccc;
+    background-color: #bed3f0;
     height: fit-content;
 }
 
@@ -141,7 +140,7 @@ body::-webkit-scrollbar {
 
 /*styles for all buttons*/
 button[type="submit"].btn-submit {
-    background-color: #024CAA;
+    background-color: #00338e;
     color:#F5F5F5;
     border: none;
     padding: 10px 20px;
@@ -152,7 +151,7 @@ button[type="submit"].btn-submit {
 }
 
 button[type="submit"].btn-submit:hover {
-    background-color: #8d446a;
+    background-color: #9325b2;
 }
 
 /*Index sliders style*/
@@ -162,7 +161,7 @@ input[type="range"] {
     appearance: none;
     outline: none;
     border-radius: 5px;
-    background: #ddd linear-gradient(to right, aqua, blue);
+    background: #ddd linear-gradient(to right, #dfc7df, #0d204a);
 }
 
 input[type="range"]::-webkit-slider-thumb {
@@ -171,7 +170,7 @@ input[type="range"]::-webkit-slider-thumb {
     width: 16px;
     height: 16px;
     border-radius: 50%;
-    background-color: #e07ca5;
+    background-color: #9325b2;
     cursor: pointer;
 }
 
@@ -197,7 +196,7 @@ input[type="range"]::-moz-range-thumb {
 }
 
 .time input[type="time"] {
-    background-color: #f1bad1;
+    background-color: #9f60b5;
     border: 1px solid #024CAA;
     color: #333;
     padding: 8px;
@@ -208,7 +207,7 @@ input[type="range"]::-moz-range-thumb {
 
 .time input[type="time"]:focus {
     border-color: #4f8cff;
-    background-color: #fff8e1;
+    background-color: #cba5d7;
 }
 
 .time input[type="time"]::placeholder {
@@ -233,8 +232,8 @@ input[type="range"]::-moz-range-thumb {
 
 .location-controls button {
     padding: 12px 20px;
-    background-color: #4f8cff;
-    color: #FFF4B7;
+    background-color: #00338e;
+    color: #ffffff;
     border: none;
     border-radius: 5px;
     cursor: pointer;
@@ -245,7 +244,7 @@ input[type="range"]::-moz-range-thumb {
 }
 
 .location-controls button:hover {
-    background-color: #8d446a;
+    background-color: #9325b2;
 }
 
 .location-controls input {
@@ -254,7 +253,6 @@ input[type="range"]::-moz-range-thumb {
 }
 
 .location-controls input[type="text"]:focus {
-    border-color: #ffd54f;
     box-shadow: 0 0 10px rgba(255, 213, 79, 0.5);
     outline: none;
 }
@@ -323,7 +321,7 @@ input[type="range"]::-moz-range-thumb {
 .recommendation-item {
     margin-bottom: 15px;
     padding: 15px;
-    background-color: #86b8f0;
+    background-color:#a0a8f5;
     border-radius: 5px;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
@@ -385,7 +383,6 @@ input[type="range"]::-moz-range-thumb {
 }
 
 .input-box:focus {
-    border-color: #ffd54f;
     box-shadow: 0 0 10px rgba(255, 213, 79, 0.5);
     outline: none;
 }
@@ -422,8 +419,9 @@ button.btn-icon .icon:not(:last-child) {
 }
 
 button.btn-icon:hover {
-    border-color: #ebcd25;
-    color: #ebcd25;
+    border-color:#9f60b5;
+    color:#9f60b5;
+    background-color: white;
     cursor: pointer;
 }
 
@@ -449,7 +447,7 @@ button.btn-action {
     align-items: center;
     justify-content: center;
     text-align: center;
-    background-color: #0D3B66;
+    background-color: #002147;
     color: rgb(187, 185, 185);
     flex-direction: column;
     padding: 30px 10px;

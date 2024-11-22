@@ -25,9 +25,9 @@
 }
 .login-header .btn-icon {
     font-size: 0.9em;
-
     width: fit-content;
 }
+
 .login-header .login-title {
     text-transform: uppercase;
     margin-bottom: 0;
@@ -59,14 +59,14 @@ input.input-login {
     padding: 10px;
     border: none;
     border-radius: 5px;
-    background-color: #001f3f; /* Darker blue for input fields */
+    background-color: #aacae6;
     color: #fff; /* White text for input fields */
     font-size: 1em;
 }
 
 input.input-login:focus {
     outline: none;
-    background-color: #ebcd25; /* Bright blue on focus */
+    background-color: #9f60b5;
 }
 
 button.btn-login {
@@ -74,14 +74,14 @@ button.btn-login {
     padding: 10px;
     border: none;
     border-radius: 5px;
-    background-color: #4f8cff; /* Bright blue for button */
-    color: #FFF4B7;
+    background-color:#00338e; /* Bright blue for button */
+    color: #ffffff;
     font-size: 1.2em;
     cursor: pointer;
     transition: background-color 0.3s;
 }
 
 button[type="submit"].btn-login:hover {
-    background-color: #ffd54f;
+    background-color:#9f60b5;
 }
 
