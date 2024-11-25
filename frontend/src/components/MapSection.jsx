@@ -15,7 +15,7 @@ const MapSection = () => {
 		//hence, to get the result we need to wait for the execution of that function to be finished
 		const result = await getLocation()
 		if (result.error) {
-			alert(result.error) //TODO the error should be displayed in the pop up or sth
+			alert(result.error.toString()) //TODO the error should be displayed in the pop up or sth
 		} else {
 			setCoordinates({
 				lat: result.lat,

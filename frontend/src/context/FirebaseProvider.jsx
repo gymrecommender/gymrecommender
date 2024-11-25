@@ -49,13 +49,9 @@ const FirebaseProvider = ({children}) => {
 	}, [])
 
 	const signUp = async (values) => {
-		const result = await accountSignUp(values)
-		if (!result.error) {
-			navigate('/login')
-		}
-
-		return result
+		return await accountSignUp(values)
 	}
+
 	const signIn = async (values) => {
 		const result = {error: null}
 		try {

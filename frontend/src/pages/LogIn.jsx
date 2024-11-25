@@ -17,22 +17,24 @@ const LogIn = () => {
 	const getFormValues = async (values, flushForm) => {
 		const {password_repeat, ...rest} = values;
 		const result = await functor(rest);
-		//TODO the error should be added to the specific area of the form
 		if (result.error) {
+			//TODO the error should be added to the specific area of the form
 			alert(result.error);
+		} else {
+			//TODO make some information regarding the necessity to verify the email to login
+			flushForm();
+			navigate("/login");
 		}
-
-		flushForm();
 	}
 
 	const data = {
 		fields: [
 			...(!isLogin ?
 				[
-					{pos: 1, type: "text", label: "First name", required: true, name: "first_name"},
-					{pos: 2, type: "text", label: "Last name", required: true, name: "last_name"},
+					{pos: 1, type: "text", label: "First name", required: true, name: "firstName"},
+					{pos: 2, type: "text", label: "Last name", required: true, name: "lastName"},
 					{pos: 3, type: "text", required: true, label: "Username", name: "username"},
-					{pos: 6, type: "password", required: true, label: "Repeat the password", name: "password_repeat"},
+					{pos: 6, type: "password", required: true, label: "Repeat the password", name: "passwordRepeat"},
 				] : []),
 			{pos: 4, type: "email", required: true, label: "Email", name: "email"},
 			{pos: 5, type: "password", required: true, label: "Password", name: "password"},
