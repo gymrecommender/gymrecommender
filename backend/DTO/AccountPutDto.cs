@@ -8,4 +8,5 @@ public class AccountPutDto {
     public string? LastName { get; set; }
     public string? OuterUid { get; set; }
     public bool? IsEmailVerified { get; set; }
+    public DateTime? LastSignIn { get; set; }
 }
