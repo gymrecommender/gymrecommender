@@ -37,17 +37,14 @@ public abstract class AccountControllerTemplate : Controller {
         };
 
         var accounts = await query
-            .Select(p => new AccountViewModel {
+            .Select(p => new AccountRegularModel {
                 Id = p.Id,
                 Username = p.Username,
                 Email = p.Email,
                 FirstName = p.FirstName,
                 LastName = p.LastName,
                 IsEmailVerified = p.IsEmailVerified,
-                OuterUid = p.OuterUid,
-                CreatedAt = p.CreatedAt,
                 LastSignIn = p.LastSignIn,
-                PasswordHash = p.PasswordHash,
                 Type = p.Type.ToString(),
                 Provider = p.Provider.ToString(),
             })
@@ -63,7 +60,7 @@ public abstract class AccountControllerTemplate : Controller {
     public async Task<IActionResult> GetByUsername(string username, AccountType? accountType = null) {
         var accountQuery = context.Accounts.AsNoTracking()
             .Where(a => a.Username == username);
-        
+
         if (accountType is not null) {
             accountQuery = accountQuery.Where(a => a.Type == accountType);
         }
@@ -74,20 +71,16 @@ public abstract class AccountControllerTemplate : Controller {
             return NotFound(new { error = $"User {username} is not found" });
         }
 
-        return Ok(new AccountViewModel {
+        return Ok(new AccountRegularModel {
             Id = account.Id,
             Username = account.Username,
             Email = account.Email,
             FirstName = account.FirstName,
             LastName = account.LastName,
             IsEmailVerified = account.IsEmailVerified,
-            OuterUid = account.OuterUid,
-            CreatedAt = account.CreatedAt,
             LastSignIn = account.LastSignIn,
-            PasswordHash = account.PasswordHash,
             Type = account.Type.ToString(),
             Provider = account.Provider.ToString(),
-            // TODO deal with the CreatedBy field
         });
     }
 
@@ -122,7 +115,7 @@ public abstract class AccountControllerTemplate : Controller {
                 context.Add(account);
                 await context.SaveChangesAsync();
 
-                var result = new AccountViewModel {
+                var result = new AccountRegularModel {
                     Id = account.Id,
                     Username = account.Username,
                     Email = account.Email,
@@ -131,10 +124,7 @@ public abstract class AccountControllerTemplate : Controller {
                     IsEmailVerified = account.IsEmailVerified,
                     Type = account.Type.ToString(),
                     Provider = account.Provider.ToString(),
-                    OuterUid = account.OuterUid,
-                    CreatedAt = account.CreatedAt,
                     LastSignIn = account.LastSignIn,
-                    PasswordHash = account.PasswordHash,
                 };
 
                 return Ok(result);
@@ -157,5 +147,62 @@ public abstract class AccountControllerTemplate : Controller {
                 details = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage)
             }
         });
+    }
+
+    public async Task<IActionResult> UpdateByUsername(string username, AccountPutDto accountPutDto,
+        AccountType? accountType = null) {
+        var accountQuery = context.Accounts.AsTracking()
+            .Where(a => a.Username == username);
+
+        if (accountType is not null) {
+            accountQuery = accountQuery.Where(a => a.Type == accountType);
+        }
+
+        var account = await accountQuery.FirstOrDefaultAsync();
+
+        if (account == null) {
+            return NotFound(new { success = false, error = $"User {username} is not found" });
+        }
+
+
+        if (!string.IsNullOrWhiteSpace(accountPutDto.Password)) {
+            account.PasswordHash = BCrypt.Net.BCrypt.HashPassword(accountPutDto.Password);
+        }
+
+        account.FirstName = accountPutDto?.FirstName ?? account.FirstName;
+        account.LastName = accountPutDto?.LastName ?? account.LastName;
+        account.Username = accountPutDto?.Username ?? account.Username;
+        account.OuterUid = accountPutDto?.OuterUid ?? account.OuterUid;
+        account.IsEmailVerified = accountPutDto?.IsEmailVerified ?? account.IsEmailVerified;
+        account.Email = accountPutDto?.Email ?? account.Email;
+
+        await context.SaveChangesAsync();
+
+        return Ok(new AccountRegularModel {
+            Id = account.Id,
+            Username = account.Username,
+            Email = account.Email,
+            FirstName = account.FirstName,
+            LastName = account.LastName,
+            IsEmailVerified = account.IsEmailVerified,
+            LastSignIn = account.LastSignIn,
+            Type = account.Type.ToString(),
+            Provider = account.Provider.ToString()
+        });
+    }
+
+    public async Task<IActionResult> DeleteByUsername(string username, AccountType accountType) {
+        var account = context.Accounts.AsTracking()
+            .Where(a => a.Username == username)
+            .Where(a => a.Type == accountType).FirstOrDefault();
+
+        if (account == null) {
+            return NotFound(new { success = false, error = $"User {username} is not found" });
+        }
+        
+        context.Remove(account);
+        await context.SaveChangesAsync();
+        
+        return Ok();
     }
 }

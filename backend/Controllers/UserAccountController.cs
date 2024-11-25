@@ -15,17 +15,27 @@ public class UserAccountController : AccountControllerTemplate {
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetUserData(int page = 1, int sort = 1, bool ascending = true) {
+    public async Task<IActionResult> GetData(int page = 1, int sort = 1, bool ascending = true) {
         return await base.GetData(page, sort, ascending, _accountType);
     }
     
     [HttpPost]
-    public async Task<IActionResult> SignUpUser(AccountDto accountDto) {
+    public async Task<IActionResult> SignUp(AccountDto accountDto) {
         return await SignUp(accountDto, _accountType);
     }
     
     [HttpGet("{username}")]
-    public async Task<IActionResult> GetUserByUsername(string username, AccountType? accountType) {
+    public async Task<IActionResult> GetByUsername(string username, AccountType? accountType) {
         return await base.GetByUsername(username, _accountType);
+    }
+    
+    [HttpPut("{username}")]
+    public async Task<IActionResult> UpdateByUsername(string username, AccountPutDto accountPutDto) {
+        return await base.UpdateByUsername(username, accountPutDto, _accountType);
+    }
+    
+    [HttpDelete("{username}")]
+    public async Task<IActionResult> DeleteByUsername(string username) {
+        return await base.DeleteByUsername(username, _accountType);
     }
 }

@@ -2,12 +2,10 @@ using backend.Enums;
 
 namespace backend.ViewModels;
 
-public class AccountViewModel {
+public class AccountRegularModel {
     public Guid Id { get; set; }
 
     public string Username { get; set; } = null!;
-
-    public string OuterUid { get; set; } = null!;
 
     public string Email { get; set; } = null!;
 
@@ -17,11 +15,7 @@ public class AccountViewModel {
 
     public string LastName { get; set; } = null!;
 
-    public DateTime CreatedAt { get; set; }
-
     public DateTime? LastSignIn { get; set; }
-
-    public string PasswordHash { get; set; } = null!;
 
     public string Type { get; set; } = null!;
 

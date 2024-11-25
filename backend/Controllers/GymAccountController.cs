@@ -28,4 +28,14 @@ public class GymAccountController : AccountControllerTemplate {
     public async Task<IActionResult> GetGymByUsername(string username, AccountType? accountType) {
         return await base.GetByUsername(username, _accountType);
     }
+    
+    [HttpPut("{username}")]
+    public async Task<IActionResult> UpdateByUsername(string username, AccountPutDto accountPutDto) {
+        return await base.UpdateByUsername(username, accountPutDto, _accountType);
+    }
+    
+    [HttpDelete("{username}")]
+    public async Task<IActionResult> DeleteByUsername(string username) {
+        return await base.DeleteByUsername(username, _accountType);
+    }
 }
