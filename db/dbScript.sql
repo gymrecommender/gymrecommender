@@ -448,15 +448,6 @@ IF NOT EXISTS (
     EXECUTE FUNCTION enforce_account_type('user', 'user_id');
   END IF;
 
-IF NOT EXISTS (
-    SELECT 1 FROM pg_trigger WHERE tgname = 'enforce_user_token_user_type'
-  ) THEN
-    CREATE TRIGGER enforce_user_token_user_type
-    BEFORE INSERT OR UPDATE ON user_token
-    FOR EACH ROW
-    EXECUTE FUNCTION enforce_account_type('user', 'user_id');
-  END IF;
-
   IF NOT EXISTS (
     SELECT 1 FROM pg_trigger WHERE tgname = 'enforce_account_admin_type'
   ) THEN
@@ -467,10 +458,3 @@ IF NOT EXISTS (
   END IF;
 
 END $$;
-
-
-
-
-
-
-
