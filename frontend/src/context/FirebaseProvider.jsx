@@ -2,7 +2,8 @@ import { useEffect, useState, createContext, useContext } from "react";
 import {auth, provider} from "../Firebase.jsx";
 import {signInWithPopup, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut, updateProfile, deleteUser, sendEmailVerification} from "firebase/auth";
 import {useNavigate} from "react-router-dom";
-import {accountSignUp} from "../services/accountHelpers.jsx";
+import {accountLogin, accountSignUp} from "../services/accountHelpers.jsx";
+import {axiosInternal} from "../services/axios.jsx";
 
 const FirebaseContext = createContext();
 const useFirebase = () => useContext(FirebaseContext);
@@ -49,17 +50,21 @@ const FirebaseProvider = ({children}) => {
 	}, [])
 
 	const signUp = async (values) => {
-		return await accountSignUp(values)
+		const result = await accountSignUp(values);
+
+		if (!result.error) {
+			navigate('/login')
+		}
+
+		return result
 	}
 
 	const signIn = async (values) => {
-		const result = {error: null}
-		try {
-			const result = await signInWithEmailAndPassword(auth, values.email, values.password);
-		} catch (e) {
-			result.error = firebaseErrors(e.code);
-			console.log(e)
+		const result = await accountLogin(values)
+		if (!result.error) {
+			navigate('/')
 		}
+
 		return result;
 	}
 
@@ -67,10 +72,20 @@ const FirebaseProvider = ({children}) => {
 	const logout = async () =>  {
 		const result = {error: null};
 		try {
+			const logoutResult = await axiosInternal('DELETE', `useraccount/${user.username}/logout`);
+			if (logoutResult.error) {
+				result.error = logoutResult.error.message;
+
+				return result;
+			}
+
 			await signOut(auth);
-			navigate('/')
+			navigate('/');
 		} catch (e) {
 			result.error = firebaseErrors(e.code);
+			if (!result.error) {
+				result.error = e
+			}
 		}
 
 		return result;

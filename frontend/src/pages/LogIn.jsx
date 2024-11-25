@@ -23,7 +23,6 @@ const LogIn = () => {
 		} else {
 			//TODO make some information regarding the necessity to verify the email to login
 			flushForm();
-			navigate("/login");
 		}
 	}
 
@@ -38,7 +37,9 @@ const LogIn = () => {
 				] : []),
 			{pos: 4, type: "email", required: true, label: "Email", name: "email"},
 			{pos: 5, type: "password", required: true, label: "Password", name: "password"},
-		].sort(function(a, b) {return a.pos - b.pos;}),
+		].sort(function (a, b) {
+			return a.pos - b.pos;
+		}),
 		fieldClass: "input-login",
 		wClassName: "form-group",
 		button: {
@@ -57,13 +58,16 @@ const LogIn = () => {
 						                 icon={faHome}/>
 					</Button>
 					<h2 className={"login-title"}>{isLogin ? "Login" : "Sign up"}</h2>
-					<Button onClick={() => navigate(`${isLogin ? '/signup' : '/login'}`)} type={"button"}
+					<Button onClick={() => {
+						navigate(`${isLogin ? '/signup' : '/login'}`)
+						//TODO flush the form here
+					}} type={"button"}
 					        title={isLogin ? "Sign up" : "Login"} className={"btn-icon btn-action"}>
 						<FontAwesomeIcon className={"icon"} size={"lg"}
 						                 icon={isLogin ? faUserPlus : faRightToBracket}/>
 					</Button>
 				</div>
-				<Form data={data} onSubmit={getFormValues} />
+				<Form data={data} onSubmit={getFormValues}/>
 			</div>
 		</div>
 	)

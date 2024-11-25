@@ -1,5 +1,12 @@
 import {axiosInternal} from "./axios.jsx";
-import {createUserWithEmailAndPassword, deleteUser, sendEmailVerification, updateProfile, signOut} from "firebase/auth";
+import {
+	createUserWithEmailAndPassword,
+	deleteUser,
+	sendEmailVerification,
+	updateProfile,
+	signOut,
+	signInWithEmailAndPassword
+} from "firebase/auth";
 import {auth} from "../Firebase.jsx";
 import {firebaseErrors} from "./helpers.jsx";
 
@@ -8,7 +15,7 @@ const accountSignUp = async (values) => {
 
 	try {
 		//TODO make sure that if something fails, it is handled properly
-		const checkUser = await axiosInternal('GET', 'useraccount', values.username);
+		const checkUser = await axiosInternal('GET', `useraccount/${values.username}`, values.username);
 		if (checkUser.error?.status === 404) {
 			const outerUser = await createUserWithEmailAndPassword(auth, values.email, values.password);
 
@@ -19,7 +26,7 @@ const accountSignUp = async (values) => {
 				'provider': 'local',
 				'type': 'user'
 			}
-			const dbUser = await axiosInternal('POST', 'useraccount', null, data)
+			const dbUser = await axiosInternal('POST', 'useraccount', data)
 			if (dbUser.error) {
 				result.error = dbUser.error.data.errors;
 				await deleteUser(outerUser.user) //all the data will be lost so we will not be able to align the database and the firebase
@@ -40,7 +47,6 @@ const accountSignUp = async (values) => {
 			return result
 		}
 	} catch (e) {
-		console.log(e)
 		result.error = firebaseErrors(e.code);
 		if (!result.error) {
 			result.error = e
@@ -49,5 +55,38 @@ const accountSignUp = async (values) => {
 	return result;
 }
 
-export {accountSignUp}
+const accountLogin = async (values) => {
+	const result = {data: null, error: null}
+
+	try {
+		const signInResult = await signInWithEmailAndPassword(auth, values.email, values.password);
+
+		if (!signInResult.user.emailVerified) {
+			result.error = {"message": "You must verify your email before you are allowed to log in"};
+			await signOut(auth)
+
+			return result;
+		}
+
+		//TODO propagate expired datetime from the firebase
+		const login = await axiosInternal('POST', `useraccount/${signInResult.user.displayName}/login`, {
+			token: signInResult.user.accessToken
+		})
+		if (login.error) {
+			result.error = login.error.message;
+			await signOut(auth);
+
+			return result;
+		}
+	} catch (e) {
+		result.error = firebaseErrors(e.code);
+		if (!result.error) {
+			result.error = e
+		}
+	}
+
+	return result
+}
+
+export {accountSignUp, accountLogin}
 

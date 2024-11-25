@@ -13,8 +13,8 @@ const entityMapping = {
 	'G': 'geocode/json'
 }
 
-const axiosInternal = async (method, endpoint, id = null, data = {}, queryParams={}) => {
-	const uri = id ? `/api/${endpoint}/${id}/` : `/api/${endpoint}/`;
+const axiosInternal = async (method, endpoint, data = {}, queryParams={}) => {
+	const uri = `/api/${endpoint}`
 	const requestConfig = {method, url: uri, data, params: queryParams}
 	const result = {data: null, error: null}
 
