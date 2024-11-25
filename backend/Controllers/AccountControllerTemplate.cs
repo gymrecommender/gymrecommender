@@ -10,8 +10,8 @@ namespace backend.Controllers;
 
 public abstract class AccountControllerTemplate : Controller {
     protected AccountType _accountType;
-    private readonly GymrecommenderContext context;
-    private readonly AppSettings appData;
+    protected readonly GymrecommenderContext context;
+    protected readonly AppSettings appData;
 
     public AccountControllerTemplate(GymrecommenderContext context, IOptions<AppSettings> appSettings) {
         this.context = context;
@@ -112,7 +112,7 @@ public abstract class AccountControllerTemplate : Controller {
                     IsEmailVerified = accountDto.IsEmailVerified,
                     CreatedBy = createdBy
                 };
-                context.Add(account);
+                context.Accounts.Add(account);
                 await context.SaveChangesAsync();
 
                 var result = new AccountRegularModel {
@@ -151,43 +151,64 @@ public abstract class AccountControllerTemplate : Controller {
 
     public async Task<IActionResult> UpdateByUsername(string username, AccountPutDto accountPutDto,
         AccountType? accountType = null) {
-        var accountQuery = context.Accounts.AsTracking()
-            .Where(a => a.Username == username);
+        if (ModelState.IsValid) {
+            try {
+                var accountQuery = context.Accounts.AsTracking()
+                    .Where(a => a.Username == username);
 
-        if (accountType is not null) {
-            accountQuery = accountQuery.Where(a => a.Type == accountType);
+                if (accountType is not null) {
+                    accountQuery = accountQuery.Where(a => a.Type == accountType);
+                }
+
+                var account = await accountQuery.FirstOrDefaultAsync();
+
+                if (account == null) {
+                    return NotFound(new { success = false, error = $"User {username} is not found" });
+                }
+
+
+                if (!string.IsNullOrWhiteSpace(accountPutDto.Password)) {
+                    account.PasswordHash = BCrypt.Net.BCrypt.HashPassword(accountPutDto.Password);
+                }
+
+                account.FirstName = accountPutDto?.FirstName ?? account.FirstName;
+                account.LastName = accountPutDto?.LastName ?? account.LastName;
+                account.Username = accountPutDto?.Username ?? account.Username;
+                account.OuterUid = accountPutDto?.OuterUid ?? account.OuterUid;
+                account.IsEmailVerified = accountPutDto?.IsEmailVerified ?? account.IsEmailVerified;
+                account.Email = accountPutDto?.Email ?? account.Email;
+
+                await context.SaveChangesAsync();
+
+                return Ok(new AccountRegularModel {
+                    Id = account.Id,
+                    Username = account.Username,
+                    Email = account.Email,
+                    FirstName = account.FirstName,
+                    LastName = account.LastName,
+                    IsEmailVerified = account.IsEmailVerified,
+                    LastSignIn = account.LastSignIn,
+                    Type = account.Type.ToString(),
+                    Provider = account.Provider.ToString()
+                });
+            }
+            catch (Exception e) {
+                return StatusCode(500, new {
+                    success = false,
+                    error = new {
+                        message = e.Message
+                    }
+                });
+            }
         }
 
-        var account = await accountQuery.FirstOrDefaultAsync();
-
-        if (account == null) {
-            return NotFound(new { success = false, error = $"User {username} is not found" });
-        }
-
-
-        if (!string.IsNullOrWhiteSpace(accountPutDto.Password)) {
-            account.PasswordHash = BCrypt.Net.BCrypt.HashPassword(accountPutDto.Password);
-        }
-
-        account.FirstName = accountPutDto?.FirstName ?? account.FirstName;
-        account.LastName = accountPutDto?.LastName ?? account.LastName;
-        account.Username = accountPutDto?.Username ?? account.Username;
-        account.OuterUid = accountPutDto?.OuterUid ?? account.OuterUid;
-        account.IsEmailVerified = accountPutDto?.IsEmailVerified ?? account.IsEmailVerified;
-        account.Email = accountPutDto?.Email ?? account.Email;
-
-        await context.SaveChangesAsync();
-
-        return Ok(new AccountRegularModel {
-            Id = account.Id,
-            Username = account.Username,
-            Email = account.Email,
-            FirstName = account.FirstName,
-            LastName = account.LastName,
-            IsEmailVerified = account.IsEmailVerified,
-            LastSignIn = account.LastSignIn,
-            Type = account.Type.ToString(),
-            Provider = account.Provider.ToString()
+        return BadRequest(new {
+            success = false,
+            error = new {
+                code = "ValidationError",
+                message = "Invalid data",
+                details = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage)
+            }
         });
     }
 
@@ -199,10 +220,158 @@ public abstract class AccountControllerTemplate : Controller {
         if (account == null) {
             return NotFound(new { success = false, error = $"User {username} is not found" });
         }
-        
-        context.Remove(account);
+
+        context.Accounts.Remove(account);
         await context.SaveChangesAsync();
-        
-        return Ok();
+
+        return NoContent();
+    }
+    
+    public async Task<IActionResult> GetTokenByUsername(string username, AccountType accountType) {
+        try {
+            var account = await context.Accounts.AsNoTracking()
+                .Where(a => a.Username == username)
+                .Where(a => a.Type == accountType)
+                .FirstOrDefaultAsync();
+
+            if (account == null) {
+                return NotFound(new { error = $"User {username} is not found" });
+            }
+
+            var token = await context.UserTokens.AsNoTracking()
+                .Where(a => a.UserId == account.Id).FirstOrDefaultAsync();
+
+            if (token == null) {
+                return NotFound(new { error = $"The token for {username} is not found" });
+            }
+
+            return Ok(new UserTokenViewModel {
+                Token = token.OuterToken
+            });
+        }
+        catch (Exception e) {
+            return StatusCode(500, new {
+                success = false,
+                error = new {
+                    message = e.Message
+                }
+            });
+        }
+    }
+    
+    public async Task<IActionResult> SaveTokenByUsername(string username, AccountTokenDto accountTokenDto, AccountType accountType) {
+        if (ModelState.IsValid) {
+            try {
+                var account = await context.Accounts.AsNoTracking()
+                    .Where(a => a.Username == username)
+                    .Where(a => a.Type == accountType)
+                    .FirstOrDefaultAsync();
+
+                if (account == null) {
+                    return NotFound(new { error = $"User {username} is not found" });
+                }
+
+                var token = new UserToken {
+                    CreatedAt = DateTime.UtcNow,
+                    UserId = account.Id,
+                    OuterToken = accountTokenDto.Token
+                };
+
+                context.UserTokens.Add(token);
+                await context.SaveChangesAsync();
+
+                return Ok(new UserTokenViewModel {
+                    Token = token.OuterToken
+                });
+            }
+            catch (Exception e) {
+                return StatusCode(500, new {
+                    success = false,
+                    error = new {
+                        message = e.Message
+                    }
+                });
+            }
+        }
+
+        return BadRequest(new {
+            success = false,
+            error = new {
+                code = "ValidationError",
+                message = "Invalid data",
+                details = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage)
+            }
+        });
+    }
+    
+    public async Task<IActionResult> DeleteTokenByUsername(string username, AccountType accountType) {
+        var account = await context.Accounts.AsNoTracking()
+            .Where(a => a.Username == username)
+            .Where(a => a.Type == accountType)
+            .FirstOrDefaultAsync();
+
+        if (account == null) {
+            return NotFound(new { error = $"User {username} is not found" });
+        }
+
+        var token = await context.UserTokens.AsNoTracking()
+            .Where(a => a.UserId == account.Id).FirstOrDefaultAsync();
+
+        if (token == null) {
+            return NotFound(new { error = $"The token for {username} is not found" });
+        }
+
+        context.UserTokens.Remove(token);
+        await context.SaveChangesAsync();
+
+        return NoContent();
+    }
+    
+    public async Task<IActionResult> UpdateTokenByUsername(string username, AccountTokenDto accountTokenDto, AccountType accountType) {
+        if (ModelState.IsValid) {
+            try {
+                var account = await context.Accounts.AsNoTracking()
+                    .Where(a => a.Username == username)
+                    .Where(a => a.Type == accountType)
+                    .FirstOrDefaultAsync();
+
+                if (account == null) {
+                    return NotFound(new { error = $"User {username} is not found" });
+                }
+
+                var token = await context.UserTokens.AsTracking()
+                    .Where(a => a.UserId == account.Id).FirstOrDefaultAsync();
+
+                if (token == null) {
+                    return NotFound(new { error = $"The token for {username} is not found" });
+                }
+
+                token.OuterToken = accountTokenDto.Token;
+                token.UpdatedAt = DateTime.UtcNow;
+
+                await context.SaveChangesAsync();
+
+                return Ok(new UserTokenViewModel {
+                    Token = token.OuterToken
+                });
+            }
+            catch (Exception e) {
+                return StatusCode(500, new {
+                    success = false,
+                    error = new {
+                        message = e.Message
+                    }
+                });
+            }
+        }
+
+        return BadRequest(new {
+            success = false,
+            error = new {
+                code = "ValidationError",
+                message = "Invalid data",
+                details = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage)
+            }
+        });
     }
 }
