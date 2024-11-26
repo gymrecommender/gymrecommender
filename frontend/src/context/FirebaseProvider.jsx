@@ -1,8 +1,8 @@
 import { useEffect, useState, createContext, useContext } from "react";
 import {auth, provider} from "../Firebase.jsx";
 import {signInWithPopup, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut, updateProfile, deleteUser, sendEmailVerification} from "firebase/auth";
-import {useNavigate} from "react-router-dom";
-import {accountLogin, accountSignUp} from "../services/accountHelpers.jsx";
+import {useMatch, useNavigate} from "react-router-dom";
+import {accountLogin, accountLogout, accountSignUp} from "../services/accountHelpers.jsx";
 import {axiosInternal} from "../services/axios.jsx";
 
 const FirebaseContext = createContext();
@@ -38,12 +38,15 @@ const FirebaseProvider = ({children}) => {
 		const unsubscribe = onAuthStateChanged(auth, async (user) => {
 			//TODO handle changes of the token (propagate it to the db)
 			if (user) {
-				const result = await axiosInternal('GET', `account/${user.uid}/role`);
-				if (result.error) {
-					//TODO the error from here should be somehow propagated and diplayed to the user
-					setUser(null);
-				} else {
-					setUser({username: user.displayName, role: result.data.role});
+				if (user.emailVerified) {
+					const result = await axiosInternal('GET', `account/${user.uid}/role`);
+
+					if (result.error) {
+						//TODO the error from here should be somehow propagated and diplayed to the user
+						setUser(null);
+					} else {
+						setUser({username: user.displayName, role: result.data.role});
+					}
 				}
 			} else {
 				setUser(null);
@@ -56,18 +59,18 @@ const FirebaseProvider = ({children}) => {
 		return () => unsubscribe();
 	}, [])
 
-	const signUp = async (values) => {
-		const result = await accountSignUp(values);
+	const signUp = async (values, role) => {
+		const result = await accountSignUp(values, role);
 
 		if (!result.error) {
-			navigate('/login')
+			navigate(`/login/${role}`)
 		}
 
 		return result
 	}
 
-	const signIn = async (values) => {
-		const result = await accountLogin(values)
+	const signIn = async (values, role) => {
+		const result = await accountLogin(values, role)
 		if (!result.error) {
 			navigate('/')
 		}
@@ -77,22 +80,9 @@ const FirebaseProvider = ({children}) => {
 
 	const signInWithGoogle = () => signInWithPopup(auth, provider);
 	const logout = async () =>  {
-		const result = {error: null};
-		try {
-			const logoutResult = await axiosInternal('DELETE', `useraccount/${user.username}/logout`);
-			if (logoutResult.error) {
-				result.error = logoutResult.error.message;
-
-				return result;
-			}
-
-			await signOut(auth);
-			navigate('/');
-		} catch (e) {
-			result.error = firebaseErrors(e.code);
-			if (!result.error) {
-				result.error = e
-			}
+		const result = await accountLogout(user.username, user.role);
+		if (!result.error) {
+			navigate('/')
 		}
 
 		return result;

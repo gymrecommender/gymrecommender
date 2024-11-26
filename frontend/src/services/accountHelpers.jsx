@@ -10,12 +10,21 @@ import {
 import {auth} from "../Firebase.jsx";
 import {firebaseErrors} from "./helpers.jsx";
 
-const accountSignUp = async (values) => {
+const roleMapper = {
+	"admin": "adminaccount",
+	"user": "useraccount",
+	"gym": "gymaccount"
+}
+
+const accountSignUp = async (values, role) => {
 	const result = {data: null, error: null}
 
 	try {
-		//TODO make sure that if something fails, it is handled properly
-		const checkUser = await axiosInternal('GET', `useraccount/${values.username}`, values.username);
+		if (role === "admin") {
+			result.error = "Operation is not allowed"
+			return result
+		}
+		const checkUser = await axiosInternal('GET', `${roleMapper[role]}/${values.username}`, values.username);
 		if (checkUser.error?.status === 404) {
 			const outerUser = await createUserWithEmailAndPassword(auth, values.email, values.password);
 
@@ -26,7 +35,7 @@ const accountSignUp = async (values) => {
 				'provider': 'local',
 				'type': 'user'
 			}
-			const dbUser = await axiosInternal('POST', 'useraccount', data)
+			const dbUser = await axiosInternal('POST', `${roleMapper[role]}`, data)
 			if (dbUser.error) {
 				result.error = dbUser.error.data.errors;
 				await deleteUser(outerUser.user) //all the data will be lost so we will not be able to align the database and the firebase
@@ -55,7 +64,7 @@ const accountSignUp = async (values) => {
 	return result;
 }
 
-const accountLogin = async (values) => {
+const accountLogin = async (values, role) => {
 	const result = {data: null, error: null}
 
 	try {
@@ -69,7 +78,7 @@ const accountLogin = async (values) => {
 		}
 
 		//TODO propagate expired datetime from the firebase
-		const login = await axiosInternal('POST', `useraccount/${signInResult.user.displayName}/login`, {
+		const login = await axiosInternal('POST', `${roleMapper[role]}/${signInResult.user.displayName}/login`, {
 			token: signInResult.user.accessToken
 		})
 		if (login.error) {
@@ -88,5 +97,26 @@ const accountLogin = async (values) => {
 	return result
 }
 
-export {accountSignUp, accountLogin}
+const accountLogout = async (username, role) => {
+	const result = {error: null};
+	try {
+		const logoutResult = await axiosInternal('DELETE', `${roleMapper[role]}/${username}/logout`);
+		if (logoutResult.error) {
+			result.error = logoutResult.error.message;
+
+			return result;
+		}
+
+		await signOut(auth);
+	} catch (e) {
+		result.error = firebaseErrors(e.code);
+		if (!result.error) {
+			result.error = e
+		}
+	}
+
+	return result;
+}
+
+export {accountSignUp, accountLogin, accountLogout}
 

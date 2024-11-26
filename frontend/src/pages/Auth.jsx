@@ -1,22 +1,37 @@
 import '../styles/login.css'
 import Button from "../components/simple/Button.jsx";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faUserPlus, faRightToBracket, faHome} from "@fortawesome/free-solid-svg-icons";
+import {faUserPlus, faRightToBracket, faHome, faDumbbell, faUserGear, faUser} from "@fortawesome/free-solid-svg-icons";
 import React from "react";
-import {useLocation, useNavigate} from "react-router-dom";
+import {useLocation, useMatch, useNavigate} from "react-router-dom";
 import Form from "../components/simple/Form.jsx";
 import {useFirebase} from "../context/FirebaseProvider.jsx";
+
+const buttons = [
+	{icon: faUser, title: (action) => `${action} as a user`, role: "user"},
+	{icon: faDumbbell, title: (action) => `${action} as a gyms manager`, role: "gym"},
+	{icon: faUserGear, title: (action) => `${action} as an administrator`, role: "admin"},
+];
 
 const Auth = () => {
 	const location = useLocation();
 	const navigate = useNavigate();
-	const isLogin = location.pathname === "/login";
+
+	//TODO check whether there is better way to implement these 3 rows
+	const isLogin = location.pathname.startsWith("/login")
+	const base = isLogin ? '/login' : '/signup';
+	const titleText = isLogin ? "Login" : "Sign up";
+
+	const match = useMatch(`/${base}/:role`);
+	const role = match ? match.params.role : 'user'
+
 	const {signUp, signIn} = useFirebase();
 	const functor = isLogin ? signIn : signUp;
 
+
 	const getFormValues = async (values, flushForm) => {
 		const {password_repeat, ...rest} = values;
-		const result = await functor(rest);
+		const result = await functor(rest, role);
 		if (result.error) {
 			//TODO the error should be added to the specific area of the form
 			alert(result.error);
@@ -44,7 +59,7 @@ const Auth = () => {
 		wClassName: "form-group",
 		button: {
 			type: "submit",
-			text: isLogin ? "Login" : "Register",
+			text: isLogin ? titleText : "Register",
 			className: "btn-login",
 		}
 	};
@@ -57,15 +72,32 @@ const Auth = () => {
 						<FontAwesomeIcon className={"icon"} size={"2x"}
 						                 icon={faHome}/>
 					</Button>
-					<h2 className={"login-title"}>{isLogin ? "Login" : "Sign up"}</h2>
-					<Button onClick={() => {
-						navigate(`${isLogin ? '/signup' : '/login'}`)
-						//TODO flush the form here
-					}} type={"button"}
-					        title={isLogin ? "Sign up" : "Login"} className={"btn-icon btn-action"}>
-						<FontAwesomeIcon className={"icon"} size={"lg"}
-						                 icon={isLogin ? faUserPlus : faRightToBracket}/>
-					</Button>
+					<h2 className={"login-title"}>{titleText}</h2>
+					<div className={"login-buttons"}>
+						{role === "admin" ? ''
+							: <Button onClick={() => {
+								//forms the link for the button of the respective role
+								navigate(`/${isLogin ? "signup" : "login"}/${role === "user" ? "" : role}`);
+								//TODO flush the form here
+							}} type={"button"}
+							          title={isLogin ? "Sign up" : "Log in"} className={"btn-icon btn-action"}>
+								<FontAwesomeIcon className={"icon"} size={"lg"}
+								                 icon={isLogin ? faUserPlus : faRightToBracket}/>
+							</Button>
+						}
+						{
+							buttons.map(({title, icon, isLogInOnly, ...rest}) => {
+								//We must not show a sign-up button on admin login page
+								if (role !== rest.role && !(rest.role === "admin" && !isLogin)) {
+									return <Button type={"button"}
+									               onClick={() => navigate(`${base}/${rest.role === "user" ? "" : rest.role}`)}
+									               className={"btn-icon btn-action"} title={title(titleText)}>
+										<FontAwesomeIcon className={"icon"} size={"lg"} icon={icon}/>
+									</Button>
+								}
+							})
+						}
+					</div>
 				</div>
 				<Form data={data} onSubmit={getFormValues}/>
 			</div>

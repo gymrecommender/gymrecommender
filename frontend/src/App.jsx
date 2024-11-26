@@ -19,8 +19,15 @@ const App = () => {
 						<Route path='account/:username/*' element={<RoleBasedRoutes/>}/>
 						<Route path={"*"} element={<NotFound/>}/>
 					</Route>
-					<Route path={"/login"} element={<Auth login={true}/>}/>
-					<Route path={"/signup"} element={<Auth login={false}/>}/>
+					<Route path={"/login"}>
+						<Route index element={<Auth />}/>
+						<Route path={"gym"} element={<Auth />}/>
+						<Route path={"admin"} element={<Auth />}/>
+					</Route>
+					<Route path={"/signup"}>
+						<Route index element={<Auth />}/>
+						<Route path={"gym"} element={<Auth />}/>
+					</Route>
 				</Routes> : ''}
 		</>
 	)

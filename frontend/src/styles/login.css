@@ -85,3 +85,17 @@ button[type="submit"].btn-login:hover {
     background-color:#9f60b5;
 }
 
+.login-header .login-buttons {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    column-gap: 10px;
+}
+.login-buttons .btn-icon {
+    margin: 0;
+
+    height: 100%;
+    aspect-ratio: 1 / 1;
+}
+
