@@ -1,6 +1,5 @@
 import "../styles/header.css"
 import Button from "./simple/Button.jsx";
-import InfoSection from "./InfoSection.jsx";
 import {useNavigate, useLocation} from "react-router-dom";
 import logo from "../logo.png";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
@@ -20,6 +19,13 @@ const Header = () => {
 	const navigate = useNavigate();
 	const location = useLocation();
 
+	const buttons = [
+		{title: "Account", icon: faCircleUser, action: () => navigationHandler(`/account/${user.username}`)},
+		{title: "Notifications", icon: faBell, action: () => alert("Notifications!")},
+		{title: "History", icon: faClockRotateLeft, role: "user", action: () => navigationHandler(`/account/${user.username}/history`)},
+		{title: "Log out", icon: faRightFromBracket, action: () => logout()},
+	]
+
 	const navigationHandler = (path) => {
 		//we do not want to register multiple instances of the same page in row in the navigation's history
 		//so we use navigate only when we want to redirect to another page
@@ -34,34 +40,19 @@ const Header = () => {
 	//#TODO the condition should be different once we implement logging in (the one that can't be changed through React Dev panel or in any other way)
 	const authButton = user ? (
 			<>
-				<Button type={"btn"}
-				        title={"Account"}
-				        className={"btn-panel btn-icon"}
-				        onClick={() => navigationHandler(`/account/${user.username}`)} //#TODO this should be substituted with respective logic
-				>
-					<FontAwesomeIcon className={"icon"} size={"lg"} icon={faCircleUser}/>
-				</Button>
-				<Button type={"btn"}
-				        title={"Notification"}
-				        className={"btn-panel btn-icon"}
-				        onClick={() => alert("Notifications")} //#TODO this should be substituted with respective logic
-				>
-					<FontAwesomeIcon className={"icon"} size={"lg"} icon={faBell}/>
-				</Button>
-				<Button type={"button"}
-				        title={"History"}
-				        className={"btn-panel btn-icon"}
-				        onClick={() => navigationHandler(`/account/${user.username}/history`)} //#TODO this should be substituted with respective logic
-				>
-					<FontAwesomeIcon className={"icon"} size={"lg"} icon={faClockRotateLeft}/>
-				</Button>
-				<Button type={"button"}
-				        title={"Log out"}
-				        className={"btn-panel btn-icon btn-logout"}
-				        onClick={logout}
-				>
-					<FontAwesomeIcon className={"icon"} size={"lg"} icon={faRightFromBracket}/>
-				</Button>
+				{
+					buttons.map(({action, title, icon, role}) => {
+						if (!role || role === user.role) {
+							return <Button type={"btn"}
+							               title={title}
+							               className={"btn-panel btn-icon"}
+							               onClick={action}
+							>
+								<FontAwesomeIcon className={"icon"} size={"lg"} icon={icon}/>
+							</Button>
+						}
+					})
+				}
 			</>
 		) :
 		<Button type={"button"}
