@@ -259,6 +259,30 @@ public abstract class AccountControllerTemplate : Controller {
             });
         }
     }
+    
+    public async Task<IActionResult> GetRoleByUid(string uid) {
+        try {
+            var account = await context.Accounts.AsNoTracking()
+                .Where(a => a.OuterUid == uid)
+                .FirstOrDefaultAsync();
+
+            if (account == null) {
+                return NotFound(new { error = $"User with uid {uid} is not found" });
+            }
+
+            return Ok(new AccountRoleModel {
+                Role = account.Type.ToString()
+            });
+        }
+        catch (Exception e) {
+            return StatusCode(500, new {
+                success = false,
+                error = new {
+                    message = e.Message
+                }
+            });
+        }
+    }
 
     public async Task<IActionResult> UpdateTokenByUsername(string username, AccountTokenDto accountTokenDto,
         AccountType accountType) {

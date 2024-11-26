@@ -23,4 +23,9 @@ public class AccountController : AccountControllerTemplate {
     public async Task<IActionResult> GetByUsername(string username) {
         return await base.GetByUsername(username);
     }
+
+    [HttpGet("{uid}/role")]
+    public async Task<IActionResult> GetRoleByUid(string uid) {
+        return await base.GetRoleByUid(uid);
+    }
 }
