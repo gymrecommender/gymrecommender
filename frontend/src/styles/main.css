@@ -438,6 +438,9 @@ button.btn-action {
 .section.section-info > div {
     flex: 1 1 0;
 }
+.section.not-found {
+    color: white;
+}
 
 
 

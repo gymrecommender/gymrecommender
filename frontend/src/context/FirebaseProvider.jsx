@@ -26,6 +26,7 @@ const firebaseErrors = (code) => {
 
 const FirebaseProvider = ({children}) => {
 	const [user, setUser] = useState(null);
+	const [loading, setLoading] = useState(true);
 	const navigate = useNavigate();
 
 	useEffect(() => {
@@ -34,14 +35,20 @@ const FirebaseProvider = ({children}) => {
 		a) track the changes made by the Firebase (for example, session expiration)
 		b) retrieve the login status upon the reloading of the page, for example
 		*/
-		const unsubscribe = onAuthStateChanged(auth, (user) => {
-			//TODO handle updates of the email verification status
+		const unsubscribe = onAuthStateChanged(auth, async (user) => {
 			//TODO handle changes of the token (propagate it to the db)
 			if (user) {
-				setUser({username: user.displayName});
+				const result = await axiosInternal('GET', `account/${user.uid}/role`);
+				if (result.error) {
+					//TODO the error from here should be somehow propagated and diplayed to the user
+					setUser(null);
+				} else {
+					setUser({username: user.displayName, role: result.data.role});
+				}
 			} else {
 				setUser(null);
 			}
+			setLoading(false);
 		})
 
 		//We need this listener for the sake of tracking outer changes of state (for instance, if Firebase tells us that the session has expired)
@@ -91,9 +98,9 @@ const FirebaseProvider = ({children}) => {
 		return result;
 	}
 	const getUser = () => user
-
+	const getLoading = () => loading
 	return (
-		<FirebaseContext.Provider value={{ signInWithGoogle, signIn, logout, getUser, signUp }}>
+		<FirebaseContext.Provider value={{ signInWithGoogle, signIn, logout, getUser, signUp, getLoading}}>
 			{children}
 		</FirebaseContext.Provider>
 	)

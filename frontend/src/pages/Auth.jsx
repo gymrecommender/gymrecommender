@@ -7,7 +7,7 @@ import {useLocation, useNavigate} from "react-router-dom";
 import Form from "../components/simple/Form.jsx";
 import {useFirebase} from "../context/FirebaseProvider.jsx";
 
-const LogIn = () => {
+const Auth = () => {
 	const location = useLocation();
 	const navigate = useNavigate();
 	const isLogin = location.pathname === "/login";
@@ -73,4 +73,4 @@ const LogIn = () => {
 	)
 }
 
-export default LogIn;
+export default Auth;

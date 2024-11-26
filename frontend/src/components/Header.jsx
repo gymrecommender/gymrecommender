@@ -14,7 +14,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import {useFirebase} from "../context/FirebaseProvider.jsx";
 
-const Header = ({username}) => {
+const Header = () => {
 	const {getUser, logout} = useFirebase();
 	const user = getUser();
 	const navigate = useNavigate();
