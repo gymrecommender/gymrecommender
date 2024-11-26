@@ -21,7 +21,7 @@ const App = () => {
 					</Route>
 					<Route path={"/login"}>
 						<Route index element={<Auth />}/>
-						<Route path={"gym"} element={<Auth />}/>
+						<Route path={"gym"} element={<Auth />}/> //TODO gyms accounts must also be approved by the admins before the logging in is allowed
 						<Route path={"admin"} element={<Auth />}/>
 					</Route>
 					<Route path={"/signup"}>
