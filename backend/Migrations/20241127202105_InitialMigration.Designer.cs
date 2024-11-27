@@ -13,7 +13,7 @@ using backend.Models;
 namespace backend.Migrations
 {
     [DbContext(typeof(GymrecommenderContext))]
-    [Migration("20241127200920_InitialMigration")]
+    [Migration("20241127202105_InitialMigration")]
     partial class InitialMigration
     {
         /// <inheritdoc />
@@ -28,7 +28,7 @@ namespace backend.Migrations
             NpgsqlModelBuilderExtensions.HasPostgresEnum(modelBuilder, "not_type", "notification_type", new[] { "message", "alert", "reminder" });
             NpgsqlModelBuilderExtensions.HasPostgresEnum(modelBuilder, "own_decision", "ownership_decision", new[] { "approved", "rejected" });
             NpgsqlModelBuilderExtensions.HasPostgresEnum(modelBuilder, "provider_type", "provider_type", new[] { "local", "google" });
-            NpgsqlModelBuilderExtensions.HasPostgresEnum(modelBuilder, "rec_type", "reccomendation_type", new[] { "main", "rlternative" });
+            NpgsqlModelBuilderExtensions.HasPostgresEnum(modelBuilder, "rec_type", "recommendation_type", new[] { "main", "alternative" });
             NpgsqlModelBuilderExtensions.HasPostgresExtension(modelBuilder, "uuid-ossp");
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
@@ -717,8 +717,8 @@ namespace backend.Migrations
                         .HasColumnType("numeric(4,2)")
                         .HasColumnName("total_score");
 
-                    b.Property<ReccomendationType>("Type")
-                        .HasColumnType("reccomendation_type")
+                    b.Property<RecommendationType>("Type")
+                        .HasColumnType("recommendation_type")
                         .HasColumnName("type");
 
                     b.HasKey("Id")

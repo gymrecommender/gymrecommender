@@ -20,7 +20,7 @@ public static class StartupExtensions {
         var dataSourceBuilder = new NpgsqlDataSourceBuilder(connectionString);
         dataSourceBuilder.MapEnum<AccountType>();
         dataSourceBuilder.MapEnum<OwnershipDecision>();
-        dataSourceBuilder.MapEnum<ReccomendationType>();
+        dataSourceBuilder.MapEnum<RecommendationType>();
         dataSourceBuilder.MapEnum<NotificationType>();
         dataSourceBuilder.MapEnum<ProviderType>();
         var dataSource = dataSourceBuilder.Build();

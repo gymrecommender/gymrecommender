@@ -17,7 +17,7 @@ namespace backend.Migrations
                 .Annotation("Npgsql:Enum:not_type.notification_type", "message,alert,reminder")
                 .Annotation("Npgsql:Enum:own_decision.ownership_decision", "approved,rejected")
                 .Annotation("Npgsql:Enum:provider_type.provider_type", "local,google")
-                .Annotation("Npgsql:Enum:rec_type.reccomendation_type", "main,rlternative")
+                .Annotation("Npgsql:Enum:rec_type.recommendation_type", "main,alternative")
                 .Annotation("Npgsql:PostgresExtension:uuid-ossp", ",,");
 
             migrationBuilder.CreateTable(
@@ -448,7 +448,7 @@ namespace backend.Migrations
                     congestion_score = table.Column<decimal>(type: "numeric(4,2)", precision: 4, scale: 2, nullable: true),
                     rating_score = table.Column<decimal>(type: "numeric(4,2)", precision: 4, scale: 2, nullable: true),
                     total_score = table.Column<decimal>(type: "numeric(4,2)", precision: 4, scale: 2, nullable: false),
-                    type = table.Column<ReccomendationType>(type: "reccomendation_type", nullable: false),
+                    type = table.Column<RecommendationType>(type: "recommendation_type", nullable: false),
                     gym_id = table.Column<Guid>(type: "uuid", nullable: false),
                     request_id = table.Column<Guid>(type: "uuid", nullable: false),
                     currency_id = table.Column<Guid>(type: "uuid", nullable: false)

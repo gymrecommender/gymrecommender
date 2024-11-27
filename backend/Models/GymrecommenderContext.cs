@@ -59,7 +59,7 @@ public partial class GymrecommenderContext : DbContext
             .HasPostgresEnum<NotificationType>("not_type")
             .HasPostgresEnum<OwnershipDecision>("own_decision")
             .HasPostgresEnum<ProviderType>("provider_type")
-            .HasPostgresEnum<ReccomendationType>("rec_type")
+            .HasPostgresEnum<RecommendationType>("rec_type")
             .HasPostgresExtension("uuid-ossp");
 
         modelBuilder.Entity<Account>(entity =>
