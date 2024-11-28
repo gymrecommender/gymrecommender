@@ -3,12 +3,53 @@ import Input from "../../components/simple/Input.jsx";
 import Button from "../../components/simple/Button.jsx";
 import Modal from "../../components/simple/Modal.jsx";
 import '../../styles/admin.css';
+import {emailRegEx} from "../../services/helpers.jsx";
+import Form from "../../components/simple/Form.jsx";
 
+const accountTypes = [
+	{value: "gym", label: "Gym"},
+	{value: "admin", label: "Admin"},
+]
+const data = {
+	fields: [
+
+		{pos: 1, type: "text", minLength: 2, label: "First name", required: true, name: "firstName"},
+		{pos: 2, type: "text", label: "Last name", required: true, name: "lastName"},
+		{pos: 3, type: "text", required: true, label: "Username", name: "username"},
+		{
+			pos: 6,
+			type: "password",
+			required: true,
+			sameAs: {fieldName: "password", message: "The passwords do not match"},
+			label: "Repeat the password",
+			name: "passwordRepeat"
+		},
+		{
+			pos: 4,
+			type: "email",
+			required: true,
+			pattern: {regEx: emailRegEx, message: "Invalid email format"},
+			label: "Email",
+			name: "email"
+		},
+		{pos: 5, type: "password", required: true, label: "Password", name: "password"},
+		{pos: 7, type: "select", required: true, label: "Account type", name: "type", data: accountTypes},
+	],
+	wClassName: "form-row",
+	button: {
+		type: "submit",
+		text: "Create account",
+		className: "btn-submit",
+	}
+}
 const AccountAdmin = () => {
 	const [showCreateAdminModal, setShowCreateAdminModal] = useState(false);
 
 	const handleShowModal = () => setShowCreateAdminModal(true);
 	const handleCloseModal = () => setShowCreateAdminModal(false);
+	const handleSubmit = (values) => {
+		console.log(values);
+	}
 
 	return (
 		<div className="section-body">
@@ -79,48 +120,7 @@ const AccountAdmin = () => {
 			{/* Use Modal component for the Create Admin form */}
 			{showCreateAdminModal && (
 				<Modal onClick={handleCloseModal} headerText="New Admin Account">
-					<form className="admin-form">
-						<div className="form-row">
-							<label htmlFor="username">Username:</label>
-							<Input type="text" id="username" name="username" required/>
-						</div>
-						<div className="form-row">
-							<label htmlFor="email">Email:</label>
-							<Input type="email" id="email" name="email" required/>
-						</div>
-						<div className="form-row">
-							<label htmlFor="first_name">First Name:</label>
-							<Input type="text" id="first_name" name="first_name" required/>
-						</div>
-						<div className="form-row">
-							<label htmlFor="last_name">Last Name:</label>
-							<Input type="text" id="last_name" name="last_name" required/>
-						</div>
-						<div className="form-row">
-							<label htmlFor="provider">Provider:</label>
-							<select id="provider" name="provider" required>
-								<option value="local">Local</option>
-								<option value="google">Google</option>
-							</select>
-						</div>
-						<div className="form-row">
-							<label htmlFor="password">Password:</label>
-							<Input type="password" id="password" name="password" required/>
-						</div>
-						<div className="form-row">
-							<label htmlFor="type">Account Type:</label>
-							<select id="type" name="type" required>
-								<option value="admin">Admin</option>
-								<option value="user">User</option>
-								<option value="gym">Gym</option>
-							</select>
-						</div>
-						<div className="form-row">
-							<label htmlFor="created_by">Created By:</label>
-							<Input type="text" id="created_by" name="created_by" placeholder="Creator's UUID" required/>
-						</div>
-						<Button type="submit" className="btn-submit">Create Admin</Button>
-					</form>
+					<Form className="admin-form" data={data} onSubmit={handleSubmit}/>
 				</Modal>
 			)}
 		</div>

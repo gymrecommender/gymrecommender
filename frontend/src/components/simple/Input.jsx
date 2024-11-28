@@ -11,7 +11,7 @@ const Input = ({children, wClassName, label, className, name, ...rest}) => {
 		<div className={classNames('input-field', wClassName)}>
 			{label ?
 				<label className={`input-field-label`} htmlFor={name}>
-					{label}{rest.required ? <span>*</span> : ''}
+					{label}{required ? <span>*</span> : ''}
 				</label> : null}
 			{children}
 			{errors[name] ? <span className={"input-field-error"}>{errors[name].message}</span> : ""}

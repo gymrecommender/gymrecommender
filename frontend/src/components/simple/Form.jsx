@@ -32,7 +32,7 @@ const Field = memo(({item, fieldClass, wClassName}) => {
 	return <Component key={item.name} {...commonProps} />
 });
 
-const Form = ({data, onSubmit}) => {
+const Form = ({data, onSubmit, className}) => {
 	const methods = useForm({
 		defaultValues: {
 			...data.fields.reduce((acc, item) => {
@@ -56,7 +56,7 @@ const Form = ({data, onSubmit}) => {
 	const {text: buttonText, ...buttonRest} = data.button ?? {};
 	return (
 		<FormProvider {...methods}>
-			<form noValidate={true} onSubmit={methods.handleSubmit(customHandleSubmit)}>
+			<form noValidate={true} className={classNames(className)} onSubmit={methods.handleSubmit(customHandleSubmit)}>
 				{
 					data.fields.sort(function (a, b) {
 						return a.pos - b.pos;
