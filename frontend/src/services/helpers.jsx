@@ -1,3 +1,5 @@
+import DOMPurify from "dompurify";
+
 export const emailRegEx = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
 
 const displayTimestamp = (timestamp, isShort = false) => {
@@ -74,6 +76,17 @@ const generateValidationRules = (label, params) => {
 	};
 };
 
+const sanitizeData = (data) => {
+	return Object.fromEntries(
+		Object.entries(data).map(([k, v]) => {
+			if (typeof v === "string") {
+				return [k, DOMPurify.sanitize(v)]
+			}
+			return [k, v];
+		})
+	)
+}
+
 const firebaseErrors = (code) => {
 	let message = ''
 	switch (code) {
@@ -90,5 +103,5 @@ const firebaseErrors = (code) => {
 	return message;
 }
 
-export {displayTimestamp, getLocation, firebaseErrors, generateValidationRules}
+export {displayTimestamp, sanitizeData, getLocation, firebaseErrors, generateValidationRules}
 

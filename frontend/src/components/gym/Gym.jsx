@@ -44,7 +44,7 @@ const Gym = ({weekdays, currencies, data}) => {
 				<div className={"gym-data-row-whs-wd"}>
 					{
 						workingHours.map((item, index) => (
-							<div className={"gym-data-row-wh"}>
+							<div key={index} className={"gym-data-row-wh"}>
 								<span className={"gym-data-row-wh-wd"}>{weekdays[index]}</span>
 								<span className={"gym-data-row-wh-h"}>{item}</span>
 							</div>

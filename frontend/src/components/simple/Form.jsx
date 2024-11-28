@@ -1,11 +1,11 @@
 import classNames from 'classnames';
-import DOMPurify from "dompurify";
 import {useForm, FormProvider} from 'react-hook-form';
 import {memo} from "react";
 import Slider from "./Slider.jsx";
 import Select from "./Select.jsx";
 import Input from "./Input.jsx";
 import Button from "./Button.jsx";
+import {sanitizeData} from "../../services/helpers.jsx";
 
 const Field = memo(({item, fieldClass, wClassName}) => {
 	const commonProps = {
@@ -44,17 +44,13 @@ const Form = ({data, onSubmit}) => {
 		}
 	});
 
+	const flushForm = () => {
+		methods.reset()
+	}
+
 	const customHandleSubmit = (data) => {
 		//We want to not allow different <script>alert()</script> and something else propagated. That is why we take care of special symbols here
-		const sanitizedData = Object.fromEntries(
-			Object.entries(data).map(([k, v]) => {
-				if (typeof v === "string") {
-					return [k, DOMPurify.sanitize(v)]
-				}
-				return [k, v];
-			})
-		)
-		onSubmit(sanitizedData);
+		onSubmit(sanitizeData(data), flushForm);
 	}
 
 	const {text: buttonText, ...buttonRest} = data.button ?? {};
@@ -62,7 +58,9 @@ const Form = ({data, onSubmit}) => {
 		<FormProvider {...methods}>
 			<form noValidate={true} onSubmit={methods.handleSubmit(customHandleSubmit)}>
 				{
-					data.fields.map(({pos, value, ...item}) => {
+					data.fields.sort(function (a, b) {
+						return a.pos - b.pos;
+					}).map(({pos, value, ...item}) => {
 						return <Field
 							key={item.name}
 							item={item}

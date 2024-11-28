@@ -39,9 +39,7 @@ const data = {
 		{pos: 6, type: "range", label: "Min membership price", name: "mPrice", step: 5, min: 0, max: 100, value: 100},
 		{pos: 7, type: "range", label: "Min overall rating", name: "rating", step: 0.5, min: 1, max: 5, value: 1},
 		{pos: 8, type: "range", label: "Min congestion rating", name: "cRating", step: 0.5, min: 1, max: 5, value: 1},
-	].sort(function (a, b) {
-		return a.pos - b.pos;
-	}),
+	],
 	button: {
 		type: "submit",
 		text: "Apply",

@@ -34,10 +34,10 @@ const Auth = () => {
 		const {passwordRepeat, ...rest} = values;
 		const result = await functor(rest, role);
 		if (result.error) {
-			//TODO the error should be added to the specific area of the form
+			//TODO the error should be added to the notification pop up
 			alert(result.error);
 		} else {
-			//TODO make some information regarding the necessity to verify the email to login
+			//TODO show information regarding the necessity to verify the email to login
 			flushForm();
 		}
 	}
@@ -49,13 +49,25 @@ const Auth = () => {
 					{pos: 1, type: "text", minLength: 2, label: "First name", required: true, name: "firstName"},
 					{pos: 2, type: "text", label: "Last name", required: true, name: "lastName"},
 					{pos: 3, type: "text", required: true, label: "Username", name: "username"},
-					{pos: 6, type: "password", required: true, sameAs: {fieldName: "password", message: "The passwords do not match"}, label: "Repeat the password", name: "passwordRepeat"},
+					{
+						pos: 6,
+						type: "password",
+						required: true,
+						sameAs: {fieldName: "password", message: "The passwords do not match"},
+						label: "Repeat the password",
+						name: "passwordRepeat"
+					},
 				] : []),
-			{pos: 4, type: "email", required: true, pattern: {regEx: emailRegEx, message: "Invalid email format"}, label: "Email", name: "email"},
+			{
+				pos: 4,
+				type: "email",
+				required: true,
+				pattern: {regEx: emailRegEx, message: "Invalid email format"},
+				label: "Email",
+				name: "email"
+			},
 			{pos: 5, type: "password", required: true, label: "Password", name: "password"},
-		].sort(function (a, b) {
-			return a.pos - b.pos;
-		}),
+		],
 		fieldClass: "input-login",
 		wClassName: "form-group",
 		button: {
@@ -90,9 +102,11 @@ const Auth = () => {
 							buttons.map(({title, icon, isLogInOnly, ...rest}) => {
 								//We must not show a sign-up button on admin login page
 								if (role !== rest.role && !(rest.role === "admin" && !isLogin)) {
-									return <Button type={"button"}
-									               onClick={() => navigate(`${base}/${rest.role === "user" ? "" : rest.role}`)}
-									               className={"btn-icon btn-action"} title={title(titleText)}>
+									return <Button
+											key={title}
+											type={"button"}
+											onClick={() => navigate(`${base}/${rest.role === "user" ? "" : rest.role}`)}
+											className={"btn-icon btn-action"} title={title(titleText)}>
 										<FontAwesomeIcon className={"icon"} size={"lg"} icon={icon}/>
 									</Button>
 								}

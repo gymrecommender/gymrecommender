@@ -4,8 +4,8 @@ import {generateValidationRules} from "../../services/helpers.jsx";
 
 const Input = ({children, wClassName, label, className, name, ...rest}) => {
 	const {register, formState: {errors}} = useFormContext();
-	const {max, min, required, minLength, maxLength} = rest
-	const {sameAs, pattern, ...inputParams} = rest;
+	const {max, min, minLength, maxLength} = rest
+	const {sameAs, pattern, required, ...inputParams} = rest;
 
 	return (
 		<div className={classNames('input-field', wClassName)}>
