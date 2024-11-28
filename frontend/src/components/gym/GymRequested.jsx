@@ -4,6 +4,7 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faClose} from "@fortawesome/free-solid-svg-icons";
 import {displayTimestamp} from "../../services/helpers.jsx";
 import {useCoordinates} from "../../context/CoordinatesProvider.jsx";
+import classNames from "classnames";
 
 const GymRequested = ({showMarker}) => {
 	const {coordinates} = useCoordinates();
@@ -112,7 +113,7 @@ const GymRequested = ({showMarker}) => {
 	const content = requests?.map((item) => {
 		const isSelected = coordinates?.lat === item.gym.latitude && coordinates?.lng === item.gym.longitude;
 		return (
-			<div className={`gym-req ${isSelected ? 'gym-req-selected' : ''}`} onClick={() => showMarker({lat: item.gym.latitude, lng: item.gym.longitude})}>
+			<div className={classNames('gym-req', isSelected ? 'gym-req-selected' : '')} onClick={() => showMarker({lat: item.gym.latitude, lng: item.gym.longitude})}>
 				<div className={"gym-req-header"}>
 					<span className={"gym-req-reqtime"}>{displayTimestamp(item.requestedAt, true)}</span>
 					<Button type={"button"} className={"btn-icon"} onClick={() => handleDelete(item.id)}>

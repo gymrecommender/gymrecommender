@@ -191,7 +191,6 @@ input[type="range"]::-moz-range-thumb {
 
 /*time input for AccountUser and AccountGym*/
 .time {
-    margin-bottom: 15px;
     display: flex;
     flex-direction: column;
     gap: 5px;

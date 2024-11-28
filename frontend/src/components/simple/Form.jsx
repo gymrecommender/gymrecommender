@@ -1,3 +1,4 @@
+import classNames from 'classnames';
 import DOMPurify from "dompurify";
 import {useForm, FormProvider} from 'react-hook-form';
 import {memo} from "react";
@@ -21,6 +22,8 @@ const Field = memo(({item, fieldClass, wClassName}) => {
 		case 'select':
 			Component = Select;
 			break;
+		case 'title':
+			return <h3 {...(fieldClass && {className: fieldClass})}>{item.text}</h3>;
 		default:
 			Component = Input;
 			break;
@@ -30,7 +33,16 @@ const Field = memo(({item, fieldClass, wClassName}) => {
 });
 
 const Form = ({data, onSubmit}) => {
-	const methods = useForm();
+	const methods = useForm({
+		defaultValues: {
+			...data.fields.reduce((acc, item) => {
+				if (item.type !== 'title') {
+					acc[item.name] = item.value ?? "";
+				}
+				return acc;
+			}, {})
+		}
+	});
 
 	const customHandleSubmit = (data) => {
 		//We want to not allow different <script>alert()</script> and something else propagated. That is why we take care of special symbols here
@@ -44,24 +56,25 @@ const Form = ({data, onSubmit}) => {
 		)
 		onSubmit(sanitizedData);
 	}
-	const {text: buttonText, ...buttonRest} = data.button;
 
+	const {text: buttonText, ...buttonRest} = data.button ?? {};
 	return (
 		<FormProvider {...methods}>
 			<form noValidate={true} onSubmit={methods.handleSubmit(customHandleSubmit)}>
 				{
-					data.fields.map(({pos, ...item}) => {
+					data.fields.map(({pos, value, ...item}) => {
 						return <Field
 							key={item.name}
 							item={item}
-							fieldClass={data.fieldClass}
-							wClassName={data.wClassName}
+							fieldClass={classNames(data.fieldClass, item.className)}
+							wClassName={classNames(data.wClassName, item.wClassName)}
 						/>
 					})
 				}
-				<Button {...buttonRest} onSubmit={methods.handleSubmit(customHandleSubmit)}>
-					{buttonText}
-				</Button>
+				{buttonText ?
+					<Button {...buttonRest} onSubmit={methods.handleSubmit(customHandleSubmit)}>
+						{buttonText}
+					</Button> : ''}
 			</form>
 		</FormProvider>
 	)

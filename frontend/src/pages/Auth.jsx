@@ -32,7 +32,6 @@ const Auth = () => {
 
 	const getFormValues = async (values, flushForm) => {
 		const {passwordRepeat, ...rest} = values;
-		console.log(values)
 		const result = await functor(rest, role);
 		if (result.error) {
 			//TODO the error should be added to the specific area of the form
