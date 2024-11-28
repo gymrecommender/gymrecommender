@@ -30,9 +30,11 @@ public static class StartupExtensions {
             options.UseNpgsql(dataSource));
 
         builder.Services.AddCors();
-        builder.Services.AddControllers();
-        builder.Services.AddDbContext<GymrecommenderContext>(options =>
-            options.UseNpgsql(connectionString));
+        builder.Services.AddControllers()
+            .ConfigureApiBehaviorOptions(options =>
+            {
+                options.SuppressModelStateInvalidFilter = true;
+            });;
 
         builder.Services.AddSwaggerGen(c => {
             c.SwaggerDoc("v1", new OpenApiInfo {
