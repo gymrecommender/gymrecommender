@@ -7,6 +7,7 @@ import {useLocation, useMatch, useNavigate} from "react-router-dom";
 import Form from "../components/simple/Form.jsx";
 import {useFirebase} from "../context/FirebaseProvider.jsx";
 import {emailRegEx} from "../services/helpers.jsx";
+import {toast} from "react-toastify";
 
 const buttons = [
 	{icon: faUser, title: (action) => `${action} as a user`, role: "user"},
@@ -35,7 +36,7 @@ const Auth = () => {
 		const result = await functor(rest, role);
 		if (result.error) {
 			//TODO the error should be added to the notification pop up
-			alert(result.error);
+			toast(result.error.message);
 		} else {
 			//TODO show information regarding the necessity to verify the email to login
 			flushForm();
