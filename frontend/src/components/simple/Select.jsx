@@ -1,4 +1,8 @@
-const Select = ({className, id, data, label, value, name, onChange}) => {
+import {useFormContext} from "react-hook-form";
+
+const Select = ({className, data, label, name, ...rest}) => {
+	const {register, formState: {errors}} = useFormContext();
+
 	const options = data?.map((item, index) => {
 		return (
 			<option value={item.value} key={index}>
@@ -10,11 +14,9 @@ const Select = ({className, id, data, label, value, name, onChange}) => {
 		<div className={"selector"}>
 			{label ? (<label>{label}</label>) : ''}
 			<select
-				value={value ?? ""}
-				name={name}
+				{...register(name)}
+				{...rest}
 				{...(className && {className})}
-				id={id}
-				onChange={(e) => onChange(name, e.target.value)}
 			>
 				{options ?? ""}
 			</select>

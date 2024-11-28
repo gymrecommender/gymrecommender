@@ -1,16 +1,16 @@
-import {useState, useCallback, memo} from "react";
+import DOMPurify from "dompurify";
+import {useForm, FormProvider} from 'react-hook-form';
+import {memo} from "react";
 import Slider from "./Slider.jsx";
 import Select from "./Select.jsx";
 import Input from "./Input.jsx";
 import Button from "./Button.jsx";
 
-const Field = memo(({item, value, onChange, fieldClass, wClassName}) => {
+const Field = memo(({item, fieldClass, wClassName}) => {
 	const commonProps = {
 		...item,
-		value,
 		className: fieldClass,
 		wClassName,
-		onChange
 	}
 
 	let Component;
@@ -30,47 +30,40 @@ const Field = memo(({item, value, onChange, fieldClass, wClassName}) => {
 });
 
 const Form = ({data, onSubmit}) => {
-	const [values, setValues] = useState({
-		...data.fields.reduce((acc, item) => {
-			acc[item.name] = item.default ?? null;
-			return acc;
-		}, {}),
-	});
+	const methods = useForm();
 
-	const onChange = useCallback((name, value) => {
-		setValues((prevValues) => (
-			{...prevValues, [name]: value}
-		));
-	}, []);
-
-	const flushFields = () => {
-		setValues({})
-	}
-
-	const handleSubmit = (e) => {
-		e.preventDefault();
-		onSubmit(values, flushFields);
+	const customHandleSubmit = (data) => {
+		//We want to not allow different <script>alert()</script> and something else propagated. That is why we take care of special symbols here
+		const sanitizedData = Object.fromEntries(
+			Object.entries(data).map(([k, v]) => {
+				if (typeof v === "string") {
+					return [k, DOMPurify.sanitize(v)]
+				}
+				return [k, v];
+			})
+		)
+		onSubmit(sanitizedData);
 	}
 	const {text: buttonText, ...buttonRest} = data.button;
 
 	return (
-		<form onSubmit={handleSubmit}>
-			{
-				data.fields.map((item) => (
-					<Field
-						key={item.name}
-						item={item}
-						value={values[item.name]}
-						onChange={onChange}
-						fieldClass={data.fieldClass}
-						wClassName={data.wClassName}
-					/>
-				))
-			}
-			<Button {...buttonRest} onSubmit={handleSubmit}>
-				{buttonText}
-			</Button>
-		</form>
+		<FormProvider {...methods}>
+			<form noValidate={true} onSubmit={methods.handleSubmit(customHandleSubmit)}>
+				{
+					data.fields.map(({pos, ...item}) => {
+						return <Field
+							key={item.name}
+							item={item}
+							fieldClass={data.fieldClass}
+							wClassName={data.wClassName}
+						/>
+					})
+				}
+				<Button {...buttonRest} onSubmit={methods.handleSubmit(customHandleSubmit)}>
+					{buttonText}
+				</Button>
+			</form>
+		</FormProvider>
 	)
 }
 
