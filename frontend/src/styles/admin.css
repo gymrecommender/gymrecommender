@@ -23,7 +23,8 @@ h2 {
 
 /* Button styling for + New Admin */
 .btn-show-modal {
-    background-color: #00338e;
+    background-color: #002147;
+    border-color: #00338e;
     color: #fff;
     padding: 20px 30px;
     font-weight: bold;
@@ -35,14 +36,13 @@ h2 {
 }
 
 .btn-show-modal:hover {
-    background-color: #9325b2;
+    color: #9f60b5;
 }
 
 /* Gym Ownership Requests Section */
 .gym-requests {
-	background-color: #7C5DC6;
+	background-color: #002147;
     width: 95%;
-	border: 1px solid #ddd;
 	border-radius: 8px;
 	padding: 15px;
     margin-left: 30px;
@@ -57,6 +57,7 @@ h2 {
     color: #000000;
     border: 1px solid #ddd;
     text-align: left;
+    
 }
 
 .requests-table th, .requests-table td {
@@ -94,22 +95,45 @@ h2 {
 }
 
 .btn-icon.approve {
-	color: #28a745;
+	color: #7C5DC6;
     font-weight: bold;
 }
 
 .btn-icon.approve:hover {
-	background-color: rgba(40, 167, 69, 0.1);
+	color:#9f60b5;
 }
 
 .btn-icon.reject {
-	color: #dc3545;
+	color:#7C5DC6;
     font-weight: bold;
 }
 
 .btn-icon.reject:hover {
-	background-color: rgba(220, 53, 69, 0.1);
+	color:#9f60b5;
 }
+
+.btn-icon.save{
+    color:#7C5DC6;
+    font-weight: bold;
+}
+
+.btn-icon.save:hover{
+    color:#9f60b5;
+}
+
+.input-with-icon {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  
+  .input-with-icon input {
+    flex-grow: 1;
+    padding: 6px 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 14px;
+  }
 
 
 

@@ -10,7 +10,7 @@
     padding: 20px 40px;
     border: 3px solid #ccc;
     border-radius: 15px;
-    background-color:#a377b3;
+    background-color:#411351;
 
     width: 540px;
     min-height: 590px;
@@ -116,7 +116,7 @@
 
 .gym-data table {
     width: 100%;
-    color: #002147;
+    color: #5092de;
     font-size: 1.1rem;
 }
 .gym-data .gym-data-title {
@@ -162,7 +162,7 @@
 }
 
 .gym-own {
-    background-color: #c8b7ef;
+    background-color: #411351;
     height: 100%;
     padding: 20px;
     color: white;
@@ -176,7 +176,7 @@
 }
 
 .gym-own td.gym-own-req-item, .gym-own th.gym-own-hd-item {
-    border: 1px solid #c8b7ef;
+    border: 1px solid #411351;
     padding: 5px 10px;
 
     color: #000000;
@@ -201,7 +201,7 @@
 }
 .gym-own td.gym-own-req-item:last-child  {
     border: none;
-    background-color: #c8b7ef;
+    background-color: #411351;
 }
 
 .gym-marked {
@@ -231,7 +231,7 @@
     flex-direction: column;
     justify-content: stretch;
 
-    background-color: #024CAA;
+    background-color: #96a3e7;
 
     border-radius: 5px;
     padding: 15px;

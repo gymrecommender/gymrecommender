@@ -100,7 +100,7 @@ const GymOwnership = ({}) => {
 							{
 								!item.decision ? (
 									<Button title={"Delete the row"} className={"btn-icon"} onClick={() => handleDelete(item.id)}>
-										<FontAwesomeIcon className={"icon"} size={"xs"} icon={faTrashCan}/>
+										<FontAwesomeIcon className={"icon"} size={"L"} icon={faTrashCan}/>
 									</Button>
 								) : ''
 							}

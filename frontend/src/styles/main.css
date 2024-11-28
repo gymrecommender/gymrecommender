@@ -6,7 +6,7 @@
 
 html, body {
     height: 100%;
-    background-color: #aacae6;
+    background-color: #00367b;
     font-family: Arial, sans-serif;
     -ms-overflow-style: none;
     scrollbar-width: none;
@@ -21,7 +21,6 @@ body::-webkit-scrollbar {
     display: flex;
     flex-direction: column;
     height: 100vh;
-    background-color: inherit;
     box-sizing: border-box;
 
     width: 90%;
@@ -72,7 +71,7 @@ body::-webkit-scrollbar {
 }
 
 .sliders {
-    background-color: #bed3f0;
+    background-color: #ccc;
     height: fit-content;
 }
 
@@ -196,7 +195,7 @@ input[type="range"]::-moz-range-thumb {
 }
 
 .time input[type="time"] {
-    background-color: #9f60b5;
+    background-color: #cba5d7;
     border: 1px solid #024CAA;
     color: #333;
     padding: 8px;
@@ -207,7 +206,7 @@ input[type="range"]::-moz-range-thumb {
 
 .time input[type="time"]:focus {
     border-color: #4f8cff;
-    background-color: #cba5d7;
+    background-color: #9f60b5;
 }
 
 .time input[type="time"]::placeholder {
@@ -231,7 +230,7 @@ input[type="range"]::-moz-range-thumb {
 }
 
 .location-controls button {
-    padding: 12px 20px;
+    padding: 10px 20px;
     background-color: #00338e;
     color: #ffffff;
     border: none;
@@ -253,7 +252,7 @@ input[type="range"]::-moz-range-thumb {
 }
 
 .location-controls input[type="text"]:focus {
-    box-shadow: 0 0 10px rgba(255, 213, 79, 0.5);
+    box-shadow: 0 0 10px rgba(167, 79, 255, 0.5);
     outline: none;
 }
 
@@ -383,7 +382,7 @@ input[type="range"]::-moz-range-thumb {
 }
 
 .input-box:focus {
-    box-shadow: 0 0 10px rgba(255, 213, 79, 0.5);
+    box-shadow: 0 0 10px rgba(211, 79, 255, 0.5);
     outline: none;
 }
 
@@ -420,8 +419,7 @@ button.btn-icon .icon:not(:last-child) {
 
 button.btn-icon:hover {
     border-color:#9f60b5;
-    color:#9f60b5;
-    background-color: white;
+    color: #9f60b5;
     cursor: pointer;
 }
 
