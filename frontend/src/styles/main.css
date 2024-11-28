@@ -120,7 +120,7 @@ body::-webkit-scrollbar {
     text-align: center;
 }
 
-.input-field .input-field-error {
+.input-field .input-field-error, .selector .input-field-error {
     display: block;
     color: red;
     font-weight: bold;
