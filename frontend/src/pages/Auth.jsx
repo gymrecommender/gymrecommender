@@ -6,6 +6,8 @@ import React from "react";
 import {useLocation, useMatch, useNavigate} from "react-router-dom";
 import Form from "../components/simple/Form.jsx";
 import {useFirebase} from "../context/FirebaseProvider.jsx";
+import {emailRegEx} from "../services/helpers.jsx";
+import {toast} from "react-toastify";
 
 const buttons = [
 	{icon: faUser, title: (action) => `${action} as a user`, role: "user"},
@@ -30,13 +32,13 @@ const Auth = () => {
 
 
 	const getFormValues = async (values, flushForm) => {
-		const {password_repeat, ...rest} = values;
+		const {passwordRepeat, ...rest} = values;
 		const result = await functor(rest, role);
 		if (result.error) {
-			//TODO the error should be added to the specific area of the form
-			alert(result.error);
+			//TODO the error should be added to the notification pop up
+			toast(result.error.message);
 		} else {
-			//TODO make some information regarding the necessity to verify the email to login
+			//TODO show information regarding the necessity to verify the email to login
 			flushForm();
 		}
 	}
@@ -45,16 +47,28 @@ const Auth = () => {
 		fields: [
 			...(!isLogin ?
 				[
-					{pos: 1, type: "text", label: "First name", required: true, name: "firstName"},
+					{pos: 1, type: "text", minLength: 2, label: "First name", required: true, name: "firstName"},
 					{pos: 2, type: "text", label: "Last name", required: true, name: "lastName"},
 					{pos: 3, type: "text", required: true, label: "Username", name: "username"},
-					{pos: 6, type: "password", required: true, label: "Repeat the password", name: "passwordRepeat"},
+					{
+						pos: 6,
+						type: "password",
+						required: true,
+						sameAs: {fieldName: "password", message: "The passwords do not match"},
+						label: "Repeat the password",
+						name: "passwordRepeat"
+					},
 				] : []),
-			{pos: 4, type: "email", required: true, label: "Email", name: "email"},
+			{
+				pos: 4,
+				type: "email",
+				required: true,
+				pattern: {regEx: emailRegEx, message: "Invalid email format"},
+				label: "Email",
+				name: "email"
+			},
 			{pos: 5, type: "password", required: true, label: "Password", name: "password"},
-		].sort(function (a, b) {
-			return a.pos - b.pos;
-		}),
+		],
 		fieldClass: "input-login",
 		wClassName: "form-group",
 		button: {
@@ -89,9 +103,11 @@ const Auth = () => {
 							buttons.map(({title, icon, isLogInOnly, ...rest}) => {
 								//We must not show a sign-up button on admin login page
 								if (role !== rest.role && !(rest.role === "admin" && !isLogin)) {
-									return <Button type={"button"}
-									               onClick={() => navigate(`${base}/${rest.role === "user" ? "" : rest.role}`)}
-									               className={"btn-icon btn-action"} title={title(titleText)}>
+									return <Button
+											key={title}
+											type={"button"}
+											onClick={() => navigate(`${base}/${rest.role === "user" ? "" : rest.role}`)}
+											className={"btn-icon btn-action"} title={title(titleText)}>
 										<FontAwesomeIcon className={"icon"} size={"lg"} icon={icon}/>
 									</Button>
 								}

@@ -6,6 +6,7 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faPenToSquare, faLock, faCircleArrowLeft} from "@fortawesome/free-solid-svg-icons";
 import Modal from "../simple/Modal.jsx";
 import GymMarked from "./GymMarked.jsx";
+import classNames from "classnames";
 
 const GymManager = ({weekdays, currencies, data}) => {
 	const [isEdit, setIsEdit] = useState(false);
@@ -14,7 +15,7 @@ const GymManager = ({weekdays, currencies, data}) => {
 	return (
 		<>
 			<div className={"gym-data"}>
-				<div className={`gym-data-header ${isMarked ? 'left' : ''}`}>
+				<div className={classNames('gym-data-header', isMarked ? 'left' : '')}>
 					{
 						!isMarked ?
 							<Button title={"Mark gym as unavailable"} className={"btn-icon"} type={"btn"} onClick={() => setIsMarked(true)}>

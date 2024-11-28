@@ -1,4 +1,10 @@
-const Select = ({className, id, data, label, value, name, onChange}) => {
+import {useFormContext} from "react-hook-form";
+import classNames from "classnames";
+import {generateValidationRules} from "../../services/helpers.jsx";
+
+const Select = ({className, wClassName, required, data, label, name, ...rest}) => {
+	const {register, formState: {errors}} = useFormContext();
+
 	const options = data?.map((item, index) => {
 		return (
 			<option value={item.value} key={index}>
@@ -7,14 +13,13 @@ const Select = ({className, id, data, label, value, name, onChange}) => {
 		);
 	})
 	return (
-		<div className={"selector"}>
-			{label ? (<label>{label}</label>) : ''}
+		<div className={classNames('selector', wClassName)}>
+			{label ? (<label>{label}{required ? <span>*</span> : ''}</label>) : ''}
+			{errors[name] ? <span className={"input-field-error"}>{errors[name].message}</span> : ""}
 			<select
-				value={value ?? ""}
-				name={name}
+				{...register(name, generateValidationRules(label, {required}))}
+				{...rest}
 				{...(className && {className})}
-				id={id}
-				onChange={(e) => onChange(name, e.target.value)}
 			>
 				{options ?? ""}
 			</select>

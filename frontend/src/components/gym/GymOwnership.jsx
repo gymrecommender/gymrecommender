@@ -3,6 +3,7 @@ import {displayTimestamp} from '../../services/helpers.jsx'
 import Button from "../simple/Button.jsx";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faTrashCan} from "@fortawesome/free-solid-svg-icons";
+import {toast} from "react-toastify";
 
 const GymOwnership = ({}) => {
 	const [requests, setRequests] = useState([]);
@@ -47,7 +48,7 @@ const GymOwnership = ({}) => {
 
 	const handleDelete = (id) => {
 		//TODO handle delete logic
-		alert(`${id} is deleted`);
+		toast(`${id} is deleted`);
 	}
 
 	const content = (
