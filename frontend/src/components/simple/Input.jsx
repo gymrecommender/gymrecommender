@@ -1,19 +1,26 @@
-const Input = ({children, wClassName, onChange, label, className, value, ...rest}) => {
+import classNames from 'classnames';
+import {useFormContext} from "react-hook-form";
+import {generateValidationRules} from "../../services/helpers.jsx";
+
+const Input = ({children, wClassName, label, className, name, ...rest}) => {
+	const {register, formState: {errors}} = useFormContext();
+	const {max, min, minLength, maxLength} = rest
+	const {sameAs, pattern, required, ...inputParams} = rest;
+
 	return (
-		<div className={`input-field ${wClassName ?? ''}`}>
+		<div className={classNames('input-field', wClassName)}>
 			{label ?
-				<label className={`input-field-label`} htmlFor={rest.name}>
-					{label}{rest.required ? <span>*</span> : ''}
+				<label className={`input-field-label`} htmlFor={name}>
+					{label}{required ? <span>*</span> : ''}
 				</label> : null}
 			{children}
+			{errors[name] ? <span className={"input-field-error"}>{errors[name].message}</span> : ""}
 			<input
-				{...rest}
+				{...inputParams}
 				{...(className && {className})}//conditional rendering of the class
-				value={value ?? ''}
-				onChange={(e) => onChange(rest.name, e.target.value)} //Propagate the new value to the form
+				{...register(name, generateValidationRules(label, {max, min, required, sameAs, minLength, maxLength, pattern}))}
 			/>
 		</div>
-
 	)
 }
 

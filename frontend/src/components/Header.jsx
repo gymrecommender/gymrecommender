@@ -43,7 +43,8 @@ const Header = () => {
 				{
 					buttons.map(({action, title, icon, role}) => {
 						if (!role || role === user.role) {
-							return <Button type={"btn"}
+							return <Button key={title}
+								           type={"btn"}
 							               title={title}
 							               className={"btn-panel btn-icon"}
 							               onClick={action}

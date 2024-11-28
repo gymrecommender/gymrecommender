@@ -5,6 +5,8 @@ import Auth from "./pages/Auth.jsx";
 import Main from "./layouts/Main.jsx";
 import RoleBasedRoutes from "./RoleBasedRoutes.jsx";
 import {useFirebase} from "./context/FirebaseProvider.jsx";
+import Account from "./pages/accounts/AccountUser.jsx";
+import AccountAdmin from "./pages/accounts/AccountAdmin.jsx";
 
 const App = () => {
 	const {getLoading} = useFirebase();

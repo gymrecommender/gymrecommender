@@ -1,23 +1,20 @@
-import Input from "./simple/Input.jsx";
 import Button from "./simple/Button.jsx";
-import {useState} from "react";
+import Form from "./simple/Form.jsx";
 
+const data = {
+	fields: [
+		{pos: 1, type: "text", name: "locationSearch", placeholder: "Search for location"}
+	]
+}
 const LocationControls = ({onGetLocation, onSubmitSearch}) => {
-	const [searchState, setSearchState] = useState('')
-	const handleSearchChange = (name, value) => {
-		setSearchState(value);
-	}
-	const handleSubmitSearch = (e) => {
-		e.preventDefault()
-		onSubmitSearch(searchState);
+	const handleSubmitSearch = (values) => {
+		onSubmitSearch(values);
 	}
 
 	return (
 		<div className="location-controls">
 			<Button type={"button"} onClick={onGetLocation}>Find my location</Button>
-			<form onSubmit={handleSubmitSearch}>
-				<Input type={"text"} name="locationSearch" placeholder="Search for location" value={searchState} onChange={handleSearchChange}/>
-			</form>
+			<Form data={data} onSubmit={handleSubmitSearch}/>
 		</div>
 	);
 };

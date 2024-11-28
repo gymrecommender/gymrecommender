@@ -4,6 +4,7 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faClose} from "@fortawesome/free-solid-svg-icons";
 import {displayTimestamp} from "../../services/helpers.jsx";
 import {useCoordinates} from "../../context/CoordinatesProvider.jsx";
+import classNames from "classnames";
 
 const GymRequested = ({showMarker}) => {
 	const {coordinates} = useCoordinates();
@@ -50,7 +51,20 @@ const GymRequested = ({showMarker}) => {
 				}
 			},
 			{
-				"id": "uuid14",
+				"id": "uuid187",
+				"requestedAt": "2024-11-06T14:45:00+05:30",
+				"respondedAt": "2024-11-06T15:30:00+05:30",
+				"decision": "rejected",
+				"message": "Request rejected due to insufficient documentation.",
+				"gym": {
+					"name": "River North Athletic Club",
+					"address": "500 W Erie St, Chicago, IL",
+					"latitude": 41.894512,
+					"longitude": -87.642197
+				}
+			},
+			{
+				"id": "uuid1",
 				"requestedAt": "2024-11-06T14:45:00+05:30",
 				"respondedAt": "2024-11-06T15:30:00+05:30",
 				"decision": "rejected",
@@ -76,20 +90,7 @@ const GymRequested = ({showMarker}) => {
 				}
 			},
 			{
-				"id": "uuid14",
-				"requestedAt": "2024-11-06T14:45:00+05:30",
-				"respondedAt": "2024-11-06T15:30:00+05:30",
-				"decision": "rejected",
-				"message": "Request rejected due to insufficient documentation.",
-				"gym": {
-					"name": "River North Athletic Club",
-					"address": "500 W Erie St, Chicago, IL",
-					"latitude": 41.894512,
-					"longitude": -87.642197
-				}
-			},
-			{
-				"id": "uuid14",
+				"id": "uuid15",
 				"requestedAt": "2024-11-06T14:45:00+05:30",
 				"respondedAt": "2024-11-06T15:30:00+05:30",
 				"decision": "rejected",
@@ -112,7 +113,7 @@ const GymRequested = ({showMarker}) => {
 	const content = requests?.map((item) => {
 		const isSelected = coordinates?.lat === item.gym.latitude && coordinates?.lng === item.gym.longitude;
 		return (
-			<div className={`gym-req ${isSelected ? 'gym-req-selected' : ''}`} onClick={() => showMarker({lat: item.gym.latitude, lng: item.gym.longitude})}>
+			<div key={item.id} className={classNames('gym-req', isSelected ? 'gym-req-selected' : '')} onClick={() => showMarker({lat: item.gym.latitude, lng: item.gym.longitude})}>
 				<div className={"gym-req-header"}>
 					<span className={"gym-req-reqtime"}>{displayTimestamp(item.requestedAt, true)}</span>
 					<Button type={"button"} className={"btn-icon"} onClick={() => handleDelete(item.id)}>

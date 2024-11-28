@@ -120,6 +120,13 @@ body::-webkit-scrollbar {
     text-align: center;
 }
 
+.input-field .input-field-error, .selector .input-field-error {
+    display: block;
+    color: red;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
 .sliders form select,
 .sliders form input[type="text"],
 .sliders form input[type="number"] {
@@ -184,7 +191,6 @@ input[type="range"]::-moz-range-thumb {
 
 /*time input for AccountUser and AccountGym*/
 .time {
-    margin-bottom: 15px;
     display: flex;
     flex-direction: column;
     gap: 5px;

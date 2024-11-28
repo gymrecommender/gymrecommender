@@ -1,16 +1,17 @@
-import {useState, useCallback, memo} from "react";
+import classNames from 'classnames';
+import {useForm, FormProvider} from 'react-hook-form';
+import {memo} from "react";
 import Slider from "./Slider.jsx";
 import Select from "./Select.jsx";
 import Input from "./Input.jsx";
 import Button from "./Button.jsx";
+import {sanitizeData} from "../../services/helpers.jsx";
 
-const Field = memo(({item, value, onChange, fieldClass, wClassName}) => {
+const Field = memo(({item, fieldClass, wClassName}) => {
 	const commonProps = {
 		...item,
-		value,
 		className: fieldClass,
 		wClassName,
-		onChange
 	}
 
 	let Component;
@@ -21,6 +22,8 @@ const Field = memo(({item, value, onChange, fieldClass, wClassName}) => {
 		case 'select':
 			Component = Select;
 			break;
+		case 'title':
+			return <h3 {...(fieldClass && {className: fieldClass})}>{item.text}</h3>;
 		default:
 			Component = Input;
 			break;
@@ -29,48 +32,49 @@ const Field = memo(({item, value, onChange, fieldClass, wClassName}) => {
 	return <Component key={item.name} {...commonProps} />
 });
 
-const Form = ({data, onSubmit}) => {
-	const [values, setValues] = useState({
-		...data.fields.reduce((acc, item) => {
-			acc[item.name] = item.default ?? null;
-			return acc;
-		}, {}),
+const Form = ({data, onSubmit, className}) => {
+	const methods = useForm({
+		defaultValues: {
+			...data.fields.reduce((acc, item) => {
+				if (item.type !== 'title') {
+					acc[item.name] = item.value ?? "";
+				}
+				return acc;
+			}, {})
+		}
 	});
 
-	const onChange = useCallback((name, value) => {
-		setValues((prevValues) => (
-			{...prevValues, [name]: value}
-		));
-	}, []);
-
-	const flushFields = () => {
-		setValues({})
+	const flushForm = () => {
+		methods.reset()
 	}
 
-	const handleSubmit = (e) => {
-		e.preventDefault();
-		onSubmit(values, flushFields);
+	const customHandleSubmit = (data) => {
+		//We want to not allow different <script>alert()</script> and something else propagated. That is why we take care of special symbols here
+		onSubmit(sanitizeData(data), flushForm);
 	}
-	const {text: buttonText, ...buttonRest} = data.button;
 
+	const {text: buttonText, ...buttonRest} = data.button ?? {};
 	return (
-		<form onSubmit={handleSubmit}>
-			{
-				data.fields.map((item) => (
-					<Field
-						key={item.name}
-						item={item}
-						value={values[item.name]}
-						onChange={onChange}
-						fieldClass={data.fieldClass}
-						wClassName={data.wClassName}
-					/>
-				))
-			}
-			<Button {...buttonRest} onSubmit={handleSubmit}>
-				{buttonText}
-			</Button>
-		</form>
+		<FormProvider {...methods}>
+			<form noValidate={true} className={classNames(className)} onSubmit={methods.handleSubmit(customHandleSubmit)}>
+				{
+					data.fields.sort(function (a, b) {
+						return a.pos - b.pos;
+					}).map(({pos, value, ...item}) => {
+						return <Field
+							key={item.name}
+							item={item}
+							fieldClass={classNames(data.fieldClass, item.className)}
+							wClassName={classNames(data.wClassName, item.wClassName)}
+						/>
+					})
+				}
+				{buttonText ?
+					<Button {...buttonRest} onSubmit={methods.handleSubmit(customHandleSubmit)}>
+						{buttonText}
+					</Button> : ''}
+			</form>
+		</FormProvider>
 	)
 }
 

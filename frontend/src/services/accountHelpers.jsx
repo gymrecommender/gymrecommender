@@ -8,7 +8,7 @@ import {
 	signInWithEmailAndPassword
 } from "firebase/auth";
 import {auth} from "../Firebase.jsx";
-import {firebaseErrors} from "./helpers.jsx";
+import {errorsParser, firebaseErrors} from "./helpers.jsx";
 
 const roleMapper = {
 	"admin": "adminaccount",
@@ -21,7 +21,7 @@ const accountSignUp = async (values, role) => {
 
 	try {
 		if (role === "admin") {
-			result.error = "Operation is not allowed"
+			result.error = errorsParser({message:"Operation is not allowed"})
 			return result
 		}
 		const checkUser = await axiosInternal('GET', `${roleMapper[role]}/${values.username}`, values.username);
@@ -37,7 +37,7 @@ const accountSignUp = async (values, role) => {
 			}
 			const dbUser = await axiosInternal('POST', `${roleMapper[role]}`, data)
 			if (dbUser.error) {
-				result.error = dbUser.error.data.errors;
+				result.error = errorsParser(dbUser.error);
 				await deleteUser(outerUser.user) //all the data will be lost so we will not be able to align the database and the firebase
 				return dbUser
 			}
@@ -51,14 +51,14 @@ const accountSignUp = async (values, role) => {
 			//plus updateProfile does not trigger onAuthStateChanged which means that before it is triggerred by something else, displayName in the app will be set to null
 			await signOut(auth)
 		} else {
-			result.error = {"username": checkUser.data.length > 0 ? `The user with username ${values.username} already exists` : checkUser.error.message}
+			result.error = {"message": checkUser.data.length > 0 ? `The user with username ${values.username} already exists` : errorsParser(checkUser.error)}
 
 			return result
 		}
 	} catch (e) {
-		result.error = firebaseErrors(e.code);
-		if (!result.error) {
-			result.error = e
+		result.error = {message: firebaseErrors(e.code)};
+		if (!result.error.message) {
+			result.error = errorsParser(e)
 		}
 	}
 	return result;
@@ -71,7 +71,7 @@ const accountLogin = async (values, role) => {
 		const signInResult = await signInWithEmailAndPassword(auth, values.email, values.password);
 
 		if (!signInResult.user.emailVerified) {
-			result.error = {"message": "You must verify your email before you are allowed to log in"};
+			result.error = errorsParser({"message": "You must verify your email before you are allowed to log in"});
 			await signOut(auth)
 
 			return result;
@@ -82,15 +82,15 @@ const accountLogin = async (values, role) => {
 			token: signInResult.user.accessToken
 		})
 		if (login.error) {
-			result.error = login.error.message;
+			result.error = errorsParser(login.error);
 			await signOut(auth);
 
 			return result;
 		}
 	} catch (e) {
-		result.error = firebaseErrors(e.code);
-		if (!result.error) {
-			result.error = e
+		result.error = {message: firebaseErrors(e.code)};
+		if (!result.error.message) {
+			result.error = errorsParser(e)
 		}
 	}
 
@@ -102,16 +102,16 @@ const accountLogout = async (username, role) => {
 	try {
 		const logoutResult = await axiosInternal('DELETE', `${roleMapper[role]}/${username}/logout`);
 		if (logoutResult.error) {
-			result.error = logoutResult.error.message;
+			result.error = errorsParser(logoutResult.error);
 
 			return result;
 		}
 
 		await signOut(auth);
 	} catch (e) {
-		result.error = firebaseErrors(e.code);
-		if (!result.error) {
-			result.error = e
+		result.error = {message: firebaseErrors(e.code)};
+		if (!result.error.message) {
+			result.error = errorsParser(e)
 		}
 	}
 

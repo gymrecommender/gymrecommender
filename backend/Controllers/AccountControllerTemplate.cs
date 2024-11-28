@@ -8,6 +8,7 @@ using Microsoft.Extensions.Options;
 
 namespace backend.Controllers;
 
+[ApiController]
 public abstract class AccountControllerTemplate : Controller {
     protected AccountType _accountType;
     protected readonly GymrecommenderContext context;
@@ -95,7 +96,11 @@ public abstract class AccountControllerTemplate : Controller {
                 if (errors.Count > 0) {
                     return BadRequest(new {
                         success = false,
-                        error = errors
+                        error = new {
+                            code = "ValidationError",
+                            message = "Some fields contain invalid data",
+                            details = errors
+                        }
                     });
                 }
 
@@ -133,18 +138,24 @@ public abstract class AccountControllerTemplate : Controller {
                 return StatusCode(500, new {
                     success = false,
                     error = new {
-                        message = e.Message
+                        code = "InternalError",
+                        message = "An unexpected error occurred. Please try again later."
                     }
                 });
             }
         }
 
+        var modelErrors = ModelState.Values.SelectMany(v => v.Errors)
+            .Select(e => "Invalid field data")
+            .Distinct()
+            .ToArray();
+
         return BadRequest(new {
             success = false,
             error = new {
                 code = "ValidationError",
-                message = "Invalid data",
-                details = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage)
+                message = "Some required fields are missing or incorrect.",
+                details = modelErrors
             }
         });
     }
@@ -259,7 +270,7 @@ public abstract class AccountControllerTemplate : Controller {
             });
         }
     }
-    
+
     public async Task<IActionResult> GetRoleByUid(string uid) {
         try {
             var account = await context.Accounts.AsNoTracking()
@@ -334,40 +345,52 @@ public abstract class AccountControllerTemplate : Controller {
     }
 
     public async Task<IActionResult> Login(string username, AccountTokenDto accountTokenDto, AccountType accountType) {
-        try {
-            var account = await context.Accounts.AsTracking()
-                .Where(a => a.Username == username)
-                .Where(a => a.Type == accountType)
-                .FirstOrDefaultAsync();
+        if (ModelState.IsValid) {
+            try {
+                var account = await context.Accounts.AsTracking()
+                    .Where(a => a.Username == username)
+                    .Where(a => a.Type == accountType)
+                    .FirstOrDefaultAsync();
 
-            if (account == null) {
-                return NotFound(new { error = $"User {username} is not found" });
-            }
-            account.LastSignIn = DateTime.UtcNow;
-            account.IsEmailVerified = true; //TODO this should be handled in a smarter way
-            
-            var token = new UserToken {
-                CreatedAt = DateTime.UtcNow,
-                UserId = account.Id,
-                OuterToken = accountTokenDto.Token
-            };
-
-            context.UserTokens.Add(token);
-            await context.SaveChangesAsync();
-            //TODO some login logic
-
-            return Ok();
-        }
-        catch (Exception e) {
-            return StatusCode(500, new {
-                success = false,
-                error = new {
-                    message = e.Message
+                if (account == null) {
+                    return NotFound(new { error = $"User {username} is not found" });
                 }
-            });
+
+                account.LastSignIn = DateTime.UtcNow;
+                account.IsEmailVerified = true; //TODO this should be handled in a smarter way
+
+                var token = new UserToken {
+                    CreatedAt = DateTime.UtcNow,
+                    UserId = account.Id,
+                    OuterToken = accountTokenDto.Token
+                };
+
+                context.UserTokens.Add(token);
+                await context.SaveChangesAsync();
+                //TODO some login logic
+
+                return Ok();
+            }
+            catch (Exception e) {
+                return StatusCode(500, new {
+                    success = false,
+                    error = new {
+                        message = e.Message
+                    }
+                });
+            }
         }
+
+        return BadRequest(new {
+            success = false,
+            error = new {
+                code = "ValidationError",
+                message = "Invalid data",
+                details = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage)
+            }
+        });
     }
-    
+
     public async Task<IActionResult> Logout(string username, AccountType accountType) {
         try {
             var account = await context.Accounts.AsTracking()
@@ -378,7 +401,7 @@ public abstract class AccountControllerTemplate : Controller {
             if (account == null) {
                 return NotFound(new { error = $"User {username} is not found" });
             }
-            
+
             var token = await context.UserTokens.AsTracking()
                 .Where(a => a.UserId == account.Id).FirstOrDefaultAsync();
 
