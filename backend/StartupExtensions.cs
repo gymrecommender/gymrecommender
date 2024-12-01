@@ -18,11 +18,11 @@ public static class StartupExtensions {
                                   $"Password={Environment.GetEnvironmentVariable("DB_PASSWORD")};";
 
         var dataSourceBuilder = new NpgsqlDataSourceBuilder(connectionString);
-        dataSourceBuilder.MapEnum<AccountType>();
-        dataSourceBuilder.MapEnum<OwnershipDecision>();
-        dataSourceBuilder.MapEnum<ReccomendationType>();
-        dataSourceBuilder.MapEnum<NotificationType>();
-        dataSourceBuilder.MapEnum<ProviderType>();
+        dataSourceBuilder.MapEnum<AccountType>("account_type");
+        dataSourceBuilder.MapEnum<OwnershipDecision>("own_decision");
+        dataSourceBuilder.MapEnum<RecommendationType>("rec_type");
+        dataSourceBuilder.MapEnum<NotificationType>("not_type");
+        dataSourceBuilder.MapEnum<ProviderType>("provider_type");
         var dataSource = dataSourceBuilder.Build();
 
         builder.Services.AddSingleton<NpgsqlDataSource>(dataSource);
@@ -57,23 +57,26 @@ public static class StartupExtensions {
         if (!app.Environment.IsDevelopment()) {
             app.UseDeveloperExceptionPage();
             app.UseHsts();
+            // .UseHttpsRedirection();
+        }
+        else {
+            app.UseSwagger()
+                .UseSwaggerUI(c => {
+                    c.SwaggerEndpoint("/swagger/v1/swagger.json",
+                        "GymRecommender WebAPI");
+                    c.RoutePrefix = "docs";
+                });
         }
 
         app.UseCors(aux => {
             aux
                 .AllowAnyHeader()
                 .AllowAnyMethod()
-                .WithOrigins("http://localhost:5173");
+                // .WithOrigins(Environment.GetEnvironmentVariable("FRONTEND_ADDRESS"));
+                .WithOrigins("http://frontend:3000", "http://localhost:3000");
         })
-            .UseHttpsRedirection()
             .UseStaticFiles()
-            .UseRouting()
-            .UseSwagger()
-            .UseSwaggerUI(c => {
-            c.SwaggerEndpoint("/swagger/v1/swagger.json",
-                "GymRecommender WebAPI");
-            c.RoutePrefix = "docs";
-        });
+            .UseRouting();
 
         app.MapControllerRoute(
             name: "default",

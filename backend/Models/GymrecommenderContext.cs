@@ -55,11 +55,11 @@ public partial class GymrecommenderContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder
-            .HasPostgresEnum<AccountType>("account_type")
-            .HasPostgresEnum<NotificationType>("not_type")
-            .HasPostgresEnum<OwnershipDecision>("own_decision")
-            .HasPostgresEnum<ProviderType>("provider_type")
-            .HasPostgresEnum<ReccomendationType>("rec_type")
+            .HasPostgresEnum<AccountType>("public", "account_type")
+            .HasPostgresEnum<NotificationType>("public", "not_type")
+            .HasPostgresEnum<OwnershipDecision>("public", "own_decision")
+            .HasPostgresEnum<ProviderType>("public", "provider_type")
+            .HasPostgresEnum<RecommendationType>("public", "rec_type")
             .HasPostgresExtension("uuid-ossp");
 
         modelBuilder.Entity<Account>(entity =>

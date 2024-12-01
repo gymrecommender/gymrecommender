@@ -1,0 +1,54 @@
+services:
+  backend:
+    build:
+      context: ./backend
+    env_file:
+      - .env #TODO find a fix for this as the redundant duplication is introduced
+    ports:
+      - "5000:5000"
+    depends_on:
+      - migration
+      - db
+    networks:
+      - app-network
+
+  frontend:
+    build:
+      context: frontend
+      dockerfile: Dockerfile
+    env_file:
+      - frontend/.env
+    ports:
+      - "3000:80"
+    environment:
+      NODE_ENV: production
+    depends_on:
+      - backend
+    networks:
+      - app-network
+
+  db:
+    image: postgres
+    environment:
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_DATABASE}
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    networks:
+      - app-network
+
+  migration:
+    build: 
+      context: backend
+      dockerfile: Migration.Dockerfile
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  postgres-data:
+
