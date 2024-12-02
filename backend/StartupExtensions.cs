@@ -56,8 +56,7 @@ public static class StartupExtensions {
         // Configure the HTTP request pipeline.
         if (!app.Environment.IsDevelopment()) {
             app.UseDeveloperExceptionPage();
-            app.UseHsts();
-            // .UseHttpsRedirection();
+            app.UseHsts().UseHttpsRedirection();
         }
         else {
             app.UseSwagger()
@@ -74,7 +73,8 @@ public static class StartupExtensions {
                     .AllowAnyHeader()
                     .AllowAnyMethod()
                     // .AllowAnyOrigin();
-                    .WithOrigins(Environment.GetEnvironmentVariable("FRONTEND_ADDRESS"));
+                    .WithOrigins(Environment.GetEnvironmentVariable("FRONTEND_ADDRESS"))
+                    .AllowCredentials();
             })
             .UseRouting();
 
