@@ -4,8 +4,7 @@ ENV NODE_ENV=${NODE_ENV}
 
 WORKDIR /app
 COPY package*.json ./
-RUN npm install
-RUN npm install vite
+RUN npm install --production=false
 COPY . .
 RUN npm run build
 
