@@ -23,7 +23,7 @@ const Field = memo(({item, fieldClass, wClassName}) => {
 			Component = Select;
 			break;
 		case 'title':
-			return <h3 {...(fieldClass && {className: fieldClass})}>{item.text}</h3>;
+			return <h3 key={item.text} {...(fieldClass && {className: fieldClass})}>{item.text}</h3>;
 		default:
 			Component = Input;
 			break;
@@ -62,7 +62,6 @@ const Form = ({data, onSubmit, className}) => {
 						return a.pos - b.pos;
 					}).map(({pos, value, ...item}) => {
 						return <Field
-							key={item.name}
 							item={item}
 							fieldClass={classNames(data.fieldClass, item.className)}
 							wClassName={classNames(data.wClassName, item.wClassName)}
