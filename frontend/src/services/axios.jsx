@@ -15,7 +15,7 @@ const entityMapping = {
 }
 
 const axiosInternal = async (method, endpoint, data = {}, queryParams={}) => {
-	const uri = `${import.meta.env.VITE_BACKEND_URL}/api/${endpoint}`
+	const uri = `/api/${endpoint}`
 	const requestConfig = {method, url: uri, data, params: queryParams}
 	const result = {data: null, error: null}
 
