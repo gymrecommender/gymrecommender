@@ -1,9 +1,13 @@
+using System.Net;
 using backend;
 
 var builder = WebApplication.CreateBuilder(args);
 if (!builder.Environment.IsDevelopment())
 {
-    builder.WebHost.UseUrls("http://0.0.0.0:5000");
+    builder.WebHost.ConfigureKestrel(options =>
+    {
+        options.Listen(IPAddress.Any, Convert.ToInt32(Environment.GetEnvironmentVariable("PORT") ?? "5000"));
+    });
 }
 var app = builder.ConfigureServices().ConfigurePipeline();
 

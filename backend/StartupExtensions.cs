@@ -73,7 +73,6 @@ public static class StartupExtensions {
                 .AllowAnyHeader()
                 .AllowAnyMethod()
                 .WithOrigins(Environment.GetEnvironmentVariable("FRONTEND_ADDRESS"));
-                // .WithOrigins("http://frontend:3000", "http://localhost:3000");
         })
             .UseStaticFiles()
             .UseRouting();
