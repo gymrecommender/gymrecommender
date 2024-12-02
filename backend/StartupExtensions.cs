@@ -68,20 +68,20 @@ public static class StartupExtensions {
                 });
         }
 
-        app.UseCors(aux => {
-            aux
-                .AllowAnyHeader()
-                .AllowAnyMethod()
-                .WithOrigins(Environment.GetEnvironmentVariable("FRONTEND_ADDRESS"));
-        })
-            .UseStaticFiles()
+        app.UseCors(aux =>
+            {
+                aux
+                    .AllowAnyHeader()
+                    .AllowAnyMethod()
+                    .AllowAnyOrigin();
+                // .WithOrigins(Environment.GetEnvironmentVariable("FRONTEND_ADDRESS"));
+            })
             .UseRouting();
 
         app.MapControllerRoute(
             name: "default",
             pattern: "{controller}/{action=Index}/{id?}");
 
-        app.MapFallbackToFile("/index.html");
         return app;
     }
 }
