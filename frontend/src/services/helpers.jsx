@@ -24,13 +24,13 @@ const displayTimestamp = (timestamp, isShort = false) => {
 
 const getLocation = async () => {
 	return new Promise((resolve) => {
-		const data = {lat: null, lng: null, error: null}
+		const data = {data: {lat: null, lng: null}, error: null}
 
 		if (navigator.geolocation) {
 			navigator.geolocation.getCurrentPosition(
 				(position) => {
-					data.lat = position.coords.latitude;
-					data.lng = position.coords.longitude;
+					data.data.lat = position.coords.latitude;
+					data.data.lng = position.coords.longitude;
 					resolve(data);
 				},
 				(error) => {
