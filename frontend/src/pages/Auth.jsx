@@ -8,6 +8,7 @@ import Form from "../components/simple/Form.jsx";
 import {useFirebase} from "../context/FirebaseProvider.jsx";
 import {emailRegEx} from "../services/helpers.jsx";
 import {toast} from "react-toastify";
+import {useLoader} from "../context/LoaderProvider.jsx";
 
 const buttons = [
 	{icon: faUser, title: (action) => `${action} as a user`, role: "user"},
@@ -18,6 +19,7 @@ const buttons = [
 const Auth = () => {
 	const location = useLocation();
 	const navigate = useNavigate();
+	const {setLoader} = useLoader();
 
 	//TODO check whether there is better way to implement these 3 rows
 	const isLogin = location.pathname.startsWith("/login")
@@ -33,7 +35,10 @@ const Auth = () => {
 
 	const getFormValues = async (values, flushForm) => {
 		const {passwordRepeat, ...rest} = values;
+		setLoader(true);
 		const result = await functor(rest, role);
+		setLoader(false);
+
 		if (result.error) {
 			//TODO the error should be added to the notification pop up
 			toast(result.error.message);

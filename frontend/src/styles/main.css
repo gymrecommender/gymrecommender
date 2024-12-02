@@ -469,3 +469,21 @@ button.btn-action {
     color: white;
 }
 
+.loader {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    background-color: rgba(159, 96, 181, 0.4);
+}
+
+.loader span {
+    color: #9f60b5;
+}
+

@@ -48,6 +48,7 @@ const data = {
 };
 const Index = () => {
 	const getFormValues = (values) => {
+		//#TODO add loaders here
 		console.log(values);
 	}
 	return (

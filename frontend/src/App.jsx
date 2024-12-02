@@ -4,11 +4,12 @@ import NotFound from "./pages/NotFound.jsx";
 import Auth from "./pages/Auth.jsx";
 import Main from "./layouts/Main.jsx";
 import RoleBasedRoutes from "./RoleBasedRoutes.jsx";
+import {useLoader} from "./context/LoaderProvider.jsx";
 import {useFirebase} from "./context/FirebaseProvider.jsx";
-import Account from "./pages/accounts/AccountUser.jsx";
-import AccountAdmin from "./pages/accounts/AccountAdmin.jsx";
+import Loader from "./components/simple/Loader.jsx";
 
 const App = () => {
+	const {loader} = useLoader();
 	const {getLoading} = useFirebase();
 	//#TODO implement permissions for the page for different roles
 	return (
@@ -30,7 +31,8 @@ const App = () => {
 						<Route index element={<Auth />}/>
 						<Route path={"gym"} element={<Auth />}/>
 					</Route>
-				</Routes> : ''}
+				</Routes> : <Loader />}
+			{loader ? <Loader/> : ""}
 		</>
 	)
 }
