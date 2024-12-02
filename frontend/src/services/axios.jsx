@@ -13,9 +13,12 @@ const entityMapping = {
 	'D': 'directions/json',
 	'G': 'geocode/json'
 }
-
+const API_BASE_URL =
+	process.env.NODE_ENV === "production"
+		? import.meta.env.VITE_BACKEND_URL
+		: "/api";
 const axiosInternal = async (method, endpoint, data = {}, queryParams={}) => {
-	const uri = `/api/${endpoint}`
+	const uri = `${API_BASE_URL}/${endpoint}`
 	const requestConfig = {method, url: uri, data, params: queryParams}
 	const result = {data: null, error: null}
 
