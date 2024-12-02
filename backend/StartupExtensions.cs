@@ -72,7 +72,6 @@ public static class StartupExtensions {
                 aux
                     .AllowAnyHeader()
                     .AllowAnyMethod()
-                    // .AllowAnyOrigin();
                     .WithOrigins(Environment.GetEnvironmentVariable("FRONTEND_ADDRESS"))
                     .AllowCredentials();
             })
