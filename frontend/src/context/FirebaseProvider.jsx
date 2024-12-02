@@ -62,7 +62,7 @@ const FirebaseProvider = ({children}) => {
 	const signUp = async (values, role) => {
 		const result = await accountSignUp(values, role);
 		if (!result.error) {
-			navigate(`/login/${role}`)
+			navigate(role === "user" ? "/login/" : `/login/${role}`)
 		}
 
 		return result
