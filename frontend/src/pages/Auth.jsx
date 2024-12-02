@@ -35,9 +35,7 @@ const Auth = () => {
 
 	const getFormValues = async (values, flushForm) => {
 		const {passwordRepeat, ...rest} = values;
-		setLoader(true);
 		const result = await functor(rest, role);
-		setLoader(false);
 
 		if (result.error) {
 			//TODO the error should be added to the notification pop up
