@@ -9,6 +9,7 @@ if (!builder.Environment.IsDevelopment())
         options.Listen(IPAddress.Any, Convert.ToInt32(Environment.GetEnvironmentVariable("PORT") ?? "5000"));
     });
 }
+
 var app = builder.ConfigureServices().ConfigurePipeline();
 
 app.Run();
