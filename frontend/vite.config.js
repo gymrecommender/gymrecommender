@@ -5,13 +5,14 @@ dotenv.config();
 
 export default defineConfig({
 	plugins: [react()],
-	proxy: {
-		'/api': {
-			target: process.env.VITE_BACKEND_URL,
-			secure: false,
-			ws: true,
-			changeOrigin: true,
-			rewrite: (path) => path.replace(/^\/api/, ''), // Remove `/api` prefix
+	server: {
+		proxy: {
+			'/api': {
+				target: process.env.VITE_BACKEND_URL,
+				secure: false,
+				ws: true,
+				changeOrigin: true
+			},
 		},
-	},
+	}
 });
