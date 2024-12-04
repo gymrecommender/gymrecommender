@@ -1,7 +1,9 @@
+# Exported from Render on 2024-12-04T19:15:28Z
 services:
-  - name: gym-backend
-    type: web
-    env: dotnet
-    buildCommand: dotnet publish -c Release
-    startCommand: dotnet GymRecommender.dll
-    region: zagreb
+- type: web
+  name: gymrecommender
+  runtime: static
+  repo: https://github.com/gymrecommender/gymrecommender
+  branch: renderSetup
+  staticPublishPath: .
+version: "1"
