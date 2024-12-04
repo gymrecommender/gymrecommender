@@ -84,13 +84,53 @@
       const display = document.getElementById(`${id}-value`);
       display.textContent = `${slider.value} ${unit}`;
     }
-    
-    // Initial call to set the default values
+
+
+    //
+    // function pingBackend() {
+    //   console.log("ping backend func");
+    //   const backendUrl = "http://localhost:5166";
+    //
+    //   // Function to send the ping request
+    //   function sendPing() {
+    //     console.log("sending ping to backend");
+    //     fetch(backendUrl, {
+    //       method: "GET",
+    //     })
+    //             .then(response => {
+    //               if (response.ok) {
+    //                 console.log("Ping successful:", response.status);
+    //               } else {
+    //                 console.error("Ping failed:", response.status);
+    //               }
+    //             })
+    //             .catch(error => {
+    //               console.error("Error while pinging backend:", error);
+    //             });
+    //   }
+    //
+    //   // Call `sendPing` every 5 minutes (300,000 milliseconds)
+    //   setInterval(sendPing, 5000);
+    // }
+    // console.log(typeof pingBackend);
+    // window.pingBackend();// Initial call to set the default values
     updateValue('time', 'min');
     updateValue('tprice', '€');
     updateValue('mprice', '€');
     updateValue('rating', '');
     updateValue('congestion', '');
+
+
+    //pingBackend();
+    // Start the ping function
+    // document.addEventListener("DOMContentLoaded", () => {
+    //   pingBackend(); // Ensures the function runs after the DOM is loaded
+    // });
+
+
+    console.log(typeof pingBackend); // Should output "function"
+
+
   </script>
 </body>
 </html>
