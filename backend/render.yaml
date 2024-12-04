@@ -4,6 +4,6 @@ services:
   name: gymrecommender
   runtime: static
   repo: https://github.com/gymrecommender/gymrecommender
-  branch: renderSetup
+  branch: renderTryNikla
   staticPublishPath: .
 version: "1"
