@@ -1,33 +1,22 @@
 import { useEffect, useState, createContext, useContext } from "react";
 import {auth, provider} from "../Firebase.jsx";
-import {signInWithPopup, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut, updateProfile, deleteUser, sendEmailVerification} from "firebase/auth";
-import {useMatch, useNavigate} from "react-router-dom";
+import {signInWithPopup, onAuthStateChanged} from "firebase/auth";
+import {useNavigate} from "react-router-dom";
 import {accountLogin, accountLogout, accountSignUp} from "../services/accountHelpers.jsx";
 import {axiosInternal} from "../services/axios.jsx";
+import {useLoader} from "./LoaderProvider.jsx";
 
 const FirebaseContext = createContext();
 const useFirebase = () => useContext(FirebaseContext);
 
-const firebaseErrors = (code) => {
-	let message = ''
-	switch (code) {
-		case "auth/email-already-in-use":
-			message = "The provided email is already in use."
-			break;
-		case "auth/invalid-credential":
-			message = "The provided login and/or password is/are invalid."
-			break;
-		default:
-			message = null;
-			break;
-	}
-	return message;
-}
 
 const FirebaseProvider = ({children}) => {
 	const [user, setUser] = useState(null);
+
+	//we need a separate loader for the initial loading of the page as we do not want the whole page to disappear upon different requests
 	const [loading, setLoading] = useState(true);
 	const navigate = useNavigate();
+	const {setLoader} = useLoader();
 
 	useEffect(() => {
 		/*
@@ -60,16 +49,22 @@ const FirebaseProvider = ({children}) => {
 	}, [])
 
 	const signUp = async (values, role) => {
+		setLoader(true);
 		const result = await accountSignUp(values, role);
+		setLoader(false);
+
 		if (!result.error) {
-			navigate(`/login/${role}`)
+			navigate(role === "user" ? "/login/" : `/login/${role}`)
 		}
 
 		return result
 	}
 
 	const signIn = async (values, role) => {
+		setLoader(true);
 		const result = await accountLogin(values, role)
+		setLoader(false);
+
 		if (!result.error) {
 			navigate('/')
 		}
@@ -79,7 +74,10 @@ const FirebaseProvider = ({children}) => {
 
 	const signInWithGoogle = () => signInWithPopup(auth, provider);
 	const logout = async () =>  {
+		setLoader(true);
 		const result = await accountLogout(user.username, user.role);
+		setLoader(false);
+
 		if (!result.error) {
 			navigate('/')
 		}

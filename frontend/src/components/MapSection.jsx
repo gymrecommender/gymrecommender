@@ -18,10 +18,7 @@ const MapSection = () => {
 		if (result.error) {
 			toast(result.error.message) //TODO the error should be displayed in the pop up or sth
 		} else {
-			setCoordinates({
-				lat: result.lat,
-				lng: result.lng,
-			})
+			setCoordinates(result.data)
 		}
 	}
 	return (
