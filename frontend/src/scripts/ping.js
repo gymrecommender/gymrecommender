@@ -5,7 +5,7 @@
 
 export function pingBackend() {
     console.log("pingBackend function started"); // Debugging line
-    const backendUrl = "VITE_BACKEND_URL";
+    const backendUrl = "VITE_BACKEND_URL/ping";
 
     function sendPing() {
         console.log("Sending ping to backend...");
