@@ -1,9 +1,12 @@
-# Exported from Render on 2024-12-04T19:15:28Z
+
+
+
+
 services:
-- type: web
-  name: gymrecommender
-  runtime: static
-  repo: https://github.com/gymrecommender/gymrecommender
-  branch: renderTryNikla
-  staticPublishPath: .
-version: "1"
+  - name: gymrecommender
+    type: web
+    runtime: static
+    repo: https://github.com/gymrecommender/gymrecommender
+    branch: renderTryNikla
+    staticPublishPath: .
+#version: "1"
