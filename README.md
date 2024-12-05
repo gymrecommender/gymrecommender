@@ -118,16 +118,16 @@ Nikla Magyar
 Mia Šagovac  
 Josipa Jagodić  
 Egor Shevtsov  
-Ivan Ivica
+Ivan Ivica  
 Ilija Rotan
 
 # Contribution
-Nikla Magyar - Back-end  
-Ivan Ivica - Back-end
-Mia Šagovac - Front-end + Design + Layout + UML
-Josipa Jagodić - Front-end  
-Egor Shevtsov - Front-end + Database + Design + Layout
-Ilija Rotan - Back-end
+Nikla Magyar - Back-end   
+Ivan Ivica - Back-end  
+Mia Šagovac - Front-end + Design + Layout + UML  
+Josipa Jagodić - Front-end   
+Egor Shevtsov - Front-end + Database + Design + Layout  
+Ilija Rotan - Back-end  
 
 
 
