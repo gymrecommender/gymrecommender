@@ -290,3 +290,7 @@
     font-weight: bold;
     text-transform: capitalize;
 }
+
+.gym-req .gym-req-title, .gym-req .gym-req-address {
+    word-break: break-all;
+}
