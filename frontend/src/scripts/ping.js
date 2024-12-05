@@ -1,8 +1,5 @@
 
 
-
-
-
 export function pingBackend() {
     console.log("pingBackend function started"); // Debugging line
     const backendUrl = `${import.meta.env.VITE_BACKEND_URL}/api/ping`;
@@ -14,7 +11,7 @@ export function pingBackend() {
         })
             .then(response => {
                 if (response.ok) {
-                    console.log("Ping successful:", response.status);
+                    response.text().then(text => console.log("Ping successful:", text));
                 } else {
                     console.error("Ping failed:", response.status);
                 }
