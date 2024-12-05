@@ -19,7 +19,7 @@ export function pingBackend() {
             });
     }
 
-    setInterval(sendPing, 780000); //13 mins, these are miliseconds we can just hardcode the exact number of milisecodns we want for the interval and leave it here
+    setInterval(sendPing, 60000); //1 min, these are miliseconds we can just hardcode the exact number of milisecodns we want for the interval and leave it here
 }
 
 
