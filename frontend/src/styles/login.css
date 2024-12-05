@@ -20,26 +20,29 @@
     width: 500px;
 }
 .login-header {
+    color: white;
+    font-weight: bold;
+}
+
+.login-header-bottom {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
 }
-.login-header .btn-icon {
+.login-header-bottom .btn-icon {
     font-size: 0.9em;
     width: fit-content;
 }
 
-.login-header .login-title {
+.login-header-bottom .login-title {
     text-transform: uppercase;
     margin-bottom: 0;
 
     display: flex;
     justify-content: center;
     align-items: center;
-
-    color: white;
 }
 
-.login-header {
+.login-header-bottom {
     margin-bottom: 20px;
 }
 
@@ -85,7 +88,7 @@ button[type="submit"].btn-login:hover {
     background-color:#9f60b5;
 }
 
-.login-header .login-buttons {
+.login-header-bottom .login-buttons {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -97,5 +100,10 @@ button[type="submit"].btn-login:hover {
 
     height: 100%;
     aspect-ratio: 1 / 1;
+}
+.login-header .login-header-top {
+    text-transform: uppercase;
+    color: inherit;
+    text-align: center;
 }
 

@@ -8,10 +8,10 @@ const Input = ({children, wClassName, label, className, name, ...rest}) => {
 	const {sameAs, pattern, required, ...inputParams} = rest;
 
 	return (
-		<div className={classNames('input-field', wClassName)}>
+		<div className={classNames('input-field', wClassName, required ? "required" : "")}>
 			{label ?
 				<label className={`input-field-label`} htmlFor={name}>
-					{label}{required ? <span>*</span> : ''}
+					{label}
 				</label> : null}
 			{children}
 			{errors[name] ? <span className={"input-field-error"}>{errors[name].message}</span> : ""}

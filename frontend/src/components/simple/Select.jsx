@@ -13,8 +13,8 @@ const Select = ({className, wClassName, required, data, label, name, ...rest}) =
 		);
 	})
 	return (
-		<div className={classNames('selector', wClassName)}>
-			{label ? (<label>{label}{required ? <span>*</span> : ''}</label>) : ''}
+		<div className={classNames('selector', wClassName, required ? "required" : '')}>
+			{label ? (<label>{label}</label>) : ''}
 			{errors[name] ? <span className={"input-field-error"}>{errors[name].message}</span> : ""}
 			<select
 				{...register(name, generateValidationRules(label, {required}))}
