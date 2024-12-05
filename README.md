@@ -1,6 +1,41 @@
 # Software engineering
 Gyms recommender
 
+# Functionality, part 1
+https://gymrecommender.onrender.com/
+
+## Authentication  
+Logging in, signing up and logging out functionality is implemented with the help of the Firebase
+Each account type has its own designated page for logging in and signing up. They can be accessed by directly typing the URL of the respective pages in the address bar or navigating there by clicking on the respective icons on any of the available login pages.  
+/login  
+/login/gym  
+/login/admin  
+/signup  
+/signup/gym  
+
+Clicking on the rightmost button in the header (if the user is not authenticated) will redirect the user to the default login page. As the majority of the users will be regular users, the default login page is the login page for the accounts of the type "user"
+From that page, it is possible to navigate to the login page of all the other account types or the signing-up page for accounts of the type "user". Analogously, from all other log-in/sign-up pages, it is possible to navigate to log-in/sign-up pages of the accounts of other types and to the sign-up/log-in page of the account type, on which page you are currently on.
+
+It is not possible to create an account of type 'admin' via a regular sign-up for security reasons
+
+Each sign-up and log-in form has a validation of the fields implemented, denoting the required fields and showing the corresponding errors (if any) above the respective fields or in the toaster.
+
+Initially, there are no dummy accounts in the system, which means that it is necessary to sign up in order to get access to the account functionalities of the respective account types. It is important to sign up with an email that you currently have access to as an email verification message is sent to that email, and logging in with the newly created account of any type is not possible without successfully verifying the email
+
+After successful submission of the sign-up form, each user is redirected to the log-in page of the respective account type. It is worth noting that it is not possible to log-in on the designated page of any other account type. For example, if a person gets registered on the sign-up page for gym accounts, it will not be possible to log in with those credentials on the user or admin log-in page
+
+After the user is successfully logged in, he/she gets access to the pages and functionalities specific to this type of account. All those pages are implemented and can be navigated to by clicking on the respective icons in the header or designated buttons on the pages. All the pages are interactable, but they are not yet connected to the backend and can only be seen as a moderately accurate representation of the actual functionality
+If the non-authenticated user tries to access the pages that are account-specific, this user is redirected to the default login page
+
+While the user is logged in, regardless of the account type, all the log-in and sign-up pages are not available - when trying to type the respective URLs in the address bar of the browser, the user will be redirected to the home page of the application
+
+In order to log out (only for authenticated users) it is necessary to press the rightmost button in the header
+
+## Map  
+Google map integration is implemented with the default location in Sydney to showcase that retrieving the current location of the user works correctly.
+In order to retrieve the current location, the blue button next to the search bar should be pressed, which will immediately show the retrieved position on the Google Map with a respective marker
+Unfortunately, there is an issue between the ability to move freely around the map and focus on the retrieved location that we have not yet managed to resolve, and for now we opted for the focus functionality in order to unambiguously demonstrate the implemented functionality
+
 # Description of the project
 Our app will help to find the best gym options for people with different priorities
 
