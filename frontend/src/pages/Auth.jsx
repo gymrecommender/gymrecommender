@@ -84,38 +84,43 @@ const Auth = () => {
 		<div className="container-login">
 			<div className="form-login">
 				<div className="login-header">
-					<Button onClick={() => navigate(`/`)} type={"button"}
-					        title={"Home"} className={"btn-icon btn-login-home"}>
-						<FontAwesomeIcon className={"icon"} size={"2x"}
-						                 icon={faHome}/>
-					</Button>
-					<h2 className={"login-title"}>{titleText}</h2>
-					<div className={"login-buttons"}>
-						{role === "admin" ? ''
-							: <Button onClick={() => {
-								//forms the link for the button of the respective role
-								navigate(`/${isLogin ? "signup" : "login"}/${role === "user" ? "" : role}`);
-								//TODO flush the form here
-							}} type={"button"}
-							          title={isLogin ? "Sign up" : "Log in"} className={"btn-icon btn-action"}>
-								<FontAwesomeIcon className={"icon"} size={"lg"}
-								                 icon={isLogin ? faUserPlus : faRightToBracket}/>
-							</Button>
-						}
-						{
-							buttons.map(({title, icon, isLogInOnly, ...rest}) => {
-								//We must not show a sign-up button on admin login page
-								if (role !== rest.role && !(rest.role === "admin" && !isLogin)) {
-									return <Button
+					<div className="login-header-top">
+						{role}
+					</div>
+					<div className={"login-header-bottom"}>
+						<Button onClick={() => navigate(`/`)} type={"button"}
+						        title={"Home"} className={"btn-icon btn-login-home"}>
+							<FontAwesomeIcon className={"icon"} size={"2x"}
+							                 icon={faHome}/>
+						</Button>
+						<h2 className={"login-title"}>{titleText}</h2>
+						<div className={"login-buttons"}>
+							{role === "admin" ? ''
+								: <Button onClick={() => {
+									//forms the link for the button of the respective role
+									navigate(`/${isLogin ? "signup" : "login"}/${role === "user" ? "" : role}`);
+									//TODO flush the form here
+								}} type={"button"}
+								          title={isLogin ? "Sign up" : "Log in"} className={"btn-icon btn-action"}>
+									<FontAwesomeIcon className={"icon"} size={"lg"}
+									                 icon={isLogin ? faUserPlus : faRightToBracket}/>
+								</Button>
+							}
+							{
+								buttons.map(({title, icon, isLogInOnly, ...rest}) => {
+									//We must not show a sign-up button on admin login page
+									if (role !== rest.role && !(rest.role === "admin" && !isLogin)) {
+										return <Button
 											key={title}
 											type={"button"}
 											onClick={() => navigate(`${base}/${rest.role === "user" ? "" : rest.role}`)}
 											className={"btn-icon btn-action"} title={title(titleText)}>
-										<FontAwesomeIcon className={"icon"} size={"lg"} icon={icon}/>
-									</Button>
-								}
-							})
-						}
+											<FontAwesomeIcon className={"icon"} size={"lg"} icon={icon}/>
+										</Button>
+									}
+								})
+							}
+						</div>
 					</div>
 				</div>
 				<Form data={data} onSubmit={getFormValues}/>

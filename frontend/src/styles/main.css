@@ -484,3 +484,7 @@ button.btn-action {
     color: #9f60b5;
 }
 
+.input-field.required label:after, .selector.required label:after {
+    content: "*";
+    color: red;
+}

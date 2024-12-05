@@ -15,6 +15,7 @@ const GoogleMap = () => {
 						mapId={"aux"}
 						options={{
 							streetViewControl: false, // Disable Street View control
+							gestureHandling: "greedy"
 						}}
 					>
 						<AdvancedMarker position={coordinates} />
