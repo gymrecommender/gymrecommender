@@ -3,13 +3,13 @@ using Microsoft.AspNetCore.Mvc;
 namespace backend.Controllers;
 
 [ApiController]
-[Route("ping")]
+[Route("api/[controller]")]
 
 public class pingController : ControllerBase
 {
     [HttpGet]
     public IActionResult Get()
     {
-        return Ok("backend is alive");
+        return Ok("pong");
     }
 }
