@@ -488,3 +488,9 @@ button.btn-action {
     content: "*";
     color: red;
 }
+
+button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
