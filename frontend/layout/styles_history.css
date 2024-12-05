@@ -1,0 +1,142 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html, body {
+    height: 100%; /* Ensure full height */
+}
+
+body {
+    font-family: Arial, sans-serif;
+}
+
+.container {
+    display: grid;
+    grid-template-rows: 12.5% 12.5% 70% 5%;
+    grid-template-columns: 25% 50% 25%;
+    grid-template-areas:
+        "logo title auth"
+        "logo nav-links auth"
+        "info-section info-section info-section"
+        "footer footer footer";
+    height: 100vh; /* Full viewport height */
+    gap: 10px;
+    background-color: #003366;
+}
+
+.logo {
+    grid-area: logo;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+    border: solid;
+    border-color: #001f3f;
+    border-radius: 10px;
+}
+
+.logo img {
+    width: 220px;
+    height: auto;
+}
+
+.title {
+    grid-area: title;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 3em;
+    font-weight: bold;
+    color: #4f8cff;
+    background-color: #032c54;
+}
+
+.nav-links {
+    grid-area: nav-links;
+    display: flex;
+    justify-content: center;
+    gap: 70px;
+    padding: 10px;
+    border: solid;
+    border-color: #001f3f;
+    border-radius: 10px;
+    padding-top: 20px;
+}
+
+.nav-links a:hover {
+    color: rgb(124, 176, 225);
+}
+
+.nav-links a {
+    color: #4f8cff;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 2em;
+    transition: color 0.3s;
+    text-decoration: underline;
+}
+
+.auth-button {
+    grid-area: auth;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: solid;
+    border-color: #001f3f;
+    border-radius: 10px;
+    padding: 10px;
+}
+
+.auth-button button {
+    background-color: #4f8cff;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    font-size: 2em;
+    font-weight: bold;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    height: 60%;
+    width: 80%;
+}
+
+.auth-button button:hover {
+    background-color: rgb(124, 176, 225);
+}
+
+.info-section {
+    grid-area: info-section;
+    display: flex;
+    align-items: flex-start; /* Change to flex-start for better alignment */
+    text-align: left;
+    background-color: #032c54;
+    padding: 20px;
+    border-radius: 5px;
+}
+
+.info-section h3 {
+    font-size: 1.3em;
+    color: #4f8cff;
+    margin-bottom: 10px;
+}
+
+.footer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    background-color: #003366;
+    color: rgb(187, 185, 185);
+    flex-direction: column;
+    grid-area: footer;
+    padding: 10px;
+    margin-top: 0;
+}
+
+.footer-note {
+    font-size: 0.8em;
+    color: #b0c4de;
+}

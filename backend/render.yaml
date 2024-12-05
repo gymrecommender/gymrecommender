@@ -1,0 +1,12 @@
+
+
+
+
+services:
+  - name: gymrecommender
+    type: web
+    runtime: static
+    repo: https://github.com/gymrecommender/gymrecommender
+    branch: renderTryNikla
+    staticPublishPath: .
+#version: "1"

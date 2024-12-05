@@ -1,0 +1,60 @@
+header {
+    background: #002147;
+    margin-bottom: 10px;
+}
+
+header .header-top {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-areas:
+    "home logo authentication";
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+}
+
+.logo img {
+    width: 100px;
+    height: auto;
+    transform: translate(10%, 5%);
+}
+
+header .title {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 3em;
+    font-weight: bold;
+    color: #ffffff;
+    text-transform: uppercase;
+}
+
+.authentication, .home {
+    display: flex;
+    align-items: center;
+    box-sizing: border-box;
+}
+.authentication {
+    justify-content: end;
+    margin-right: 20px;
+}
+.home {
+    justify-content: start;
+    margin-left: 10px;
+}
+
+button.btn-panel {
+    padding: 10px 20px;
+    font-size: 2em;
+    border-radius: 5px;
+    color: #ffffff;
+}
+
+button.btn-panel:hover {
+
+    color: #9f60b5;
+}
