@@ -10,6 +10,9 @@ builder.Logging.AddDebug();
 
 builder.Services.AddControllers();
 
+var fireBaseProjectId = Environment.GetEnvironmentVariable("JWT_AUTHORITY")
+                        ?? throw new InvalidOperationException("JWT_AUTHORITY not set.");;
+
 builder.Services.AddAuthentication(options =>
     {
         options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -17,14 +20,14 @@ builder.Services.AddAuthentication(options =>
     })
     .AddJwtBearer(options =>
     {
-        options.Authority = "https://securetoken.google.com/{YOUR_FIREBASE_PROJECT_ID}";
+        options.Authority = "https://securetoken.google.com/"+fireBaseProjectId;
 
         options.TokenValidationParameters = new TokenValidationParameters
         {
             ValidateIssuer = true,
-            ValidIssuer = "https://securetoken.google.com/{YOUR_FIREBASE_PROJECT_ID}",
+            ValidIssuer = "https://securetoken.google.com/"+fireBaseProjectId,
             ValidateAudience = true,
-            ValidAudience = "{YOUR_FIREBASE_PROJECT_ID}",
+            ValidAudience = fireBaseProjectId,
             ValidateLifetime = true,
             ClockSkew = TimeSpan.FromMinutes(5) 
         };
