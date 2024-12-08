@@ -1,140 +1,127 @@
 .section-body {
-	padding: 20px;
-	display: flex;
-	flex-direction: column;
-	gap: 10px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
 }
 
 /* Header styling */
-h2 {
-	font-size: 1.8em;
-	color: #ffffff;
-	margin-bottom: 10px;
+.body-header h2 {
+    font-size: 1.8em;
+    color: #ffffff;
+    margin-bottom: 10px;
     justify-content: center;
 }
 
-.body_header {
+.body-header {
     width: 100%;
     display: flex;
-    justify-content:space-between;
+    justify-content: space-between;
     align-items: center;
     margin-bottom: 15px;
 }
 
 /* Button styling for + New Admin */
-.btn-show-modal {
-    background-color: #002147;
-    border-color: #00338e;
-    color: #fff;
-    padding: 20px 30px;
+.btn-icon.btn-show-modal {
+    font-size: 1.1rem;
+}
+.btn-icon.btn-show-modal .icon {
+    margin: 0 !important;
+}
+
+.accordion {
+    color: white;
+    margin-bottom: 10px;
+}
+
+.accordion .accordion-header {
+    padding: 15px 40px;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+
+    gap: 20px;
+    border: 3px solid white;
+    border-radius: 10px;
     font-weight: bold;
-    margin-right: 50px;
-    font-size: medium;
-    border: none;
-    cursor: pointer;
-    border-radius: 5px;
+    font-size: 1.3rem;
+
+    background-color: #411351;
 }
 
-.btn-show-modal:hover {
-    color: #9f60b5;
-}
+.accordion-header .accordion-header-number {
+    padding: 7px;
+    border: 3px solid white;
+    height: 100%;
+    aspect-ratio: 1/1;
 
-/* Gym Ownership Requests Section */
-.gym-requests {
-	background-color: #002147;
-    width: 95%;
-	border-radius: 8px;
-	padding: 15px;
-    margin-left: 30px;
-}
-
-.requests-table {
-    width: 100%;
-    margin: 0 auto;
-    border-collapse: collapse;
-    margin-top: 15px;
-    background-color: #7C5DC6;
-    color: #000000;
-    border: 1px solid #ddd;
-    text-align: left;
-    
-}
-
-.requests-table th, .requests-table td {
-    padding: 12px;
-    border: 1px solid #ddd;
-}
-
-.requests-table th {
-    background-color: #00338e;
-    color: #fff;
-    font-weight: bold;
-}
-
-.requests-table td {
-    background-color: #C5D7ED;
-}
-
-.requests-table tr:nth-child(even) td {
-    background-color: #cacafa;
-}
-
-/* Approve/Reject buttons in request rows */
-.btn-icon {
-	background: none;
-	border: none;
-	cursor: pointer;
-	font-size: 1.5em;
-	padding: 5px;
-	margin: 0 5px;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	border-radius: 4px;
-	transition: background-color 0.2s;
-}
-
-.btn-icon.approve {
-	color: #7C5DC6;
-    font-weight: bold;
-}
-
-.btn-icon.approve:hover {
-	color:#9f60b5;
-}
-
-.btn-icon.reject {
-	color:#7C5DC6;
-    font-weight: bold;
-}
-
-.btn-icon.reject:hover {
-	color:#9f60b5;
-}
-
-.btn-icon.save{
-    color:#7C5DC6;
-    font-weight: bold;
-}
-
-.btn-icon.save:hover{
-    color:#9f60b5;
-}
-
-.input-with-icon {
     display: flex;
     align-items: center;
-    gap: 8px;
-  }
-  
-  .input-with-icon input {
-    flex-grow: 1;
-    padding: 6px 8px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    font-size: 14px;
-  }
+    justify-content: center;
+}
 
+.accordion-header .accordion-header-text {
+    display: flex;
+    flex-direction: column;
+}
 
+.accordion-header-text .accordion-header-name {
+    font-size: 1.5rem;
+}
+.accordion-header-text .accordion-header-address {
+    font-size: 1rem;
+}
 
+.accordion .accordion-header:hover {
+    cursor: pointer;
+}
+
+.accordion .accordion-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+    margin-left: 50px;
+    border: 3px solid white;
+    border-top: none;
+
+    padding: 10px;
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+
+    background-color: #823284;
+}
+
+.accordion-content .accordion-content-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 2fr;
+    font-weight: bold;
+    font-size: 1.1rem;
+}
+.accordion-content .accordion-content-row:not(:last-child) {
+    margin-bottom: 10px;
+}
+
+.accordion-content-row span {
+    height: 100%;
+    display: flex;
+    align-items: center;
+}
+
+.accordion .accordion-form {
+    display: grid;
+    grid-template-columns: 2fr 1fr auto;
+    gap: 10px;
+}
+
+.accordion .accordion-field {
+    padding: 0 20px;
+    border-radius: 10px;
+
+    background-color: white;
+}
+
+.accordion-content-row .btn-icon.save:hover {
+    color: #0d204a;
+}
 

@@ -7,6 +7,8 @@ import RoleBasedRoutes from "./RoleBasedRoutes.jsx";
 import {useLoader} from "./context/LoaderProvider.jsx";
 import {useFirebase} from "./context/FirebaseProvider.jsx";
 import Loader from "./components/simple/Loader.jsx";
+import AccountAdmin from "./pages/accounts/AccountAdmin.jsx";
+import AccountGym from "./pages/accounts/AccountGym.jsx";
 
 const App = () => {
 	const {loader} = useLoader();
@@ -17,8 +19,7 @@ const App = () => {
 				<Routes>
 					<Route path="/" element={<Main/>}>
 						<Route index element={<Index/>}/>
-						{/*TODO make the route the same for all the components + add conditional rendering of Account pages*/}
-						{<Route path='account/:username/*' element={<RoleBasedRoutes/>}/>}
+						<Route path='account/:username/*' element={<RoleBasedRoutes/>}/>
 						<Route path={"*"} element={<NotFound/>}/>
 					</Route>
 

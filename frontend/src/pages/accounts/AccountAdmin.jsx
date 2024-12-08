@@ -1,26 +1,25 @@
-import React, { useState } from "react";
-import Input from "../../components/simple/Input.jsx";
+import {useState, useEffect} from "react";
 import Button from "../../components/simple/Button.jsx";
 import Modal from "../../components/simple/Modal.jsx";
 import "../../styles/admin.css";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {
-  faPlus,
-  faX,
-  faCheck,
-  faUserGear,
-  faSave,
+	faPlus,
+	faX,
+	faCheck,
+	faUserGear,
+	faSave,
 } from "@fortawesome/free-solid-svg-icons";
 import {emailRegEx} from "../../services/helpers.jsx";
 import Form from "../../components/simple/Form.jsx";
+import Accordion from "../../components/simple/Accordion.jsx";
 
 const accountTypes = [
 	{value: "gym", label: "Gym"},
 	{value: "admin", label: "Admin"},
 ]
-const data = {
+const accountData = {
 	fields: [
-
 		{pos: 1, type: "text", minLength: 2, label: "First name", required: true, name: "firstName"},
 		{pos: 2, type: "text", label: "Last name", required: true, name: "lastName"},
 		{pos: 3, type: "text", required: true, label: "Username", name: "username"},
@@ -50,102 +49,73 @@ const data = {
 		className: "btn-submit",
 	}
 }
+
 const AccountAdmin = () => {
-  const [showCreateAdminModal, setShowCreateAdminModal] = useState(false);
-  const [editableMessages, setEditableMessages] = useState({
-    123: "",
-    456: "",
-    789: "",
-  });
+	const [showCreateAdminModal, setShowCreateAdminModal] = useState(false);
+	const [groupedGyms, setGroupedGyms] = useState({});
 
-  const handleShowModal = () => setShowCreateAdminModal(true);
-  const handleCloseModal = () => setShowCreateAdminModal(false);
+	useEffect(() => {
+		setGroupedGyms({
+			"gym_uuid_1": {
+				name: "Maplewood gym",
+				address: "1234 Maplewood Avenue Springfield, IL 62701, United States",
+				requests: {
+					"gym_account_id_1": {requestTime: "2024-11-06T14:45:00+05:30", email: "thebestgym@gmail.com"},
+					"gym_account_id_2": {requestTime: "2024-11-06T14:45:00+05:30", email: "nickname@gmail.com"},
+					"gym_account_id_3": {requestTime: "2024-11-06T14:45:00+05:30", email: "anothergym@gmail.com"},
+				}
+			},
+			"gym_uuid_2": {
+				name: "Summit Wellness Center",
+				address: "789 Summit Street, New York, NY 10001, United States",
+				requests: {
+					"gym_account_id_1": { requestTime: "2024-11-06T14:45:00+05:30", email: "thebestgym@gmail.com"},
+					"gym_account_id_2": {requestTime: "2024-11-06T14:45:00+05:30", email: "nickname@gmail.com"},
+					"gym_account_id_3": {requestTime: "2024-11-06T14:45:00+05:30", email: "anothergym@gmail.com"},
+				}
+			},
+			"gym_uuid_3": {
+				name: "Riverside Fitness Center",
+				address: "4567 Riverside Drive, Los Angeles, CA 90012, United States",
+				requests: {
+					"gym_account_id_1": {requestTime: "2024-11-06T14:45:00+05:30", email: "thebestgym@gmail.com"},
+				}
+			},
+		})
+	}, [])
 
-  const handleInputChange = (id, value) => {
-	setEditableMessages((prev) => ({ ...prev, [id]: value }));
-  };
+	const handleShowModal = () => setShowCreateAdminModal(true);
+	const handleCloseModal = () => setShowCreateAdminModal(false);
 
-  const handleSaveMessage = (id) => {
-    console.log(`Saved message for ID ${id}:`, editableMessages[id]);
-    // call an API
-  };
-	const handleSubmit = (values) => {
+	const handleOnSubmit = (values, gymId, accountId) => {
+		console.log(values, gymId, accountId);
+	}
+	const handleAccountSubmit = (values) => {
 		console.log(values);
 	}
 
-  return (
-    <div className="section-body">
-      <div className="body_header">
-        <h2>Gym Ownership Requests</h2>
-        <Button onClick={handleShowModal} className="btn-show-modal">
-          <FontAwesomeIcon className={"icon"} size={"2x"} icon={faPlus} />
-          <FontAwesomeIcon className={"icon"} size={"2x"} icon={faUserGear} />
-        </Button>
-      </div>
-      <section className="gym-requests">
-        <table className="requests-table">
-          <thead>
-            <tr>
-              <th>Gym Name / ID</th>
-              <th>Requester Email</th>
-              <th>Address</th>
-              <th>Status</th>
-              <th>Message</th>
-              <th>Request Time</th>
-              <th>Response Time</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {/* Dynamic table rows */}
-            {[123, 456, 789].map((id) => (
-              <tr key={id}>
-                <td>Gym / ID {id}</td>
-                <td>requester{id}@example.com</td>
-                <td>Sample Address</td>
-                <td>approved</td>
-                <td>
-					<div className="input-with-icon">
-						<Input
-						type="text"
-						name={`message-${id}`}
-						placeholder="Enter a message"
-						value={editableMessages[id] || ""}
-						onChange={(name, value) => handleInputChange(id, value)}
-						/>
+	return (
+		<div className="section-body">
+			<div className="body-header">
+				<h2>Gym Ownership Requests</h2>
+				<Button onClick={handleShowModal} className="btn-icon btn-show-modal">
+					<FontAwesomeIcon className={"icon"} size={"2x"} icon={faPlus}/>
+					<FontAwesomeIcon className={"icon"} size={"2x"} icon={faUserGear}/>
+				</Button>
+			</div>
+			<section className="gym-requests">
+				{
+					Object.keys(groupedGyms)?.map((gymId, index) => {
+						const {name, address, requests} = groupedGyms[gymId];
+						return <Accordion onSubmit={handleOnSubmit} gymId={gymId} key={index} name={name} address={address} requests={requests}/>
+					})
+				}
+			</section>
 
-						<Button
-						className="btn-icon save"
-						onClick={() => handleSaveMessage(id)}
-						>
-						<FontAwesomeIcon
-							className={"icon"}
-							size={"lg"}
-							icon={faSave}
-						/>
-						</Button>
-					</div>
-                </td>
-                <td>7 Nov 2024, 9:15:30 CET</td>
-                <td>13 Nov 2024, 10:15:30 CET</td>
-                <td>
-                  <Button className="btn-icon approve" aria-label="Approve">
-                    <FontAwesomeIcon className={"icon"} size={"lg"} icon={faCheck} />
-                  </Button>
-                  <Button className="btn-icon reject" aria-label="Reject">
-                    <FontAwesomeIcon className={"icon"} size={""} icon={faX} />
-                  </Button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </section>
-
-     {/* Use Modal component for the Create Admin form */}
+			{/* Use Modal component for the Create Admin form */}
 			{showCreateAdminModal && (
 				<Modal onClick={handleCloseModal} headerText="New Admin Account">
-					<Form className="admin-form" data={data} onSubmit={handleSubmit}/>
+					<Form className="admin-form" data={accountData} onSubmit={handleAccountSubmit}/>
 				</Modal>
 			)}
 		</div>
