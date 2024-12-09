@@ -1,4 +1,5 @@
 using System.Net;
+using backend;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 
@@ -73,7 +74,7 @@ if (!builder.Environment.IsDevelopment())
     });
 }
 
-var app = builder.Build();
+var app = builder.ConfigureServices().ConfigurePipeline();
 
 app.UseHttpsRedirection();
 
