@@ -71,8 +71,9 @@
     margin-top: 0;
 }
 .gym-data .gym-price {
-    display: flex;
+    display: grid;
     align-items: end;
+    grid-template-columns: 4fr 1fr;
 }
 .gym-data .gym-price .input-field {
     margin-top: 0;
