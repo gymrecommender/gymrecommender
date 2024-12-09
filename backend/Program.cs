@@ -1,6 +1,8 @@
 using System.Net;
 using backend;
+using backend.Authorization;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -63,7 +65,14 @@ builder.Services.AddAuthentication(options =>
         };
     });
 
-builder.Services.AddAuthorization();
+builder.Services.AddAuthorization()
+    .AddAuthorization(options =>
+{
+    options.AddPolicy("AdminOnly", policy => policy.Requirements.Add(new HasTypeRequierment("admin")));
+    options.AddPolicy("GymOnly", policy => policy.Requirements.Add(new HasTypeRequierment("gym")));
+});
+
+builder.Services.AddScoped<IAuthorizationHandler, AuthorizationRequestHandler>(); 
 
 if (!builder.Environment.IsDevelopment())
 {
