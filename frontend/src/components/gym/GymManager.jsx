@@ -3,12 +3,12 @@ import GymEdit from "./GymEdit.jsx";
 import Gym from "./Gym.jsx";
 import Button from "../simple/Button.jsx";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faPenToSquare, faLock, faCircleArrowLeft} from "@fortawesome/free-solid-svg-icons";
+import {faPenToSquare, faLock, faCircleArrowLeft, faFolderMinus} from "@fortawesome/free-solid-svg-icons";
 import Modal from "../simple/Modal.jsx";
 import GymMarked from "./GymMarked.jsx";
 import classNames from "classnames";
 
-const GymManager = ({weekdays, currencies, data}) => {
+const GymManager = ({weekdays, currencies, data, onRemove}) => {
 	const [isEdit, setIsEdit] = useState(false);
 	const [isMarked, setIsMarked] = useState(false);
 
@@ -30,6 +30,9 @@ const GymManager = ({weekdays, currencies, data}) => {
 						setIsEdit(true)
 					}}>
 						<FontAwesomeIcon className={"icon"} size={"lg"} icon={faPenToSquare}/>
+					</Button>
+					<Button title={"Remove from management"} className={"btn-icon"} type={"btn"} onClick={() => onRemove(data.id)}>
+						<FontAwesomeIcon className={"icon icon-delete"} size={"lg"} icon={faFolderMinus}/>
 					</Button>
 				</div>
 				{

@@ -8,11 +8,14 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faCircleInfo, faPlus} from "@fortawesome/free-solid-svg-icons";
 import Modal from "../../components/simple/Modal.jsx";
 import GymOwnership from "../../components/gym/GymOwnership.jsx";
+import Confirm from "../../components/simple/Confirm.jsx";
+import {toast} from "react-toastify";
 
 const AccountGym = () => {
-	const [gyms, setGyms] = useState([]);
+	const [gyms, setGyms] = useState({});
 	const [currencies, setCurrencies] = useState([]);
 	const [isShowRequests, setIsShowRequests] = useState(false);
+	const [gymToDelete, setGymToDelete] = useState(null); //We use it as a marker to show the confirm window, so this is not excessive
 
 	const navigate = useNavigate();
 	const weekdays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
@@ -32,9 +35,8 @@ const AccountGym = () => {
 				name: "Dollar"
 			}
 		]);
-		setGyms([
-			{
-				id: "uuid1",
+		setGyms({
+			"uuid1": {
 				name: "Maplewood gym",
 				latitude: 39.7817,
 				longitude: -89.6501,
@@ -46,36 +48,36 @@ const AccountGym = () => {
 				yearlyMprice: 400,
 				sixMonthsMprice: 250,
 				isWheelchairAccessible: true,
-				workingHours: [
-					{
-						weekday: 0,
-						openFrom: "08:00",
-						openUntil: "20:00"
-					},
-					{
-						weekday: 2,
-						openFrom: "08:00",
-						openUntil: "20:00"
-					},
-					{
-						weekday: 3,
-						openFrom: "08:00",
-						openUntil: "20:00"
-					},
-					{
-						weekday: 5,
-						openFrom: "08:00",
-						openUntil: "20:00"
-					},
-					{
-						weekday: 6,
-						openFrom: "08:00",
-						openUntil: "20:00"
-					},
-				]
+				workingHours:
+					[
+						{
+							weekday: 0,
+							openFrom: "08:00",
+							openUntil: "20:00"
+						},
+						{
+							weekday: 2,
+							openFrom: "08:00",
+							openUntil: "20:00"
+						},
+						{
+							weekday: 3,
+							openFrom: "08:00",
+							openUntil: "20:00"
+						},
+						{
+							weekday: 5,
+							openFrom: "08:00",
+							openUntil: "20:00"
+						},
+						{
+							weekday: 6,
+							openFrom: "08:00",
+							openUntil: "20:00"
+						},
+					]
 			},
-			{
-				id: "uuid2",
+			"uuid2": {
 				name: "Riverside Fitness Center",
 				latitude: 34.0522,
 				longitude: -118.2437,
@@ -87,41 +89,41 @@ const AccountGym = () => {
 				yearlyMprice: 500,
 				sixMonthsMprice: 350,
 				isWheelchairAccessible: true,
-				workingHours: [
-					{
-						weekday: 1,
-						openFrom: "06:00",
-						openUntil: "22:00"
-					},
-					{
-						weekday: 2,
-						openFrom: "06:00",
-						openUntil: "22:00"
-					},
-					{
-						weekday: 3,
-						openFrom: "06:00",
-						openUntil: "22:00"
-					},
-					{
-						weekday: 4,
-						openFrom: "06:00",
-						openUntil: "22:00"
-					},
-					{
-						weekday: 5,
-						openFrom: "06:00",
-						openUntil: "20:00"
-					},
-					{
-						weekday: 6,
-						openFrom: "08:00",
-						openUntil: "18:00"
-					}
-				]
+				workingHours:
+					[
+						{
+							weekday: 1,
+							openFrom: "06:00",
+							openUntil: "22:00"
+						},
+						{
+							weekday: 2,
+							openFrom: "06:00",
+							openUntil: "22:00"
+						},
+						{
+							weekday: 3,
+							openFrom: "06:00",
+							openUntil: "22:00"
+						},
+						{
+							weekday: 4,
+							openFrom: "06:00",
+							openUntil: "22:00"
+						},
+						{
+							weekday: 5,
+							openFrom: "06:00",
+							openUntil: "20:00"
+						},
+						{
+							weekday: 6,
+							openFrom: "08:00",
+							openUntil: "18:00"
+						}
+					]
 			},
-			{
-				id: "uuid3",
+			"uuid3": {
 				name: "Summit Wellness Center",
 				latitude: 40.7128,
 				longitude: -74.0060,
@@ -133,41 +135,41 @@ const AccountGym = () => {
 				yearlyMprice: 450,
 				sixMonthsMprice: 330,
 				isWheelchairAccessible: false,
-				workingHours: [
-					{
-						weekday: 1,
-						openFrom: "07:00",
-						openUntil: "21:00"
-					},
-					{
-						weekday: 2,
-						openFrom: "07:00",
-						openUntil: "21:00"
-					},
-					{
-						weekday: 3,
-						openFrom: "07:00",
-						openUntil: "21:00"
-					},
-					{
-						weekday: 4,
-						openFrom: "07:00",
-						openUntil: "21:00"
-					},
-					{
-						weekday: 5,
-						openFrom: "07:00",
-						openUntil: "20:00"
-					},
-					{
-						weekday: 6,
-						openFrom: "09:00",
-						openUntil: "17:00"
-					}
-				]
+				workingHours:
+					[
+						{
+							weekday: 1,
+							openFrom: "07:00",
+							openUntil: "21:00"
+						},
+						{
+							weekday: 2,
+							openFrom: "07:00",
+							openUntil: "21:00"
+						},
+						{
+							weekday: 3,
+							openFrom: "07:00",
+							openUntil: "21:00"
+						},
+						{
+							weekday: 4,
+							openFrom: "07:00",
+							openUntil: "21:00"
+						},
+						{
+							weekday: 5,
+							openFrom: "07:00",
+							openUntil: "20:00"
+						},
+						{
+							weekday: 6,
+							openFrom: "09:00",
+							openUntil: "17:00"
+						}
+					]
 			},
-			{
-				id: "uuid4",
+			"uuid4": {
 				name: "Maplewood gym",
 				latitude: 39.7817,
 				longitude: -89.6501,
@@ -179,36 +181,36 @@ const AccountGym = () => {
 				yearlyMprice: 450,
 				sixMonthsMprice: 330,
 				isWheelchairAccessible: true,
-				workingHours: [
-					{
-						weekday: 0,
-						openFrom: "08:00",
-						openUntil: "20:00"
-					},
-					{
-						weekday: 2,
-						openFrom: "08:00",
-						openUntil: "20:00"
-					},
-					{
-						weekday: 3,
-						openFrom: "08:00",
-						openUntil: "20:00"
-					},
-					{
-						weekday: 5,
-						openFrom: "08:00",
-						openUntil: "20:00"
-					},
-					{
-						weekday: 6,
-						openFrom: "08:00",
-						openUntil: "20:00"
-					},
-				]
+				workingHours:
+					[
+						{
+							weekday: 0,
+							openFrom: "08:00",
+							openUntil: "20:00"
+						},
+						{
+							weekday: 2,
+							openFrom: "08:00",
+							openUntil: "20:00"
+						},
+						{
+							weekday: 3,
+							openFrom: "08:00",
+							openUntil: "20:00"
+						},
+						{
+							weekday: 5,
+							openFrom: "08:00",
+							openUntil: "20:00"
+						},
+						{
+							weekday: 6,
+							openFrom: "08:00",
+							openUntil: "20:00"
+						},
+					]
 			},
-			{
-				id: "uuid5",
+			"uuid5": {
 				name: "Maplewood gym",
 				latitude: 39.7817,
 				longitude: -89.6501,
@@ -220,39 +222,54 @@ const AccountGym = () => {
 				yearlyMprice: 450,
 				sixMonthsMprice: 330,
 				isWheelchairAccessible: true,
-				workingHours: [
-					{
-						weekday: 0,
-						openFrom: "08:00",
-						openUntil: "20:00"
-					},
-					{
-						weekday: 2,
-						openFrom: "08:00",
-						openUntil: "20:00"
-					},
-					{
-						weekday: 3,
-						openFrom: "08:00",
-						openUntil: "20:00"
-					},
-					{
-						weekday: 5,
-						openFrom: "08:00",
-						openUntil: "20:00"
-					},
-					{
-						weekday: 6,
-						openFrom: "08:00",
-						openUntil: "20:00"
-					},
-				]
-			},
-		])
+				workingHours:
+					[
+						{
+							weekday: 0,
+							openFrom: "08:00",
+							openUntil: "20:00"
+						},
+						{
+							weekday: 2,
+							openFrom: "08:00",
+							openUntil: "20:00"
+						},
+						{
+							weekday: 3,
+							openFrom: "08:00",
+							openUntil: "20:00"
+						},
+						{
+							weekday: 5,
+							openFrom: "08:00",
+							openUntil: "20:00"
+						},
+						{
+							weekday: 6,
+							openFrom: "08:00",
+							openUntil: "20:00"
+						},
+					]
+			}
+			,
+		})
 	}, [])
 
-	const list = gyms?.map((item) => <GymManager weekdays={weekdays} key={item.id} data={item}
-	                                             currencies={currencies}/>)
+	const onConfirm = () => {
+		const gymId = gymToDelete;
+		setGymToDelete(null);
+
+		//TODO request removal of the gym management in the db
+		const {[gymId]: rGym, ...rest} = gyms
+		setGyms(rest);
+		toast(`You no longer manage ${rGym.name}!`)
+	}
+	const list = Object.keys(gyms)?.map((gymId) => {
+		return <GymManager key={gymId}
+		                   onRemove={() => setGymToDelete(gymId)}
+		                   weekdays={weekdays} data={{...gyms[gymId], id: gymId}}
+		                   currencies={currencies}/>
+	})
 	return (
 		<div className="section">
 			<section className={"section-mg"}>
@@ -279,6 +296,9 @@ const AccountGym = () => {
 						<GymOwnership/>
 					</Modal>
 				) : ''}
+				{gymToDelete ?
+					<Confirm message={`Are you sure that you want to stop managing '${gyms[gymToDelete].name}'?`}
+					         onConfirm={onConfirm} onCancel={() => setGymToDelete(null)}/> : null}
 			</section>
 		</div>
 	)

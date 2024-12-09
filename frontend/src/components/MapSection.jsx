@@ -24,7 +24,7 @@ const MapSection = () => {
 	return (
 		<div className={"section main"}>
 			<LocationControls onSubmitSearch={handleSubmitSearch} onGetLocation={handleGetLocation}/>
-			<GoogleMap />
+			{/*<GoogleMap />*/}
 		</div>
 	);
 };
