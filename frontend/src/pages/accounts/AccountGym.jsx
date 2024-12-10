@@ -12,7 +12,7 @@ import Confirm from "../../components/simple/Confirm.jsx";
 import {toast} from "react-toastify";
 
 const AccountGym = () => {
-	const [gyms, setGyms] = useState({});
+	const [gyms, setGyms] = useState([]);
 	const [currencies, setCurrencies] = useState([]);
 	const [isShowRequests, setIsShowRequests] = useState(false);
 	const [gymToDelete, setGymToDelete] = useState(null); //We use it as a marker to show the confirm window, so this is not excessive
@@ -35,8 +35,9 @@ const AccountGym = () => {
 				name: "Dollar"
 			}
 		]);
-		setGyms({
-			"uuid1": {
+		setGyms([
+			{
+				id: "uuid1",
 				name: "Maplewood gym",
 				latitude: 39.7817,
 				longitude: -89.6501,
@@ -77,7 +78,8 @@ const AccountGym = () => {
 						},
 					]
 			},
-			"uuid2": {
+			{
+				id: "uuid2",
 				name: "Riverside Fitness Center",
 				latitude: 34.0522,
 				longitude: -118.2437,
@@ -123,7 +125,8 @@ const AccountGym = () => {
 						}
 					]
 			},
-			"uuid3": {
+			{
+				id: "uuid3",
 				name: "Summit Wellness Center",
 				latitude: 40.7128,
 				longitude: -74.0060,
@@ -169,7 +172,8 @@ const AccountGym = () => {
 						}
 					]
 			},
-			"uuid4": {
+			{
+				id: "uuid4",
 				name: "Maplewood gym",
 				latitude: 39.7817,
 				longitude: -89.6501,
@@ -210,7 +214,8 @@ const AccountGym = () => {
 						},
 					]
 			},
-			"uuid5": {
+			{
+				id: "uuid5",
 				name: "Maplewood gym",
 				latitude: 39.7817,
 				longitude: -89.6501,
@@ -250,24 +255,31 @@ const AccountGym = () => {
 							openUntil: "20:00"
 						},
 					]
-			}
-			,
-		})
+			},
+		])
 	}, [])
 
 	const onConfirm = () => {
 		const gymId = gymToDelete;
 		setGymToDelete(null);
 
-		//TODO request removal of the gym management in the db
-		const {[gymId]: rGym, ...rest} = gyms
-		setGyms(rest);
-		toast(`You no longer manage ${rGym.name}!`)
+		let gymName;
+		setGyms(gyms?.reduce((acc, gym) => {
+			const isEqual = gymId === gym.id;
+			if (isEqual) {
+				gymName = gym.name;
+			} else {
+				acc.push(gym)
+			}
+			return acc
+		}, []));
+		toast(`You no longer manage ${gymName}!`)
 	}
-	const list = Object.keys(gyms)?.map((gymId) => {
-		return <GymManager key={gymId}
-		                   onRemove={() => setGymToDelete(gymId)}
-		                   weekdays={weekdays} data={{...gyms[gymId], id: gymId}}
+
+	const list = gyms?.map((gym) => {
+		return <GymManager key={gym.id}
+		                   onRemove={() => setGymToDelete(gym.id)}
+		                   weekdays={weekdays} data={gym}
 		                   currencies={currencies}/>
 	})
 	return (
@@ -297,7 +309,7 @@ const AccountGym = () => {
 					</Modal>
 				) : ''}
 				{gymToDelete ?
-					<Confirm message={`Are you sure that you want to stop managing '${gyms[gymToDelete].name}'?`}
+					<Confirm message={`Are you sure that you want to stop managing the gym?`}
 					         onConfirm={onConfirm} onCancel={() => setGymToDelete(null)}/> : null}
 			</section>
 		</div>
