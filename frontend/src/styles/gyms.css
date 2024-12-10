@@ -74,6 +74,7 @@
     display: grid;
     align-items: end;
     grid-template-columns: 4fr 1fr;
+    column-gap: 5px;
 }
 .gym-data .gym-price .input-field {
     margin-top: 0;

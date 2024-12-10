@@ -1,7 +1,11 @@
 import "../../styles/confirm.css"
 import Button from "./Button.jsx";
+import {useConfirm} from "../../context/ConfirmProvider.jsx";
 
-const Confirm = ({message, onConfirm, onCancel}) => {
+const Confirm = () => {
+	const {data} = useConfirm();
+	const {message, onConfirm, onCancel} = data;
+
 	return (
 		<div className={"confirm-window"}>
 			<div className={"confirm-content"}>

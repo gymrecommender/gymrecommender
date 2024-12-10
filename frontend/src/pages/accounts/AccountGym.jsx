@@ -10,12 +10,13 @@ import Modal from "../../components/simple/Modal.jsx";
 import GymOwnership from "../../components/gym/GymOwnership.jsx";
 import Confirm from "../../components/simple/Confirm.jsx";
 import {toast} from "react-toastify";
+import {useConfirm} from "../../context/ConfirmProvider.jsx";
 
 const AccountGym = () => {
 	const [gyms, setGyms] = useState([]);
 	const [currencies, setCurrencies] = useState([]);
 	const [isShowRequests, setIsShowRequests] = useState(false);
-	const [gymToDelete, setGymToDelete] = useState(null); //We use it as a marker to show the confirm window, so this is not excessive
+	const {flushData, setValues} = useConfirm();
 
 	const navigate = useNavigate();
 	const weekdays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
@@ -259,16 +260,11 @@ const AccountGym = () => {
 		])
 	}, [])
 
-	const onConfirm = () => {
-		const gymId = gymToDelete;
-		setGymToDelete(null);
+	const onConfirm = (gymId, gymName) => {
+		flushData();
 
-		let gymName;
 		setGyms(gyms?.reduce((acc, gym) => {
-			const isEqual = gymId === gym.id;
-			if (isEqual) {
-				gymName = gym.name;
-			} else {
+			if (gymId !== gym.id) {
 				acc.push(gym)
 			}
 			return acc
@@ -278,7 +274,14 @@ const AccountGym = () => {
 
 	const list = gyms?.map((gym) => {
 		return <GymManager key={gym.id}
-		                   onRemove={() => setGymToDelete(gym.id)}
+		                   onRemove={() => {
+							   setValues(
+								   true,
+								   `Are you sure that you want to stop managing ${gym.name}?`,
+								   () => onConfirm(gym.id, gym.name),
+								   flushData
+							   );
+		                   }}
 		                   weekdays={weekdays} data={gym}
 		                   currencies={currencies}/>
 	})
@@ -308,9 +311,6 @@ const AccountGym = () => {
 						<GymOwnership/>
 					</Modal>
 				) : ''}
-				{gymToDelete ?
-					<Confirm message={`Are you sure that you want to stop managing the gym?`}
-					         onConfirm={onConfirm} onCancel={() => setGymToDelete(null)}/> : null}
 			</section>
 		</div>
 	)

@@ -9,10 +9,14 @@ import {useFirebase} from "./context/FirebaseProvider.jsx";
 import Loader from "./components/simple/Loader.jsx";
 import AccountAdmin from "./pages/accounts/AccountAdmin.jsx";
 import AccountGym from "./pages/accounts/AccountGym.jsx";
+import {useConfirm} from "./context/ConfirmProvider.jsx";
+import Confirm from "./components/simple/Confirm.jsx";
 
 const App = () => {
 	const {loader} = useLoader();
 	const {getLoading, getUser} = useFirebase();
+	const {data} = useConfirm();
+
 	return (
 		<>
 			{!getLoading() ?
@@ -45,6 +49,7 @@ const App = () => {
 				</Routes> : <Loader/>}
 
 			{loader ? <Loader/> : ""}
+			{data.isShow ? <Confirm/> : null}
 		</>
 	)
 }

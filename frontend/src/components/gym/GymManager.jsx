@@ -18,22 +18,31 @@ const GymManager = ({weekdays, currencies, data, onRemove}) => {
 				<div className={classNames('gym-data-header', isMarked ? 'left' : '')}>
 					{
 						!isMarked ?
-							<Button title={"Mark gym as unavailable"} className={"btn-icon"} type={"btn"} onClick={() => setIsMarked(true)}>
+							<Button title={"Mark gym as unavailable"} className={"btn-icon"} type={"btn"}
+							        onClick={() => setIsMarked(true)}>
 								<FontAwesomeIcon className={"icon"} size={"lg"} icon={faLock}/>
 							</Button> :
-							<Button title={"Back"} className={"btn-icon"} type={"btn"} onClick={() => setIsMarked(false)}>
+							<Button title={"Back"} className={"btn-icon"} type={"btn"}
+							        onClick={() => setIsMarked(false)}>
 								<FontAwesomeIcon className={"icon"} size={"lg"} icon={faCircleArrowLeft}/>
 							</Button>
 					}
-					<Button title={"Edit"} className={"btn-icon"} type={"btn"} onClick={() => {
-						setIsMarked(false)
-						setIsEdit(true)
-					}}>
-						<FontAwesomeIcon className={"icon"} size={"lg"} icon={faPenToSquare}/>
-					</Button>
-					<Button title={"Remove from management"} className={"btn-icon"} type={"btn"} onClick={() => onRemove(data.id)}>
-						<FontAwesomeIcon className={"icon icon-delete"} size={"lg"} icon={faFolderMinus}/>
-					</Button>
+					{
+						!isMarked ?
+							<>
+								<Button title={"Edit"} className={"btn-icon"} type={"btn"} onClick={() => {
+									setIsMarked(false)
+									setIsEdit(true)
+								}}>
+									<FontAwesomeIcon className={"icon"} size={"lg"} icon={faPenToSquare}/>
+								</Button>
+								<Button title={"Remove from management"} className={"btn-icon"} type={"btn"}
+								        onClick={() => onRemove(data.id)}>
+									<FontAwesomeIcon className={"icon icon-delete"} size={"lg"} icon={faFolderMinus}/>
+								</Button>
+							</> :
+							null
+					}
 				</div>
 				{
 					!isMarked ? <Gym weekdays={weekdays} currencies={currencies} data={data}/>
