@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using backend.Models;
 using backend.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore.Query;
 
 namespace backend.Controllers;
@@ -15,6 +16,7 @@ public class AccountController : AccountControllerTemplate {
     public AccountController(GymrecommenderContext context, IOptions<AppSettings> appSettings) : base(context, appSettings) {}
 
     [HttpGet]
+    [Authorize(Policy = "AdminOnly")]
     public async Task<IActionResult> GetAccounts(int page = 1, int sort = 1, bool ascending = true) {
         return await base.GetData(page, sort, ascending);
     }
