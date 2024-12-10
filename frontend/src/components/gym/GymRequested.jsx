@@ -5,10 +5,14 @@ import {faClose} from "@fortawesome/free-solid-svg-icons";
 import {displayTimestamp} from "../../services/helpers.jsx";
 import {useCoordinates} from "../../context/CoordinatesProvider.jsx";
 import classNames from "classnames";
+import {toast} from "react-toastify";
+import {useConfirm} from "../../context/ConfirmProvider.jsx";
 
 const GymRequested = ({showMarker}) => {
 	const {coordinates} = useCoordinates();
 	const [requests, setRequests] = useState([]);
+	const {setValues, flushData} = useConfirm();
+
 	useEffect(() => {
 		//TODO retrieve pending requests
 		setRequests([{
@@ -105,9 +109,16 @@ const GymRequested = ({showMarker}) => {
 		])
 	}, []);
 
-	const handleDelete = (id) => {
-		//TODO implement deletion logic
-		alert(`Request ${id} is cancelled`);
+	const onConfirm = (id, name) => {
+		flushData();
+		//TODO request deletion of the request from the table
+		setRequests(requests?.reduce((acc, request) => {
+			if (request.id !== id) {
+				acc.push(request);
+			}
+			return acc;
+		}, []))
+		toast(`The ownership request for ${name} has been withdrawn`);
 	}
 
 	const content = requests?.map((item) => {
@@ -116,7 +127,14 @@ const GymRequested = ({showMarker}) => {
 			<div key={item.id} className={classNames('gym-req', isSelected ? 'gym-req-selected' : '')} onClick={() => showMarker({lat: item.gym.latitude, lng: item.gym.longitude})}>
 				<div className={"gym-req-header"}>
 					<span className={"gym-req-reqtime"}>{displayTimestamp(item.requestedAt, true)}</span>
-					<Button type={"button"} className={"btn-icon"} onClick={() => handleDelete(item.id)}>
+					<Button type={"button"} className={"btn-icon"} onClick={() => {
+						setValues(
+							true,
+							`Are you sure that you want to withdraw the ownership request for '${item.gym.name}'?'`,
+							() => onConfirm(item.id, item.gym.name),
+							flushData
+						)
+					}}>
 						<FontAwesomeIcon className={"icon"} size={"lg"} icon={faClose}/>
 					</Button>
 				</div>
