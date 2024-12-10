@@ -240,12 +240,18 @@
 
     gap: 20px;
     max-height: 500px;
+    min-height: 500px;
 
     overflow-y: scroll;
     -ms-overflow-style: none;
     scrollbar-width: none;
 
     flex: 0.5;
+}
+
+.container .gyms-req:has(.no-content) {
+    justify-content: center;
+    align-items: center;
 }
 
 .gyms-req::-webkit-scrollbar {
@@ -298,4 +304,11 @@
 }
 .icon.icon-delete {
     font-size: 1.8rem;
+}
+
+.gyms-req .no-content {
+    font-weight: bold;
+    text-align: center;
+    text-transform: uppercase;
+    padding: 5px;
 }

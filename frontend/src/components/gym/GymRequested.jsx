@@ -15,7 +15,8 @@ const GymRequested = ({showMarker}) => {
 
 	useEffect(() => {
 		//TODO retrieve pending requests
-		setRequests([{
+		setRequests([
+			{
 				"id": "uuid11",
 				"requestedAt": "2024-11-07T08:15:30+00:00",
 				"respondedAt": "2024-11-07T09:00:45+00:00",
@@ -145,9 +146,13 @@ const GymRequested = ({showMarker}) => {
 			</div>
 		)
 	})
+	console.log(content)
 	return (
 		<div className={"gyms-req"}>
-			{content}
+			{content.length > 0 ? content : <div className={"no-content"}>
+				You have no pending ownership requests
+			</div>
+			}
 		</div>
 	)
 }
