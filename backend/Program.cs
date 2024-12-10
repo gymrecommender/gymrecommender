@@ -70,6 +70,7 @@ builder.Services.AddAuthorization()
 {
     options.AddPolicy("AdminOnly", policy => policy.Requirements.Add(new HasTypeRequierment("admin")));
     options.AddPolicy("GymOnly", policy => policy.Requirements.Add(new HasTypeRequierment("gym")));
+    options.AddPolicy("UserOnly", policy => policy.Requirements.Add(new HasTypeRequierment("user")));
 });
 
 builder.Services.AddScoped<IAuthorizationHandler, AuthorizationRequestHandler>(); 
