@@ -4,9 +4,12 @@ import Button from "../simple/Button.jsx";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faTrashCan} from "@fortawesome/free-solid-svg-icons";
 import {toast} from "react-toastify";
+import {useConfirm} from "../../context/ConfirmProvider.jsx";
 
 const GymOwnership = ({}) => {
 	const [requests, setRequests] = useState([]);
+	const {setValues, flushData} = useConfirm();
+
 	useEffect(() => {
 		//TODO retrieve all the requests for the current gym
 		setRequests([
@@ -46,9 +49,16 @@ const GymOwnership = ({}) => {
 		])
 	}, []);
 
-	const handleDelete = (id) => {
-		//TODO handle delete logic
-		toast(`${id} is deleted`);
+	const onConfirm = (id, name) => {
+		flushData();
+		//TODO request deletion of the request from the table
+		setRequests(requests?.reduce((acc, request) => {
+			if (request.id !== id) {
+				acc.push(request);
+			}
+			return acc;
+		}, []))
+		toast(`The ownership request for ${name} has been withdrawn`);
 	}
 
 	const content = (
@@ -100,7 +110,14 @@ const GymOwnership = ({}) => {
 						<td className={"gym-own-req-item "}>
 							{
 								!item.decision ? (
-									<Button title={"Cancel the ownership request"} className={"btn-icon"} onClick={() => handleDelete(item.id)}>
+									<Button title={"Cancel the ownership request"} className={"btn-icon"} onClick={() => {
+										setValues(
+											true,
+											`Are you sure that you want to withdraw the ownership request for '${item.gym.name}'?'`,
+											() => onConfirm(item.id, item.gym.name),
+											flushData
+										)
+									}}>
 										<FontAwesomeIcon className={"icon"} size={"L"} icon={faTrashCan}/>
 									</Button>
 								) : ''
