@@ -9,7 +9,7 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 
 
-public class AuthorizationRequestHandler : AuthorizationHandler<HasTypeRequierment>
+public class AuthorizationRequestHandler : AuthorizationHandler<HasTypeRequirement>
 {
     private readonly GymrecommenderContext _dbContext;
     private readonly ILogger<AuthorizationRequestHandler> _logger;
@@ -20,7 +20,7 @@ public class AuthorizationRequestHandler : AuthorizationHandler<HasTypeRequierme
         _logger = logger;
     }
 
-    protected override async Task HandleRequirementAsync(AuthorizationHandlerContext context, HasTypeRequierment requirement)
+    protected override async Task HandleRequirementAsync(AuthorizationHandlerContext context, HasTypeRequirement requirement)
     {
         _logger.LogInformation("Checking for authorization request");
 

@@ -2,11 +2,11 @@ namespace backend.Authorization;
 
 using Microsoft.AspNetCore.Authorization;
 
-public class HasTypeRequierment : IAuthorizationRequirement
+public class HasTypeRequirement : IAuthorizationRequirement
 {
     public string[] RequiredRoles { get; }
 
-    public HasTypeRequierment(params string[] roles)
+    public HasTypeRequirement(params string[] roles)
     {
         RequiredRoles = roles;
     }

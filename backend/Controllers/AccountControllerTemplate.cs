@@ -238,39 +238,7 @@ public abstract class AccountControllerTemplate : Controller {
 
         return NoContent();
     }
-
-    public async Task<IActionResult> GetTokenByUsername(string username, AccountType accountType) {
-        try {
-            var account = await context.Accounts.AsNoTracking()
-                .Where(a => a.Username == username)
-                .Where(a => a.Type == accountType)
-                .FirstOrDefaultAsync();
-
-            if (account == null) {
-                return NotFound(new { error = $"User {username} is not found" });
-            }
-
-            var token = await context.UserTokens.AsNoTracking()
-                .Where(a => a.UserId == account.Id).FirstOrDefaultAsync();
-
-            if (token == null) {
-                return NotFound(new { error = $"The token for {username} is not found" });
-            }
-
-            return Ok(new UserTokenViewModel {
-                Token = token.OuterToken
-            });
-        }
-        catch (Exception e) {
-            return StatusCode(500, new {
-                success = false,
-                error = new {
-                    message = e.Message
-                }
-            });
-        }
-    }
-
+    
     public async Task<IActionResult> GetRoleByUid(string uid) {
         try {
             var account = await context.Accounts.AsNoTracking()
@@ -295,56 +263,7 @@ public abstract class AccountControllerTemplate : Controller {
         }
     }
 
-    public async Task<IActionResult> UpdateTokenByUsername(string username, AccountTokenDto accountTokenDto,
-        AccountType accountType) {
-        if (ModelState.IsValid) {
-            try {
-                var account = await context.Accounts.AsNoTracking()
-                    .Where(a => a.Username == username)
-                    .Where(a => a.Type == accountType)
-                    .FirstOrDefaultAsync();
-
-                if (account == null) {
-                    return NotFound(new { error = $"User {username} is not found" });
-                }
-
-                var token = await context.UserTokens.AsTracking()
-                    .Where(a => a.UserId == account.Id).FirstOrDefaultAsync();
-
-                if (token == null) {
-                    return NotFound(new { error = $"The token for {username} is not found" });
-                }
-
-                token.OuterToken = accountTokenDto.Token;
-                token.UpdatedAt = DateTime.UtcNow;
-
-                await context.SaveChangesAsync();
-
-                return Ok(new UserTokenViewModel {
-                    Token = token.OuterToken
-                });
-            }
-            catch (Exception e) {
-                return StatusCode(500, new {
-                    success = false,
-                    error = new {
-                        message = e.Message
-                    }
-                });
-            }
-        }
-
-        return BadRequest(new {
-            success = false,
-            error = new {
-                code = "ValidationError",
-                message = "Invalid data",
-                details = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage)
-            }
-        });
-    }
-
-    public async Task<IActionResult> Login(string username, AccountTokenDto accountTokenDto, AccountType accountType) {
+    public async Task<IActionResult> Login(string username, AccountType accountType) {
         if (ModelState.IsValid) {
             try {
                 var account = await context.Accounts.AsTracking()
@@ -358,14 +277,7 @@ public abstract class AccountControllerTemplate : Controller {
 
                 account.LastSignIn = DateTime.UtcNow;
                 account.IsEmailVerified = true; //TODO this should be handled in a smarter way
-
-                var token = new UserToken {
-                    CreatedAt = DateTime.UtcNow,
-                    UserId = account.Id,
-                    OuterToken = accountTokenDto.Token
-                };
-
-                context.UserTokens.Add(token);
+                
                 await context.SaveChangesAsync();
                 //TODO some login logic
 
@@ -401,16 +313,6 @@ public abstract class AccountControllerTemplate : Controller {
             if (account == null) {
                 return NotFound(new { error = $"User {username} is not found" });
             }
-
-            var token = await context.UserTokens.AsTracking()
-                .Where(a => a.UserId == account.Id).FirstOrDefaultAsync();
-
-            if (token == null) {
-                return NotFound(new { error = $"The token for {username} is not found" });
-            }
-
-            context.UserTokens.Remove(token);
-            await context.SaveChangesAsync();
             //TODO some logout logic
 
             return NoContent();

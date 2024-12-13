@@ -41,19 +41,9 @@ public class UserAccountController : AccountControllerTemplate {
         return await base.DeleteByUsername(username, _accountType);
     }
 
-    [HttpGet("{username}/token")]
-    public async Task<IActionResult> GetTokenByUsername(string username) {
-        return await base.GetTokenByUsername(username, _accountType);
-    }
-
-    [HttpPut("{username}/token")]
-    public async Task<IActionResult> UpdateTokenByUsername(string username, AccountTokenDto accountTokenDto) {
-        return await base.UpdateTokenByUsername(username, accountTokenDto, _accountType);
-    }
-
     [HttpPost("{username}/login")]
-    public async Task<IActionResult> Login(string username, AccountTokenDto logInDto) {
-        return await base.Login(username, logInDto, _accountType);
+    public async Task<IActionResult> Login(string username) {
+        return await base.Login(username, _accountType);
     }
     
     [HttpDelete("{username}/logout")]
