@@ -7,6 +7,13 @@ const instance = axios.create({
 	}
 })
 
+const attachToken = (token) => {
+	instance.defaults.headers.common['Authorization'] = 'Bearer ' + token;
+}
+const deattachToken = () => {
+	delete instance.defaults.headers.common['Authorization'];
+}
+
 const entityMapping = {
 	'PD': 'place/details/json',
 	'P': 'place/nearbysearch/json',
@@ -17,10 +24,13 @@ const API_BASE_URL =
 	process.env.NODE_ENV === "production"
 		? import.meta.env.VITE_BACKEND_URL
 		: "";
+
 const axiosInternal = async (method, endpoint, data = {}, queryParams={}) => {
 	const uri = `${API_BASE_URL}/api/${endpoint}`
 	const requestConfig = {method, url: uri, data, params: queryParams}
 	const result = {data: null, error: null}
+
+	console.log(instance.defaults.headers)
 
 	try {
 		const {data} = await instance(requestConfig);
@@ -52,4 +62,4 @@ const axiosGoogleAPI = async (entity, queryParams={}) => {
 	return result;
 }
 
-export {axiosInternal, axiosGoogleAPI};
+export {axiosInternal, axiosGoogleAPI, attachToken, deattachToken};

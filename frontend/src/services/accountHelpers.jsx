@@ -24,6 +24,7 @@ const accountSignUp = async (values, role) => {
 			result.error = errorsParser({message:"Operation is not allowed"})
 			return result
 		}
+
 		const checkUser = await axiosInternal('GET', `${roleMapper[role]}/${values.username}`, values.username);
 		if (checkUser.error?.status === 404) {
 			const outerUser = await createUserWithEmailAndPassword(auth, values.email, values.password);
@@ -78,9 +79,7 @@ const accountLogin = async (values, role) => {
 		}
 
 		//TODO propagate expired datetime from the firebase
-		const login = await axiosInternal('POST', `${roleMapper[role]}/${signInResult.user.displayName}/login`, {
-			token: signInResult.user.accessToken
-		})
+		const login = await axiosInternal('POST', `${roleMapper[role]}/${signInResult.user.displayName}/login`)
 		if (login.error) {
 			result.error = errorsParser(login.error);
 			await signOut(auth);

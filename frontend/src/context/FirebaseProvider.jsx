@@ -1,9 +1,9 @@
-import { useEffect, useState, createContext, useContext } from "react";
+import {useEffect, useState, createContext, useContext} from "react";
 import {auth, provider} from "../Firebase.jsx";
 import {signInWithPopup, onAuthStateChanged} from "firebase/auth";
 import {useNavigate} from "react-router-dom";
 import {accountLogin, accountLogout, accountSignUp} from "../services/accountHelpers.jsx";
-import {axiosInternal} from "../services/axios.jsx";
+import {attachToken, axiosInternal, deattachToken} from "../services/axios.jsx";
 import {useLoader} from "./LoaderProvider.jsx";
 
 const FirebaseContext = createContext();
@@ -28,16 +28,21 @@ const FirebaseProvider = ({children}) => {
 			//TODO handle changes of the token (propagate it to the db)
 			if (user) {
 				if (user.emailVerified) {
+					if (user.accessToken) {
+						attachToken(user.accessToken);
+					}
 					const result = await axiosInternal('GET', `account/${user.uid}/role`);
 
 					if (result.error) {
 						//TODO the error from here should be somehow propagated and diplayed to the user
+						deattachToken();
 						setUser(null);
 					} else {
 						setUser({username: user.displayName, role: result.data.role});
 					}
 				}
 			} else {
+				deattachToken();
 				setUser(null);
 			}
 			setLoading(false);
@@ -73,7 +78,7 @@ const FirebaseProvider = ({children}) => {
 	}
 
 	const signInWithGoogle = () => signInWithPopup(auth, provider);
-	const logout = async () =>  {
+	const logout = async () => {
 		setLoader(true);
 		const result = await accountLogout(user.username, user.role);
 		setLoader(false);
@@ -87,7 +92,7 @@ const FirebaseProvider = ({children}) => {
 	const getUser = () => user
 	const getLoading = () => loading
 	return (
-		<FirebaseContext.Provider value={{ signInWithGoogle, signIn, logout, getUser, signUp, getLoading}}>
+		<FirebaseContext.Provider value={{signInWithGoogle, signIn, logout, getUser, signUp, getLoading}}>
 			{children}
 		</FirebaseContext.Provider>
 	)
