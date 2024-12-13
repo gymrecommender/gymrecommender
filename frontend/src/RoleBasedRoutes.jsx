@@ -1,28 +1,33 @@
-import AccountGymRequest from "./pages/accounts/AccountGymRequest.jsx";
-import AccountGym from "./pages/accounts/AccountGym.jsx";
+import GymRequest from "./pages/GymRequest.jsx";
 import History from "./pages/History.jsx";
-import AccountUser from "./pages/accounts/AccountUser.jsx";
-import AccountAdmin from "./pages/accounts/AccountAdmin.jsx";
 import {useFirebase} from "./context/FirebaseProvider.jsx";
 import {Navigate, Route, Routes} from "react-router-dom";
 import NotFound from "./pages/NotFound.jsx";
+import GymManagement from "./pages/GymManagement.jsx";
+import Account from "./pages/Account.jsx";
+import UserRating from "./pages/UserRating.jsx";
+import AdminRequests from "./pages/AdminRequests.jsx";
 
 const roles = {
 	gym: {
 		routes: [
-			{path: "add", component: AccountGymRequest}
+			{path: "management", component: GymManagement},
+			{path: "management/add", component: GymRequest}
 		],
-		defaultComponent: AccountGym
+		defaultComponent: Account
 	},
 	user: {
 		routes: [
+			{path: "rating", component: UserRating},
 			{path: "history", component: History}
 		],
-		defaultComponent: AccountUser
+		defaultComponent: Account
 	},
 	admin: {
-		routes: [],
-		defaultComponent: AccountAdmin
+		routes: [
+			{path: "requests", component: AdminRequests}
+		],
+		defaultComponent: Account
 	}
 }
 

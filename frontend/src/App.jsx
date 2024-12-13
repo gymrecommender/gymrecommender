@@ -7,8 +7,6 @@ import RoleBasedRoutes from "./RoleBasedRoutes.jsx";
 import {useLoader} from "./context/LoaderProvider.jsx";
 import {useFirebase} from "./context/FirebaseProvider.jsx";
 import Loader from "./components/simple/Loader.jsx";
-import AccountAdmin from "./pages/accounts/AccountAdmin.jsx";
-import AccountGym from "./pages/accounts/AccountGym.jsx";
 import {useConfirm} from "./context/ConfirmProvider.jsx";
 import Confirm from "./components/simple/Confirm.jsx";
 

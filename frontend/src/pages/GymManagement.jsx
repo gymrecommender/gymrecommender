@@ -1,18 +1,17 @@
 import React, {useEffect, useState} from "react";
-import "../../styles/gyms.css";
-import "../../styles/modal.css";
+import "../styles/gyms.css";
+import "../styles/modal.css";
 import {useNavigate} from "react-router-dom";
-import GymManager from "../../components/gym/GymManager.jsx";
-import Button from "../../components/simple/Button.jsx";
+import GymManager from "../components/gym/GymManager.jsx";
+import Button from "../components/simple/Button.jsx";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faCircleInfo, faPlus} from "@fortawesome/free-solid-svg-icons";
-import Modal from "../../components/simple/Modal.jsx";
-import GymOwnership from "../../components/gym/GymOwnership.jsx";
-import Confirm from "../../components/simple/Confirm.jsx";
+import Modal from "../components/simple/Modal.jsx";
+import GymOwnership from "../components/gym/GymOwnership.jsx";
 import {toast} from "react-toastify";
-import {useConfirm} from "../../context/ConfirmProvider.jsx";
+import {useConfirm} from "../context/ConfirmProvider.jsx";
 
-const AccountGym = () => {
+const GymManagement = () => {
 	const [gyms, setGyms] = useState([]);
 	const [currencies, setCurrencies] = useState([]);
 	const [isShowRequests, setIsShowRequests] = useState(false);
@@ -275,12 +274,12 @@ const AccountGym = () => {
 	const list = gyms?.map((gym) => {
 		return <GymManager key={gym.id}
 		                   onRemove={() => {
-							   setValues(
-								   true,
-								   `Are you sure that you want to stop managing ${gym.name}?`,
-								   () => onConfirm(gym.id, gym.name),
-								   flushData
-							   );
+			                   setValues(
+				                   true,
+				                   `Are you sure that you want to stop managing ${gym.name}?`,
+				                   () => onConfirm(gym.id, gym.name),
+				                   flushData
+			                   );
 		                   }}
 		                   weekdays={weekdays} data={gym}
 		                   currencies={currencies}/>
@@ -316,4 +315,4 @@ const AccountGym = () => {
 	)
 };
 
-export default AccountGym;
+export default GymManagement;

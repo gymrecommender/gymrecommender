@@ -1,6 +1,6 @@
-import MapSection from '../../components/MapSection.jsx';
+import MapSection from '../components/MapSection.jsx';
 import React from "react";
-import Form from "../../components/simple/Form.jsx";
+import Form from "../components/simple/Form.jsx";
 
 const wRating = [
 	{value: 5, label: "No Waiting"},
@@ -33,7 +33,7 @@ const data = {
 }
 
 
-const Account = () => {
+const UserRating = () => {
 	const handleSubmit = (values) => {
 		console.log(values);
 	}
@@ -49,4 +49,4 @@ const Account = () => {
 	)
 }
 
-export default Account;
+export default UserRating;

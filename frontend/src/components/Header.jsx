@@ -9,7 +9,10 @@ import {
 	faCircleUser,
 	faHome,
 	faClockRotateLeft,
-	faBell
+	faBell,
+	faDumbbell,
+	faStarHalfStroke,
+	faClipboard
 } from "@fortawesome/free-solid-svg-icons";
 import {useFirebase} from "../context/FirebaseProvider.jsx";
 
@@ -20,9 +23,12 @@ const Header = () => {
 	const location = useLocation();
 
 	const buttons = [
-		{title: "Account", icon: faCircleUser, action: () => navigationHandler(`/account/${user.username}`)},
 		{title: "Notifications", icon: faBell, action: () => alert("Notifications!")},
+		{title: "Gyms", icon: faDumbbell, role: "gym", action: () => navigationHandler(`/account/${user.username}/management`)},
+		{title: "Ownership requests", icon: faClipboard, role: "admin", action: () => navigationHandler(`/account/${user.username}/requests`)},
+		{title: "Rate gyms", icon: faStarHalfStroke, role: "user", action: () => navigationHandler(`/account/${user.username}/rating`)},
 		{title: "History", icon: faClockRotateLeft, role: "user", action: () => navigationHandler(`/account/${user.username}/history`)},
+		{title: "Account", icon: faCircleUser, action: () => navigationHandler(`/account/${user.username}`)},
 		{title: "Log out", icon: faRightFromBracket, action: () => logout()},
 	]
 

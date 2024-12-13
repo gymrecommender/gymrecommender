@@ -1,7 +1,7 @@
 import {useState, useEffect} from "react";
-import Button from "../../components/simple/Button.jsx";
-import Modal from "../../components/simple/Modal.jsx";
-import "../../styles/admin.css";
+import Button from "../components/simple/Button.jsx";
+import Modal from "../components/simple/Modal.jsx";
+import "../styles/admin.css";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {
 	faPlus,
@@ -10,9 +10,9 @@ import {
 	faUserGear,
 	faSave,
 } from "@fortawesome/free-solid-svg-icons";
-import {emailRegEx} from "../../services/helpers.jsx";
-import Form from "../../components/simple/Form.jsx";
-import Accordion from "../../components/simple/Accordion.jsx";
+import {emailRegEx} from "../services/helpers.jsx";
+import Form from "../components/simple/Form.jsx";
+import Accordion from "../components/simple/Accordion.jsx";
 
 const accountTypes = [
 	{value: "gym", label: "Gym"},
@@ -50,7 +50,7 @@ const accountData = {
 	}
 }
 
-const AccountAdmin = () => {
+const AdminRequests = () => {
 	const [showCreateAdminModal, setShowCreateAdminModal] = useState(false);
 	const [groupedGyms, setGroupedGyms] = useState({});
 
@@ -122,9 +122,4 @@ const AccountAdmin = () => {
 	);
 };
 
-export default AccountAdmin;
-
-
-
-
-			
+export default AdminRequests;
