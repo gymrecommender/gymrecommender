@@ -114,20 +114,45 @@ public abstract class AccountControllerTemplate : Controller {
                 };
                 context.Accounts.Add(account);
                 await context.SaveChangesAsync();
+                
+                var tokenValue = Guid.NewGuid().ToString();
+                var token = new UserToken()
+                {
+                    CreatedAt = DateTime.UtcNow,
+                    UserId = account.Id,
+                    OuterToken = tokenValue
+                };
+                context.UserTokens.Add(token);
+                await context.SaveChangesAsync();
+                
+                var role = account.Type.ToString();
 
-                var result = new AccountRegularModel {
-                    Id = account.Id,
+
+                var response = new AuthResponse()
+                {
                     Username = account.Username,
                     Email = account.Email,
                     FirstName = account.FirstName,
                     LastName = account.LastName,
-                    IsEmailVerified = account.IsEmailVerified,
-                    Type = account.Type.ToString(),
-                    Provider = account.Provider.ToString(),
-                    LastSignIn = account.LastSignIn,
+                    Role = role,
+                    Token = tokenValue
                 };
+                
+                return Ok(response);
 
-                return Ok(result);
+                // var result = new AccountRegularModel {
+                //     Id = account.Id,
+                //     Username = account.Username,
+                //     Email = account.Email,
+                //     FirstName = account.FirstName,
+                //     LastName = account.LastName,
+                //     IsEmailVerified = account.IsEmailVerified,
+                //     Type = account.Type.ToString(),
+                //     Provider = account.Provider.ToString(),
+                //     LastSignIn = account.LastSignIn,
+                // };
+                //
+                //return Ok(result);
             }
             catch (Exception e) {
                 return StatusCode(500, new {
@@ -345,6 +370,7 @@ public abstract class AccountControllerTemplate : Controller {
             }
             account.LastSignIn = DateTime.UtcNow;
             account.IsEmailVerified = true; //TODO this should be handled in a smarter way
+            await context.SaveChangesAsync();
             
             var token = new UserToken {
                 CreatedAt = DateTime.UtcNow,
@@ -355,8 +381,24 @@ public abstract class AccountControllerTemplate : Controller {
             context.UserTokens.Add(token);
             await context.SaveChangesAsync();
             //TODO some login logic
+            
+            
+            var role = account.Type.ToString();
 
-            return Ok();
+            var response = new AuthResponse()
+            {
+                Username = account.Username,
+                Token = token.OuterToken,
+                Role = role,
+                Email = account.Email,
+                FirstName = account.FirstName,
+                LastName = account.LastName,
+            };
+            
+            
+            
+
+            return Ok(response);
         }
         catch (Exception e) {
             return StatusCode(500, new {
