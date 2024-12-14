@@ -30,8 +30,6 @@ const axiosInternal = async (method, endpoint, data = {}, queryParams={}) => {
 	const requestConfig = {method, url: uri, data, params: queryParams}
 	const result = {data: null, error: null}
 
-	console.log(instance.defaults.headers)
-
 	try {
 		const {data} = await instance(requestConfig);
 		result.data = data;

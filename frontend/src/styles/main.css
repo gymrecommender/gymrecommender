@@ -499,3 +499,50 @@ button {
 button:hover {
     cursor: pointer;
 }
+
+button.btn-disabled {
+    background-color: gray !important;
+}
+button.btn-disabled:hover {
+    cursor: not-allowed !important;
+    background-color: gray !important;
+}
+
+fieldset {
+    border: none;
+}
+
+form {
+    position: sticky;
+}
+
+form .form-disabler {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+
+    background-color: rgba(159, 96, 181, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+form .form-disabler:hover {
+    background-color: rgba(159, 96, 181, 0.9);
+}
+
+.form-disabler .form-disabler-hint {
+    color: white;
+    font-weight: bold;
+    font-size: 1.4rem;
+
+    text-align: center;
+    visibility: hidden;
+}
+
+form .form-disabler:hover .form-disabler-hint {
+    visibility: visible;
+    cursor: default;
+}

@@ -1,6 +1,7 @@
 import MapSection from '../components/MapSection.jsx';
 import React from "react";
 import Form from "../components/simple/Form.jsx";
+import {useCoordinates} from "../context/CoordinatesProvider.jsx";
 
 const membershipTypes = [
 	{value: "1-month", label: "1 month"},
@@ -47,14 +48,17 @@ const data = {
 	}
 };
 const Index = () => {
+	const {coordinates} = useCoordinates();
+
 	const getFormValues = (values) => {
 		//#TODO add loaders here
 		console.log(values);
 	}
+	console.log(coordinates, !!coordinates.lat)
 	return (
 		<>
 			<aside className="sliders">
-				<Form data={data} onSubmit={getFormValues}></Form>
+				<Form data={data} disabledFormHint={"Select the starting location"} isDisabled={!coordinates.lat} onSubmit={getFormValues}/>
 			</aside>
 			<MapSection/>
 

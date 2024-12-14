@@ -6,6 +6,7 @@ import Select from "./Select.jsx";
 import Input from "./Input.jsx";
 import Button from "./Button.jsx";
 import {sanitizeData} from "../../services/helpers.jsx";
+import {useCoordinates} from "../../context/CoordinatesProvider.jsx";
 
 const Field = memo(({item, fieldClass, wClassName}) => {
 	const commonProps = {
@@ -32,7 +33,7 @@ const Field = memo(({item, fieldClass, wClassName}) => {
 	return <Component key={item.name} {...commonProps} />
 });
 
-const Form = ({data, onSubmit, className}) => {
+const Form = ({data, onSubmit, className, isDisabled, disabledFormHint}) => {
 	const methods = useForm({
 		defaultValues: {
 			...data.fields.reduce((acc, item) => {
@@ -53,25 +54,36 @@ const Form = ({data, onSubmit, className}) => {
 		onSubmit(sanitizeData(data), flushForm);
 	}
 
-	const {text: buttonText, ...buttonRest} = data.button ?? {};
+	const {text: buttonText, className: btnClassName, ...buttonRest} = data.button ?? {};
 	return (
 		<FormProvider {...methods}>
-			<form noValidate={true} className={classNames(className)} onSubmit={methods.handleSubmit(customHandleSubmit)}>
-				{
-					data.fields.sort(function (a, b) {
-						return a.pos - b.pos;
-					}).map(({pos, value, ...item}) => {
-						return <Field
-							item={item}
-							fieldClass={classNames(data.fieldClass, item.className)}
-							wClassName={classNames(data.wClassName, item.wClassName)}
-						/>
-					})
-				}
-				{buttonText ?
-					<Button {...buttonRest} onSubmit={methods.handleSubmit(customHandleSubmit)}>
-						{buttonText}
-					</Button> : ''}
+			<form noValidate={true} className={classNames(className, isDisabled ? "form-disabled" : null)}
+			      onSubmit={methods.handleSubmit(customHandleSubmit)}>
+				<fieldset disabled={isDisabled}>
+					{
+						data.fields.sort(function (a, b) {
+							return a.pos - b.pos;
+						}).map(({pos, value, ...item}, index) => {
+							return <Field
+								key={index}
+								item={item}
+								fieldClass={classNames(data.fieldClass, item.className)}
+								wClassName={classNames(data.wClassName, item.wClassName)}
+							/>
+						})
+					}
+					{buttonText ?
+						<Button
+							className={classNames(btnClassName, isDisabled ? "btn-disabled" : null)} {...buttonRest}
+							onSubmit={(e) => {
+								return isDisabled ? e.preventDefault() : methods.handleSubmit(customHandleSubmit)
+							}}
+							disabled={isDisabled}
+						>
+							{buttonText}
+						</Button> : ''}
+				</fieldset>
+				{isDisabled ? <div className={"form-disabler"}><span className={"form-disabler-hint"}>{disabledFormHint}</span></div> : null}
 			</form>
 		</FormProvider>
 	)

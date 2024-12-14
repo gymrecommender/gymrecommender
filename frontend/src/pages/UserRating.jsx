@@ -1,6 +1,7 @@
 import MapSection from '../components/MapSection.jsx';
 import React from "react";
 import Form from "../components/simple/Form.jsx";
+import {useCoordinates} from "../context/CoordinatesProvider.jsx";
 
 const wRating = [
 	{value: 5, label: "No Waiting"},
@@ -34,6 +35,8 @@ const data = {
 
 
 const UserRating = () => {
+	const {coordinates} = useCoordinates();
+
 	const handleSubmit = (values) => {
 		console.log(values);
 	}
@@ -42,7 +45,7 @@ const UserRating = () => {
 	return (
 		<>
 			<aside className="sliders">
-				<Form data={data} onSubmit={handleSubmit}/>
+				<Form data={data} disabledFormHint={"Select the starting location"} isDisabled={!coordinates.lat} onSubmit={handleSubmit}/>
 			</aside>
 			<MapSection/>
 		</>

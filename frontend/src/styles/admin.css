@@ -108,7 +108,7 @@
     align-items: center;
 }
 
-.accordion .accordion-form {
+.accordion .accordion-form fieldset {
     display: grid;
     grid-template-columns: 2fr 1fr auto;
     gap: 10px;
