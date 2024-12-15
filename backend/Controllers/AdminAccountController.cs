@@ -14,47 +14,47 @@ public class AdminAccountController : AccountControllerTemplate {
         _accountType = AccountType.admin;
     }
 
-    [HttpGet]
+    [HttpGet]// GET /api/adminaccount
     public async Task<IActionResult> GetAdminData(int page = 1, int sort = 1, bool ascending = true) {
         return await base.GetData(page, sort, ascending, _accountType);
     }
     
-    [HttpPost]
+    [HttpPost]// POST /api/adminaccount
     public async Task<IActionResult> SignUpAdmin(AccountDto accountDto) {
         return await SignUp(accountDto, _accountType);
     }
     
-    [HttpGet("{username}")]
+    [HttpGet("{username}")] // GET /api/adminaccount/{username}
     public async Task<IActionResult> GetAdminByUsername(string username) {
         return await base.GetByUsername(username, _accountType);
     }
     
-    [HttpPut("{username}")]
+    [HttpPut("{username}")] // PUT /api/adminaccount/{username}
     public async Task<IActionResult> UpdateByUsername(string username, AccountPutDto accountPutDto) {
         return await base.UpdateByUsername(username, accountPutDto, _accountType);
     }
     
-    [HttpDelete("{username}")]
+    [HttpDelete("{username}")] // DELETE /api/adminaccount/{username}
     public async Task<IActionResult> DeleteByUsername(string username) {
         return await base.DeleteByUsername(username, _accountType);
     }
     
-    [HttpGet("{username}/token")]
+    [HttpGet("{username}/token")] // GET /api/adminaccount/{username}/token
     public async Task<IActionResult> GetTokenByUsername(string username) {
         return await base.GetTokenByUsername(username, _accountType);
     }
     
-    [HttpPut("{username}/token")]
+    [HttpPut("{username}/token")] // PUT /api/adminaccount/{username}/token
     public async Task<IActionResult> UpdateTokenByUsername(string username, AccountTokenDto accountTokenDto) {
         return await base.UpdateTokenByUsername(username, accountTokenDto, _accountType);
     }
     
-    [HttpPost("{username}/login")]
+    [HttpPost("{username}/login")] // POST /api/adminaccount/{username}/login
     public async Task<IActionResult> Login(string username, AccountTokenDto logInDto) {
         return await base.Login(username, logInDto, _accountType);
     }
     
-    [HttpDelete("{username}/logout")]
+    [HttpDelete("{username}/logout")] // DELETE /api/adminaccount/{username}/logout
     public async Task<IActionResult> Logout(string username) {
         return await base.Logout(username, _accountType);
     }
