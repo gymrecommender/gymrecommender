@@ -529,3 +529,20 @@ form .form-disabler:hover .form-disabler-hint {
     visibility: visible;
     cursor: default;
 }
+
+.error-border {
+    border-radius: inherit;
+    outline-offset: -4px;
+    outline: 3px solid red;
+
+    padding: 15px;
+}
+
+.no-content {
+    font-weight: bold;
+    text-align: center;
+    text-transform: uppercase;
+    padding: 5px;
+
+    color: white;
+}

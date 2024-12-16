@@ -5,14 +5,18 @@ import "../styles/admin.css";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {
 	faPlus,
-	faX,
-	faCheck,
 	faUserGear,
-	faSave,
 } from "@fortawesome/free-solid-svg-icons";
 import {emailRegEx} from "../services/helpers.jsx";
 import Form from "../components/simple/Form.jsx";
-import Accordion from "../components/simple/Accordion.jsx";
+import AccordionRequests from "../components/simple/AccordionRequests.jsx";
+import {toast} from "react-toastify";
+import {useConfirm} from "../context/ConfirmProvider.jsx";
+
+const statuses = [
+	{value: "approved", label: "Approved"},
+	{value: "rejected", label: "Rejected"}
+]
 
 const accountTypes = [
 	{value: "gym", label: "Gym"},
@@ -52,6 +56,7 @@ const accountData = {
 const AdminRequests = () => {
 	const [showCreateAdminModal, setShowCreateAdminModal] = useState(false);
 	const [groupedGyms, setGroupedGyms] = useState({});
+	const {flushData, setValues} = useConfirm();
 
 	useEffect(() => {
 		setGroupedGyms({
@@ -86,12 +91,71 @@ const AdminRequests = () => {
 	const handleShowModal = () => setShowCreateAdminModal(true);
 	const handleCloseModal = () => setShowCreateAdminModal(false);
 
-	const handleOnSubmit = (values, gymId, accountId) => {
-		console.log(values, gymId, accountId);
+	const onAccept = (gymId, acceptedAccountId, acceptedMessage) => {
+		flushData();
+		Object.keys(groupedGyms[gymId].requests).forEach(gymAccountId => {
+			const data = groupedGyms[gymId].requests[gymAccountId]
+			if (gymAccountId === acceptedAccountId) {
+				data.message = acceptedMessage;
+				data.status = statuses[0].value;
+			} else {
+				data.status = statuses[1].value;
+			}
+			// TODO save the response for the current gym and handle the response
+		})
+
+		const copy = {...groupedGyms}
+		toast(`Responses for '${copy[gymId].name}' has been successfully submitted`)
+		delete copy[gymId];
+		setGroupedGyms(copy);
 	}
+
+	const handleOnSubmit = (values, gymId, accountId) => {
+		const copy = {...groupedGyms}
+		const changedRequests = copy[gymId].requests;
+		const isFinish = values.status && values.message;
+
+		changedRequests[accountId] = {
+			...changedRequests[accountId],
+			message: values.message,
+			status: values.status
+		};
+		copy[gymId].requests = changedRequests;
+
+		if (isFinish && values.status === statuses[0].value) {
+			if (Object.keys(changedRequests).length > 1) {
+				setValues(
+					true,
+					`Accepting this ownership request for '${copy[gymId].name}' will automatically reject all the other ownership requests for this gym. Continue?`,
+					() => onAccept(gymId, accountId, values.message),
+					flushData
+				)
+			} else {
+				onAccept(gymId, accountId, values.message);
+			}
+			return;
+		}
+
+		//TODO save data in the db. Proceed if the data has been stored successfully
+		if (isFinish) {
+			delete changedRequests[accountId]
+			if (Object.keys(copy[gymId]).length === 0) {
+				delete copy[gymId];
+			}
+		}
+		setGroupedGyms(copy);
+		toast("The response has been saved successfully")
+	}
+
 	const handleAccountSubmit = (values) => {
 		console.log(values);
 	}
+
+	const requests = Object.keys(groupedGyms)?.map((gymId) => {
+		const {name, address, requests} = groupedGyms[gymId];
+		return <AccordionRequests onSubmit={handleOnSubmit} gymId={gymId} key={gymId} name={name}
+		                          address={address} statuses={statuses} requests={requests}/>
+	})
 
 	return (
 		<div className="section-body">
@@ -104,11 +168,9 @@ const AdminRequests = () => {
 			</div>
 			<section className="gym-requests">
 				{
-					Object.keys(groupedGyms)?.map((gymId, index) => {
-						const {name, address, requests} = groupedGyms[gymId];
-						return <Accordion onSubmit={handleOnSubmit} gymId={gymId} key={index} name={name}
-						                  address={address} requests={requests}/>
-					})
+					requests.length > 0 ? requests : <div className={"no-content"}>
+						There are no ownership requests at the moment
+					</div>
 				}
 			</section>
 

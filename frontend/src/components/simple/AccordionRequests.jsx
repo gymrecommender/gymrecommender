@@ -4,7 +4,7 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faSave} from "@fortawesome/free-solid-svg-icons";
 import {displayTimestamp} from "../../services/helpers.jsx";
 
-const Accordion = ({name, requests, address, gymId, onSubmit}) => {
+const AccordionRequests = ({name, requests, address, gymId, onSubmit, statuses}) => {
 	const [isOpen, setIsOpen] = useState(false);
 
 	return (
@@ -20,20 +20,26 @@ const Accordion = ({name, requests, address, gymId, onSubmit}) => {
 				<div className={"accordion-content"}>
 					{
 						Object.keys(requests)?.map((gymAccountId, index) => {
-							const {requestTime, email} = requests[gymAccountId];
-							return <div key={index} className={"accordion-content-row"}>
+							const {requestTime, email, message, status} = requests[gymAccountId];
+							return <div key={gymAccountId} className={"accordion-content-row"}>
 								<span className={"accordion-content-email"}>{email}</span>
 								<span className={"accordion-content-requestTime"}>{displayTimestamp(requestTime)}</span>
 								<Form className={"accordion-form"} data={{
 									fields: [
-										{type: "text", name: "message", placeholder: "Message..."},
+										{
+											type: "text",
+											name: "message",
+											required: true,
+											value: message ?? "",
+											isBorderError: "border",
+											placeholder: "Message..."
+										},
 										{
 											type: "select",
 											name: "status",
-											data: [{value: "approved", label: "Approved"}, {
-												value: "rejected",
-												label: "Rejected"
-											}]
+											value: status ?? "",
+											isBorderError: "border",
+											data: statuses
 										},
 									],
 									fieldClass: "accordion-field",
@@ -57,4 +63,4 @@ const Accordion = ({name, requests, address, gymId, onSubmit}) => {
 	)
 }
 
-export default Accordion;
+export default AccordionRequests;
