@@ -75,3 +75,38 @@
 .modal input[type="text"], select, input[type="email"] {
     border-radius: 5px;
 }
+
+.modal .modal-form {
+    width: 540px;
+    min-height: 590px;
+
+    padding: 20px 40px;
+    color: #ccc;
+}
+
+.modal-form .form-row {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+    gap: 0;
+    width: 100%;
+    margin-left: 0;
+
+    color: inherit;
+}
+
+.modal-form .input-field input, .modal-form .input-field select {
+    border-radius: 10px !important;
+}
+
+.modal-form .input-field, .modal-form select {
+    margin: 10px 0;
+    flex-grow: 1;
+}
+
+.modal-form label {
+    color: #ccc;
+    text-transform: capitalize;
+    font-weight: bold;
+}

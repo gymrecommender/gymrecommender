@@ -42,7 +42,6 @@ const accountData = {
 		{pos: 5, type: "password", required: true, label: "Password", name: "password"},
 		{pos: 7, type: "select", required: true, label: "Account type", name: "type", data: accountTypes},
 	],
-	wClassName: "form-row",
 	button: {
 		type: "submit",
 		text: "Create account",
@@ -69,7 +68,7 @@ const AdminRequests = () => {
 				name: "Summit Wellness Center",
 				address: "789 Summit Street, New York, NY 10001, United States",
 				requests: {
-					"gym_account_id_1": { requestTime: "2024-11-06T14:45:00+05:30", email: "thebestgym@gmail.com"},
+					"gym_account_id_1": {requestTime: "2024-11-06T14:45:00+05:30", email: "thebestgym@gmail.com"},
 					"gym_account_id_2": {requestTime: "2024-11-06T14:45:00+05:30", email: "nickname@gmail.com"},
 					"gym_account_id_3": {requestTime: "2024-11-06T14:45:00+05:30", email: "anothergym@gmail.com"},
 				}
@@ -107,7 +106,8 @@ const AdminRequests = () => {
 				{
 					Object.keys(groupedGyms)?.map((gymId, index) => {
 						const {name, address, requests} = groupedGyms[gymId];
-						return <Accordion onSubmit={handleOnSubmit} gymId={gymId} key={index} name={name} address={address} requests={requests}/>
+						return <Accordion onSubmit={handleOnSubmit} gymId={gymId} key={index} name={name}
+						                  address={address} requests={requests}/>
 					})
 				}
 			</section>
@@ -115,7 +115,7 @@ const AdminRequests = () => {
 			{/* Use Modal component for the Create Admin form */}
 			{showCreateAdminModal && (
 				<Modal onClick={handleCloseModal} headerText="New Admin Account">
-					<Form className="admin-form" data={accountData} onSubmit={handleAccountSubmit}/>
+					<Form className={"modal-form"} data={accountData} onSubmit={handleAccountSubmit}/>
 				</Modal>
 			)}
 		</div>

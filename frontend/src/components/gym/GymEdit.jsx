@@ -26,98 +26,96 @@ const GymEdit = ({data, currencies, weekdays}) => {
 	}
 
 	return (
-		<div className={"gym-data"}>
-			<FormProvider {...methods}>
-				<form noValidate={true} onSubmit={methods.handleSubmit(customHandleSubmit)}>
+		<FormProvider {...methods}>
+			<form className={"modal-form"} noValidate={true} onSubmit={methods.handleSubmit(customHandleSubmit)}>
+				<Input
+					label={'name'}
+					type={"text"}
+					name={"name"}
+					required={true}
+				/>
+				<Input
+					label={'phone number'}
+					type={"phone"}
+					name={"phoneNumber"}
+					required={true}
+				/>
+				<Input
+					label={'address'}
+					type={"text"}
+					name={"address"}
+					required={true}
+				/>
+				<Input
+					label={'website'}
+					type={"text"}
+					name={"website"}
+					required={true}
+				/>
+				<div className={"gym-price"}>
 					<Input
-						label={'name'}
-						type={"text"}
-						name={"name"}
+						label={'Monthly membership'}
+						type={"number"}
+						min={0}
+						name={"monthlyMprice"}
 						required={true}
 					/>
+					<Select data={currencies}
+					        name={"currency"}
+					/>
+				</div>
+				<div className={"gym-price"}>
 					<Input
-						label={'phone number'}
-						type={"phone"}
-						name={"phoneNumber"}
+						label={'6-months membership'}
+						type={"number"}
+						min={0}
+						name={"sixMonthsMprice"}
 						required={true}
 					/>
+					<Select data={currencies}
+					        name={"currency"}
+					/>
+				</div>
+				<div className={"gym-price"}>
 					<Input
-						label={'address'}
-						type={"text"}
-						name={"address"}
+						label={'Yearly membership'}
+						type={"number"}
+						min={0}
+						name={"yearlyMprice"}
 						required={true}
 					/>
-					<Input
-						label={'website'}
-						type={"text"}
-						name={"website"}
-						required={true}
+					<Select data={currencies}
+					        name={"currency"}
 					/>
-					<div className={"gym-price"}>
-						<Input
-							label={'Monthly membership'}
-							type={"number"}
-							min={0}
-							name={"monthlyMprice"}
-							required={true}
-						/>
-						<Select data={currencies}
-						        name={"currency"}
-						/>
-					</div>
-					<div className={"gym-price"}>
-						<Input
-							label={'6-months membership'}
-							type={"number"}
-							min={0}
-							name={"sixMonthsMprice"}
-							required={true}
-						/>
-						<Select data={currencies}
-						        name={"currency"}
-						/>
-					</div>
-					<div className={"gym-price"}>
-						<Input
-							label={'Yearly membership'}
-							type={"number"}
-							min={0}
-							name={"yearlyMprice"}
-							required={true}
-						/>
-						<Select data={currencies}
-						        name={"currency"}
-						/>
-					</div>
-					<div className={"gym-working-hours"}>
-						{
-							weekdays.map((name, index) => {
-								return (
-									<div key={index} className={'gym-whs-wd'}>
-										<span className={'gym-whs-wd-name'}>{name}</span>
-										<div className={'gym-whs-wd-time'}>
-											<Input
-												label={"open from"}
-												type={"time"}
-												name={`${index}-openFrom`}
-											/>
-											<Input
-												label={"open until"}
-												type={"time"}
-												name={`${index}-openUntil`}
-											/>
-										</div>
+				</div>
+				<div className={"gym-working-hours"}>
+					{
+						weekdays.map((name, index) => {
+							return (
+								<div key={index} className={'gym-whs-wd'}>
+									<span className={'gym-whs-wd-name'}>{name}</span>
+									<div className={'gym-whs-wd-time'}>
+										<Input
+											label={"open from"}
+											type={"time"}
+											name={`${index}-openFrom`}
+										/>
+										<Input
+											label={"open until"}
+											type={"time"}
+											name={`${index}-openUntil`}
+										/>
 									</div>
-								)
-							})
-						}
-					</div>
-					<Button className={"btn-submit"} type={"submit"} onSubmit={methods.handleSubmit(customHandleSubmit)}>
-						Save
-					</Button>
-				</form>
-			</FormProvider>
-		</div>
+								</div>
+							)
+						})
+					}
+				</div>
+				<Button className={"btn-submit"} type={"submit"} onSubmit={methods.handleSubmit(customHandleSubmit)}>
+					Save
+				</Button>
+			</form>
+		</FormProvider>
 	)
 }
 
