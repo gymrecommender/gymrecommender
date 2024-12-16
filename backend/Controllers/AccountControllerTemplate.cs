@@ -1,6 +1,7 @@
 using backend.DTO;
 using backend.Enums;
 using backend.Models;
+using backend.Utilities;
 using backend.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -19,6 +20,7 @@ public abstract class AccountControllerTemplate : Controller {
         appData = appSettings.Value;
     }
 
+    [NonAction]
     public async Task<IActionResult> GetData(int page = 1, int sort = 1, bool ascending = true,
         AccountType? type = null) {
         int pagesize = appData.PageSize;
@@ -56,8 +58,9 @@ public abstract class AccountControllerTemplate : Controller {
             .ToListAsync();
 
         return Ok(new { data = accounts, paging = pagingInfo });
-    }
+    }//ok
 
+    [NonAction]
     public async Task<IActionResult> GetByUsername(string username, AccountType? accountType = null) {
         var accountQuery = context.Accounts.AsNoTracking()
             .Where(a => a.Username == username);
@@ -69,7 +72,11 @@ public abstract class AccountControllerTemplate : Controller {
         var account = await accountQuery.FirstOrDefaultAsync();
 
         if (account == null) {
-            return NotFound(new { error = $"User {username} is not found" });
+            return NotFound(new{ success = false, error = new
+            {
+                code = "UsernameError",
+                message = ErrorMessage.ErrorMessages["UsernameError"]
+            }});//new { error = $"User {username} is not found" }
         }
 
         return Ok(new AccountRegularModel {
@@ -83,15 +90,16 @@ public abstract class AccountControllerTemplate : Controller {
             Type = account.Type.ToString(),
             Provider = account.Provider.ToString(),
         });
-    }
+    }//ok
 
+    [NonAction]
     protected async Task<IActionResult> SignUp(AccountDto accountDto, AccountType type, Guid? createdBy = null) {
         if (ModelState.IsValid) {
             try {
                 var errors = new Dictionary<string, string[]> { };
                 if (!Enum.TryParse<ProviderType>(accountDto.Provider, out var provider)) {
                     errors["Provider"] = new[] { $"Provider {accountDto.Provider} is not supported" };
-                }
+                }//not sure if this can be changed to a smarter way
 
                 if (errors.Count > 0) {
                     return BadRequest(new {
@@ -119,27 +127,25 @@ public abstract class AccountControllerTemplate : Controller {
                 };
                 context.Accounts.Add(account);
                 await context.SaveChangesAsync();
-
-                var result = new AccountRegularModel {
-                    Id = account.Id,
+                
+                var role = account.Type.ToString();
+                var response = new AuthResponse()
+                {
                     Username = account.Username,
                     Email = account.Email,
                     FirstName = account.FirstName,
                     LastName = account.LastName,
-                    IsEmailVerified = account.IsEmailVerified,
-                    Type = account.Type.ToString(),
-                    Provider = account.Provider.ToString(),
-                    LastSignIn = account.LastSignIn,
+                    Role = role,
                 };
-
-                return Ok(result);
+                
+                return Ok(response);
             }
             catch (Exception e) {
                 return StatusCode(500, new {
                     success = false,
                     error = new {
-                        code = "InternalError",
-                        message = "An unexpected error occurred. Please try again later."
+                        code = "SignupError",
+                        message = ErrorMessage.ErrorMessages["SignUpError"]
                     }
                 });
             }
@@ -154,12 +160,12 @@ public abstract class AccountControllerTemplate : Controller {
             success = false,
             error = new {
                 code = "ValidationError",
-                message = "Some required fields are missing or incorrect.",
-                details = modelErrors
+                message = ErrorMessage.ErrorMessages["ValidationError"],
             }
         });
     }
 
+    [NonAction]
     public async Task<IActionResult> UpdateByUsername(string username, AccountPutDto accountPutDto,
         AccountType? accountType = null) {
         if (ModelState.IsValid) {
@@ -174,7 +180,11 @@ public abstract class AccountControllerTemplate : Controller {
                 var account = await accountQuery.FirstOrDefaultAsync();
 
                 if (account == null) {
-                    return NotFound(new { success = false, error = $"User {username} is not found" });
+                    return NotFound(new{ success = false, error = new
+                    {
+                        code = "UsernameError",
+                        message = ErrorMessage.ErrorMessages["UsernameError"]
+                    }});
                 }
 
 
@@ -218,19 +228,24 @@ public abstract class AccountControllerTemplate : Controller {
             success = false,
             error = new {
                 code = "ValidationError",
-                message = "Invalid data",
-                details = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage)
+                message = ErrorMessage.ErrorMessages["ValidationError"],
+                //details = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage)
             }
         });
     }
 
+    [NonAction]
     public async Task<IActionResult> DeleteByUsername(string username, AccountType accountType) {
         var account = context.Accounts.AsTracking()
             .Where(a => a.Username == username)
             .Where(a => a.Type == accountType).FirstOrDefault();
 
         if (account == null) {
-            return NotFound(new { success = false, error = $"User {username} is not found" });
+            return NotFound(new{ success = false, error = new
+            {
+                code = "UsernameError",
+                message = ErrorMessage.ErrorMessages["UsernameError"]
+            }});
         }
 
         context.Accounts.Remove(account);
@@ -239,6 +254,7 @@ public abstract class AccountControllerTemplate : Controller {
         return NoContent();
     }
     
+    [NonAction]
     public async Task<IActionResult> GetRoleByUid(string uid) {
         try {
             var account = await context.Accounts.AsNoTracking()
@@ -246,7 +262,12 @@ public abstract class AccountControllerTemplate : Controller {
                 .FirstOrDefaultAsync();
 
             if (account == null) {
-                return NotFound(new { error = $"User with uid {uid} is not found" });
+                return NotFound(new{ success = false, error = new
+                {
+                    code = "UIDError",
+                    message = ErrorMessage.ErrorMessages["TokenError"] + $"{uid}"//?
+                }});
+                //return NotFound(new { error = $"User with uid {uid} is not found" });
             }
 
             return Ok(new AccountRoleModel {
@@ -262,47 +283,50 @@ public abstract class AccountControllerTemplate : Controller {
             });
         }
     }
-
+    
+    [NonAction]
     public async Task<IActionResult> Login(string username, AccountType accountType) {
-        if (ModelState.IsValid) {
-            try {
-                var account = await context.Accounts.AsTracking()
-                    .Where(a => a.Username == username)
-                    .Where(a => a.Type == accountType)
-                    .FirstOrDefaultAsync();
+        try {
+            var account = await context.Accounts.AsTracking()
+                .Where(a => a.Username == username)
+                .Where(a => a.Type == accountType)
+                .FirstOrDefaultAsync();
 
-                if (account == null) {
-                    return NotFound(new { error = $"User {username} is not found" });
-                }
-
-                account.LastSignIn = DateTime.UtcNow;
-                account.IsEmailVerified = true; //TODO this should be handled in a smarter way
-                
-                await context.SaveChangesAsync();
-                //TODO some login logic
-
-                return Ok();
+            if (account == null) {
+                return NotFound(new{ success = false, error = new
+                {
+                    code = "UsernameError",
+                    message = ErrorMessage.ErrorMessages["UsernameError"]
+                }});
             }
-            catch (Exception e) {
-                return StatusCode(500, new {
-                    success = false,
-                    error = new {
-                        message = e.Message
-                    }
-                });
-            }
+            account.LastSignIn = DateTime.UtcNow;
+            account.IsEmailVerified = true; //TODO this should be handled in a smarter way
+            await context.SaveChangesAsync();
+            
+            var role = account.Type.ToString();
+            var response = new AuthResponse()
+            {
+                Username = account.Username,
+                Role = role,
+                Email = account.Email,
+                FirstName = account.FirstName,
+                LastName = account.LastName,
+            };
+
+            return Ok(response);
         }
-
-        return BadRequest(new {
-            success = false,
-            error = new {
-                code = "ValidationError",
-                message = "Invalid data",
-                details = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage)
-            }
-        });
+        catch (Exception e) {
+            return StatusCode(500, new {
+                success = false,
+                error = new {
+                    code = "LoginError",
+                    message = ErrorMessage.ErrorMessages["LoginError"],
+                }
+            });
+        }
     }
-
+    
+    [NonAction]
     public async Task<IActionResult> Logout(string username, AccountType accountType) {
         try {
             var account = await context.Accounts.AsTracking()
@@ -311,9 +335,12 @@ public abstract class AccountControllerTemplate : Controller {
                 .FirstOrDefaultAsync();
 
             if (account == null) {
-                return NotFound(new { error = $"User {username} is not found" });
+                return NotFound(new{ success = false, error = new
+                {
+                    code = "UsernameError",
+                    message = ErrorMessage.ErrorMessages["UsernameError"]
+                }});
             }
-            //TODO some logout logic
 
             return NoContent();
         }
@@ -321,7 +348,8 @@ public abstract class AccountControllerTemplate : Controller {
             return StatusCode(500, new {
                 success = false,
                 error = new {
-                    message = e.Message
+                    code = "LogoutError",
+                    message = ErrorMessage.ErrorMessages["LogoutError"]
                 }
             });
         }

@@ -3,13 +3,16 @@ using backend.Enums;
 using DotNetEnv;
 using Microsoft.EntityFrameworkCore;
 using backend.Models;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.OpenApi.Models;
 using Npgsql;
 
 namespace backend;
 
-public static class StartupExtensions {
-    public static WebApplication ConfigureServices(this WebApplicationBuilder builder) {
+public static class StartupExtensions
+{
+    public static WebApplication ConfigureServices(this WebApplicationBuilder builder)
+    {
         Env.Load();
         string connectionString = $"Server={Environment.GetEnvironmentVariable("DB_HOST")};" +
                                   $"Database={Environment.GetEnvironmentVariable("DB_DATABASE")};" +
@@ -33,18 +36,18 @@ public static class StartupExtensions {
 
         builder.Services.AddCors();
         builder.Services.AddControllers()
-            .ConfigureApiBehaviorOptions(options =>
-            {
-                options.SuppressModelStateInvalidFilter = true;
-            });;
+            .ConfigureApiBehaviorOptions(options => { options.SuppressModelStateInvalidFilter = true; });
+        ;
 
-        builder.Services.AddSwaggerGen(c => {
-            c.SwaggerDoc("v1", new OpenApiInfo {
+        builder.Services.AddSwaggerGen(c =>
+        {
+            c.SwaggerDoc("v1", new OpenApiInfo
+            {
                 Title = "GymRecommender Web API",
                 Version = "v1"
             });
             c.ResolveConflictingActions(apiDescriptions => apiDescriptions.First());
-            
+
             var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
             var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
 
@@ -54,15 +57,30 @@ public static class StartupExtensions {
         return builder.Build();
     }
 
-    public static WebApplication ConfigurePipeline(this WebApplication app) {
+    public static WebApplication ConfigurePipeline(this WebApplication app)
+    {
+        app.UseForwardedHeaders(new ForwardedHeadersOptions
+        {
+            ForwardedHeaders = ForwardedHeaders.XForwardedFor |
+                               ForwardedHeaders.XForwardedProto
+        });
+        string pathBase = app.Configuration["PathBase"];
+        if (!string.IsNullOrWhiteSpace(pathBase))
+        {
+            app.UsePathBase(pathBase);
+        }
+
         // Configure the HTTP request pipeline.
-        if (!app.Environment.IsDevelopment()) {
+        if (!app.Environment.IsDevelopment())
+        {
             app.UseDeveloperExceptionPage();
             app.UseHsts().UseHttpsRedirection();
         }
-        else {
+        else
+        {
             app.UseSwagger()
-                .UseSwaggerUI(c => {
+                .UseSwaggerUI(c =>
+                {
                     c.SwaggerEndpoint("/swagger/v1/swagger.json",
                         "GymRecommender WebAPI");
                     c.RoutePrefix = "docs";
@@ -77,7 +95,10 @@ public static class StartupExtensions {
                     .WithOrigins(Environment.GetEnvironmentVariable("FRONTEND_ADDRESS"))
                     .AllowCredentials();
             })
-            .UseRouting();
+            .UseStaticFiles()
+            .UseRouting()
+            .UseEndpoints(endpoints => { endpoints.MapControllers(); });
+        ;
 
         app.MapControllerRoute(
             name: "default",
