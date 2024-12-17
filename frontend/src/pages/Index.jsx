@@ -60,7 +60,6 @@ const Index = () => {
 				<Form data={data} disabledFormHint={"Select the starting location"} isDisabled={!coordinates.lat} onSubmit={getFormValues}/>
 			</aside>
 			<MapSection/>
-
 		</>
 	)
 }

@@ -1,4 +1,4 @@
-import {Outlet, useLocation, matchPath, useParams} from "react-router-dom";
+import {Outlet, useParams} from "react-router-dom";
 import Header from "../components/Header.jsx";
 import Footer from "../components/Footer.jsx";
 import {CoordinatesProvider} from "../context/CoordinatesProvider.jsx";

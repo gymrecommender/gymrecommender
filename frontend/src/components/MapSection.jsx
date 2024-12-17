@@ -4,9 +4,28 @@ import {getLocation} from "../services/helpers.jsx";
 import {useCoordinates} from "../context/CoordinatesProvider.jsx";
 import {toast} from "react-toastify";
 
-const MapSection = () => {
+//expected structure of markers
+// [
+// 	{
+// 		lat: -33.860664,
+// 		lng: 150.808138,
+// 		colour: "#7cff33",
+// 		id: "gym2_uuid",
+//      infoWindow: <div>This is pop up</div>,
+//      ...
+// 	},
+// 	{
+// 		lat: -33.860235,
+// 		lng: 151.208138,
+// 		colour: "#581845",
+// 		id: "gym1_uuid",
+//      infoWindow: <SomeComponent />,
+//      ...
+// 	},
+// ]
+const MapSection = ({markers}) => {
 	//#TODO these variables must be within the GoogleMap component (use context to share these variables with each other)
-	const { setCoordinates } = useCoordinates();
+	const {setCoordinates} = useCoordinates();
 
 	const handleSubmitSearch = (value) => {
 		console.log(value)
@@ -24,7 +43,7 @@ const MapSection = () => {
 	return (
 		<div className={"section main"}>
 			<LocationControls onSubmitSearch={handleSubmitSearch} onGetLocation={handleGetLocation}/>
-			{/*<GoogleMap />*/}
+			{/*<GoogleMap markers={markers}/>*/}
 		</div>
 	);
 };

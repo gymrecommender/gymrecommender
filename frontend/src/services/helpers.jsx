@@ -128,5 +128,18 @@ const errorsParser = ({request, response, message}) => {
 	return errorDetails;
 }
 
-export {displayTimestamp, errorsParser, sanitizeData, getLocation, firebaseErrors, generateValidationRules}
+const calculateCenter = (markers) => {
+	const result = markers?.reduce((acc, marker) => {
+		acc.lat += marker.lat;
+		acc.lng += marker.lng;
+		return acc;
+	}, {lat: 0, lng: 0});
+
+	if (!result) {
+		return null;
+	}
+	return {lat: result.lat / markers.length, lng: result.lng / markers.length};
+}
+
+export {displayTimestamp, errorsParser, sanitizeData, getLocation, firebaseErrors, generateValidationRules, calculateCenter}
 
