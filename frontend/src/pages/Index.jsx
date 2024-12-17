@@ -54,7 +54,6 @@ const Index = () => {
 		//#TODO add loaders here
 		console.log(values);
 	}
-	console.log(coordinates, !!coordinates.lat)
 	return (
 		<>
 			<aside className="sliders">
