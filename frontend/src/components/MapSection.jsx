@@ -3,24 +3,37 @@ import GoogleMap from "./simple/GoogleMap.jsx";
 import {getLocation} from "../services/helpers.jsx";
 import {useCoordinates} from "../context/CoordinatesProvider.jsx";
 import {toast} from "react-toastify";
+import {forRatings, mainRatingMarker, secRatingMarket, startMarker} from "../services/markers.jsx";
 
 //expected structure of markers
 // [
 // 	{
 // 		lat: -33.860664,
 // 		lng: 150.808138,
-// 		colour: "#7cff33",
-// 		id: "gym2_uuid",
-//      infoWindow: <div>This is pop up</div>,
-//      ...
+// 		...mainRatingMarker,
+// 		id: "gym1_uuid",
+// 		infoWindow: <div>This is pop up</div>,
 // 	},
 // 	{
 // 		lat: -33.860235,
 // 		lng: 151.208138,
-// 		colour: "#581845",
-// 		id: "gym1_uuid",
-//      infoWindow: <SomeComponent />,
-//      ...
+// 		...secRatingMarket,
+// 		id: "gym2_uuid",
+// 		infoWindow: <div>A pop</div>,
+// 	},
+// 	{
+// 		lat: -33.760235,
+// 		lng: 151.208138,
+// 		...forRatings,
+// 		id: "gym3_uuid",
+// 		infoWindow: <div>A pop</div>,
+// 	},
+// 	{
+// 		lat: -33.860235,
+// 		lng: 150.508138,
+// 		...startMarker,
+// 		id: "gym4_uuid",
+// 		infoWindow: <div>A pop</div>,
 // 	},
 // ]
 const MapSection = ({markers}) => {
@@ -43,7 +56,7 @@ const MapSection = ({markers}) => {
 	return (
 		<div className={"section main"}>
 			<LocationControls onSubmitSearch={handleSubmitSearch} onGetLocation={handleGetLocation}/>
-			{/*<GoogleMap markers={markers}/>*/}
+			<GoogleMap markers={markers}/>
 		</div>
 	);
 };
