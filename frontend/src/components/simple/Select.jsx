@@ -2,7 +2,7 @@ import {useFormContext} from "react-hook-form";
 import classNames from "classnames";
 import {generateValidationRules} from "../../services/helpers.jsx";
 
-const Select = ({className, wClassName, isBorderError, required, data, label, name, ...rest}) => {
+const Select = ({className, wClassName, showAsterisks=true, isBorderError, required, data, label, name, ...rest}) => {
 	const {register, formState: {errors}} = useFormContext();
 
 	const options = data?.map((item, index) => {
@@ -13,7 +13,7 @@ const Select = ({className, wClassName, isBorderError, required, data, label, na
 		);
 	})
 	return (
-		<div className={classNames('selector', wClassName, required ? "required" : '')}>
+		<div className={classNames('selector', wClassName, required && showAsterisks ? "required" : '')}>
 			{label ? (<label>{label}</label>) : ''}
 			{!isBorderError && errors[name] ? <span className={"input-field-error"}>{errors[name].message}</span> : ""}
 			<select

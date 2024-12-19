@@ -57,7 +57,7 @@ const Index = () => {
 	return (
 		<>
 			<aside className="sliders">
-				<Form data={data} disabledFormHint={"Select the starting location"} isDisabled={!coordinates.lat} onSubmit={getFormValues}/>
+				<Form data={data} showAsterisks={false} disabledFormHint={"Select the starting location"} isDisabled={!coordinates.lat} onSubmit={getFormValues}/>
 			</aside>
 			<MapSection/>
 		</>

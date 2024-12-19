@@ -33,7 +33,7 @@ const Field = memo(({item, fieldClass, wClassName}) => {
 	return <Component key={item.name} {...commonProps} />
 });
 
-const Form = ({data, onSubmit, className, isDisabled, disabledFormHint}) => {
+const Form = ({data, onSubmit, className, showAsterisks=true, isDisabled, disabledFormHint}) => {
 	const methods = useForm({
 		defaultValues: {
 			...data.fields.reduce((acc, item) => {
@@ -64,6 +64,7 @@ const Form = ({data, onSubmit, className, isDisabled, disabledFormHint}) => {
 						data.fields.sort(function (a, b) {
 							return a.pos - b.pos;
 						}).map(({pos, value, ...item}, index) => {
+							item.showAsterisks = showAsterisks;
 							return <Field
 								key={index}
 								item={item}

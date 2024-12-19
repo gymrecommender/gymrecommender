@@ -122,7 +122,7 @@ const Auth = () => {
 						</div>
 					</div>
 				</div>
-				<Form data={data} onSubmit={getFormValues}/>
+				<Form data={data} showAsterisks={!isLogin} onSubmit={getFormValues}/>
 			</div>
 		</div>
 	)
