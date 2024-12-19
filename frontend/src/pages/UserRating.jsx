@@ -43,7 +43,7 @@ const UserRating = () => {
 	return (
 		<CoordinatesProvider>
 			<aside className="sliders">
-				<Form data={data} disabledFormHint={"Select the starting location"} isDisabled={!coordinates.lat} onSubmit={handleSubmit}/>
+				<Form data={data} showAsterisks={false} disabledFormHint={"Select the starting location"} isDisabled={!coordinates.lat} onSubmit={handleSubmit}/>
 			</aside>
 			<MapSection/>
 		</CoordinatesProvider>

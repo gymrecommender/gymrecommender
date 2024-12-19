@@ -461,15 +461,16 @@ button.btn-action {
     justify-content: center;
     align-items: center;
 
-    background-color: rgba(159, 96, 181, 0.4);
+    background-color: rgba(0, 54, 123, 0.4);
 }
 
 .loader span {
-    color: #9f60b5;
+    color: #c60557;
 }
 
 .input-field.required label:after, .selector.required label:after {
     content: "*";
+    margin-left: 2px;
     color: red;
 }
 
