@@ -295,7 +295,7 @@ const GymManagement = () => {
 							<span>Requests</span>
 							<FontAwesomeIcon className={"icon"} icon={faCircleInfo} size={"lg"}/>
 						</Button>
-						<Button type={"button"} className={"btn-icon btn-action"} onClick={() => navigate("add")}>
+						<Button type={"button"} className={"btn-icon btn-action"} onClick={() => navigate("request")}>
 							<span>Add</span>
 							<FontAwesomeIcon className={"icon"} icon={faPlus} size={"lg"}/>
 						</Button>

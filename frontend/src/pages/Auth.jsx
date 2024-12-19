@@ -19,7 +19,6 @@ const buttons = [
 const Auth = () => {
 	const location = useLocation();
 	const navigate = useNavigate();
-	const {setLoader} = useLoader();
 
 	//TODO check whether there is better way to implement these 3 rows
 	const isLogin = location.pathname.startsWith("/login")
@@ -95,7 +94,7 @@ const Auth = () => {
 						</Button>
 						<h2 className={"login-title"}>{titleText}</h2>
 						<div className={"login-buttons"}>
-							{role === "admin" ? ''
+							{role !== "user" ? ''
 								: <Button onClick={() => {
 									//forms the link for the button of the respective role
 									navigate(`/${isLogin ? "signup" : "login"}/${role === "user" ? "" : role}`);
@@ -108,8 +107,8 @@ const Auth = () => {
 							}
 							{
 								buttons.map(({title, icon, isLogInOnly, ...rest}) => {
-									//We must not show a sign-up button on admin login page
-									if (role !== rest.role && !(rest.role === "admin" && !isLogin)) {
+									//We must not show a sign-up button on admin and gym login page
+									if (role !== rest.role && !(rest.role !== "user" && !isLogin)) {
 										return <Button
 											key={title}
 											type={"button"}

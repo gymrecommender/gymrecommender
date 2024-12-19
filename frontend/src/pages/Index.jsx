@@ -1,5 +1,5 @@
 import MapSection from '../components/MapSection.jsx';
-import React from "react";
+import React, {useEffect} from "react";
 import Form from "../components/simple/Form.jsx";
 import {useCoordinates} from "../context/CoordinatesProvider.jsx";
 

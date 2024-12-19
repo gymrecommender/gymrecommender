@@ -7,26 +7,30 @@ import GymManagement from "./pages/GymManagement.jsx";
 import Account from "./pages/Account.jsx";
 import UserRating from "./pages/UserRating.jsx";
 import AdminRequests from "./pages/AdminRequests.jsx";
+import TitleSetter from "./TitleSetter.jsx";
 
 const roles = {
 	gym: {
 		routes: [
-			{path: "management", component: GymManagement},
-			{path: "management/add", component: GymRequest}
+			{path: "management", component: GymManagement, title: "Managed gyms"},
+			{path: "management/request", component: GymRequest, title: "Request management"},
 		],
+		title: "My account - Gym",
 		defaultComponent: Account
 	},
 	user: {
 		routes: [
-			{path: "rating", component: UserRating},
-			{path: "history", component: History}
+			{path: "rating", component: UserRating, title: "Rating gyms"},
+			{path: "history", component: History, title: "Recommendations history"}
 		],
+		title: "My account - User",
 		defaultComponent: Account
 	},
 	admin: {
 		routes: [
-			{path: "requests", component: AdminRequests}
+			{path: "requests", component: AdminRequests, title: "Ownership requests"}
 		],
+		title: "My account - Admin",
 		defaultComponent: Account
 	}
 }
@@ -44,18 +48,31 @@ const RoleBasedRoutes = () => {
 		return <Navigate to={'/'}/>;
 	}
 
-	const {routes, defaultComponent: DefaultComponent} = roleRoutes;
+	const {routes, title: indexTitle, defaultComponent: DefaultComponent} = roleRoutes;
 	return (
 		<Routes>
-			{routes.map(({path, component: Component}) => (
+			{routes.map(({path, title: routeTitle, component: Component}) => (
 				<Route
 					key={path}
 					path={path}
-					element={<Component/>}
+					element={
+						<TitleSetter title={routeTitle}>
+							<Component/>
+						</TitleSetter>
+					}
 				/>
 			))}
-			<Route index element={<DefaultComponent/>}/>
-			<Route path={"*"} element={<NotFound/>}/> //TODO make sure that this absolutely must be duplicated in this component
+			<Route index element={
+				<TitleSetter title={indexTitle}>
+					<DefaultComponent/>
+				</TitleSetter>
+			}/>
+			<Route path={"*"} element={
+				<TitleSetter title={"404|Not Found"}>
+					<NotFound/>
+				</TitleSetter>
+			}/> //TODO make sure that this absolutely must be duplicated in this
+			component
 		</Routes>
 	)
 }

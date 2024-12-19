@@ -91,7 +91,7 @@ button[type="submit"].btn-login:hover {
 .login-header-bottom .login-buttons {
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: end;
 
     column-gap: 10px;
 }
