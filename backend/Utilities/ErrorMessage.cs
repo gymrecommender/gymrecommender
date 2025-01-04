@@ -11,7 +11,9 @@ public static class ErrorMessage
         {"UsernameError", "The user with the provided username has not been found"},
         {"ValidationError", "Invalid data"},
         {"TokenError", "'s token not found"},
-        {"UIDError", "The user with the following ID has not been: "}
+        {"UIDError", "The user with the following ID has not been found: "},
+        {"Internal error", "Internal error occured"},
+        {"Location error", "Unknown city or country"},
     };
 
 }
