@@ -14,19 +14,21 @@ namespace backend.Controllers;
 [ApiController]
 [Route("/api/[controller]")]
 public class GymController : Controller {
-    private readonly GymrecommenderContext context;
-    private readonly AppSettings appData;
+    private readonly GymrecommenderContext _context;
+    private readonly AppSettings _appData;
+    private readonly GoogleApi _googleApi;
 
-    public GymController(GymrecommenderContext context, IOptions<AppSettings> appSettings) {
-        this.context = context;
-        appData = appSettings.Value;
+    public GymController(GymrecommenderContext context, IOptions<AppSettings> appSettings, GoogleApi googleApi) {
+        _context = context;
+        _appData = appSettings.Value;
+        _googleApi = googleApi;
     }
 
     [HttpGet("{country}/{city}")]
     public async Task<IActionResult> GetGymsByCity(string country, string city) {
         try {
             TextInfo textInfo = new CultureInfo("en-US", false).TextInfo;
-            var reqCity = context.Cities.AsNoTracking()
+            var reqCity = _context.Cities.AsNoTracking()
                                  .Include(c => c.Country)
                                  .Where(c => c.Name == textInfo.ToTitleCase(city))
                                  .Where(c => c.Country.Name == textInfo.ToTitleCase(country))
@@ -41,7 +43,7 @@ public class GymController : Controller {
                 });
             }
 
-            var gyms = context.Gyms.AsNoTracking()
+            var gyms = _context.Gyms.AsNoTracking()
                               .Include(g => g.City).ThenInclude(c => c.Country)
                               .Include(g => g.Currency)
                               .Include(g => g.GymWorkingHours).ThenInclude(w => w.WorkingHours)
@@ -85,16 +87,12 @@ public class GymController : Controller {
 
     [NonAction]
     private async Task<Response> AddCity(double lat, double lng) {
-        Geocode? newCity = await GoogleApi.GetCity(lat, lng);
-        if (newCity == null) {
-            return new Response(
-                ErrorMessage.ErrorMessages["LocationError"],
-                "LocationError",
-                true
-            );
-        }
+        Response response = await _googleApi.GetCity(lat, lng);
+        if (!response.Success) return response;
+
+        Geocode newCity = (Geocode)response.Value;
             
-        var country = context.Countries.AsNoTracking()
+        var country = _context.Countries.AsNoTracking()
                              .FirstOrDefault(c => c.Name == newCity.Country);
 
         if (country == null) {
@@ -102,8 +100,8 @@ public class GymController : Controller {
                 Name = newCity.Country
             };
                 
-            context.Countries.Add(country);
-            await context.SaveChangesAsync();
+            _context.Countries.Add(country);
+            await _context.SaveChangesAsync();
         }
 
         var city = new City {
@@ -114,8 +112,8 @@ public class GymController : Controller {
             Swlongitude = newCity.Swlongitude,
             Swlatitude = newCity.Swlatitude,
         };
-        context.Cities.Add(city);
-        await context.SaveChangesAsync();
+        _context.Cities.Add(city);
+        await _context.SaveChangesAsync();
 
         return new Response(city);
     }
@@ -125,7 +123,7 @@ public class GymController : Controller {
         try {
             var cityRes = await AddCity(lat, lng);
             if (!cityRes.Success) return cityRes;
-
+            
             return cityRes;
         } catch (Exception e) {
             return new Response(
@@ -139,7 +137,7 @@ public class GymController : Controller {
     [HttpGet("location")]
     public async Task<IActionResult> GetGymsForLocation([FromQuery] double lat, [FromQuery] double lng) {
         try {
-            var city = context.Cities.AsNoTracking()
+            var city = _context.Cities.AsNoTracking()
                               .Include(c => c.Country)
                               .Where(c => c.Swlatitude <= lat && lat <= c.Nelatitude)
                               .Where(c => c.Swlongitude <= lng && lng <= c.Nelongitude)

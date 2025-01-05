@@ -31,6 +31,7 @@ public static class StartupExtensions
 
         var dataSource = dataSourceBuilder.Build();
 
+        builder.Services.AddHttpClient<GoogleApi>();
         builder.Services.AddSingleton<NpgsqlDataSource>(dataSource);
         builder.Services.AddDbContext<GymrecommenderContext>(options =>
             options.UseNpgsql(dataSource));
@@ -105,7 +106,6 @@ public static class StartupExtensions
             name: "default",
             pattern: "{controller}/{action=Index}/{id?}");
         
-        GoogleApi.setApiKey();
         return app;
     }
 }
