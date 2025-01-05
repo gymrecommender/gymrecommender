@@ -31,5 +31,5 @@ public class GymViewModel {
     
     public string Country { get; set; }
     
-    public List<GymWorkingHourViewModel> WorkingHours { get; set; } = null!;
+    public List<GymWorkingHoursViewModel> WorkingHours { get; set; } = null!;
 }

@@ -1,6 +1,6 @@
 namespace backend.ViewModels.WorkingHour;
 
-public class GymWorkingHourViewModel {
+public class GymWorkingHoursViewModel {
     public int Weekday { get; set; }
     
     public TimeOnly OpenFrom { get; set; }
