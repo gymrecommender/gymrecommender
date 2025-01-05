@@ -3,6 +3,7 @@ using backend.Enums;
 using DotNetEnv;
 using Microsoft.EntityFrameworkCore;
 using backend.Models;
+using backend.Utilities;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.OpenApi.Models;
 using Npgsql;
@@ -103,7 +104,8 @@ public static class StartupExtensions
         app.MapControllerRoute(
             name: "default",
             pattern: "{controller}/{action=Index}/{id?}");
-
+        
+        GoogleApi.setApiKey();
         return app;
     }
 }
