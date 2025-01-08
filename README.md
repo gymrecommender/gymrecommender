@@ -1,6 +1,5 @@
 # Software engineering
 Gyms recommender
-https://www.fer.unizg.hr/predmet/proinz
 
 # Production
 Website URL:  
@@ -10,6 +9,10 @@ Description of the implemented functionality
 https://github.com/gymrecommender/gymrecommender/wiki/Log-of-cycles
 
 # Description of the project
+
+_This project is the result of teamwork developed as part of a project assignment for the course Software Engineering (https://www.fer.unizg.hr/predmet/proinz) at the Faculty of Electrical Engineering and Computing, University of Zagreb._
+
+
 Our app will help to find the best gym options for people with different priorities
 
 Since "the best" is extremely vague and unspecific, we have to define the criteria that will make "the best" measurable
