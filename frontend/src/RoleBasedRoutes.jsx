@@ -8,6 +8,7 @@ import Account from "./pages/Account.jsx";
 import UserRating from "./pages/UserRating.jsx";
 import AdminRequests from "./pages/AdminRequests.jsx";
 import TitleSetter from "./TitleSetter.jsx";
+import Recommendation from "./pages/Recommendation.jsx";
 
 const roles = {
 	gym: {
@@ -21,7 +22,8 @@ const roles = {
 	user: {
 		routes: [
 			{path: "rating", component: UserRating, title: "Rating gyms"},
-			{path: "history", component: History, title: "Recommendations history"}
+			{path: "history", component: History, title: "Recommendations history"},
+			{path: "history/recommendations/:id", component: Recommendation, title: "Recommendations History"}
 		],
 		title: "My account - User",
 		defaultComponent: Account
