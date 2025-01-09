@@ -94,10 +94,6 @@ const History = () => {
     setRequests(dummyData);
   }, []); 
 
-  // Navigate to recommendation page
-  const handleRequestClick = (id) => {
-    navigate(`/history/recommendations/${id}`);
-  };
 
   return (
     <section className="section">

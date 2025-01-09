@@ -313,43 +313,81 @@ input[type="range"]::-moz-range-thumb {
     box-sizing: border-box;
 }
 
-/*History list style*/
-/*.recommendation-list{
-    list-style-type: none;
-    padding: 0;
-    width: 100%;
-}
-
-.recommendation-item{
-    margin-bottom: 15px;
+/*Recommendations style*/
+.recommendation-container {
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
     padding: 20px;
-    background-color: #dce3f5;
+  }
+  
+  .recommendation-lists {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    width: 40%;
+  }
+  
+  .recommendation-list {
+    background-color: #7c5dc6;
+    padding: 15px;
     border-radius: 10px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    color: #1f2a44;
-    font-family: 'Arial', sans-serif;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.recommendation-item:hover {
-    transform: scale(1.02);
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-    background-color: #e6ebfa;
-}
-
-.recommendation-item h4 {
-    margin: 0 0 10px 0;
-    font-size: 1.8em;
+    color: white;
+    max-height: 500px;
+    overflow-y: auto;
+  }
+  
+  .recommendation-list h3 {
+    font-size: 1.5em;
+    margin-bottom: 15px;
+    text-transform: uppercase;
+    text-align: center;
+  }
+  
+  .gym-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+  }
+  
+  .gym-table th, .gym-table td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+    color: #f4f4f4; 
+  }
+  
+  .gym-table th {
+    background-color: #411351; 
     font-weight: bold;
-    color: #5a60b5;
-}
+    color: #fff;
+  }
+  
+  .gym-table tr:nth-child(even) {
+    background-color: #6a4f9d;
+  }
+  
+  .gym-table tr:hover {
+    background-color: #5e3b8d;
+  }
+  
+  .gym-table td {
+    font-size: 1em;
+    color: #f4f4f4;
+  }
+  
+  .gym-table td:nth-child(2), .gym-table td:nth-child(3), .gym-table td:nth-child(4) {
+    font-weight: bold;
+  }
 
-.recommendation-item p {
-    margin: 10px 0;
-    color: #4b4e5e;
-    font-size: 1.1em;
-} for the new page css*/
+  .gym-table td.address {
+    word-break: break-word;
+    color: #ddd;
+  }
 
+
+  
+/*History page*/
 .history-table {
     width: 100%;
     border-collapse: collapse;
@@ -393,7 +431,7 @@ input[type="range"]::-moz-range-thumb {
   .no-requests svg {
     font-size: 3rem;
     margin-bottom: 10px;
-    color: #cdbfff; /* A bright color for the FontAwesome icon */
+    color: #cdbfff;
   }
   
 
