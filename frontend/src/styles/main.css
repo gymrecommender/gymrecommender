@@ -314,29 +314,82 @@ input[type="range"]::-moz-range-thumb {
 }
 
 /*History list style*/
-.recommendation-list {
+/*.recommendation-list{
     list-style-type: none;
     padding: 0;
     width: 100%;
 }
 
-.recommendation-item {
+.recommendation-item{
     margin-bottom: 15px;
-    padding: 15px;
-    background-color:#a0a8f5;
-    border-radius: 5px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    background-color: #dce3f5;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    color: #1f2a44;
+    font-family: 'Arial', sans-serif;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.recommendation-item:hover {
+    transform: scale(1.02);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    background-color: #e6ebfa;
 }
 
 .recommendation-item h4 {
-    margin: 0;
-    font-size: 1.2em;
+    margin: 0 0 10px 0;
+    font-size: 1.8em;
+    font-weight: bold;
+    color: #5a60b5;
 }
 
 .recommendation-item p {
-    margin: 5px 0;
-    color: #666;
-}
+    margin: 10px 0;
+    color: #4b4e5e;
+    font-size: 1.1em;
+} for the new page css*/
+
+.history-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    background-color: #a0a8f5;
+    color: #002147;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  }
+  
+  .history-table th,
+  .history-table td {
+    border: 1px solid #ddd;
+    text-align: center;
+    padding: 16px;
+  }
+  
+  .history-table th {
+    background-color: #002147;
+    color: #ffffff;
+  }
+  
+  .history-table tr:nth-child(even) {
+    background-color: #cdd2fc;
+  }
+  
+  .history-table tr:hover {
+    background-color: #f0f0f5;
+  }
+  
+    .no-content {
+        text-align: center;
+        color: #4b4e5e;
+        font-size: 1.2em;
+        background-color: #dce3f5;
+        padding: 15px;
+        border-radius: 5px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+
+
 
 /*AccountGym forms*/
 .request-form, .update-form, .unavailable-form {

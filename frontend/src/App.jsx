@@ -10,6 +10,7 @@ import Loader from "./components/simple/Loader.jsx";
 import {useConfirm} from "./context/ConfirmProvider.jsx";
 import Confirm from "./components/simple/Confirm.jsx";
 import TitleSetter from "./TitleSetter.jsx";
+import History from "./pages/History.jsx";
 
 const App = () => {
 	const {loader} = useLoader();
