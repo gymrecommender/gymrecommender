@@ -3,6 +3,7 @@ using backend.Enums;
 using DotNetEnv;
 using Microsoft.EntityFrameworkCore;
 using backend.Models;
+using backend.Utilities;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.OpenApi.Models;
 using Npgsql;
@@ -30,6 +31,7 @@ public static class StartupExtensions
 
         var dataSource = dataSourceBuilder.Build();
 
+        builder.Services.AddHttpClient<GoogleApi>();
         builder.Services.AddSingleton<NpgsqlDataSource>(dataSource);
         builder.Services.AddDbContext<GymrecommenderContext>(options =>
             options.UseNpgsql(dataSource));
@@ -103,7 +105,7 @@ public static class StartupExtensions
         app.MapControllerRoute(
             name: "default",
             pattern: "{controller}/{action=Index}/{id?}");
-
+        
         return app;
     }
 }
