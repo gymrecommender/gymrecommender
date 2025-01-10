@@ -2,11 +2,19 @@ using System.Collections;
 using backend.DTO;
 using backend.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace backend.Services;
 
 public class RecomendationService
 {
+    private readonly GymrecommenderContext _dbContext;
+
+    public RecomendationService(GymrecommenderContext context)
+    {
+        _dbContext = context;
+    }
+
     private const string MONTHLY_PRICE_WEIGHT = "TimePriority";
     private const string EXTERNAL_RATING_WEIGHT = "PricePriority";
     private const string CONGESTION_RATING_WEIGHT = "PricePriority";
@@ -18,17 +26,57 @@ public class RecomendationService
         { CONGESTION_RATING_WEIGHT, 0.2 }
     };
 
-    public async Task<IActionResult> GetRecomendations(GymRecommendationRequestDto gymRecommendationRequestRequest)
+    public async Task<IActionResult> GetRecomendations(GymRecommendationRequestDto gymRecommendationRequest)
     {
-        List<Gym> filetredGyms = new List<Gym>(); //TODO: Get gyms by parameters in gymRecomendationRequest
-        var recommendations = GetRatings(filetredGyms);
+        List<Gym> filteredGyms = await GetFilteredGyms(gymRecommendationRequest);
+        var recommendations = GetRatings(filteredGyms);
         //TODO: save request and recomndation
         //saveRequest(gymRecomendationRequest);
         //saveRecomensations(recommendations);
         return new OkObjectResult(recommendations);
     }
 
-    public List<GymRecommendationDto> GetRatings(List<Gym> filteredGyms)
+    /// <summary>
+    /// Filters gyms based on the provided parameters: MaxMembershipPrice, MinOverallRating, MinCongestionRating, City.
+    /// </summary>
+    /// <param name="request">GymRecommendationRequestDto containing filter parameters.</param>
+    /// <returns>A list of Gym objects that match the filter criteria.</returns>
+    private async Task<List<Gym>> GetFilteredGyms(GymRecommendationRequestDto request)
+    {
+        // Start with all gyms
+        IQueryable<Gym> query = _dbContext.Gyms.AsQueryable();
+
+        // Filter by MaxMembershipPrice if specified
+        if (request.MaxMembershipPrice > 0)
+        {
+            //Todo chenge based on membership length
+            query = query.Where(g => g.MonthlyMprice.HasValue && g.MonthlyMprice.Value <= request.MaxMembershipPrice);
+        }
+
+        // Filter by MinOverallRating if specified
+        if (request.MinOverallRating > 0)
+        {
+            query = query.Where(g => g.ExternalRating >= request.MinOverallRating);
+        }
+
+        // Filter by MinCongestionRating if specified
+        if (request.MinCongestionRating > 0)
+        {
+            query = query.Where(g => g.CongestionRating >= request.MinCongestionRating);
+        }
+
+        // Filter by City if specified
+        if (!string.IsNullOrEmpty(request.City))
+        {
+            query = query.Where(g =>
+                g.City != null && g.City.Name.Equals(request.City, StringComparison.OrdinalIgnoreCase));
+        }
+
+        // Execute the query and return the list
+        return await query.ToListAsync();
+    }
+
+    private List<GymRecommendationDto> GetRatings(List<Gym> filteredGyms)
     {
         if (filteredGyms == null || !filteredGyms.Any())
         {
