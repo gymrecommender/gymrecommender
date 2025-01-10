@@ -1,4 +1,3 @@
-using System.Collections;
 using backend.DTO;
 using backend.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -17,21 +16,20 @@ public class RecomendationService
         _geoService = geoService;
     }
 
-    private const string MONTHLY_PRICE_WEIGHT = "MonthlyPrice";
-    private const string EXTERNAL_RATING_WEIGHT = "ExternalRating";
-    private const string CONGESTION_RATING_WEIGHT = "CongestionRating";
-    private const string TRAVEL_PRICE_WEIGHT = "TravelPrice";
-    private const string TRAVEL_TIME_WEIGHT = "TravelTime";
+    // Define static readonly constants for base weights within each group
+    // These represent the distribution within price-related and other-related criteria
+    private static readonly double BaseMembershipPriceWeight = 0.5; // Within price-related group
+    private static readonly double BaseTravelPriceWeight = 0.5; // Within price-related group
 
-    protected static readonly Hashtable WEIGHTS_MAP = new Hashtable()
-    {
-        { MONTHLY_PRICE_WEIGHT, 0.25 },
-        { EXTERNAL_RATING_WEIGHT, 0.25 },
-        { CONGESTION_RATING_WEIGHT, 0.15 },
-        { TRAVEL_PRICE_WEIGHT, 0.20 },
-        { TRAVEL_TIME_WEIGHT, 0.15 }
-    };
+    private static readonly double BaseExternalRatingWeight = 0.4; // Within other-related group
+    private static readonly double BaseCongestionRatingWeight = 0.3; // Within other-related group
+    private static readonly double BaseTravelTimeWeight = 0.3; // Within other-related group
 
+    /// <summary>
+    /// Retrieves gym recommendations based on user preferences.
+    /// </summary>
+    /// <param name="gymRecommendationRequest">User's gym recommendation request.</param>
+    /// <returns>List of recommended gyms with scores.</returns>
     public async Task<IActionResult> GetRecomendations(GymRecommendationRequestDto gymRecommendationRequest)
     {
         List<Gym> filteredGyms = await GetFilteredGyms(gymRecommendationRequest);
@@ -40,9 +38,8 @@ public class RecomendationService
             gymRecommendationRequest.Latitude,
             gymRecommendationRequest.Longitude
         );
-        List<GymTravelInfoDto> finalFilteredGyms = FilterGymsByTravelData(filteredGymsWithGeoData);
 
-        var recommendations = GetRatings(filteredGymsWithGeoData);
+        var recommendations = GetRatings(filteredGymsWithGeoData, gymRecommendationRequest.PriceRatingPriority);
         // TODO: save request and recomndation
         //saveRequest(gymRecomendationRequest);
         //saveRecomensations(recommendations);
@@ -62,7 +59,7 @@ public class RecomendationService
         // Filter by MaxMembershipPrice if specified
         if (request.MaxMembershipPrice > 0)
         {
-            //Todo chenge based on membership length
+            //TODO: Change based on membership length
             query = query.Where(g => g.MonthlyMprice.HasValue && g.MonthlyMprice.Value <= request.MaxMembershipPrice);
         }
 
@@ -90,30 +87,13 @@ public class RecomendationService
     }
 
     /// <summary>
-    /// Filters gyms based on TravelPrice and TravelTime thresholds.
-    /// </summary>
-    /// <param name="gymsWithGeoData">List of GymTravelInfoDto containing travel data.</param>
-    /// <returns>Filtered list of GymTravelInfoDto.</returns>
-    private List<GymTravelInfoDto> FilterGymsByTravelData(List<GymTravelInfoDto> gymsWithGeoData)
-    {
-        // Define your thresholds for TravelPrice and TravelTime
-        const double MAX_TRAVEL_PRICE = 5.0; // Example threshold
-        const double MAX_TRAVEL_TIME = 60.0; // Example threshold in minutes
-
-        // Filter gyms that meet the TravelPrice and TravelTime criteria
-        var filtered = gymsWithGeoData
-            .Where(g => g.TravelPrice <= MAX_TRAVEL_PRICE && g.TravelTime <= MAX_TRAVEL_TIME)
-            .ToList();
-
-        return filtered;
-    }
-
-    /// <summary>
     /// Calculates the final ratings for each gym based on multiple criteria.
+    /// Adjusts weights based on PriceRatingPriority to balance price-related and other criteria.
     /// </summary>
     /// <param name="filteredGyms">List of GymTravelInfoDto after filtering.</param>
+    /// <param name="priceRatingPriority">User's priority for price (0-100).</param>
     /// <returns>List of GymRecommendationDto with calculated scores.</returns>
-    private List<GymRecommendationDto> GetRatings(List<GymTravelInfoDto> filteredGyms)
+    private List<GymRecommendationDto> GetRatings(List<GymTravelInfoDto> filteredGyms, int priceRatingPriority)
     {
         if (filteredGyms == null || !filteredGyms.Any())
         {
@@ -121,6 +101,7 @@ public class RecomendationService
         }
 
         // Extract the lists for each criterion
+        //TODO: Change to use correct field based on membership length
         List<double?> membershipPrices = filteredGyms
             .Select(g => g.Gym.MonthlyMprice.HasValue ? (double?)g.Gym.MonthlyMprice.Value : null)
             .ToList();
@@ -142,42 +123,46 @@ public class RecomendationService
             .ToList();
 
         // Normalize each criterion using the helper method
-        List<double> normalizedMembershipPrices = NormalizeWithZScoreAndMinMax(membershipPrices);
-        List<double> normalizedExternalRatings = NormalizeWithZScoreAndMinMax(externalRatings);
-        List<double> normalizedCongestionRatings = NormalizeWithZScoreAndMinMax(congestionRatings);
-        List<double> normalizedTravelPrices = NormalizeWithZScoreAndMinMax(travelPrices);
-        List<double> normalizedTravelTimes = NormalizeWithZScoreAndMinMax(travelTimes);
+        // Pass 'inverted' = false for criteria to maximize (ExternalRating, CongestionRating)
+        // Pass 'inverted' = true for criteria to minimize (MembershipPrice, TravelPrice, TravelTime)
+        // Note: MembershipPrice is typically something to minimize, but based on original code, it was not inverted.
+        // Here, we assume MembershipPrice should be minimized. Adjust if necessary.
+        List<double> normalizedMembershipPrices = NormalizeCriteria(membershipPrices, inverted: true);
+        List<double> normalizedExternalRatings = NormalizeCriteria(externalRatings, inverted: false);
+        List<double> normalizedCongestionRatings = NormalizeCriteria(congestionRatings, inverted: false);
+        List<double> normalizedTravelPrices = NormalizeCriteria(travelPrices, inverted: true);
+        List<double> normalizedTravelTimes = NormalizeCriteria(travelTimes, inverted: true);
 
-        // Assign weights and ensure they sum to 1
-        double weightMembershipPrice = WEIGHTS_MAP.ContainsKey(MONTHLY_PRICE_WEIGHT)
-            ? Convert.ToDouble(WEIGHTS_MAP[MONTHLY_PRICE_WEIGHT])
-            : 0.25;
+        // Adjust weights based on PriceRatingPriority
+        // PriceRatingPriority (0-100) determines the balance between price-related and other criteria
+        // Higher PriceRatingPriority gives more emphasis to price-related criteria
 
-        double weightExternalRating = WEIGHTS_MAP.ContainsKey(EXTERNAL_RATING_WEIGHT)
-            ? Convert.ToDouble(WEIGHTS_MAP[EXTERNAL_RATING_WEIGHT])
-            : 0.25;
+        // Convert PriceRatingPriority to a proportion (0.0 to 1.0)
+        double pricePriorityProportion = Math.Clamp(priceRatingPriority / 100.0, 0.0, 1.0);
+        double otherPriorityProportion = 1.0 - pricePriorityProportion;
 
-        double weightCongestionRating = WEIGHTS_MAP.ContainsKey(CONGESTION_RATING_WEIGHT)
-            ? Convert.ToDouble(WEIGHTS_MAP[CONGESTION_RATING_WEIGHT])
-            : 0.15;
+        // Distribute the proportions within their respective groups
+        // Price-related group: MembershipPrice and TravelPrice
+        double membershipPriceWeight = BaseMembershipPriceWeight * pricePriorityProportion;
+        double travelPriceWeight = BaseTravelPriceWeight * pricePriorityProportion;
 
-        double weightTravelPrice = WEIGHTS_MAP.ContainsKey(TRAVEL_PRICE_WEIGHT)
-            ? Convert.ToDouble(WEIGHTS_MAP[TRAVEL_PRICE_WEIGHT])
-            : 0.20;
+        // Other-related group: ExternalRating, CongestionRating, TravelTime
+        double externalRatingWeight = BaseExternalRatingWeight * otherPriorityProportion;
+        double congestionRatingWeight = BaseCongestionRatingWeight * otherPriorityProportion;
+        double travelTimeWeight = BaseTravelTimeWeight * otherPriorityProportion;
 
-        double weightTravelTime = WEIGHTS_MAP.ContainsKey(TRAVEL_TIME_WEIGHT)
-            ? Convert.ToDouble(WEIGHTS_MAP[TRAVEL_TIME_WEIGHT])
-            : 0.15;
+        // Total weight should now sum to 1.0 if pricePriorityProportion + otherPriorityProportion = 1
+        // However, due to Base weights, it might not. So, normalize them.
+        double totalWeight = membershipPriceWeight + travelPriceWeight + externalRatingWeight + congestionRatingWeight +
+                             travelTimeWeight;
 
-        double totalWeight = weightMembershipPrice + weightExternalRating + weightCongestionRating + weightTravelPrice +
-                             weightTravelTime;
 
-        // Normalize weights to ensure they sum up to 1
-        weightMembershipPrice /= totalWeight;
-        weightExternalRating /= totalWeight;
-        weightCongestionRating /= totalWeight;
-        weightTravelPrice /= totalWeight;
-        weightTravelTime /= totalWeight;
+        membershipPriceWeight /= totalWeight;
+        travelPriceWeight /= totalWeight;
+        externalRatingWeight /= totalWeight;
+        congestionRatingWeight /= totalWeight;
+        travelTimeWeight /= totalWeight;
+
 
         // Calculate Final Score for each gym
         List<GymRecommendationDto> recommendations = new List<GymRecommendationDto>();
@@ -193,11 +178,11 @@ public class RecomendationService
                 NormalizedTravelPrice = normalizedTravelPrices[i],
                 NormalizedTravelTime = normalizedTravelTimes[i],
                 FinalScore =
-                    (normalizedMembershipPrices[i] * weightMembershipPrice) +
-                    (normalizedExternalRatings[i] * weightExternalRating) +
-                    (normalizedCongestionRatings[i] * weightCongestionRating) +
-                    (normalizedTravelPrices[i] * weightTravelPrice) +
-                    (normalizedTravelTimes[i] * weightTravelTime)
+                    (normalizedMembershipPrices[i] * membershipPriceWeight) +
+                    (normalizedExternalRatings[i] * externalRatingWeight) +
+                    (normalizedCongestionRatings[i] * congestionRatingWeight) +
+                    (normalizedTravelPrices[i] * travelPriceWeight) +
+                    (normalizedTravelTimes[i] * travelTimeWeight)
             };
             recommendations.Add(recommendation);
         }
@@ -210,11 +195,13 @@ public class RecomendationService
 
     /// <summary>
     /// Normalizes a list of nullable doubles using Z-score normalization followed by Min-Max normalization.
+    /// Optionally inverts the normalized values if the criteria should be minimized.
     /// Missing values (nulls) are assigned a Z-score of 0, representing the mean.
     /// </summary>
     /// <param name="values">List of nullable double values to normalize.</param>
-    /// <returns>List of normalized double values.</returns>
-    private List<double> NormalizeWithZScoreAndMinMax(List<double?> values)
+    /// <param name="inverted">Indicates whether to invert the normalized values.</param>
+    /// <returns>List of normalized (and possibly inverted) double values.</returns>
+    private List<double> NormalizeCriteria(List<double?> values, bool inverted)
     {
         // Extract non-null values for calculations
         var nonNullValues = values.Where(v => v.HasValue).Select(v => v.Value).ToList();
@@ -256,6 +243,12 @@ public class RecomendationService
             (z - minZ) / rangeZ
         ).ToList();
 
+        // Invert the normalized values if required
+        if (inverted)
+        {
+            normalizedValues = normalizedValues.Select(x => 1 - x).ToList();
+        }
+
         return normalizedValues;
     }
 
@@ -271,4 +264,64 @@ public class RecomendationService
         double variance = values.Sum(v => Math.Pow(v - mean, 2)) / values.Count;
         return Math.Sqrt(variance);
     }
+
+    // /// <summary>
+    // /// Saves the gym recommendation request to the database.
+    // /// </summary>
+    // /// <param name="requestDto">The gym recommendation request DTO.</param>
+    // /// <returns>The ID of the saved request.</returns>
+    // private Guid SaveRequest(GymRecommendationRequestDto requestDto)
+    // {
+    //     // Convert DTO to entity
+    //     var requestEntity = new RecommendationRequest
+    //     {
+    //         Id = Guid.NewGuid(),
+    //         TimePriority = requestDto.TimePriority,
+    //         MembershipLength = requestDto.MembershipLength,
+    //         PreferredDepartureTime = requestDto.PreferredDepartureTime,
+    //         PreferredArrivalTime = requestDto.PreferredArrivalTime,
+    //         MinMembershipPrice = requestDto.MinMembershipPrice,
+    //         MinOverallRating = requestDto.MinOverallRating,
+    //         MinCongestionRating = requestDto.MinCongestionRating,
+    //         City = requestDto.City,
+    //         Latitude = requestDto.Latitude,
+    //         Longitude = requestDto.Longitude,
+    //         CreatedAt = DateTime.UtcNow
+    //     };
+    //
+    //     // Save to DB
+    //     _dbContext.RecommendationRequests.Add(requestEntity);
+    //     _dbContext.SaveChanges();
+    //
+    //     return requestEntity.Id;
+    // }
+    //
+    // /// <summary>
+    // /// Saves the gym recommendations to the database, linking them to the request ID.
+    // /// </summary>
+    // /// <param name="requestId">The ID of the recommendation request.</param>
+    // /// <param name="recommendations">The list of gym recommendations.</param>
+    // private void SaveRecommendations(Guid requestId, List<GymRecommendationDto> recommendations)
+    // {
+    //     foreach (var recommendation in recommendations)
+    //     {
+    //         var recommendationEntity = new Recommendation
+    //         {
+    //             Id = Guid.NewGuid(),
+    //             RequestId = requestId,
+    //             GymId = recommendation.Gym.Id,
+    //             FinalScore = recommendation.FinalScore,
+    //             NormalizedMembershipPrice = recommendation.NormalizedMembershipPrice,
+    //             NormalizedOverallRating = recommendation.NormalizedOverallRating,
+    //             NormalizedCongestionRating = recommendation.NormalizedCongestionRating,
+    //             NormalizedTravelPrice = recommendation.NormalizedTravelPrice,
+    //             NormalizedTravelTime = recommendation.NormalizedTravelTime,
+    //             CreatedAt = DateTime.UtcNow
+    //         };
+    //
+    //         _dbContext.Recommendations.Add(recommendationEntity);
+    //     }
+    //
+    //     _dbContext.SaveChanges();
+    // }
 }
