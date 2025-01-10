@@ -8,13 +8,11 @@ import {
   faChartBar,
   faFrown,
 } from "@fortawesome/free-solid-svg-icons";
-import {useNavigate, useParams, useLocation} from "react-router-dom";
+import {useParams} from "react-router-dom";
 import { axiosInternal } from "../services/axios";
 
 const History = () => {
   const [requests, setRequests] = useState([]);
-  const navigate = useNavigate();
-  const location = useLocation();
   const {username} = useParams();
 
   // Actual useEffect for fetching data from backend
@@ -96,14 +94,7 @@ const History = () => {
     setRequests(dummyData);
   }, []); 
 
-  const navigationHandler = (path) => {
-    // Ensure no duplicate history entries for the same path
-    if ((path === '/' && path !== location.pathname) || location.pathname !== path) {
-        navigate(path);
-    }
-    // Scroll to the top for smooth UX
-    window.scrollTo({top: 0, left: 0, behavior: "smooth"});
-};
+
 
 const handleRequestClick = (id) => {
   const url = `/account/${username}/history/recommendations/${id}`;
