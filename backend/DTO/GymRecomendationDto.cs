@@ -7,11 +7,10 @@ public class GymRecommendationDto
     public Gym Gym { get; set; }
 
     public double NormalizedMembershipPrice { get; set; }
-
     public double NormalizedOverallRating { get; set; }
-
     public double NormalizedCongestionRating { get; set; }
-
+    public double NormalizedTravelPrice { get; set; }
+    public double NormalizedTravelTime { get; set; }
     public double FinalScore { get; set; }
 
     public GymRecommendationDto(Gym gym)

@@ -9,28 +9,41 @@ namespace backend.Services;
 public class RecomendationService
 {
     private readonly GymrecommenderContext _dbContext;
+    private readonly GeoService _geoService;
 
-    public RecomendationService(GymrecommenderContext context)
+    public RecomendationService(GymrecommenderContext context, GeoService geoService)
     {
         _dbContext = context;
+        _geoService = geoService;
     }
 
-    private const string MONTHLY_PRICE_WEIGHT = "TimePriority";
-    private const string EXTERNAL_RATING_WEIGHT = "PricePriority";
-    private const string CONGESTION_RATING_WEIGHT = "PricePriority";
+    private const string MONTHLY_PRICE_WEIGHT = "MonthlyPrice";
+    private const string EXTERNAL_RATING_WEIGHT = "ExternalRating";
+    private const string CONGESTION_RATING_WEIGHT = "CongestionRating";
+    private const string TRAVEL_PRICE_WEIGHT = "TravelPrice";
+    private const string TRAVEL_TIME_WEIGHT = "TravelTime";
 
     protected static readonly Hashtable WEIGHTS_MAP = new Hashtable()
     {
-        { MONTHLY_PRICE_WEIGHT, 0.6 },
-        { EXTERNAL_RATING_WEIGHT, 0.2 },
-        { CONGESTION_RATING_WEIGHT, 0.2 }
+        { MONTHLY_PRICE_WEIGHT, 0.25 },
+        { EXTERNAL_RATING_WEIGHT, 0.25 },
+        { CONGESTION_RATING_WEIGHT, 0.15 },
+        { TRAVEL_PRICE_WEIGHT, 0.20 },
+        { TRAVEL_TIME_WEIGHT, 0.15 }
     };
 
     public async Task<IActionResult> GetRecomendations(GymRecommendationRequestDto gymRecommendationRequest)
     {
         List<Gym> filteredGyms = await GetFilteredGyms(gymRecommendationRequest);
-        var recommendations = GetRatings(filteredGyms);
-        //TODO: save request and recomndation
+        List<GymTravelInfoDto> filteredGymsWithGeoData = _geoService.CalculateTravelingTimeAndPrice(
+            filteredGyms,
+            gymRecommendationRequest.Latitude,
+            gymRecommendationRequest.Longitude
+        );
+        List<GymTravelInfoDto> finalFilteredGyms = FilterGymsByTravelData(filteredGymsWithGeoData);
+
+        var recommendations = GetRatings(filteredGymsWithGeoData);
+        // TODO: save request and recomndation
         //saveRequest(gymRecomendationRequest);
         //saveRecomensations(recommendations);
         return new OkObjectResult(recommendations);
@@ -76,70 +89,115 @@ public class RecomendationService
         return await query.ToListAsync();
     }
 
-    private List<GymRecommendationDto> GetRatings(List<Gym> filteredGyms)
+    /// <summary>
+    /// Filters gyms based on TravelPrice and TravelTime thresholds.
+    /// </summary>
+    /// <param name="gymsWithGeoData">List of GymTravelInfoDto containing travel data.</param>
+    /// <returns>Filtered list of GymTravelInfoDto.</returns>
+    private List<GymTravelInfoDto> FilterGymsByTravelData(List<GymTravelInfoDto> gymsWithGeoData)
+    {
+        // Define your thresholds for TravelPrice and TravelTime
+        const double MAX_TRAVEL_PRICE = 5.0; // Example threshold
+        const double MAX_TRAVEL_TIME = 60.0; // Example threshold in minutes
+
+        // Filter gyms that meet the TravelPrice and TravelTime criteria
+        var filtered = gymsWithGeoData
+            .Where(g => g.TravelPrice <= MAX_TRAVEL_PRICE && g.TravelTime <= MAX_TRAVEL_TIME)
+            .ToList();
+
+        return filtered;
+    }
+
+    /// <summary>
+    /// Calculates the final ratings for each gym based on multiple criteria.
+    /// </summary>
+    /// <param name="filteredGyms">List of GymTravelInfoDto after filtering.</param>
+    /// <returns>List of GymRecommendationDto with calculated scores.</returns>
+    private List<GymRecommendationDto> GetRatings(List<GymTravelInfoDto> filteredGyms)
     {
         if (filteredGyms == null || !filteredGyms.Any())
         {
-            return [];
+            return new List<GymRecommendationDto>();
         }
 
-        // TODO: add time traveling and traveling price
-
         // Extract the lists for each criterion
-        List<double?> monthlyPrices = filteredGyms
-            .Select(g => g.MonthlyMprice.HasValue ? (double?)g.MonthlyMprice.Value : null)
+        List<double?> membershipPrices = filteredGyms
+            .Select(g => g.Gym.MonthlyMprice.HasValue ? (double?)g.Gym.MonthlyMprice.Value : null)
             .ToList();
 
         List<double?> externalRatings = filteredGyms
-            .Select(g => (double?)g.ExternalRating)
+            .Select(g => (double?)g.Gym.ExternalRating)
             .ToList(); // Assuming ExternalRating is non-nullable
 
         List<double?> congestionRatings = filteredGyms
-            .Select(g => (double?)g.CongestionRating)
+            .Select(g => (double?)g.Gym.CongestionRating)
             .ToList(); // Assuming CongestionRating is non-nullable
 
+        List<double?> travelPrices = filteredGyms
+            .Select(g => (double?)g.TravelPrice)
+            .ToList();
+
+        List<double?> travelTimes = filteredGyms
+            .Select(g => (double?)g.TravelTime)
+            .ToList();
 
         // Normalize each criterion using the helper method
-        List<double> normalizedMonthlyPrices = NormalizeWithZScoreAndMinMax(monthlyPrices);
+        List<double> normalizedMembershipPrices = NormalizeWithZScoreAndMinMax(membershipPrices);
         List<double> normalizedExternalRatings = NormalizeWithZScoreAndMinMax(externalRatings);
         List<double> normalizedCongestionRatings = NormalizeWithZScoreAndMinMax(congestionRatings);
+        List<double> normalizedTravelPrices = NormalizeWithZScoreAndMinMax(travelPrices);
+        List<double> normalizedTravelTimes = NormalizeWithZScoreAndMinMax(travelTimes);
 
-        // Assign weights
-        // Ensure the weights sum to 1
-        double weightMonthlyPrice = WEIGHTS_MAP.ContainsKey(MONTHLY_PRICE_WEIGHT)
+        // Assign weights and ensure they sum to 1
+        double weightMembershipPrice = WEIGHTS_MAP.ContainsKey(MONTHLY_PRICE_WEIGHT)
             ? Convert.ToDouble(WEIGHTS_MAP[MONTHLY_PRICE_WEIGHT])
-            : 0.6;
+            : 0.25;
 
         double weightExternalRating = WEIGHTS_MAP.ContainsKey(EXTERNAL_RATING_WEIGHT)
             ? Convert.ToDouble(WEIGHTS_MAP[EXTERNAL_RATING_WEIGHT])
-            : 0.2;
+            : 0.25;
 
         double weightCongestionRating = WEIGHTS_MAP.ContainsKey(CONGESTION_RATING_WEIGHT)
             ? Convert.ToDouble(WEIGHTS_MAP[CONGESTION_RATING_WEIGHT])
-            : 0.2;
+            : 0.15;
 
-        double totalWeight = weightMonthlyPrice + weightExternalRating + weightCongestionRating;
+        double weightTravelPrice = WEIGHTS_MAP.ContainsKey(TRAVEL_PRICE_WEIGHT)
+            ? Convert.ToDouble(WEIGHTS_MAP[TRAVEL_PRICE_WEIGHT])
+            : 0.20;
+
+        double weightTravelTime = WEIGHTS_MAP.ContainsKey(TRAVEL_TIME_WEIGHT)
+            ? Convert.ToDouble(WEIGHTS_MAP[TRAVEL_TIME_WEIGHT])
+            : 0.15;
+
+        double totalWeight = weightMembershipPrice + weightExternalRating + weightCongestionRating + weightTravelPrice +
+                             weightTravelTime;
 
         // Normalize weights to ensure they sum up to 1
-        weightMonthlyPrice /= totalWeight;
+        weightMembershipPrice /= totalWeight;
         weightExternalRating /= totalWeight;
         weightCongestionRating /= totalWeight;
+        weightTravelPrice /= totalWeight;
+        weightTravelTime /= totalWeight;
 
         // Calculate Final Score for each gym
         List<GymRecommendationDto> recommendations = new List<GymRecommendationDto>();
 
         for (int i = 0; i < filteredGyms.Count; i++)
         {
-            var gym = filteredGyms[i];
+            var gym = filteredGyms[i].Gym;
             var recommendation = new GymRecommendationDto(gym)
             {
-                NormalizedMembershipPrice = normalizedMonthlyPrices[i],
+                NormalizedMembershipPrice = normalizedMembershipPrices[i],
                 NormalizedOverallRating = normalizedExternalRatings[i],
                 NormalizedCongestionRating = normalizedCongestionRatings[i],
+                NormalizedTravelPrice = normalizedTravelPrices[i],
+                NormalizedTravelTime = normalizedTravelTimes[i],
                 FinalScore =
-                    (normalizedMonthlyPrices[i] * weightMonthlyPrice) +
+                    (normalizedMembershipPrices[i] * weightMembershipPrice) +
                     (normalizedExternalRatings[i] * weightExternalRating) +
-                    (normalizedCongestionRatings[i] * weightCongestionRating)
+                    (normalizedCongestionRatings[i] * weightCongestionRating) +
+                    (normalizedTravelPrices[i] * weightTravelPrice) +
+                    (normalizedTravelTimes[i] * weightTravelTime)
             };
             recommendations.Add(recommendation);
         }
@@ -167,7 +225,7 @@ public class RecomendationService
             return values.Select(v => 0.5).ToList();
         }
 
-        // Step 2: Calculate mean and standard deviation for Z-score
+        // Calculate mean and standard deviation for Z-score
         double mean = nonNullValues.Average();
         double stdDev = CalculateStandardDeviation(nonNullValues, mean);
 
@@ -177,7 +235,7 @@ public class RecomendationService
             stdDev = 1;
         }
 
-        //  Compute Z-scores
+        // Compute Z-scores, assign 0 for missing values
         List<double> zScores = values.Select(v =>
             v.HasValue ? (v.Value - mean) / stdDev : 0
         ).ToList();
