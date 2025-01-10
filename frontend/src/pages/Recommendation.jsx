@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import MapSection from "../components/MapSection.jsx";
+import { useParams } from "react-router-dom";
+import { axiosInternal } from "../services/axios";
 import { CoordinatesProvider } from "../context/CoordinatesProvider.jsx";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -13,9 +15,11 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 
 const Recommendation = () => {
+  const { id } = useParams();
   const [recommendations, setRecommendations] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  console.log("Navigated to ID:", id);
 
   useEffect(() => {
     const fetchRecommendations = async () => {
