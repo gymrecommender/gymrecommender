@@ -21,7 +21,7 @@ public class RecomendationController : Controller
     /// <param name="request">User's gym recommendation request containing filters and preferences.</param>
     /// <returns>List of recommended gyms with normalized scores and final scores.</returns>
     [HttpPost("recommendations")]
-    public async Task<IActionResult> GetRecommendations([FromBody] GymRecommendationRequestDto request)
+    public async Task<IActionResult> CreateRecommendationsRequest([FromBody] GymRecommendationRequestDto request)
     {
         if (request == null)
         {

@@ -18,8 +18,8 @@ public class RecomendationService
 
     // Define static readonly constants for base weights within each group
     // These represent the distribution within price-related and other-related criteria
-    private static readonly double BaseMembershipPriceWeight = 0.5; // Within price-related group
-    private static readonly double BaseTravelPriceWeight = 0.5; // Within price-related group
+    private static readonly double BaseMembershipPriceWeight = 0.8; // Within price-related group
+    private static readonly double BaseTravelPriceWeight = 0.2; // Within price-related group
 
     private static readonly double BaseExternalRatingWeight = 0.4; // Within other-related group
     private static readonly double BaseCongestionRatingWeight = 0.3; // Within other-related group
@@ -53,13 +53,13 @@ public class RecomendationService
     /// <returns>A list of Gym objects that match the filter criteria.</returns>
     private async Task<List<Gym>> GetFilteredGyms(GymRecommendationRequestDto request)
     {
-        // Start with all gyms
-        IQueryable<Gym> query = _dbContext.Gyms.AsQueryable();
+        // Start with all gyms and include the City navigation property
+        IQueryable<Gym> query = _dbContext.Gyms.Include(g => g.City).AsQueryable();
 
         // Filter by MaxMembershipPrice if specified
         if (request.MaxMembershipPrice > 0)
         {
-            //TODO: Change based on membership length
+            // TODO: Adjust based on membership length
             query = query.Where(g => g.MonthlyMprice.HasValue && g.MonthlyMprice.Value <= request.MaxMembershipPrice);
         }
 
@@ -79,12 +79,13 @@ public class RecomendationService
         if (!string.IsNullOrEmpty(request.City))
         {
             query = query.Where(g =>
-                g.City != null && g.City.Name.Equals(request.City, StringComparison.OrdinalIgnoreCase));
+                g.City != null && EF.Functions.ILike(g.City.Name, request.City));
         }
 
         // Execute the query and return the list
         return await query.ToListAsync();
     }
+
 
     /// <summary>
     /// Calculates the final ratings for each gym based on multiple criteria.
@@ -107,7 +108,7 @@ public class RecomendationService
             .ToList();
 
         List<double?> externalRatings = filteredGyms
-            .Select(g => (double?)g.Gym.ExternalRating)
+            .Select(g => (double?)g.Gym.InternalRating)
             .ToList(); // Assuming ExternalRating is non-nullable
 
         List<double?> congestionRatings = filteredGyms
@@ -136,7 +137,6 @@ public class RecomendationService
         // Adjust weights based on PriceRatingPriority
         // PriceRatingPriority (0-100) determines the balance between price-related and other criteria
         // Higher PriceRatingPriority gives more emphasis to price-related criteria
-
         // Convert PriceRatingPriority to a proportion (0.0 to 1.0)
         double pricePriorityProportion = Math.Clamp(priceRatingPriority / 100.0, 0.0, 1.0);
         double otherPriorityProportion = 1.0 - pricePriorityProportion;
