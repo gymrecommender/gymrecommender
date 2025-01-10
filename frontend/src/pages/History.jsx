@@ -106,8 +106,11 @@ const History = () => {
 };
 
 const handleRequestClick = (id) => {
-    navigationHandler(`/account/${username}/history/recommendations/${id}`);
+  const url = `/account/${username}/history/recommendations/${id}`;
+  // Open in a new tab
+  window.open(url, '_blank', 'noopener,noreferrer');
 };
+
 
 
   return (
