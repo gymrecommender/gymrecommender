@@ -3,7 +3,14 @@ import {useCoordinates} from "../../context/CoordinatesProvider.jsx";
 import {useCallback, useEffect, useState} from "react";
 import Marker from "./Marker.jsx";
 import {calculateCenter} from "../../services/helpers.jsx";
-import {startMarker} from "../../services/markers.jsx";
+import {startMarker, mainRatingMarker, secRatingMarket, forRatings} from "../../services/markers.jsx";
+
+const markerStyles = {
+    start: startMarker,
+    main: mainRatingMarker,
+    secondary: secRatingMarket,
+    forRatings: forRatings,
+};
 
 const startingCamera = {
 	center: {lat: -33.860664, lng: 151.208138},
@@ -23,7 +30,7 @@ const GoogleMap = ({markers}) => {
 			setCameraProps({zoom: 15, center: coordinates});
 
 			// We want to remove the previous marker as there is no case in which we can add more than 1 marker
-			const newMarker = {...coordinates, ...startMarker, id: Math.round(Math.random() * 800)}
+			const newMarker = {...coordinates, ...startMarker, type: "start", id: Math.round(Math.random() * 800)}
 			setMarkersData([newMarker])
 		}
 	}, [coordinates])
@@ -40,9 +47,12 @@ const GoogleMap = ({markers}) => {
 
 	const handleCameraChange = useCallback((event) => setCameraProps(event.detail))
 
-	const showMarkers = markersData?.map(marker => {
-		return <Marker key={marker.id} {...marker} />
-	})
+	const showMarkers = markersData?.map((marker) => {
+		const { type, ...rest } = marker;
+		const styles = markerStyles[type] || {};
+		return <Marker key={marker.id} {...rest} {...styles} />;
+	});
+
 	return (
 		<section className="section section-map">
 			<div className={"map"}>
