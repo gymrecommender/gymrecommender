@@ -93,7 +93,7 @@ public class RecomendationService
     /// <param name="filteredGyms">List of GymTravelInfoDto after filtering.</param>
     /// <param name="priceRatingPriority">User's priority for price (0-100).</param>
     /// <returns>List of GymRecommendationDto with calculated scores.</returns>
-    private List<GymRecommendationDto> GetRatings(List<GymTravelInfoDto> filteredGyms, int priceRatingPriority)
+    public List<GymRecommendationDto> GetRatings(List<GymTravelInfoDto> filteredGyms, int priceRatingPriority)
     {
         if (filteredGyms == null || !filteredGyms.Any())
         {
