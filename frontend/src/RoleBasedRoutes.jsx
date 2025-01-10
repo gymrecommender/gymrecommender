@@ -9,6 +9,7 @@ import UserRating from "./pages/UserRating.jsx";
 import AdminRequests from "./pages/AdminRequests.jsx";
 import TitleSetter from "./TitleSetter.jsx";
 import Recommendation from "./pages/Recommendation.jsx";
+import {SelectedGymProvider} from "./context/SelectedGymProvider.jsx";
 
 const roles = {
 	gym: {
@@ -59,7 +60,11 @@ const RoleBasedRoutes = () => {
 					path={path}
 					element={
 						<TitleSetter title={routeTitle}>
-							<Component/>
+							{Component === Recommendation ?
+								<SelectedGymProvider>
+									<Component/>
+								</SelectedGymProvider>
+								: <Component/>}
 						</TitleSetter>
 					}
 				/>

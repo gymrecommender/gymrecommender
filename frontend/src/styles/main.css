@@ -36,9 +36,11 @@ body::-webkit-scrollbar {
     background-color: #002147;
     padding: 20px;
 }
+
 .content > :first-child {
     flex: 1;
 }
+
 .content > :nth-child(2) {
     flex: 3;
 }
@@ -96,6 +98,7 @@ body::-webkit-scrollbar {
 .input-field {
     width: 100%;
 }
+
 .selector > select, .input-field > input:not([type="range"]) {
     width: 100%;
     height: 45px;
@@ -146,7 +149,7 @@ body::-webkit-scrollbar {
 /*styles for all buttons*/
 button[type="submit"].btn-submit {
     background-color: #00338e;
-    color:#F5F5F5;
+    color: #F5F5F5;
     border: none;
     padding: 10px 20px;
     border-radius: 5px;
@@ -230,6 +233,7 @@ input[type="range"]::-moz-range-thumb {
     height: 45px;
     font-size: 1.0em;
 }
+
 .location-controls > :last-child {
     flex-grow: 1;
 }
@@ -276,7 +280,7 @@ input[type="range"]::-moz-range-thumb {
     width: 100%;
     height: 100%;
     background-color: #e6e6e6;
-    position:relative;
+    position: relative;
     font-size: 2em;
     color: #666;
     border: 1px solid #ccc;
@@ -315,44 +319,44 @@ input[type="range"]::-moz-range-thumb {
 
 /*Recommendations style*/
 .recommendation-container {
-  display: flex;
-  flex-direction: row;
-  height: 80vh;
-  gap: 20px;
+    display: flex;
+    flex-direction: row;
+    height: 80vh;
+    gap: 20px;
 }
 
 .recommendation-lists {
-  width: 25%;
-  background-color: #96a3e7;
-  color: #ecf0f1;
-  padding: 20px;
-  overflow-y: auto;
+    background-color: #96a3e7;
+    color: #ecf0f1;
+    padding: 20px;
+    overflow-y: auto;
+    height: 80vh;
 }
 
 .recommendation-list {
-  margin-bottom: 20px;
+    margin-bottom: 20px;
 }
 
 .recommendation-lists h3 {
     color: #ffffff;
     font-size: 1.5em;
     margin-bottom: 20px;
-  }
+}
 
 .recommendation-list h3::before {
-  content: '\f015';
-  font-family: 'Font Awesome 5 Free';
-  font-weight: 900;
-  color: #ffffff;
+    content: '\f015';
+    font-family: 'Font Awesome 5 Free';
+    font-weight: 900;
+    color: #ffffff;
 }
 
 .gym-item {
-  background-color: #7C5DC6;
-  border-radius: 8px;
-  padding: 15px;
-  margin-bottom: 10px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  gap: 15px;
+    background-color: #7C5DC6;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    gap: 15px;
 }
 
 .gym-item p {
@@ -361,26 +365,26 @@ input[type="range"]::-moz-range-thumb {
     margin: 8px 0;
     font-family: "Arial", sans-serif;
     color: #ffffff;
-  }
+}
 
-  .gym-item p svg {
+.gym-item p svg {
     margin-right: 8px;
     color: #00BFFF;
-  }
+}
 
 .recommendation-lists::-webkit-scrollbar {
-  width: 8px;
+    width: 8px;
 }
 
 .recommendation-lists::-webkit-scrollbar-thumb {
-  background-color: #00BFFF;
-  border-radius: 8px;
+    background-color: #00BFFF;
+    border-radius: 8px;
 }
 
 .recommendation-lists::-webkit-scrollbar-track {
-  background-color: #34495e;
+    background-color: #34495e;
 }
-  
+
 /*History page*/
 .history-table {
     width: 100%;
@@ -389,29 +393,29 @@ input[type="range"]::-moz-range-thumb {
     background-color: #a0a8f5;
     color: #002147;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  }
-  
-  .history-table th,
-  .history-table td {
+}
+
+.history-table th,
+.history-table td {
     border: 1px solid #ddd;
     text-align: center;
     padding: 16px;
-  }
-  
-  .history-table th {
+}
+
+.history-table th {
     background-color: #002147;
     color: #ffffff;
-  }
-  
-  .history-table tr:nth-child(even) {
+}
+
+.history-table tr:nth-child(even) {
     background-color: #cdd2fc;
-  }
-  
-  .history-table tr:hover {
+}
+
+.history-table tr:hover {
     background-color: #f0f0f5;
-  }
-  
-  .no-requests {
+}
+
+.no-requests {
     color: #fff;
     font-size: 1.5rem;
     margin-top: 20px;
@@ -420,15 +424,13 @@ input[type="range"]::-moz-range-thumb {
     flex-direction: column;
     align-items: center;
     gap: 20px;
-  }
-  
-  .no-requests svg {
+}
+
+.no-requests svg {
     font-size: 3rem;
     margin-bottom: 10px;
     color: #cdbfff;
-  }
-  
-
+}
 
 
 /*AccountGym forms*/
@@ -436,7 +438,7 @@ input[type="range"]::-moz-range-thumb {
     color: #4f8cff;
     font-weight: bold;
     margin-top: 10px;
-  }
+}
 
 .unavailable-form {
     display: grid;
@@ -500,7 +502,7 @@ button.btn-icon .icon:not(:last-child) {
 }
 
 button.btn-icon:hover {
-    border-color:#9f60b5;
+    border-color: #9f60b5;
     color: #9f60b5;
     cursor: pointer;
 }
@@ -515,13 +517,14 @@ button.btn-action {
     flex-direction: row;
     padding: 30px 40px;
 }
+
 .section.section-info > div {
     flex: 1 1 0;
 }
+
 .section.not-found {
     color: white;
 }
-
 
 
 /*Footer*/
@@ -561,6 +564,14 @@ button.btn-action {
     color: #c60557;
 }
 
+.loader.loader-container {
+    position: inherit;
+    width: 100%;
+    height: 100%;
+
+    background-color: inherit;
+}
+
 .input-field.required label:after, .selector.required label:after {
     content: "*";
     margin-left: 2px;
@@ -580,6 +591,7 @@ button:hover {
 button.btn-disabled {
     background-color: gray !important;
 }
+
 button.btn-disabled:hover {
     cursor: not-allowed !important;
     background-color: gray !important;
@@ -639,4 +651,12 @@ form .form-disabler:hover .form-disabler-hint {
     padding: 5px;
 
     color: white;
+}
+
+.gym-item.selected {
+    border: 10px solid white;
+}
+
+.gym-item:hover {
+    cursor: pointer;
 }
