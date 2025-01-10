@@ -1,7 +1,16 @@
 import React, { useState, useEffect } from "react";
 import MapSection from "../components/MapSection.jsx";
 import { CoordinatesProvider } from "../context/CoordinatesProvider.jsx";
-import { axiosInternal } from "../services/axios.jsx";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faMapMarkerAlt,
+  faCalendarAlt,
+  faDollarSign,
+  faStar,
+  faRoute,
+  faMoneyBillWave,
+  faClock
+} from "@fortawesome/free-solid-svg-icons";
 
 const Recommendation = () => {
   const [recommendations, setRecommendations] = useState([]);
@@ -88,13 +97,41 @@ const Recommendation = () => {
     fetchRecommendations();
   }, []);
 
+  /*useEffect(() => {
+    const fetchRecommendations = async () => {
+      setLoading(true);
+      setError(null);
+
+      try {
+        const response = await axiosInternal.get("/api/recommendations");
+        setRecommendations(response.data);
+      } catch (err) {
+        setError(err.message || "An error occurred while fetching data.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchRecommendations();
+  }, []);*/
+
   // Separate gyms with complete and incomplete data
-  const completeDataGyms = recommendations.filter(gym => 
-    gym.overallRating && gym.timeRating && gym.costRating && gym.travellingTime && gym.totalCost
+  const completeDataGyms = recommendations.filter(
+    (gym) =>
+      gym.overallRating &&
+      gym.timeRating &&
+      gym.costRating &&
+      gym.travellingTime &&
+      gym.totalCost
   );
 
-  const incompleteDataGyms = recommendations.filter(gym => 
-    !gym.overallRating || !gym.timeRating || !gym.costRating || !gym.travellingTime || !gym.totalCost
+  const incompleteDataGyms = recommendations.filter(
+    (gym) =>
+      !gym.overallRating ||
+      !gym.timeRating ||
+      !gym.costRating ||
+      !gym.travellingTime ||
+      !gym.totalCost
   );
 
   return (
@@ -108,32 +145,20 @@ const Recommendation = () => {
             ) : error ? (
               <p>Error: {error}</p>
             ) : completeDataGyms.length > 0 ? (
-                <table className="gym-table">
-                <thead>
-                  <tr>
-                    <th>Gym Name</th>
-                    <th>Overall Rating</th>
-                    <th>Time Rating</th>
-                    <th>Cost Rating</th>
-                    <th>Travelling Time (min)</th>
-                    <th>Total Cost</th>
-                    <th>Address</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {completeDataGyms.slice(0, 5).map((gym) => (
-                    <tr key={gym.id}>
-                      <td>{gym.name}</td>
-                      <td>{gym.overallRating}</td>
-                      <td>{gym.timeRating}</td>
-                      <td>{gym.costRating}</td>
-                      <td>{gym.travellingTime}</td>
-                      <td>{gym.totalCost} {gym.currency}</td>
-                      <td className="address">{gym.address}</td> 
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+              <ul className="gym-list">
+                {completeDataGyms.slice(0, 5).map((gym) => (
+                  <li key={gym.id} className="gym-item">
+                    <h4>{gym.name}</h4>
+                    <p><FontAwesomeIcon icon={faMapMarkerAlt} /> {gym.address}</p>
+                    <p><FontAwesomeIcon icon={faCalendarAlt} /> {gym.date}</p>
+                    <p><FontAwesomeIcon icon={faStar} /> Overall Rating: {gym.overallRating}</p>
+                    <p><FontAwesomeIcon icon={faClock} /> Time Rating: {gym.timeRating}</p>
+                    <p><FontAwesomeIcon icon={faDollarSign} /> Cost Rating: {gym.costRating}</p>
+                    <p><FontAwesomeIcon icon={faRoute} />Travelling Time: {gym.travellingTime} min</p>
+                    <p><FontAwesomeIcon icon={faMoneyBillWave} /> Total Cost: {gym.totalCost} {gym.currency}</p>
+                  </li>
+                ))}
+              </ul>
             ) : (
               <p>No complete data available.</p>
             )}
@@ -146,32 +171,20 @@ const Recommendation = () => {
             ) : error ? (
               <p>Error: {error}</p>
             ) : incompleteDataGyms.length > 0 ? (
-              <table className="gym-table">
-                <thead>
-                  <tr>
-                    <th>Gym Name</th>
-                    <th>Overall Rating</th>
-                    <th>Time Rating</th>
-                    <th>Cost Rating</th>
-                    <th>Travelling Time (min)</th>
-                    <th>Total Cost</th>
-                    <th>Address</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {incompleteDataGyms.slice(0, 3).map((gym) => (
-                    <tr key={gym.id}>
-                      <td>{gym.name}</td>
-                      <td>{gym.overallRating || "N/A"}</td>
-                      <td>{gym.timeRating || "N/A"}</td>
-                      <td>{gym.costRating || "N/A"}</td>
-                      <td>{gym.travellingTime || "N/A"}</td>
-                      <td>{gym.totalCost || "N/A"} {gym.currency || "N/A"}</td>
-                      <td className="address">{gym.address}</td> 
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+              <ul className="gym-list">
+                {incompleteDataGyms.slice(0, 3).map((gym) => (
+                  <li key={gym.id} className="gym-item">
+                    <h4>{gym.name}</h4>
+                    <p><FontAwesomeIcon icon={faMapMarkerAlt} /> {gym.address}</p>
+                    <p><FontAwesomeIcon icon={faCalendarAlt} /> {gym.date}</p>
+                    <p><FontAwesomeIcon icon={faStar} /> Overall Rating: {gym.overallRating || "N/A"}</p>
+                    <p><FontAwesomeIcon icon={faClock} /> Time Rating: {gym.timeRating || "N/A"}</p>
+                    <p><FontAwesomeIcon icon={faDollarSign} /> Cost Rating: {gym.costRating || "N/A"}</p>
+                    <p><FontAwesomeIcon icon={faRoute} /> Travelling Time: {gym.travellingTime || "N/A"} min</p>
+                    <p><FontAwesomeIcon icon={faMoneyBillWave} /> Total Cost: {gym.totalCost || "N/A"} {gym.currency || "N/A"}</p>
+                  </li>
+                ))}
+              </ul>
             ) : (
               <p>No gyms with incomplete data.</p>
             )}
