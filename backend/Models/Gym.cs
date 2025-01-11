@@ -5,19 +5,19 @@ namespace backend.Models;
 
 public partial class Gym
 {
-    public Guid Id { get; set; }
+    public Guid Id { get; set; }//
 
-    public double Latitude { get; set; }
+    public double Latitude { get; set; }//
 
-    public double Longitude { get; set; }
+    public double Longitude { get; set; }//
 
-    public string Name { get; set; } = null!;
+    public string Name { get; set; } = null!;//
 
-    public string ExternalPlaceId { get; set; } = null!;
+    public string ExternalPlaceId { get; set; } = null!;//
 
-    public decimal ExternalRating { get; set; }
+    public decimal ExternalRating { get; set; }//
 
-    public int ExternalRatingNumber { get; set; }
+    public int ExternalRatingNumber { get; set; }//
 
     public string? PhoneNumber { get; set; }
 

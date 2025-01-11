@@ -24,6 +24,44 @@ public class GymController : Controller {
         _appData = appSettings.Value;
         _googleApi = googleApi;
     }
+    
+    
+    [HttpGet("currencies")]
+    public async Task<IActionResult> GetAllCurrencies()
+    {
+        try
+        {
+            var currencies = await _context.Currencies
+                .AsNoTracking()
+                .Select(c => new {
+                    c.Id,
+                    c.Code,
+                    c.Name,
+                    c.Gyms,
+                    c.Recommendations
+                    
+                })
+                .ToListAsync();
+
+            return Ok(new {
+                success = true,
+                data = currencies,
+                message = "All currencies retrieved"
+            });
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, new {
+                success = false,
+                error = new {
+                    code = "InternalError",
+                    message = ex.Message
+                }
+            });
+        }
+    }
+    
+    
 
     [HttpGet("{country}/{city}")]
     public async Task<IActionResult> GetGymsByCity(string country, string city) {
