@@ -24,7 +24,9 @@ builder.Services.AddControllers().AddJsonOptions(options =>
 });
 ;
 
-var fireBaseProjectId = "gymrecommenderprod";
+var fireBaseProjectId = Environment.GetEnvironmentVariable("JWT_AUTHORITY")
+                        ?? throw new InvalidOperationException("JWT_AUTHORITY not set.");
+;
 
 builder.Services.AddAuthentication(options =>
     {
