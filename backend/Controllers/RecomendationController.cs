@@ -8,9 +8,9 @@ namespace backend.Controllers;
 [Route("api/[controller]")]
 public class RecomendationController : Controller
 {
-    private readonly RecomendationService _recommendationService;
+    private readonly RecommendationService _recommendationService;
 
-    public RecomendationController(RecomendationService recommendationService)
+    public RecomendationController(RecommendationService recommendationService)
     {
         _recommendationService = recommendationService;
     }

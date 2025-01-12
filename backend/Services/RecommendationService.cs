@@ -1,19 +1,23 @@
 using backend.DTO;
+using backend.Enums;
 using backend.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace backend.Services;
 
-public class RecomendationService
+public class RecommendationService
 {
     private readonly GymrecommenderContext _dbContext;
     private readonly GeoService _geoService;
+    private readonly AuthenticationService _authenticationService;
 
-    public RecomendationService(GymrecommenderContext context, GeoService geoService)
+    public RecommendationService(GymrecommenderContext context, GeoService geoService,
+        AuthenticationService authenticationService)
     {
         _dbContext = context;
         _geoService = geoService;
+        _authenticationService = authenticationService;
     }
 
     // Define static readonly constants for base weights within each group
@@ -32,18 +36,40 @@ public class RecomendationService
     /// <returns>List of recommended gyms with scores.</returns>
     public async Task<IActionResult> GetRecomendations(GymRecommendationRequestDto gymRecommendationRequest)
     {
-        List<Gym> filteredGyms = await GetFilteredGyms(gymRecommendationRequest);
-        List<GymTravelInfoDto> filteredGymsWithGeoData = _geoService.CalculateTravelingTimeAndPrice(
-            filteredGyms,
-            gymRecommendationRequest.Latitude,
-            gymRecommendationRequest.Longitude
-        );
+        // Start a transaction to ensure atomicity
+        using var transaction = await _dbContext.Database.BeginTransactionAsync();
 
-        var recommendations = GetRatings(filteredGymsWithGeoData, gymRecommendationRequest.PriceRatingPriority);
-        // TODO: save request and recomndation
-        //saveRequest(gymRecomendationRequest);
-        //saveRecomensations(recommendations);
-        return new OkObjectResult(recommendations);
+        try
+        {
+            // Get filtered gyms
+            List<Gym> filteredGyms = await GetFilteredGyms(gymRecommendationRequest);
+
+            // Calculate travel data
+            List<GymTravelInfoDto> filteredGymsWithGeoData = _geoService.CalculateTravelingTimeAndPrice(
+                filteredGyms,
+                gymRecommendationRequest.Latitude,
+                gymRecommendationRequest.Longitude
+            );
+
+            // Calculate ratings
+            var recommendations = GetRatings(filteredGymsWithGeoData, gymRecommendationRequest.PriceRatingPriority);
+            // TODO: save request and recommendations
+            var requestEntity = await SaveRecommendationRequestAsync(gymRecommendationRequest);
+            await SaveRecommendationsAsync(requestEntity.Id, recommendations);
+
+            await transaction.CommitAsync();
+            return new OkObjectResult(recommendations);
+        }
+        catch (Exception ex)
+        {
+            // Rollback the transaction in case of error
+            await transaction.RollbackAsync();
+
+            // Log the exception (implement logging as needed)
+            // _logger.LogError(ex, "Error while processing recommendations.");
+
+            return new StatusCodeResult(500); // Internal Server Error
+        }
     }
 
     /// <summary>
@@ -59,8 +85,10 @@ public class RecomendationService
         // Filter by MaxMembershipPrice if specified
         if (request.MaxMembershipPrice > 0)
         {
-            // TODO: Adjust based on membership length
-            query = query.Where(g => g.MonthlyMprice.HasValue && g.MonthlyMprice.Value <= request.MaxMembershipPrice);
+            // TODO: Change to use correct field based on membership length
+            // TODO: Convert currencies
+            query = query.Where(
+                g => g.MonthlyMprice.HasValue && g.MonthlyMprice.Value <= request.MaxMembershipPrice);
         }
 
         // Filter by MinOverallRating if specified
@@ -103,6 +131,7 @@ public class RecomendationService
 
         // Extract the lists for each criterion
         //TODO: Change to use correct field based on membership length
+        //TODO: Convert currencies
         List<double?> membershipPrices = filteredGyms
             .Select(g => g.Gym.MonthlyMprice.HasValue ? (double?)g.Gym.MonthlyMprice.Value : null)
             .ToList();
@@ -153,7 +182,8 @@ public class RecomendationService
 
         // Total weight should now sum to 1.0 if pricePriorityProportion + otherPriorityProportion = 1
         // However, due to Base weights, it might not. So, normalize them.
-        double totalWeight = membershipPriceWeight + travelPriceWeight + externalRatingWeight + congestionRatingWeight +
+        double totalWeight = membershipPriceWeight + travelPriceWeight + externalRatingWeight +
+                             congestionRatingWeight +
                              travelTimeWeight;
 
 
@@ -265,63 +295,75 @@ public class RecomendationService
         return Math.Sqrt(variance);
     }
 
-    // /// <summary>
-    // /// Saves the gym recommendation request to the database.
-    // /// </summary>
-    // /// <param name="requestDto">The gym recommendation request DTO.</param>
-    // /// <returns>The ID of the saved request.</returns>
-    // private Guid SaveRequest(GymRecommendationRequestDto requestDto)
-    // {
-    //     // Convert DTO to entity
-    //     var requestEntity = new RecommendationRequest
-    //     {
-    //         Id = Guid.NewGuid(),
-    //         TimePriority = requestDto.TimePriority,
-    //         MembershipLength = requestDto.MembershipLength,
-    //         PreferredDepartureTime = requestDto.PreferredDepartureTime,
-    //         PreferredArrivalTime = requestDto.PreferredArrivalTime,
-    //         MinMembershipPrice = requestDto.MinMembershipPrice,
-    //         MinOverallRating = requestDto.MinOverallRating,
-    //         MinCongestionRating = requestDto.MinCongestionRating,
-    //         City = requestDto.City,
-    //         Latitude = requestDto.Latitude,
-    //         Longitude = requestDto.Longitude,
-    //         CreatedAt = DateTime.UtcNow
-    //     };
-    //
-    //     // Save to DB
-    //     _dbContext.RecommendationRequests.Add(requestEntity);
-    //     _dbContext.SaveChanges();
-    //
-    //     return requestEntity.Id;
-    // }
-    //
-    // /// <summary>
-    // /// Saves the gym recommendations to the database, linking them to the request ID.
-    // /// </summary>
-    // /// <param name="requestId">The ID of the recommendation request.</param>
-    // /// <param name="recommendations">The list of gym recommendations.</param>
-    // private void SaveRecommendations(Guid requestId, List<GymRecommendationDto> recommendations)
-    // {
-    //     foreach (var recommendation in recommendations)
-    //     {
-    //         var recommendationEntity = new Recommendation
-    //         {
-    //             Id = Guid.NewGuid(),
-    //             RequestId = requestId,
-    //             GymId = recommendation.Gym.Id,
-    //             FinalScore = recommendation.FinalScore,
-    //             NormalizedMembershipPrice = recommendation.NormalizedMembershipPrice,
-    //             NormalizedOverallRating = recommendation.NormalizedOverallRating,
-    //             NormalizedCongestionRating = recommendation.NormalizedCongestionRating,
-    //             NormalizedTravelPrice = recommendation.NormalizedTravelPrice,
-    //             NormalizedTravelTime = recommendation.NormalizedTravelTime,
-    //             CreatedAt = DateTime.UtcNow
-    //         };
-    //
-    //         _dbContext.Recommendations.Add(recommendationEntity);
-    //     }
-    //
-    //     _dbContext.SaveChanges();
-    // }
+    /// <summary>
+    /// Saves the gym recommendation request to the database.
+    /// </summary>
+    /// <param name="requestDto">The gym recommendation request DTO.</param>
+    /// <returns>The saved Request entity.</returns>
+    private async Task<Request> SaveRecommendationRequestAsync(GymRecommendationRequestDto requestDto)
+    {
+        // Map DTO to entity
+        var requestEntity = new Request
+        {
+            Id = Guid.NewGuid(),
+            RequestedAt = DateTime.UtcNow,
+            OriginLatitude = requestDto.Latitude,
+            OriginLongitude = requestDto.Longitude,
+            //TODO: Rename field in db to PriceRatingPriority
+            TimePriority = requestDto.PriceRatingPriority,
+            TotalCostPriority = requestDto.PriceRatingPriority,
+            MinCongestionRating = requestDto.MinCongestionRating,
+            MinRating = requestDto.MinOverallRating,
+            MinMembershipPrice = (int)requestDto.MaxMembershipPrice,
+            //TODO: What is initial purpose if this field? Rename to City if we want to save city name, Name remove request_user_id_name_key constraint from db
+            Name = requestDto.City +
+                   Guid.NewGuid(), // TODO: remove Guid.NewGuid(), it is currently required to work around request_user_id_name_key
+            UserId = await _authenticationService.GetCurrentUserIdAsync(),
+            // Initialize other properties if needed
+        };
+
+        // Add to DbContext
+        _dbContext.Requests.Add(requestEntity);
+        await _dbContext.SaveChangesAsync();
+
+        return requestEntity;
+    }
+
+    /// <summary>
+    /// Saves the gym recommendations to the database, linking them to the request ID.
+    /// </summary>
+    /// <param name="requestId">The ID of the recommendation request.</param>
+    /// <param name="recommendations">The list of gym recommendations.</param>
+    /// <returns>A task representing the asynchronous operation.</returns>
+    private async Task SaveRecommendationsAsync(Guid requestId, List<GymRecommendationDto> recommendations)
+    {
+        if (recommendations == null || !recommendations.Any())
+            return;
+
+        foreach (var recommendation in recommendations)
+        {
+            var recommendationEntity = new Recommendation
+            {
+                Id = Guid.NewGuid(),
+                GymId = recommendation.Gym.Id, // Ensure GymId is included in RecommendationDto
+                RequestId = requestId,
+                //TODO: Add separate field for NormalizedTravelPrice, priority is low as we likely do not need to save this in DB.
+                Tcost = new decimal(recommendation.NormalizedMembershipPrice), // Adjust mapping as necessary
+                Time = TimeOnly.FromTimeSpan(TimeSpan.Parse("00:00")), // Adjust based on actual data
+                TimeScore = new decimal(recommendation.NormalizedTravelTime),
+                TcostScore = new decimal(recommendation.NormalizedTravelPrice),
+                CongestionScore = new decimal(recommendation.NormalizedCongestionRating),
+                RatingScore = new decimal(recommendation.NormalizedOverallRating),
+                TotalScore = new decimal(recommendation.FinalScore),
+                // TODO: Implement alternative recommendations
+                Type = RecommendationType.main,
+                // TODO: Why do we need currency in this table? Should we move it to the Request table
+                CurrencyId = recommendation.Gym.CurrencyId,
+            };
+
+            _dbContext.Recommendations.Add(recommendationEntity);
+        }
+
+        await _dbContext.SaveChangesAsync();
+    }
 }

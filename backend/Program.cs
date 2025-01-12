@@ -6,7 +6,6 @@ using DotNetEnv;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.IdentityModel.Tokens;
-using DotNetEnv;
 
 Env.Load();
 var builder = WebApplication.CreateBuilder(args);
@@ -71,15 +70,16 @@ builder.Services.AddAuthentication(options =>
 
 builder.Services.AddAuthorization()
     .AddAuthorization(options =>
-{
-    options.AddPolicy("AdminOnly", policy => policy.Requirements.Add(new HasTypeRequirement("admin")));
-    options.AddPolicy("GymOnly", policy => policy.Requirements.Add(new HasTypeRequirement("gym")));
-    options.AddPolicy("UserOnly", policy => policy.Requirements.Add(new HasTypeRequirement("user")));
-});
-
+    {
+        options.AddPolicy("AdminOnly", policy => policy.Requirements.Add(new HasTypeRequirement("admin")));
+        options.AddPolicy("GymOnly", policy => policy.Requirements.Add(new HasTypeRequirement("gym")));
+        options.AddPolicy("UserOnly", policy => policy.Requirements.Add(new HasTypeRequirement("user")));
+    });
+builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<IAuthorizationHandler, AuthorizationRequestHandler>();
-builder.Services.AddScoped<RecomendationService, RecomendationService>();
+builder.Services.AddScoped<RecommendationService, RecommendationService>();
 builder.Services.AddScoped<GeoService, GeoService>();
+builder.Services.AddScoped<AuthenticationService, AuthenticationService>();
 
 
 if (!builder.Environment.IsDevelopment())

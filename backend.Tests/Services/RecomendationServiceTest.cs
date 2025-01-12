@@ -9,7 +9,7 @@ using Xunit;
 
 namespace backend.Tests.Services
 {
-    public class RecomendationServiceTest
+    public class RecommendationServiceTest
     {
         [Fact]
         public void GetRatings_Should_Calculate_FinalScore_Correctly_With_Balanced_Priority()
@@ -18,9 +18,11 @@ namespace backend.Tests.Services
             // Mock dependencies
             var mockDbContext = new Mock<GymrecommenderContext>(new DbContextOptions<GymrecommenderContext>());
             var mockGeoService = new Mock<GeoService>();
+            var mockAuthService = new Mock<AuthenticationService>();
 
             // Instantiate RecomendationService with mocked dependencies
-            var service = new RecomendationService(mockDbContext.Object, mockGeoService.Object);
+            var service =
+                new RecommendationService(mockDbContext.Object, mockGeoService.Object, mockAuthService.Object);
 
             // Create sample gyms
             var gym1 = new Gym
@@ -121,8 +123,10 @@ namespace backend.Tests.Services
             // Arrange
             var mockDbContext = new Mock<GymrecommenderContext>(new DbContextOptions<GymrecommenderContext>());
             var mockGeoService = new Mock<GeoService>();
+            var mockAuthService = new Mock<AuthenticationService>();
 
-            var service = new RecomendationService(mockDbContext.Object, mockGeoService.Object);
+            var service =
+                new RecommendationService(mockDbContext.Object, mockGeoService.Object, mockAuthService.Object);
 
             var gymsWithGeoData = new List<GymTravelInfoDto>(); // Empty list
             int priceRatingPriority = 50;
@@ -141,8 +145,10 @@ namespace backend.Tests.Services
             // Arrange
             var mockDbContext = new Mock<GymrecommenderContext>(new DbContextOptions<GymrecommenderContext>());
             var mockGeoService = new Mock<GeoService>();
+            var mockAuthService = new Mock<AuthenticationService>();
 
-            var service = new RecomendationService(mockDbContext.Object, mockGeoService.Object);
+            var service =
+                new RecommendationService(mockDbContext.Object, mockGeoService.Object, mockAuthService.Object);
 
             var gym1 = new Gym
             {
@@ -231,8 +237,10 @@ namespace backend.Tests.Services
             // Arrange
             var mockDbContext = new Mock<GymrecommenderContext>(new DbContextOptions<GymrecommenderContext>());
             var mockGeoService = new Mock<GeoService>();
+            var mockAuthService = new Mock<AuthenticationService>();
 
-            var service = new RecomendationService(mockDbContext.Object, mockGeoService.Object);
+            var service =
+                new RecommendationService(mockDbContext.Object, mockGeoService.Object, mockAuthService.Object);
 
             var gym1 = new Gym
             {
