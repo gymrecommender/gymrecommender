@@ -2,6 +2,7 @@ import MapSection from '../components/MapSection.jsx';
 import React, {useEffect, useState} from "react";
 import Form from "../components/simple/Form.jsx";
 import {useCoordinates} from "../context/CoordinatesProvider.jsx";
+import axios from "axios";
 
 const membershipTypes = [
 	{value: "1-month", label: "1 month"},
@@ -51,9 +52,29 @@ const Index = () => {
 	const {coordinates} = useCoordinates();
 	const [countdownComplete, setCountdownComplete] = useState(false);
 
+	const saveEnforcedPause = async () => {
+		const enforcedPauseData = {
+		  reason: "Example reason for pause",
+		  duration: 5,
+		};
+	
+		try {
+		  const response = await axios.post("/api/enforced-pause", enforcedPauseData);
+	
+		  if (response.status === 200) {
+			console.log("Enforced pause saved successfully.");
+		  } else {
+			console.error("Failed to save enforced pause.");
+		  }
+		} catch (error) {
+		  console.error("Error saving enforced pause:", error);
+		}
+	  };
+
 	const getFormValues = (values) => {
 		console.log("Form submitted with values:", values);
 		setCountdownComplete(false);
+		saveEnforcedPause();
 	};
 	return (
 		<>
