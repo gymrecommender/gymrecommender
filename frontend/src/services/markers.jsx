@@ -22,4 +22,10 @@ const forRatings = {
 	glyphColor: "white",
 }
 
-export {startMarker, mainRatingMarker, secRatingMarket, forRatings};
+const ownedGyms = {
+	background: "#FF0000",
+	borderColor: "#FF0000",
+	glyphColor: "white",
+}
+
+export {startMarker, mainRatingMarker, secRatingMarket, forRatings, ownedGyms};

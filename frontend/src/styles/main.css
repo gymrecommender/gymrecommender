@@ -35,6 +35,7 @@ body::-webkit-scrollbar {
 
     background-color: #002147;
     padding: 20px;
+    position: relative;
 }
 
 .content > :first-child {
@@ -557,7 +558,7 @@ button.btn-action {
     justify-content: center;
     align-items: center;
 
-    background-color: rgba(0, 54, 123, 0.4);
+    background-color: rgba(0, 54, 123, 0.7);
 }
 
 .loader span {
@@ -570,6 +571,13 @@ button.btn-action {
     height: 100%;
 
     background-color: inherit;
+}
+.loader.loader-hover {
+    position: absolute;
+    z-index: 10;
+    width: 100%;
+
+
 }
 
 .input-field.required label:after, .selector.required label:after {
@@ -659,4 +667,13 @@ form .form-disabler:hover .form-disabler-hint {
 
 .gym-item:hover {
     cursor: pointer;
+}
+
+.gym-popup table td {
+    font-weight: bold;
+    color: #7C5DC6;
+}
+.gym-popup table td.gym-name {
+    color: #0d204a;
+    font-size: 1.3rem;
 }

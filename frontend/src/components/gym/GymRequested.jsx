@@ -146,7 +146,6 @@ const GymRequested = ({showMarker}) => {
 			</div>
 		)
 	})
-	console.log(content)
 	return (
 		<div className={"gyms-req"}>
 			{content.length > 0 ? content : <div className={"no-content"}>
