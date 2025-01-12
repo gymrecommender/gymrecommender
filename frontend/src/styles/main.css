@@ -576,8 +576,7 @@ button.btn-action {
     position: absolute;
     z-index: 10;
     width: 100%;
-
-
+    height: 100%;
 }
 
 .input-field.required label:after, .selector.required label:after {
@@ -673,6 +672,7 @@ form .form-disabler:hover .form-disabler-hint {
     font-weight: bold;
     color: #7C5DC6;
 }
+
 .gym-popup table td.gym-name {
     color: #0d204a;
     font-size: 1.3rem;

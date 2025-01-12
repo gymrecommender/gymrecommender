@@ -16,8 +16,11 @@ const Marker = ({lat, lng, background, borderColor, glyphColor, id, onClick, inf
 		if (onClick) {
 			onClick(gymId !== id)
 		} else {
-			setShowPopup(true)
 			setScale(1.5)
+		}
+
+		if (infoWindow) {
+			setShowPopup(true)
 		}
 	}} position={{lat, lng}}>
 		<Pin
