@@ -1,5 +1,5 @@
 import MapSection from '../components/MapSection.jsx';
-import React, {useEffect} from "react";
+import React, {useEffect, useState} from "react";
 import Form from "../components/simple/Form.jsx";
 import {useCoordinates} from "../context/CoordinatesProvider.jsx";
 
@@ -49,15 +49,25 @@ const data = {
 };
 const Index = () => {
 	const {coordinates} = useCoordinates();
+	const [countdownComplete, setCountdownComplete] = useState(false);
 
 	const getFormValues = (values) => {
-		//#TODO add loaders here
-		console.log(values);
-	}
+		console.log("Form submitted with values:", values);
+		setCountdownComplete(false);
+	};
 	return (
 		<>
 			<aside className="sliders">
-				<Form data={data} showAsterisks={false} disabledFormHint={"Select the starting location"} isDisabled={!coordinates.lat} onSubmit={getFormValues}/>
+			<Form
+          data={data}
+          showAsterisks={false}
+		  disabledFormHint={"Select the starting location"}
+          isDisabled={!coordinates.lat}
+          onSubmit={(values) => {
+            getFormValues(values);
+            setCountdownComplete(false);
+          }}
+        />
 			</aside>
 			<MapSection/>
 		</>
