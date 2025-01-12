@@ -349,18 +349,30 @@ const Recommendation = () => {
 	  fetchRecommendations();
 	}, []);*/
 
+	const getMarkerStyle = (ratingType) => {
+		switch (ratingType) {
+			case "mainRating":
+				return mainRatingMarker;
+			case "secRating":
+				return secRatingMarket;
+			case "forRatings":
+				return forRatings;
+			default:
+				return startMarker;
+		}
+	};
+
 	const content = Object.keys(recommendations).map((ratingType) => {
 		const mainRating = recommendations[ratingType].map((gym) => {
 			return <li key={gym.Gym.id} className={classNames("gym-item", gymId === gym.Gym.id ? "selected" : "")}
 			onClick={() => setGymId(gymId === gym.Gym.id ? null : gym.Gym.id)}>
 				<h4>{gym.Gym.name}</h4>
+				<p><FontAwesomeIcon icon={faMoneyBillWave}/> Total Cost: {gym.totalCost} {gym.currency}</p>
+				<p><FontAwesomeIcon icon={faRoute}/>Travelling Time: {gym.travellingTime} min</p>
 				<p><FontAwesomeIcon icon={faMapMarkerAlt}/> {gym.Gym.address}</p>
 				<p><FontAwesomeIcon icon={faStar}/> Overall Rating: {gym.overallRating}</p>
 				<p><FontAwesomeIcon icon={faClock}/> Time Rating: {gym.timeRating}</p>
 				<p><FontAwesomeIcon icon={faDollarSign}/> Cost Rating: {gym.costRating}</p>
-				<p><FontAwesomeIcon icon={faRoute}/>Travelling Time: {gym.travellingTime} min</p>
-				<p><FontAwesomeIcon icon={faMoneyBillWave}/> Total
-					Cost: {gym.totalCost} {gym.currency}</p>
 			</li>
 		});
 
