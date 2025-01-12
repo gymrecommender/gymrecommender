@@ -191,10 +191,113 @@ public class GymAccountController : AccountControllerTemplate {
         // Return the result as JSON
         return Ok(response);
     }
-}
+    
+    
+    
+    [HttpPost("ownership-requests")]
+    public async Task<IActionResult> AddOwnershipRequest([FromBody] OwnershipRequestDto ownershipRequest)
+    {
+        // Validate the incoming request
+        if (ownershipRequest == null || ownershipRequest.GymId == Guid.Empty || ownershipRequest.AccountId == Guid.Empty)
+        {
+            return StatusCode(500, new {
+                success = false,
+                error = new {
+                    message = ErrorMessage.ErrorMessages["EmptyBoxes"]
+                }
+            });
+        }
+        
+        var gym = await _context.Gyms.FindAsync(ownershipRequest.GymId);
+        if (gym == null)
+        {
+            
+            return StatusCode(500, new {
+                success = false,
+                error = new {
+                    message = ErrorMessage.ErrorMessages["OwnedGymError"]
+                }
+            });
+        }
+        //check if account exists
+        var account = await _context.Accounts.FindAsync(ownershipRequest.AccountId);
+        if (account == null)
+        {
+            
+            return StatusCode(500, new {
+                success = false,
+                error = new {
+                    message = ErrorMessage.ErrorMessages["AccountId"]
+                }
+            });
+        }
+        
+        var existingRequest = await _context.Ownerships
+            .Where(o => o.GymId == ownershipRequest.GymId && o.RequestedBy == ownershipRequest.AccountId && o.RespondedAt == null)//%%%%%%%
+            .FirstOrDefaultAsync();
 
-/*
-RequestedAt { get; set; }
+        if (existingRequest != null)
+        {
+            return StatusCode(500, new {
+                success = false,
+                error = new {
+                    message = ErrorMessage.ErrorMessages["RequestPending"]
+                }
+            });
+            
+        }
 
-   public DateTime? RespondedAt
-*/
+        // Create a new ownership request
+        var newOwnershipRequest = new Ownership
+        {
+            Id = Guid.NewGuid(),
+            GymId = ownershipRequest.GymId,
+            RequestedBy = ownershipRequest.AccountId,
+            RequestedAt = DateTime.UtcNow,
+            Message = ownershipRequest.Message,
+            RespondedBy = null,
+            RespondedAt = null 
+        };
+        
+        _context.Ownerships.Add(newOwnershipRequest);
+        await _context.SaveChangesAsync();
+
+        return Ok(new
+        {
+            success = true,
+            message = "Ownership request submitted successfully.",
+            requestId = newOwnershipRequest.Id
+        });
+    }
+    
+    
+    [HttpPut("detach/{gymId:guid}")]
+    public async Task<IActionResult> DetachGym(Guid gymId)
+    {
+        var gym = await _context.Gyms.FindAsync(gymId);
+        if (gym == null)
+        {
+            return StatusCode(500, new {
+                success = false,
+                error = new {
+                    message = ErrorMessage.ErrorMessages["GymIdError"]
+                }
+            });
+        }
+        gym.OwnedBy = null;
+        await _context.SaveChangesAsync();
+
+        return Ok(new
+        {
+            success = true,
+            message = $"Gym with ID {gymId} has been detached successfully."
+        });
+    }
+
+    
+    
+    
+    
+    
+
+}//class bracket
