@@ -36,30 +36,17 @@ public class GymController : Controller {
     [HttpGet("location")]
     public async Task<IActionResult> GetGymsForLocation([FromQuery] double lat, [FromQuery] double lng) {
         try {
-            var cities = _context.Cities.AsNoTracking()
-                                 .Include(c => c.Country)
-                                 .Where(c => c.Swlatitude <= lat && lat <= c.Nelatitude)
-                                 .Where(c => c.Swlongitude <= lng && lng <= c.Nelongitude)
-                                 .ToList();
-
-            City city = cities.FirstOrDefault();
-            if (cities.Count == 0) {
-                var cityRes = await AddCity(lat, lng);
-                if (!cityRes.Success) {
-                    return StatusCode(Convert.ToInt32(cityRes.ErrorCode), new {
-                        success = false,
-                        error = new {
-                            code = cityRes.ErrorCode,
-                            message = cityRes.Error,
-                        }
-                    });
-                }
-
-                city = (City)cityRes.Value;
-            } else if (cities.Count > 1) {
-                //TODO do something else when there is more than one city that satisfies these criteria
-                city = cities.First();
+            var cityRes = await GetCity(lat, lng);
+            if (!cityRes.Success) {
+                return StatusCode(Convert.ToInt32(cityRes.ErrorCode), new {
+                    success = false,
+                    error = new {
+                        code = cityRes.ErrorCode,
+                        message = cityRes.Error,
+                    }
+                });
             }
+            City city = (City)cityRes.Value;
 
             var gymsRes = await RetrieveGymsByCity(city.Country.Name, city.Name);
             if (!gymsRes.Success) return ParseError(gymsRes);
@@ -87,7 +74,7 @@ public class GymController : Controller {
             gymsRes = await RetrieveGymsByCity(city.Country.Name, city.Name);
             if (!gymsRes.Success) return ParseError(gymsRes);
             
-            return Ok(gymsRes.Value);
+            return Ok(gymsRes);
         } catch (Exception e) {
             return StatusCode(500, new {
                 success = false,
@@ -109,6 +96,7 @@ public class GymController : Controller {
             foreach (var dataItem in data) {
                 var gym = dataItem.Item1;
                 gym.CurrencyId = currency.Id;
+                
                 _context.Gyms.Add(gym);
                 
                 var workingHours = dataItem.Item2;
@@ -235,6 +223,7 @@ public class GymController : Controller {
                                    YearlyMprice = g.YearlyMprice,
                                    SixMonthsMprice = g.SixMonthsMprice,
                                    Website = g.Website,
+                                   IsOwned = g.OwnedBy.HasValue,
                                    WorkingHours = g.GymWorkingHours.Select(w => new GymWorkingHoursViewModel {
                                        Weekday = w.Weekday,
                                        OpenFrom = w.WorkingHours.OpenFrom,
@@ -255,11 +244,21 @@ public class GymController : Controller {
     }
 
     [NonAction]
-    private async Task<Response> AddCity(double lat, double lng) {
+    private async Task<Response> GetCity(double lat, double lng) {
         Response response = await _googleApi.GetCity(lat, lng);
         if (!response.Success) return response;
 
         Geocode newCity = (Geocode)response.Value;
+        var cityCheck = _context.Cities.AsNoTracking()
+                           .Include(c => c.Country)
+                           .Where(c => c.Name == newCity.City && c.Country.Name == newCity.Country)
+                           .Where(c => c.Swlatitude <= lat && lat <= c.Nelatitude)
+                           .Where(c => c.Swlongitude <= lng && lng <= c.Nelongitude)
+                           .FirstOrDefault();
+        
+        if (cityCheck != null) {
+            return new Response(cityCheck);
+        } 
 
         var country = _context.Countries.AsNoTracking()
                               .FirstOrDefault(c => c.Name == newCity.Country);
@@ -271,11 +270,13 @@ public class GymController : Controller {
 
             _context.Countries.Add(country);
             await _context.SaveChangesAsync();
+        } else {
+            _context.Attach(country);
         }
 
         var city = new City {
             Name = newCity.City,
-            CountryId = country.Id,
+            Country = country,
             Nelongitude = newCity.Nelongitude,
             Nelatitude = newCity.Nelatitude,
             Swlongitude = newCity.Swlongitude,
