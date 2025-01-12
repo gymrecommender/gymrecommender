@@ -1,6 +1,8 @@
 using System.Net;
 using backend;
 using backend.Authorization;
+using backend.Services;
+using DotNetEnv;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.IdentityModel.Tokens;
@@ -75,7 +77,10 @@ builder.Services.AddAuthorization()
     options.AddPolicy("UserOnly", policy => policy.Requirements.Add(new HasTypeRequirement("user")));
 });
 
-builder.Services.AddScoped<IAuthorizationHandler, AuthorizationRequestHandler>(); 
+builder.Services.AddScoped<IAuthorizationHandler, AuthorizationRequestHandler>();
+builder.Services.AddScoped<RecomendationService, RecomendationService>();
+builder.Services.AddScoped<GeoService, GeoService>();
+
 
 if (!builder.Environment.IsDevelopment())
 {
