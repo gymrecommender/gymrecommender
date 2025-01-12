@@ -24,33 +24,22 @@ public class GymController : Controller {
         _appData = appSettings.Value;
         _googleApi = googleApi;
     }
-    
-    
-    [HttpGet("currencies")]
-    public async Task<IActionResult> GetAllCurrencies()
-    {
-        try
-        {
-            var currencies = await _context.Currencies
-                .AsNoTracking()
-                .Select(c => new {
-                    c.Id,
-                    c.Code,
-                    c.Name,
-                    c.Gyms,
-                    c.Recommendations
-                    
-                })
-                .ToListAsync();
 
-            return Ok(new {
-                success = true,
-                data = currencies,
-                message = "All currencies retrieved"
-            });
-        }
-        catch (Exception ex)
-        {
+
+    [HttpGet("currencies")]
+    public async Task<IActionResult> GetCurrencies() {
+        try {
+            var currencies = await _context.Currencies
+                                           .AsNoTracking()
+                                           .Select(c => new {
+                                               c.Id,
+                                               c.Code,
+                                               c.Name,
+                                           })
+                                           .ToListAsync();
+
+            return Ok(currencies);
+        } catch (Exception ex) {
             return StatusCode(500, new {
                 success = false,
                 error = new {
@@ -60,8 +49,7 @@ public class GymController : Controller {
             });
         }
     }
-    
-    
+
 
     [HttpGet("{country}/{city}")]
     public async Task<IActionResult> GetGymsByCity(string country, string city) {
@@ -112,19 +100,19 @@ public class GymController : Controller {
             // This way the results will be less personalized and optimal, but we will avoid paying for the services
             var cityMiddleLat = (city.Nelatitude + city.Swlatitude) / 2;
             var cityMiddleLng = (city.Nelongitude + city.Swlongitude) / 2;
-            
+
             //Retrieving the gyms for the current city via the Google API
             var result = await _googleApi.GetGyms(cityMiddleLat, cityMiddleLng, CalculateCityRadius(city), city);
             if (!result.Success) return ParseError(result);
-            
+
             //Saving retrieved gyms, working hours and their relations to the database
             var save = await SaveNewGyms((List<Tuple<Gym, List<GymWorkingHoursViewModel>>>)result.Value);
             if (!save.Success) return ParseError(save);
-            
+
             //Retrieving the gyms for the city from the database
             gymsRes = await RetrieveGymsByCity(city.Country.Name, city.Name);
             if (!gymsRes.Success) return ParseError(gymsRes);
-            
+
             return Ok(gymsRes.Value);
         } catch (Exception e) {
             return StatusCode(500, new {
@@ -143,12 +131,12 @@ public class GymController : Controller {
             var existingWorkingHours = await _context.WorkingHours.AsNoTracking().ToListAsync();
             //TODO currency should be determined in some other way
             var currency = _context.Currencies.AsNoTracking().Where(c => c.Code == "EUR").ToList().First();
-            
+
             foreach (var dataItem in data) {
                 var gym = dataItem.Item1;
                 gym.CurrencyId = currency.Id;
                 _context.Gyms.Add(gym);
-                
+
                 var workingHours = dataItem.Item2;
                 foreach (var wHour in workingHours) {
                     var match = existingWorkingHours.FirstOrDefault(wh =>
@@ -200,7 +188,7 @@ public class GymController : Controller {
         double lng2 = ToRadians(city.Swlongitude);
         double deltaLat = lat2 - lat1;
         double deltaLng = lng2 - lng1;
-        
+
         //Generally, we want to calculate the approximate radius of the city in order to retrieve as much gyms
         //as possible from different districts of the city whenever that is possible
         //Haversine formula is helping us with that
