@@ -56,12 +56,14 @@ public class RecommendationService
             // Calculate ratings
             var recommendations = GetRatings(filteredGymsWithGeoData, gymRecommendationRequest.PriceRatingPriority,
                 gymRecommendationRequest.MembershipLength);
-            // TODO: save request and recommendations
             var requestEntity = await SaveRecommendationRequestAsync(gymRecommendationRequest);
             await SaveRecommendationsAsync(requestEntity.Id, recommendations);
 
             await transaction.CommitAsync();
-            return new OkObjectResult(recommendations);
+            // TODO: add AdditionalRecommendations recommendations
+            return new OkObjectResult(
+                new GymRecommendationResponceDto(requestEntity.Id, recommendations, new List<GymRecommendationDto>())
+            );
         }
         catch (Exception ex)
         {
