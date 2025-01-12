@@ -73,6 +73,40 @@ public class RecommendationService
     }
 
     /// <summary>
+    /// Retrieves all requests associated with a specific user email. throws KeyNotFoundException if email doe not exists
+    /// </summary>
+    /// <param name="email">The email of the user.</param>
+    /// <returns>A list of RequestDto objects.</returns>
+    public async Task<List<Request>> GetRequestsByEmailAsync(string email)
+    {
+        if (string.IsNullOrWhiteSpace(email))
+        {
+            throw new ArgumentException("Email must be provided.", nameof(email));
+        }
+
+        // Fetch the user from the database
+        var user = await _dbContext.Accounts
+            .AsNoTracking()
+            .SingleOrDefaultAsync(u => u.Email == email);
+
+        if (user == null)
+        {
+            throw new KeyNotFoundException($"User with email '{email}' not found.");
+        }
+
+        // Retrieve requests associated with the user's ID
+        var requests = await _dbContext.Requests
+            .AsNoTracking()
+            .Include(r => r.Recommendations)
+            .Where(r => r.UserId == user.Id)
+            .ToListAsync();
+
+
+        // Map Request entities to RequestDto
+        return requests;
+    }
+
+    /// <summary>
     /// Filters gyms based on the provided parameters: MaxMembershipPrice, MinOverallRating, MinCongestionRating, City.
     /// </summary>
     /// <param name="request">GymRecommendationRequestDto containing filter parameters.</param>
