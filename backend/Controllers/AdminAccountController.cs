@@ -4,6 +4,7 @@ using backend.Models;
 using backend.Utilities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
+using Microsoft.EntityFrameworkCore;
 
 namespace backend.Controllers;
 
@@ -54,10 +55,10 @@ public class AdminAccountController : AccountControllerTemplate {
     }
     
     
-    [HttpPut("ownership-requests/{requestId:guid}")]
+    [HttpPut("requests/{requestId:guid}")]
     public async Task<IActionResult> UpdateOwnershipRequest(Guid requestId, [FromBody] UpdateOwnershipRequestDto updateDto)
     {
-        // Validate the incoming request
+        
         if (updateDto == null || updateDto.Decision == null)
         {
             return StatusCode(500, new {
@@ -67,8 +68,7 @@ public class AdminAccountController : AccountControllerTemplate {
                 }
             });
         }
-
-        // Find the ownership request by ID
+        
         var ownershipRequest = await _context.Ownerships.FindAsync(requestId);
         if (ownershipRequest == null)
         {
@@ -90,10 +90,9 @@ public class AdminAccountController : AccountControllerTemplate {
         ownershipRequest.RespondedAt = DateTime.UtcNow;
         ownershipRequest.Message = updateDto.Message;
 
-        // Save changes to the database
         await _context.SaveChangesAsync();
 
-        // Return a success response
+   
         return Ok(new
         {
             success = true,
@@ -103,19 +102,45 @@ public class AdminAccountController : AccountControllerTemplate {
             respondedAt = ownershipRequest.RespondedAt.ToString(),
         });
     }
-    [HttpDelete("ownership-requests/{requestId:guid}")]
+    
+    
+    [HttpGet("requests")]
+    public async Task<IActionResult> GetOwnershipRequests() {
+        //TODO with the get parameter for the function above this function is not needed
+        // im npot sure what you mean by this, i fixed the above function but still 
+        var ownershipRequests = await _context.Ownerships
+            .Include(o => o.Gym)
+            .ToListAsync();
+
+        var response = ownershipRequests.Select(o => new {
+            id = o.Id.ToString(),
+            requestedAt = o.RequestedAt.ToString("o"),
+            respondedAt = o.RespondedAt.HasValue ? o.RespondedAt.Value.ToString("o") : null,
+            decision = o.Decision.ToString(),
+            message = o.Message,
+            gym = new {
+                name = o.Gym.Name,
+                address = o.Gym.Address,
+                latitude = o.Gym.Latitude,
+                longitude = o.Gym.Longitude
+            }
+        }).ToList();
+
+        // Return the result as JSON
+        return Ok(response);
+    }
+
+    
+    
+    
+
+      
+    [HttpDelete("requests/{requestId:guid}")]
     public async Task<IActionResult> DeleteOwnershipRequest(Guid requestId)
     {
-        // Find the ownership request by ID
         var ownershipRequest = await _context.Ownerships.FindAsync(requestId);
         if (ownershipRequest == null)
         {
-            // return NotFound(new
-            // {
-            //     success = false,
-            //     message = $"Ownership request with ID {requestId} not found."
-            // });
-            
             return StatusCode(500, new {
                 success = false,
                 error = new {
@@ -123,12 +148,10 @@ public class AdminAccountController : AccountControllerTemplate {
                 }
             });
         }
-
-        // Remove the ownership request
+        
         _context.Ownerships.Remove(ownershipRequest);
         await _context.SaveChangesAsync();
-
-        // Return a success response
+        
         return Ok(new
         {
             success = true,
