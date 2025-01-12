@@ -9,6 +9,9 @@ public class AuthenticationService
     private readonly IHttpContextAccessor _httpContextAccessor;
     private readonly GymrecommenderContext _dbContext;
 
+    public AuthenticationService()
+    {
+    }
 
     public AuthenticationService(IHttpContextAccessor httpContextAccessor, GymrecommenderContext dbContext)
     {

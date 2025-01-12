@@ -1,4 +1,5 @@
 ﻿using System.Text.Json.Serialization;
+using backend.Enums;
 
 namespace backend.Models;
 
@@ -65,4 +66,15 @@ public partial class Gym
     [JsonIgnore] public virtual ICollection<Ownership> Ownerships { get; set; } = new List<Ownership>();
     [JsonIgnore] public virtual ICollection<Rating> Ratings { get; set; } = new List<Rating>();
     [JsonIgnore] public virtual ICollection<Recommendation> Recommendations { get; set; } = new List<Recommendation>();
+
+    public decimal? GetPrice(MembershipLength membershipLength)
+    {
+        return membershipLength switch
+        {
+            MembershipLength.Month => MonthlyMprice,
+            MembershipLength.HalfYear => SixMonthsMprice,
+            MembershipLength.Year => YearlyMprice,
+            _ => MonthlyMprice
+        };
+    }
 }

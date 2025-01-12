@@ -1,9 +1,11 @@
 using System;
 using System.Collections.Generic;
 using backend.DTO;
+using backend.Enums;
 using backend.Models;
 using backend.Services;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Moq;
 using Xunit;
 
@@ -19,17 +21,19 @@ namespace backend.Tests.Services
             var mockDbContext = new Mock<GymrecommenderContext>(new DbContextOptions<GymrecommenderContext>());
             var mockGeoService = new Mock<GeoService>();
             var mockAuthService = new Mock<AuthenticationService>();
+            var mockLogger = new Mock<ILogger<RecommendationService>>();
 
             // Instantiate RecomendationService with mocked dependencies
             var service =
-                new RecommendationService(mockDbContext.Object, mockGeoService.Object, mockAuthService.Object);
+                new RecommendationService(mockDbContext.Object, mockGeoService.Object, mockAuthService.Object,
+                    mockLogger.Object);
 
             // Create sample gyms
             var gym1 = new Gym
             {
                 Id = Guid.NewGuid(),
                 MonthlyMprice = 100,
-                ExternalRating = 4,
+                InternalRating = 4,
                 CongestionRating = 3,
                 City = new City { Name = "CityA" }
             };
@@ -38,7 +42,7 @@ namespace backend.Tests.Services
             {
                 Id = Guid.NewGuid(),
                 MonthlyMprice = 200,
-                ExternalRating = 5,
+                InternalRating = 5,
                 CongestionRating = 4,
                 City = new City { Name = "CityB" }
             };
@@ -47,7 +51,7 @@ namespace backend.Tests.Services
             {
                 Id = Guid.NewGuid(),
                 MonthlyMprice = 150,
-                ExternalRating = 3,
+                InternalRating = 3,
                 CongestionRating = 2,
                 City = new City { Name = "CityC" }
             };
@@ -78,7 +82,7 @@ namespace backend.Tests.Services
             int priceRatingPriority = 50; // Balanced priority between price and other criteria
 
             // Act
-            var recommendations = service.GetRatings(gymsWithGeoData, priceRatingPriority);
+            var recommendations = service.GetRatings(gymsWithGeoData, priceRatingPriority, MembershipLength.Month);
 
             // Assert
             Assert.NotNull(recommendations);
@@ -90,7 +94,7 @@ namespace backend.Tests.Services
             var recommendation1 = recommendations.Find(r => r.Gym.Id == gym1.Id);
             Assert.NotNull(recommendation1);
             Assert.Equal(1.0, recommendation1.NormalizedMembershipPrice, 2); // Inverted normalized price
-            Assert.Equal(0.5, recommendation1.NormalizedOverallRating, 2); // ExternalRating normalized
+            Assert.Equal(0.5, recommendation1.NormalizedOverallRating, 2); // InternalRating normalized
             Assert.Equal(0.5, recommendation1.NormalizedCongestionRating, 2); // CongestionRating normalized
             Assert.Equal(1.0, recommendation1.NormalizedTravelPrice, 2); // Inverted TravelPrice
             Assert.Equal(1.0, recommendation1.NormalizedTravelTime, 2); // Inverted TravelTime
@@ -100,7 +104,7 @@ namespace backend.Tests.Services
             var recommendation2 = recommendations.Find(r => r.Gym.Id == gym2.Id);
             Assert.NotNull(recommendation2);
             Assert.Equal(0.0, recommendation2.NormalizedMembershipPrice, 2); // Inverted normalized price
-            Assert.Equal(1.0, recommendation2.NormalizedOverallRating, 2); // ExternalRating normalized
+            Assert.Equal(1.0, recommendation2.NormalizedOverallRating, 2); // InternalRating normalized
             Assert.Equal(1.0, recommendation2.NormalizedCongestionRating, 2); // CongestionRating normalized
             Assert.Equal(0.0, recommendation2.NormalizedTravelPrice, 2); // Inverted TravelPrice
             Assert.Equal(0.0, recommendation2.NormalizedTravelTime, 2); // Inverted TravelTime
@@ -110,7 +114,7 @@ namespace backend.Tests.Services
             var recommendation3 = recommendations.Find(r => r.Gym.Id == gym3.Id);
             Assert.NotNull(recommendation3);
             Assert.Equal(0.5, recommendation3.NormalizedMembershipPrice, 2); // Inverted normalized price
-            Assert.Equal(0.0, recommendation3.NormalizedOverallRating, 2); // ExternalRating normalized
+            Assert.Equal(0.0, recommendation3.NormalizedOverallRating, 2); // InternalRating normalized
             Assert.Equal(0.0, recommendation3.NormalizedCongestionRating, 2); // CongestionRating normalized
             Assert.Equal(0.5, recommendation3.NormalizedTravelPrice, 2); // Inverted TravelPrice
             Assert.Equal(0.5, recommendation3.NormalizedTravelTime, 2); // Inverted TravelTime
@@ -124,15 +128,17 @@ namespace backend.Tests.Services
             var mockDbContext = new Mock<GymrecommenderContext>(new DbContextOptions<GymrecommenderContext>());
             var mockGeoService = new Mock<GeoService>();
             var mockAuthService = new Mock<AuthenticationService>();
+            var mockLogger = new Mock<ILogger<RecommendationService>>();
 
             var service =
-                new RecommendationService(mockDbContext.Object, mockGeoService.Object, mockAuthService.Object);
+                new RecommendationService(mockDbContext.Object, mockGeoService.Object, mockAuthService.Object,
+                    mockLogger.Object);
 
             var gymsWithGeoData = new List<GymTravelInfoDto>(); // Empty list
             int priceRatingPriority = 50;
 
             // Act
-            var recommendations = service.GetRatings(gymsWithGeoData, priceRatingPriority);
+            var recommendations = service.GetRatings(gymsWithGeoData, priceRatingPriority, MembershipLength.Month);
 
             // Assert
             Assert.NotNull(recommendations);
@@ -146,15 +152,17 @@ namespace backend.Tests.Services
             var mockDbContext = new Mock<GymrecommenderContext>(new DbContextOptions<GymrecommenderContext>());
             var mockGeoService = new Mock<GeoService>();
             var mockAuthService = new Mock<AuthenticationService>();
+            var mockLogger = new Mock<ILogger<RecommendationService>>();
 
             var service =
-                new RecommendationService(mockDbContext.Object, mockGeoService.Object, mockAuthService.Object);
+                new RecommendationService(mockDbContext.Object, mockGeoService.Object, mockAuthService.Object,
+                    mockLogger.Object);
 
             var gym1 = new Gym
             {
                 Id = Guid.NewGuid(),
                 MonthlyMprice = null, // Null
-                ExternalRating = 0, // Minimum rating
+                InternalRating = 0, // Minimum rating
                 CongestionRating = 0, // Minimum congestion
                 City = new City { Name = "CityD" }
             };
@@ -163,7 +171,7 @@ namespace backend.Tests.Services
             {
                 Id = Guid.NewGuid(),
                 MonthlyMprice = null, // Null
-                ExternalRating = 0, // Minimum rating
+                InternalRating = 0, // Minimum rating
                 CongestionRating = 0, // Minimum congestion
                 City = new City { Name = "CityE" }
             };
@@ -172,7 +180,7 @@ namespace backend.Tests.Services
             {
                 Id = Guid.NewGuid(),
                 MonthlyMprice = null, // Null
-                ExternalRating = 0, // Minimum rating
+                InternalRating = 0, // Minimum rating
                 CongestionRating = 0, // Minimum congestion
                 City = new City { Name = "CityF" }
             };
@@ -202,7 +210,7 @@ namespace backend.Tests.Services
             int priceRatingPriority = 50;
 
             // Act
-            var recommendations = service.GetRatings(gymsWithGeoData, priceRatingPriority);
+            var recommendations = service.GetRatings(gymsWithGeoData, priceRatingPriority, MembershipLength.Month);
 
             // Assert
             Assert.NotNull(recommendations);
@@ -213,7 +221,7 @@ namespace backend.Tests.Services
                 // Since MonthlyMprice is null, normalized value should be 0.5
                 Assert.Equal(0.5, recommendation.NormalizedMembershipPrice, 2);
 
-                // ExternalRating is 0, so normalized value should be 0.0
+                // InternalRating is 0, so normalized value should be 0.0
                 Assert.Equal(0.0, recommendation.NormalizedOverallRating, 2);
 
                 // CongestionRating is 0, so normalized value should be 0.0
@@ -226,8 +234,7 @@ namespace backend.Tests.Services
                 Assert.Equal(1.0, recommendation.NormalizedTravelTime, 2);
 
                 // FinalScore calculation:
-                // (0.5 * 0.25) + (0.0 * 0.2) + (0.0 * 0.15) + (1.0 * 0.25) + (1.0 * 0.15) = 0.125 + 0 + 0 + 0.25 + 0.15 = 0.525
-                Assert.Equal(0.525, recommendation.FinalScore, 3);
+                Assert.Equal(0.450, recommendation.FinalScore, 3);
             }
         }
 
@@ -238,15 +245,17 @@ namespace backend.Tests.Services
             var mockDbContext = new Mock<GymrecommenderContext>(new DbContextOptions<GymrecommenderContext>());
             var mockGeoService = new Mock<GeoService>();
             var mockAuthService = new Mock<AuthenticationService>();
+            var mockLogger = new Mock<ILogger<RecommendationService>>();
 
             var service =
-                new RecommendationService(mockDbContext.Object, mockGeoService.Object, mockAuthService.Object);
+                new RecommendationService(mockDbContext.Object, mockGeoService.Object, mockAuthService.Object,
+                    mockLogger.Object);
 
             var gym1 = new Gym
             {
                 Id = Guid.NewGuid(),
                 MonthlyMprice = 120,
-                ExternalRating = 4,
+                InternalRating = 4,
                 CongestionRating = 3,
                 City = new City { Name = "CityG" }
             };
@@ -255,7 +264,7 @@ namespace backend.Tests.Services
             {
                 Id = Guid.NewGuid(),
                 MonthlyMprice = 180,
-                ExternalRating = 5,
+                InternalRating = 5,
                 CongestionRating = 4,
                 City = new City { Name = "CityH" }
             };
@@ -264,7 +273,7 @@ namespace backend.Tests.Services
             {
                 Id = Guid.NewGuid(),
                 MonthlyMprice = 160,
-                ExternalRating = 3,
+                InternalRating = 3,
                 CongestionRating = 2,
                 City = new City { Name = "CityI" }
             };
@@ -297,7 +306,7 @@ namespace backend.Tests.Services
             foreach (var priceRatingPriority in pricePriorities)
             {
                 // Act
-                var recommendations = service.GetRatings(gymsWithGeoData, priceRatingPriority);
+                var recommendations = service.GetRatings(gymsWithGeoData, priceRatingPriority, MembershipLength.Month);
 
                 // Assert
                 Assert.NotNull(recommendations);

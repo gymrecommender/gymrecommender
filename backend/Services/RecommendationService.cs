@@ -11,13 +11,15 @@ public class RecommendationService
     private readonly GymrecommenderContext _dbContext;
     private readonly GeoService _geoService;
     private readonly AuthenticationService _authenticationService;
+    private readonly ILogger<RecommendationService> _logger;
 
     public RecommendationService(GymrecommenderContext context, GeoService geoService,
-        AuthenticationService authenticationService)
+        AuthenticationService authenticationService, ILogger<RecommendationService> logger)
     {
         _dbContext = context;
         _geoService = geoService;
         _authenticationService = authenticationService;
+        _logger = logger;
     }
 
     // Define static readonly constants for base weights within each group
@@ -52,7 +54,8 @@ public class RecommendationService
             );
 
             // Calculate ratings
-            var recommendations = GetRatings(filteredGymsWithGeoData, gymRecommendationRequest.PriceRatingPriority);
+            var recommendations = GetRatings(filteredGymsWithGeoData, gymRecommendationRequest.PriceRatingPriority,
+                gymRecommendationRequest.MembershipLength);
             // TODO: save request and recommendations
             var requestEntity = await SaveRecommendationRequestAsync(gymRecommendationRequest);
             await SaveRecommendationsAsync(requestEntity.Id, recommendations);
@@ -66,7 +69,7 @@ public class RecommendationService
             await transaction.RollbackAsync();
 
             // Log the exception (implement logging as needed)
-            // _logger.LogError(ex, "Error while processing recommendations.");
+            _logger.LogError(ex, "Error while processing recommendations.");
 
             return new StatusCodeResult(500); // Internal Server Error
         }
@@ -116,13 +119,32 @@ public class RecommendationService
         // Start with all gyms and include the City navigation property
         IQueryable<Gym> query = _dbContext.Gyms.Include(g => g.City).AsQueryable();
 
-        // Filter by MaxMembershipPrice if specified
+        // TODO: Convert currencies
         if (request.MaxMembershipPrice > 0)
         {
-            // TODO: Change to use correct field based on membership length
-            // TODO: Convert currencies
-            query = query.Where(
-                g => g.MonthlyMprice.HasValue && g.MonthlyMprice.Value <= request.MaxMembershipPrice);
+            // Implement conditional filtering based on MembershipLength
+            switch (request.MembershipLength)
+            {
+                case MembershipLength.Month:
+                    query = query.Where(g =>
+                        g.MonthlyMprice.HasValue && g.MonthlyMprice.Value <= request.MaxMembershipPrice);
+                    break;
+
+                case MembershipLength.HalfYear:
+                    query = query.Where(g =>
+                        g.SixMonthsMprice.HasValue && g.SixMonthsMprice.Value <= request.MaxMembershipPrice);
+                    break;
+
+                case MembershipLength.Year:
+                    query = query.Where(g =>
+                        g.YearlyMprice.HasValue && g.YearlyMprice.Value <= request.MaxMembershipPrice);
+                    break;
+
+                default:
+                    query = query.Where(g =>
+                        g.MonthlyMprice.HasValue && g.MonthlyMprice.Value <= request.MaxMembershipPrice);
+                    break;
+            }
         }
 
         // Filter by MinOverallRating if specified
@@ -156,7 +178,8 @@ public class RecommendationService
     /// <param name="filteredGyms">List of GymTravelInfoDto after filtering.</param>
     /// <param name="priceRatingPriority">User's priority for price (0-100).</param>
     /// <returns>List of GymRecommendationDto with calculated scores.</returns>
-    public List<GymRecommendationDto> GetRatings(List<GymTravelInfoDto> filteredGyms, int priceRatingPriority)
+    public List<GymRecommendationDto> GetRatings(List<GymTravelInfoDto> filteredGyms, int priceRatingPriority,
+        MembershipLength membershipLength)
     {
         if (filteredGyms == null || !filteredGyms.Any())
         {
@@ -164,10 +187,10 @@ public class RecommendationService
         }
 
         // Extract the lists for each criterion
-        //TODO: Change to use correct field based on membership length
         //TODO: Convert currencies
         List<double?> membershipPrices = filteredGyms
-            .Select(g => g.Gym.MonthlyMprice.HasValue ? (double?)g.Gym.MonthlyMprice.Value : null)
+            .Select(g =>
+                g.Gym.GetPrice(membershipLength).HasValue ? (double?)g.Gym.GetPrice(membershipLength).Value : null)
             .ToList();
 
         List<double?> externalRatings = filteredGyms
