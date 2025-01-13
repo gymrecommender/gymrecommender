@@ -83,7 +83,8 @@ const Index = () => {
           data={data}
           showAsterisks={false}
 		  disabledFormHint={"Select the starting location"}
-          isDisabled={!coordinates.lat}
+          isDisabled={false}
+		  enableCountdown={true}
           onSubmit={(values) => {
             getFormValues(values);
             setCountdownComplete(false);

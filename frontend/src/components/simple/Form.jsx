@@ -34,7 +34,7 @@ const Field = memo(({item, fieldClass, wClassName}) => {
   return <Component key={item.name} {...commonProps} />;
 });
 
-const Form = ({data, onSubmit, className, showAsterisks = true, isDisabled, disabledFormHint}) => {
+const Form = ({data, onSubmit, className, showAsterisks = true, isDisabled, disabledFormHint, enableCountdown = false}) => {
   const [isCountdownActive, setCountdownActive] = useState(false);
   const methods = useForm({
     defaultValues: {
@@ -53,7 +53,7 @@ const Form = ({data, onSubmit, className, showAsterisks = true, isDisabled, disa
 
   const customHandleSubmit = (formData) => {
     onSubmit(sanitizeData(formData), flushForm);
-    setCountdownActive(true);
+    if (enableCountdown) setCountdownActive(true);
   };
 
   const handleCountdownComplete = () => {
@@ -75,7 +75,7 @@ const Form = ({data, onSubmit, className, showAsterisks = true, isDisabled, disa
               wClassName={classNames(data.wClassName, item.wClassName)}
             />;
           })}
-          {isCountdownActive ? (
+          {enableCountdown && isCountdownActive ? (
             <CountdownTimer initialTime={120} onComplete={handleCountdownComplete} />
           ) : (
             buttonText && (
