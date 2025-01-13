@@ -1,9 +1,10 @@
 using System.Reflection;
 using backend.Enums;
-using backend.Models;
 using DotNetEnv;
-using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.EntityFrameworkCore;
+using backend.Models;
+using backend.Utilities;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.OpenApi.Models;
 using Npgsql;
 
@@ -14,11 +15,11 @@ public static class StartupExtensions
     public static WebApplication ConfigureServices(this WebApplicationBuilder builder)
     {
         Env.Load();
-        string connectionString = $"Server=localhost;" +
-                                  $"Database=gym;" +
-                                  $"Port={5432};" +
-                                  $"User Id=postgres;" +
-                                  $"Password=postgres;";
+        string connectionString = $"Server={Environment.GetEnvironmentVariable("DB_HOST")};" +
+                                  $"Database={Environment.GetEnvironmentVariable("DB_DATABASE")};" +
+                                  $"Port={Environment.GetEnvironmentVariable("DB_PORT")};" +
+                                  $"User Id={Environment.GetEnvironmentVariable("DB_USERNAME")};" +
+                                  $"Password={Environment.GetEnvironmentVariable("DB_PASSWORD")};";
 
         var dataSourceBuilder = new NpgsqlDataSourceBuilder(connectionString);
 
@@ -30,11 +31,12 @@ public static class StartupExtensions
 
         var dataSource = dataSourceBuilder.Build();
 
+        builder.Services.AddHttpClient<GoogleApi>();
         builder.Services.AddSingleton<NpgsqlDataSource>(dataSource);
         builder.Services.AddDbContext<GymrecommenderContext>(options =>
             options.UseNpgsql(dataSource));
 
-        //builder.Services.AddCors();
+        builder.Services.AddCors();
         builder.Services.AddControllers()
             .ConfigureApiBehaviorOptions(options => { options.SuppressModelStateInvalidFilter = true; });
         ;
@@ -87,23 +89,23 @@ public static class StartupExtensions
                 });
         }
 
-        app
-            // .UseCors(aux =>
-            //     {
-            //         aux
-            //             .AllowAnyHeader()
-            //             .AllowAnyMethod()
-            //             .WithOrigins(Environment.GetEnvironmentVariable("FRONTEND_ADDRESS"))
-            //             .AllowCredentials();
-            //     })
+        app.UseCors(aux =>
+            {
+                aux
+                    .AllowAnyHeader()
+                    .AllowAnyMethod()
+                    .WithOrigins(Environment.GetEnvironmentVariable("FRONTEND_ADDRESS"))
+                    .AllowCredentials();
+            })
             .UseStaticFiles()
             .UseRouting()
             .UseEndpoints(endpoints => { endpoints.MapControllers(); });
+        ;
 
         app.MapControllerRoute(
             name: "default",
             pattern: "{controller}/{action=Index}/{id?}");
-
+        
         return app;
     }
 }

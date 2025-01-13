@@ -11,6 +11,7 @@ import {useConfirm} from "./context/ConfirmProvider.jsx";
 import Confirm from "./components/simple/Confirm.jsx";
 import TitleSetter from "./TitleSetter.jsx";
 
+
 const App = () => {
 	const {loader} = useLoader();
 	const {getLoading, getUser} = useFirebase();

@@ -40,7 +40,7 @@ public abstract class AccountControllerTemplate : Controller {
         };
 
         var accounts = await query
-            .Select(p => new AccountRegularModel {
+            .Select(p => new AccountViewModel {
                 Id = p.Id,
                 Username = p.Username,
                 Email = p.Email,
@@ -79,7 +79,7 @@ public abstract class AccountControllerTemplate : Controller {
             }});//new { error = $"User {username} is not found" }
         }
 
-        return Ok(new AccountRegularModel {
+        return Ok(new AccountViewModel {
             Id = account.Id,
             Username = account.Username,
             Email = account.Email,
@@ -202,7 +202,7 @@ public abstract class AccountControllerTemplate : Controller {
 
                 await context.SaveChangesAsync();
 
-                return Ok(new AccountRegularModel {
+                return Ok(new AccountViewModel {
                     Id = account.Id,
                     Username = account.Username,
                     Email = account.Email,

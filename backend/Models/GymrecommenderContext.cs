@@ -314,9 +314,7 @@ public partial class GymrecommenderContext : DbContext
             entity.Property(e => e.MonthlyMprice)
                 .HasPrecision(5, 2)
                 .HasColumnName("monthly_mprice");
-            entity.Property(e => e.Name)
-                .HasMaxLength(80)
-                .HasColumnName("name");
+            entity.Property(e => e.Name).HasColumnName("name");
             entity.Property(e => e.OwnedBy).HasColumnName("owned_by");
             entity.Property(e => e.PhoneNumber)
                 .HasMaxLength(15)

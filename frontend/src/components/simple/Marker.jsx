@@ -1,17 +1,38 @@
 import {AdvancedMarker, Pin, InfoWindow, useAdvancedMarkerRef} from "@vis.gl/react-google-maps";
-import {useState} from "react";
+import {useEffect, useState} from "react";
+import {useSelectedGym} from "../../context/SelectedGymProvider.jsx";
 
-const Marker = ({lat, lng, background, borderColor, glyphColor, infoWindow}) => {
+const Marker = ({lat, lng, background, borderColor, glyphColor, id, onClick, infoWindow}) => {
 	const [markerRef, marker] = useAdvancedMarkerRef();
 	const [showPopup, setShowPopup] = useState(false);
+	const { gymId } = useSelectedGym() || { gymId: false };
+	const [scale, setScale] = useState(gymId === id ? 1.5 : 1);
 
-	return <AdvancedMarker ref={markerRef} onClick={() => setShowPopup(true)} position={{lat, lng}}>
+	useEffect(() => {
+		setScale(gymId === id ? 1.5 : 1);
+	}, [gymId])
+
+	return <AdvancedMarker ref={markerRef} onClick={() => {
+		if (onClick) {
+			onClick(gymId !== id)
+		} else {
+			setScale(1.5)
+		}
+
+		if (infoWindow) {
+			setShowPopup(true)
+		}
+	}} position={{lat, lng}}>
 		<Pin
 			{...(background && {background})}
 			{...(borderColor && {borderColor})}
 			{...(glyphColor && {glyphColor})}
+			scale={scale}
 		/>
-		{showPopup ? <InfoWindow anchor={marker} onClose={() => setShowPopup(false)}>
+		{showPopup ? <InfoWindow anchor={marker} onClose={() => {
+			if (!onClick) setShowPopup(false)
+			setScale(1)
+		}}>
 			<div>
 				{infoWindow ?? "Current position"}
 			</div>

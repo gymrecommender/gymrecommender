@@ -2,7 +2,7 @@ using backend.Enums;
 
 namespace backend.ViewModels;
 
-public class AccountRegularModel {
+public class AccountViewModel {
     public Guid Id { get; set; }
 
     public string Username { get; set; } = null!;
