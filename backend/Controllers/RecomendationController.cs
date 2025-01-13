@@ -1,5 +1,6 @@
 using backend.DTO;
 using backend.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace backend.Controllers;
@@ -21,6 +22,7 @@ public class RecomendationController : Controller
     /// <param name="request">User's gym recommendation request containing filters and preferences.</param>
     /// <returns>List of recommended gyms with normalized scores and final scores.</returns>
     [HttpPost("recommendations")]
+    [Authorize(Policy = "UserOnly")]
     public async Task<IActionResult> CreateRecommendationsRequest([FromBody] GymRecommendationRequestDto request)
     {
         if (request == null)
@@ -42,6 +44,7 @@ public class RecomendationController : Controller
     /// <param name="email">The email of the user whose requests are to be retrieved.</param>
     /// <returns>A list of RequestDto objects.</returns>
     [HttpGet("getRequestsHistory")]
+    [Authorize(Policy = "UserOnly")]
     public async Task<IActionResult> GetRequestsHistory([FromQuery] string email)
     {
         try
@@ -53,7 +56,6 @@ public class RecomendationController : Controller
 
             // Retrieve requests using the recommendation service
             var requests = await _recommendationService.GetRequestsByEmailAsync(email);
-
 
             return Ok(requests);
         }

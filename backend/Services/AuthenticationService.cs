@@ -40,15 +40,12 @@ public class AuthenticationService
         // Check if the user is authenticated
         if (user.Identity?.IsAuthenticated != true)
         {
-            //throw new UnauthorizedAccessException("User is not authenticated.");
-            //TODO: temporary for test purposes, remove it later
-            userEmail = "ilyarotan2@gmail.com";
+            throw new UnauthorizedAccessException("User is not authenticated.");
         }
-        else
-        {
-            // Attempt to retrieve the email claim from the token
-            userEmail = user.FindFirst(ClaimTypes.Email)?.Value;
-        }
+
+        // Attempt to retrieve the email claim from the token
+        userEmail = user.FindFirst(ClaimTypes.Email)?.Value;
+
 
         if (string.IsNullOrEmpty(userEmail))
         {
