@@ -100,7 +100,7 @@ public class AdminAccountController : AccountControllerTemplate {
             ownershipRequest.RespondedAt = DateTime.UtcNow;
             ownershipRequest.RespondedBy = admin.Id;
         }
-        ownershipRequest.Message = updateDto.Message;
+        if (ownershipRequest.Message != null) ownershipRequest.Message = updateDto.Message;
         await _context.SaveChangesAsync();
         
         return Ok(new {
