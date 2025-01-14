@@ -18,4 +18,5 @@ public partial class GymWorkingHour
     public virtual Gym Gym { get; set; } = null!;
 
     public virtual WorkingHour WorkingHours { get; set; } = null!;
+    
 }
