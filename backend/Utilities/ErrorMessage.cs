@@ -14,6 +14,7 @@ public static class ErrorMessage
         {"UIDError", "The user with the following ID has not been found: "},
         {"Internal error", "Internal error occured"},
         {"Location error", "Unknown city or country"},
+        {"OwnedGymError", "The gym with the provided id is not found or you do not have the rights to manage the requested gym"}
     };
 
 }

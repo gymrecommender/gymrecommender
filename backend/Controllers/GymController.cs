@@ -25,6 +25,32 @@ public class GymController : Controller {
         _googleApi = googleApi;
     }
 
+
+    [HttpGet("currencies")]
+    public async Task<IActionResult> GetCurrencies() {
+        try {
+            var currencies = await _context.Currencies
+                                           .AsNoTracking()
+                                           .Select(c => new {
+                                               c.Id,
+                                               c.Code,
+                                               c.Name,
+                                           })
+                                           .ToListAsync();
+
+            return Ok(currencies);
+        } catch (Exception ex) {
+            return StatusCode(500, new {
+                success = false,
+                error = new {
+                    code = "InternalError",
+                    message = ex.Message
+                }
+            });
+        }
+    }
+
+
     [HttpGet("{country}/{city}")]
     public async Task<IActionResult> GetGymsByCity(string country, string city) {
         var gymsRes = await RetrieveGymsByCity(country, city);
@@ -92,13 +118,13 @@ public class GymController : Controller {
             var existingWorkingHours = await _context.WorkingHours.AsNoTracking().ToListAsync();
             //TODO currency should be determined in some other way
             var currency = _context.Currencies.AsNoTracking().Where(c => c.Code == "EUR").ToList().First();
-            
+
             foreach (var dataItem in data) {
                 var gym = dataItem.Item1;
                 gym.CurrencyId = currency.Id;
                 
                 _context.Gyms.Add(gym);
-                
+
                 var workingHours = dataItem.Item2;
                 foreach (var wHour in workingHours) {
                     var match = existingWorkingHours.FirstOrDefault(wh =>
@@ -150,7 +176,7 @@ public class GymController : Controller {
         double lng2 = ToRadians(city.Swlongitude);
         double deltaLat = lat2 - lat1;
         double deltaLng = lng2 - lng1;
-        
+
         //Generally, we want to calculate the approximate radius of the city in order to retrieve as much gyms
         //as possible from different districts of the city whenever that is possible
         //Haversine formula is helping us with that
