@@ -54,9 +54,8 @@ public class AdminAccountController : AccountControllerTemplate {
         return await base.Logout(username, _accountType);
     }
     
-    
-    [HttpPut("requests/{requestId:guid}")]
-    public async Task<IActionResult> UpdateOwnershipRequest(Guid requestId, [FromBody] UpdateOwnershipRequestDto updateDto)
+    [HttpPut("{username}/requests/{requestId}")]
+    public async Task<IActionResult> UpdateOwnershipRequest(string username, Guid requestId, [FromBody] UpdateOwnershipRequestDto updateDto)
     {
         if (updateDto == null)
         {
@@ -68,9 +67,20 @@ public class AdminAccountController : AccountControllerTemplate {
             });
         }
         
+        var admin = _context.Accounts.FirstOrDefault(a => a.Username == username && a.Type == AccountType.admin);
+        if (admin == null) {
+            return StatusCode(500, new {
+                success = false,
+                error = new {
+                    message = ErrorMessage.ErrorMessages["UsernameError"]
+                }
+            });
+        }
+        
         var ownershipRequest = _context.Ownerships.AsTracking()
                                        .Include(o => o.Gym)
                                        .FirstOrDefault(o => o.Id == requestId);
+        
         if (ownershipRequest == null)
         {
             return StatusCode(500, new {
@@ -88,6 +98,7 @@ public class AdminAccountController : AccountControllerTemplate {
                 _ => throw new ArgumentException("Invalid decision value. Must be 'approved' or 'rejected'.")
             };
             ownershipRequest.RespondedAt = DateTime.UtcNow;
+            ownershipRequest.RespondedBy = admin.Id;
         }
         ownershipRequest.Message = updateDto.Message;
         await _context.SaveChangesAsync();

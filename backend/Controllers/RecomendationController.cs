@@ -43,7 +43,7 @@ public class RecomendationController : Controller
     /// </summary>
     /// <param name="username">The username of the user whose requests are to be retrieved.</param>
     /// <returns>A list of RequestDto objects.</returns>
-    [HttpGet("getRequestsHistory/{username}")]
+    [HttpGet("/{username}/history")]
     [Authorize(Policy = "UserOnly")]
     public async Task<IActionResult> GetRequestsHistory(string username)
     {
