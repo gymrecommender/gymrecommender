@@ -1,13 +1,9 @@
-using backend.Enums;
+using System.Security.Claims;
 using backend.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 
 namespace backend.Authorization;
-
-using Microsoft.AspNetCore.Authorization;
-using System.Security.Claims;
-using System.Threading.Tasks;
-
 
 public class AuthorizationRequestHandler : AuthorizationHandler<HasTypeRequirement>
 {
@@ -20,7 +16,8 @@ public class AuthorizationRequestHandler : AuthorizationHandler<HasTypeRequireme
         _logger = logger;
     }
 
-    protected override async Task HandleRequirementAsync(AuthorizationHandlerContext context, HasTypeRequirement requirement)
+    protected override async Task HandleRequirementAsync(AuthorizationHandlerContext context,
+        HasTypeRequirement requirement)
     {
         _logger.LogInformation("Checking for authorization request");
 
@@ -37,15 +34,15 @@ public class AuthorizationRequestHandler : AuthorizationHandler<HasTypeRequireme
             _logger.LogWarning("User Email not found in claims.");
             return;
         }
-            
+
         Account user = await _dbContext.Accounts.SingleOrDefaultAsync(u => u.Email == userEmail);
-        
+
         if (user == null)
         {
-            _logger.LogWarning("User not found in claims.");
+            _logger.LogWarning("User not found in db.");
             return;
         }
-        
+
         foreach (string role in requirement.RequiredRoles)
         {
             if (user.Type.ToString().Equals(role))
@@ -55,7 +52,9 @@ public class AuthorizationRequestHandler : AuthorizationHandler<HasTypeRequireme
                 return;
             }
         }
-        _logger.LogInformation("Authorization requirement handling completed, user Email: {userEmail} doesn't have the required role.", userEmail);
 
+        _logger.LogInformation(
+            "Authorization requirement handling completed, user Email: {userEmail} doesn't have the required role.",
+            userEmail);
     }
 }

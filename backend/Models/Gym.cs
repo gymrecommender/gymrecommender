@@ -1,5 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+using System.Text.Json.Serialization;
+using backend.Enums;
 
 namespace backend.Models;
 
@@ -62,12 +62,19 @@ public partial class Gym
     public virtual Currency Currency { get; set; } = null!;
 
     public virtual ICollection<GymWorkingHour> GymWorkingHours { get; set; } = new List<GymWorkingHour>();
+    [JsonIgnore] public virtual Account? OwnedByNavigation { get; set; }
+    [JsonIgnore] public virtual ICollection<Ownership> Ownerships { get; set; } = new List<Ownership>();
+    [JsonIgnore] public virtual ICollection<Rating> Ratings { get; set; } = new List<Rating>();
+    [JsonIgnore] public virtual ICollection<Recommendation> Recommendations { get; set; } = new List<Recommendation>();
 
-    public virtual Account? OwnedByNavigation { get; set; }
-
-    public virtual ICollection<Ownership> Ownerships { get; set; } = new List<Ownership>();
-
-    public virtual ICollection<Rating> Ratings { get; set; } = new List<Rating>();
-
-    public virtual ICollection<Recommendation> Recommendations { get; set; } = new List<Recommendation>();
+    public decimal? GetPrice(MembershipLength membershipLength)
+    {
+        return membershipLength switch
+        {
+            MembershipLength.Month => MonthlyMprice,
+            MembershipLength.HalfYear => SixMonthsMprice,
+            MembershipLength.Year => YearlyMprice,
+            _ => MonthlyMprice
+        };
+    }
 }

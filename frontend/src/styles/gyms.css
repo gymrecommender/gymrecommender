@@ -265,9 +265,6 @@
     background-color: #7C5DC6;
     color: white;
 }
-.gyms-req .gym-req:hover {
-    cursor: pointer;
-}
 .gyms-req .gym-req-selected {
     background-color: #7C5DC6;
 }

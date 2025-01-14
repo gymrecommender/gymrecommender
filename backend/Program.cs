@@ -1,10 +1,13 @@
 using System.Net;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using backend;
 using backend.Authorization;
+using backend.Services;
+using DotNetEnv;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.IdentityModel.Tokens;
-using DotNetEnv;
 
 Env.Load();
 var builder = WebApplication.CreateBuilder(args);
@@ -13,10 +16,17 @@ builder.Logging.ClearProviders();
 builder.Logging.AddConsole();
 builder.Logging.AddDebug();
 
-builder.Services.AddControllers();
+builder.Services.AddControllers().AddJsonOptions(options =>
+{
+    options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.CamelCase,
+        allowIntegerValues: false));
+    options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
+});
+;
 
 var fireBaseProjectId = Environment.GetEnvironmentVariable("JWT_AUTHORITY")
-                        ?? throw new InvalidOperationException("JWT_AUTHORITY not set.");;
+                        ?? throw new InvalidOperationException("JWT_AUTHORITY not set.");
+;
 
 builder.Services.AddAuthentication(options =>
     {
@@ -25,16 +35,16 @@ builder.Services.AddAuthentication(options =>
     })
     .AddJwtBearer(options =>
     {
-        options.Authority = "https://securetoken.google.com/"+fireBaseProjectId;
+        options.Authority = "https://securetoken.google.com/" + fireBaseProjectId;
 
         options.TokenValidationParameters = new TokenValidationParameters
         {
             ValidateIssuer = true,
-            ValidIssuer = "https://securetoken.google.com/"+fireBaseProjectId,
+            ValidIssuer = "https://securetoken.google.com/" + fireBaseProjectId,
             ValidateAudience = true,
             ValidAudience = fireBaseProjectId,
             ValidateLifetime = true,
-            ClockSkew = TimeSpan.FromMinutes(5) 
+            ClockSkew = TimeSpan.FromMinutes(5)
         };
 
         // Hook into the JWT Bearer events for logging
@@ -61,7 +71,8 @@ builder.Services.AddAuthentication(options =>
             OnChallenge = context =>
             {
                 var logger = context.HttpContext.RequestServices.GetRequiredService<ILogger<Program>>();
-                logger.LogWarning("OnChallenge error: {Error}, description: {ErrorDescription}", context.Error, context.ErrorDescription);
+                logger.LogWarning("OnChallenge error: {Error}, description: {ErrorDescription}", context.Error,
+                    context.ErrorDescription);
                 return Task.CompletedTask;
             }
         };
@@ -69,13 +80,17 @@ builder.Services.AddAuthentication(options =>
 
 builder.Services.AddAuthorization()
     .AddAuthorization(options =>
-{
-    options.AddPolicy("AdminOnly", policy => policy.Requirements.Add(new HasTypeRequirement("admin")));
-    options.AddPolicy("GymOnly", policy => policy.Requirements.Add(new HasTypeRequirement("gym")));
-    options.AddPolicy("UserOnly", policy => policy.Requirements.Add(new HasTypeRequirement("user")));
-});
+    {
+        options.AddPolicy("AdminOnly", policy => policy.Requirements.Add(new HasTypeRequirement("admin")));
+        options.AddPolicy("GymOnly", policy => policy.Requirements.Add(new HasTypeRequirement("gym")));
+        options.AddPolicy("UserOnly", policy => policy.Requirements.Add(new HasTypeRequirement("user")));
+    });
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddScoped<IAuthorizationHandler, AuthorizationRequestHandler>();
+builder.Services.AddScoped<RecommendationService, RecommendationService>();
+builder.Services.AddScoped<GeoService, GeoService>();
+builder.Services.AddScoped<AuthenticationService, AuthenticationService>();
 
-builder.Services.AddScoped<IAuthorizationHandler, AuthorizationRequestHandler>(); 
 
 if (!builder.Environment.IsDevelopment())
 {

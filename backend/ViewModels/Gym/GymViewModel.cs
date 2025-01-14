@@ -31,5 +31,7 @@ public class GymViewModel {
     
     public string Country { get; set; }
     
+    public bool IsOwned { get; set; }
+    
     public List<GymWorkingHoursViewModel> WorkingHours { get; set; } = null!;
 }

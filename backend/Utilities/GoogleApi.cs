@@ -27,7 +27,7 @@ public class GoogleApi {
             var res = new Dictionary<string, object>();
             string json = await response.Content.ReadAsStringAsync();
             var jsonDoc = JsonDocument.Parse(json).RootElement;
-            
+
             //Trying to retrieve the fields of the Json response that we are receiving from the Google API
             if (jsonDoc.TryGetProperty("next_page_token", out var token)) res["nextPageToken"] = token.GetString();
             if (jsonDoc.TryGetProperty("results", out var results)) res["results"] = results.EnumerateArray();
@@ -48,7 +48,7 @@ public class GoogleApi {
         var urlCoord = $"https://maps.googleapis.com/maps/api/geocode/json?latlng={latitude},{longitude}&key={_apiKey}";
         var response = await GetRequest(urlCoord);
         if (!response.Success) return response;
-        
+
         //We have to explicitly convert the types as the value in the Response is a generic (can be of any type)
         var result = ((JsonElement.ArrayEnumerator)((Dictionary<string, object>)response.Value)["results"]).First();
         var addressComponents = result.GetProperty("address_components");
@@ -57,8 +57,14 @@ public class GoogleApi {
             var types = component.GetProperty("types").EnumerateArray()
                                  .Select(type => type.GetString());
 
-            if (types.Any(type => type == "locality")) {
-                geocode.City = component.GetProperty("long_name").GetString();
+            if (geocode.City == null) {
+                if (types.Any(type => type == "administrative_area_level_1")) {
+                    geocode.City = component.GetProperty("long_name").GetString();
+                } else if (types.Any(type => type == "administrative_area_level_2")) {
+                    geocode.City = component.GetProperty("long_name").GetString();
+                } else if (types.Any(type => type == "locality")) {
+                    geocode.City = component.GetProperty("long_name").GetString();
+                }
             } else if (types.Any(type => type == "country")) {
                 geocode.Country = component.GetProperty("long_name").GetString();
             }
@@ -100,7 +106,7 @@ public class GoogleApi {
             $"https://maps.googleapis.com/maps/api/place/nearbysearch/json?location={latitude},{longitude}&radius={rad}&type=gym&keyword=gym&key={_apiKey}";
         var placesDetailUrl =
             $"https://maps.googleapis.com/maps/api/place/details/json?fields=user_ratings_total,utc_offset,website,wheelchair_accessible_entrance,rating,name,opening_hours,formatted_address,formatted_phone_number,geometry&key={_apiKey}";
-        
+
         string? token = null;
         var returnResult = new List<Tuple<Gym, List<GymWorkingHoursViewModel>>>();
         do {
@@ -108,7 +114,7 @@ public class GoogleApi {
             var response = await GetRequest($"{placesUrl}{(string.IsNullOrEmpty(token) ? "" : $"&pagetoken={token}")}");
             if (!response.Success) return response;
 
-            
+
             var responseDict = (Dictionary<string, object>)response.Value;
             //Google API returns up to 20 elements in its response and up to 60 elements altogether
             //In order to access the next page, a token for the next page is sent, and it needs to be added as a get parameter in the subsequent request
@@ -124,45 +130,60 @@ public class GoogleApi {
                 var detResponse = await GetRequest($"{placesDetailUrl}&place_id={gym.ExternalPlaceId}");
                 if (!detResponse.Success) return detResponse;
                 var placeDetail = (JsonElement)((Dictionary<string, object>)detResponse.Value)["result"];
-                
+
                 gym.Address = placeDetail.GetProperty("formatted_address").GetString();
                 if (placeDetail.TryGetProperty("formatted_phone_number", out var phone)) {
                     gym.PhoneNumber = phone.GetString();
                 }
+
                 if (placeDetail.TryGetProperty("website", out var website)) {
                     gym.Website = website.GetString();
                 }
+
                 gym.IsWheelchairAccessible = placeDetail.TryGetProperty("wheelchair_accessible_entrance", out _);
-                
+
                 //We will need to also store working hours that are related to the gym
                 //Since they are stored in a separate table, it makes sense to have a separate list of working hours
                 var workingHours = new List<GymWorkingHoursViewModel>();
-                var openingHours = placeDetail.GetProperty("opening_hours").GetProperty("periods")
-                                              .EnumerateArray();
-                
-                // In this case we have regular opening and closing hours, no 24 hours options
-                if (openingHours.Count() > 1 && !openingHours.First().TryGetProperty("close", out _)) {
-                    foreach (var oneDay in openingHours) {
-                        workingHours.Add(new GymWorkingHoursViewModel {
-                            Weekday = Convert.ToInt32(oneDay.GetProperty("close").GetProperty("day")),
-                            OpenUntil = TimeOnly.Parse(oneDay.GetProperty("close").GetProperty("time").GetString().Insert(2, ":")),
-                            OpenFrom = TimeOnly.Parse(oneDay.GetProperty("open").GetProperty("time").GetString().Insert(2, ":"))
-                        });
-                    }
-                } else {
-                    //if there is only one element in the opening hours and there is no close attribute, it means that the gym works 24/7
-                    for (int i = 0; i <= 6; i++) {
-                        workingHours.Add(new GymWorkingHoursViewModel {
-                            Weekday = i,
-                            OpenUntil = TimeOnly.Parse("23:59:59"),
-                            OpenFrom = TimeOnly.Parse("00:00:00"),
-                        });
+                if (placeDetail.TryGetProperty("opening_hours", out var openingHours)) {
+                    var openHoursList = openingHours.GetProperty("periods")
+                                                    .EnumerateArray();
+                    // In this case we have regular opening and closing hours, no 24 hours options
+                    if (openHoursList.Count() > 1 && !openHoursList.First().TryGetProperty("close", out _)) {
+                        foreach (var oneDay in openHoursList) {
+                            workingHours.Add(new GymWorkingHoursViewModel {
+                                Weekday = Convert.ToInt32(oneDay.GetProperty("close").GetProperty("day")),
+                                OpenUntil = TimeOnly.Parse(oneDay.GetProperty("close").GetProperty("time").GetString()
+                                                                 .Insert(2, ":")),
+                                OpenFrom = TimeOnly.Parse(oneDay.GetProperty("open").GetProperty("time").GetString()
+                                                                .Insert(2, ":"))
+                            });
+                        }
+                    } else {
+                        //if there is only one element in the opening hours and there is no close attribute, it means that the gym works 24/7
+                        for (int i = 0; i <= 6; i++) {
+                            workingHours.Add(new GymWorkingHoursViewModel {
+                                Weekday = i,
+                                OpenUntil = TimeOnly.Parse("23:59:59"),
+                                OpenFrom = TimeOnly.Parse("00:00:00"),
+                            });
+                        }
                     }
                 }
 
+                if (placeDetail.TryGetProperty("rating", out var rating)) {
+                    gym.ExternalRating = oneGym.GetProperty("rating").GetDecimal();
+                } else {
+                    gym.ExternalRating = 0;
+                }
+
+                if (placeDetail.TryGetProperty("user_ratings_total", out var ratingsTotal)) {
+                    gym.ExternalRatingNumber = oneGym.GetProperty("user_ratings_total").GetInt32();
+                } else {
+                    gym.ExternalRatingNumber = 0;
+                }
+
                 gym.Name = oneGym.GetProperty("name").GetString();
-                gym.ExternalRating = oneGym.GetProperty("rating").GetDecimal();
-                gym.ExternalRatingNumber = oneGym.GetProperty("user_ratings_total").GetInt32();
 
                 var location = oneGym.GetProperty("geometry").GetProperty("location");
                 gym.Latitude = location.GetProperty("lat").GetDouble();

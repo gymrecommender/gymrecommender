@@ -4,7 +4,7 @@ import classNames from "classnames";
 
 const Loader = ({type}) => {
 	return (
-		<div className={classNames("loader", type === "container" ? "loader-container" : null)}>
+		<div className={classNames("loader", type ? `loader-${type}` : null)}>
 			<Box>
 				<CircularProgress size={"10rem"} thickness={3}/>
 			</Box>

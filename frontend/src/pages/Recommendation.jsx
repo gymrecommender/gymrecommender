@@ -402,7 +402,7 @@ const Recommendation = () => {
 					) : content
 				}
 			</aside>
-			{/*<GoogleMap markers={markers}/>*/}
+			<GoogleMap markers={markers}/>
 		</>
 	);
 };

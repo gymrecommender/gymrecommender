@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Text.Json.Serialization;
 using backend.Enums;
 
 namespace backend.Models;
@@ -21,7 +20,7 @@ public partial class Recommendation
     public decimal? RatingScore { get; set; }
 
     public decimal TotalScore { get; set; }
-    
+
     public RecommendationType Type { get; set; }
 
     public Guid GymId { get; set; }
@@ -30,9 +29,9 @@ public partial class Recommendation
 
     public Guid CurrencyId { get; set; }
 
-    public virtual Currency Currency { get; set; } = null!;
+    [JsonIgnore] public virtual Currency Currency { get; set; } = null!;
 
-    public virtual Gym Gym { get; set; } = null!;
+    [JsonIgnore] public virtual Gym Gym { get; set; } = null!;
 
-    public virtual Request Request { get; set; } = null!;
+    [JsonIgnore] public virtual Request Request { get; set; } = null!;
 }

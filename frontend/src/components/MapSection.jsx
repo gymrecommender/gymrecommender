@@ -36,7 +36,7 @@ import {forRatings, mainRatingMarker, secRatingMarket, startMarker} from "../ser
 // 		infoWindow: <div>A pop</div>,
 // 	},
 // ]
-const MapSection = ({markers}) => {
+const MapSection = ({markers, showStartMarker=true, forceClick=false}) => {
 	//#TODO these variables must be within the GoogleMap component (use context to share these variables with each other)
 	const {setCoordinates} = useCoordinates();
 
@@ -56,7 +56,7 @@ const MapSection = ({markers}) => {
 	return (
 		<div className={"section main"}>
 			<LocationControls onSubmitSearch={handleSubmitSearch} onGetLocation={handleGetLocation}/>
-			{/*<GoogleMap markers={markers}/>*/}
+			<GoogleMap markers={markers} showStartMarker={showStartMarker} forceClick={forceClick}/>
 		</div>
 	);
 };
