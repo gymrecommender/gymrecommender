@@ -58,8 +58,7 @@ public class AdminAccountController : AccountControllerTemplate {
     [HttpPut("requests/{requestId:guid}")]
     public async Task<IActionResult> UpdateOwnershipRequest(Guid requestId, [FromBody] UpdateOwnershipRequestDto updateDto)
     {
-        
-        if (updateDto == null || updateDto.Decision == null)
+        if (updateDto == null)
         {
             return StatusCode(500, new {
                 success = false,
@@ -69,7 +68,9 @@ public class AdminAccountController : AccountControllerTemplate {
             });
         }
         
-        var ownershipRequest = await _context.Ownerships.FindAsync(requestId);
+        var ownershipRequest = _context.Ownerships.AsTracking()
+                                       .Include(o => o.Gym)
+                                       .FirstOrDefault(o => o.Id == requestId);
         if (ownershipRequest == null)
         {
             return StatusCode(500, new {
@@ -79,27 +80,31 @@ public class AdminAccountController : AccountControllerTemplate {
                 }
             });
         }
-        
-        ownershipRequest.Decision = updateDto.Decision.ToLower() switch
-        {
-            "approved" => OwnershipDecision.approved,
-            "rejected" => OwnershipDecision.rejected,
-            _ => throw new ArgumentException("Invalid decision value. Must be 'approved' or 'rejected'.")
-        };
 
-        ownershipRequest.RespondedAt = DateTime.UtcNow;
+        if (updateDto.Decision != null) {
+            ownershipRequest.Decision = updateDto.Decision.ToLower() switch {
+                "approved" => OwnershipDecision.approved,
+                "rejected" => OwnershipDecision.rejected,
+                _ => throw new ArgumentException("Invalid decision value. Must be 'approved' or 'rejected'.")
+            };
+            ownershipRequest.RespondedAt = DateTime.UtcNow;
+        }
         ownershipRequest.Message = updateDto.Message;
-
         await _context.SaveChangesAsync();
-
-   
-        return Ok(new
-        {
-            success = true,
-            message = $"Ownership request {updateDto.Decision.ToLower()} successfully.",
-            requestId = ownershipRequest.Id,
-            decision = updateDto.Decision.ToLower(),
-            respondedAt = ownershipRequest.RespondedAt.ToString(),
+        
+        return Ok(new {
+            id = ownershipRequest.Id,
+            requestedAt = ownershipRequest.RequestedAt,
+            respondedAt = ownershipRequest.RespondedAt,
+            decision = ownershipRequest.Decision?.ToString(),
+            message = ownershipRequest.Message,
+            gym = new {
+                id = ownershipRequest.Gym.Id,
+                name = ownershipRequest.Gym.Name,
+                address = ownershipRequest.Gym.Address,
+                latitude = ownershipRequest.Gym.Latitude,
+                longitude = ownershipRequest.Gym.Longitude
+            }
         });
     }
     
@@ -113,12 +118,13 @@ public class AdminAccountController : AccountControllerTemplate {
             .ToListAsync();
 
         var response = ownershipRequests.Select(o => new {
-            id = o.Id.ToString(),
-            requestedAt = o.RequestedAt.ToString("o"),
-            respondedAt = o.RespondedAt.HasValue ? o.RespondedAt.Value.ToString("o") : null,
-            decision = o.Decision.ToString(),
+            id = o.Id,
+            requestedAt = o.RequestedAt,
+            respondedAt = o.RespondedAt,
+            decision = o.Decision?.ToString(),
             message = o.Message,
             gym = new {
+                id = o.Gym.Id,
                 name = o.Gym.Name,
                 address = o.Gym.Address,
                 latitude = o.Gym.Latitude,
@@ -129,52 +135,4 @@ public class AdminAccountController : AccountControllerTemplate {
         // Return the result as JSON
         return Ok(response);
     }
-
-    
-    
-    
-
-      
-    [HttpDelete("requests/{requestId:guid}")]
-    public async Task<IActionResult> DeleteOwnershipRequest(Guid requestId)
-    {
-        var ownershipRequest = await _context.Ownerships.FindAsync(requestId);
-        if (ownershipRequest == null)
-        {
-            return StatusCode(500, new {
-                success = false,
-                error = new {
-                    message = ErrorMessage.ErrorMessages["RequestError"]
-                }
-            });
-        }
-        
-        _context.Ownerships.Remove(ownershipRequest);
-        await _context.SaveChangesAsync();
-        
-        return Ok(new
-        {
-            success = true,
-            message = "Ownership request deleted successfully.",
-            requestId = requestId
-        });
-    }
-
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-}//class bracket
+}

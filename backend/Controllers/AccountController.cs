@@ -16,7 +16,6 @@ public class AccountController : AccountControllerTemplate {
     public AccountController(GymrecommenderContext context, IOptions<AppSettings> appSettings) : base(context, appSettings) {}
     
     [HttpGet] // GET /api/account
-    [Authorize(Policy = "AdminOnly")]
     public async Task<IActionResult> GetAccounts(int page = 1, int sort = 1, bool ascending = true) {
         return await base.GetData(page, sort, ascending);
     }

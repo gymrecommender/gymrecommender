@@ -22,7 +22,7 @@ public static class ErrorMessage
         {"OwnershipError", "Ownership with this id does not exist"},
         {"RequestError", "Request with this id does not exist"},
         {"GymIdError", "Gym with this Id not found"},
-        
+        {"ManagedGymError", "The selected gym is already under management"}, 
     };
 
 }

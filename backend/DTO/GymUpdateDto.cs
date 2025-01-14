@@ -11,8 +11,7 @@ public class GymUpdateDto
     public decimal? SixMonthsMprice { get; set; }
     public string? PhoneNumber { get; set; }
     public string? Website { get; set; }
-    public bool? isWheelchairAccessible { get; set; }
-    
+    public bool? IsWheelchairAccessible { get; set; }
     public GymWorkingHour[]? WorkingHours { get; set; } 
 }
 

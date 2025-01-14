@@ -95,7 +95,9 @@ public class GymAccountController : AccountControllerTemplate {
     //TODO connect new working hours with the gym in the GymWorkingHoursTable ^
     //TODO a GymViewModel should be returned ^
     public async Task<IActionResult> UpdateGym(Guid gymAccountId, Guid gymId, [FromBody] GymUpdateDto gymUpdateDto) {
-        var gym = await _context.Gyms.AsTracking().Where(g => g.Id == gymId && g.OwnedBy == gymAccountId).FirstOrDefaultAsync();
+        var gym = _context.Gyms.AsTracking()
+                                .Include(g => g.GymWorkingHours).ThenInclude(gwh => gwh.WorkingHours)
+                                .FirstOrDefault(g => g.Id == gymId && g.OwnedBy == gymAccountId);
         if (gym == null) {
             return StatusCode(500, new {
                 success = false,
@@ -112,33 +114,32 @@ public class GymAccountController : AccountControllerTemplate {
         if (gymUpdateDto.SixMonthsMprice.HasValue) gym.SixMonthsMprice = gymUpdateDto.SixMonthsMprice.Value;
         if (gymUpdateDto.PhoneNumber != null) gym.PhoneNumber = gymUpdateDto.PhoneNumber;
         if (gymUpdateDto.Website != null) gym.Website = gymUpdateDto.Website;
-        if (gymUpdateDto.isWheelchairAccessible.HasValue) gym.IsWheelchairAccessible = gymUpdateDto.isWheelchairAccessible.Value;
-        
-        if (gymUpdateDto.WorkingHours != null && gymUpdateDto.WorkingHours.Any())
-        {
-            foreach (var workingHourDto in gymUpdateDto.WorkingHours)
-            {
-                var existingWorkingHour = await _context.WorkingHours
-                    .FirstOrDefaultAsync(wh => wh.OpenFrom == workingHourDto.WorkingHours.OpenFrom && wh.OpenUntil == workingHourDto.WorkingHours.OpenUntil);
+        if (gymUpdateDto.IsWheelchairAccessible.HasValue)
+            gym.IsWheelchairAccessible = gymUpdateDto.IsWheelchairAccessible.Value;
 
-                if (existingWorkingHour == null)
-                {
-                    existingWorkingHour = new WorkingHour
-                    {
-                        Id = Guid.NewGuid(),
+        if (gymUpdateDto.WorkingHours != null && gymUpdateDto.WorkingHours.Any()) {
+            foreach (var workingHourDto in gymUpdateDto.WorkingHours) {
+                var existingWorkingHour = await _context.WorkingHours
+                                                        .FirstOrDefaultAsync(wh =>
+                                                            wh.OpenFrom == workingHourDto.WorkingHours.OpenFrom &&
+                                                            wh.OpenUntil == workingHourDto.WorkingHours.OpenUntil);
+
+                if (existingWorkingHour == null) {
+                    existingWorkingHour = new WorkingHour {
                         OpenFrom = workingHourDto.WorkingHours.OpenFrom,
                         OpenUntil = workingHourDto.WorkingHours.OpenUntil,
                     };
                     _context.WorkingHours.Add(existingWorkingHour);
                     await _context.SaveChangesAsync();
                 }
-                var existingRelation = gym.GymWorkingHours
-                    .FirstOrDefault(gwh => gwh.Weekday == workingHourDto.Weekday && gwh.WorkingHoursId == existingWorkingHour.Id);
 
-                if (existingRelation == null)
-                {
-                    gym.GymWorkingHours.Add(new GymWorkingHour
-                    {
+                var existingRelation = gym.GymWorkingHours
+                                          .FirstOrDefault(gwh =>
+                                              gwh.Weekday == workingHourDto.Weekday &&
+                                              gwh.WorkingHoursId == existingWorkingHour.Id);
+
+                if (existingRelation == null) {
+                    gym.GymWorkingHours.Add(new GymWorkingHour {
                         GymId = gym.Id,
                         WorkingHoursId = existingWorkingHour.Id,
                         Weekday = workingHourDto.Weekday
@@ -146,10 +147,10 @@ public class GymAccountController : AccountControllerTemplate {
                 }
             }
         }
+
         await _context.SaveChangesAsync();
-        
-        var updatedGym = new GymViewModel
-        {
+
+        var updatedGym = new GymViewModel {
             Id = gym.Id,
             Name = gym.Name,
             Longitude = gym.Longitude,
@@ -161,8 +162,7 @@ public class GymAccountController : AccountControllerTemplate {
             MonthlyMprice = gym.MonthlyMprice,
             YearlyMprice = gym.YearlyMprice,
             SixMonthsMprice = gym.SixMonthsMprice,
-            WorkingHours = gym.GymWorkingHours.Select(gwh => new GymWorkingHoursViewModel
-            {
+            WorkingHours = gym.GymWorkingHours.Select(gwh => new GymWorkingHoursViewModel {
                 Weekday = gwh.Weekday,
                 OpenFrom = gwh.WorkingHours.OpenFrom,
                 OpenUntil = gwh.WorkingHours.OpenUntil
@@ -171,143 +171,98 @@ public class GymAccountController : AccountControllerTemplate {
         return Ok(updatedGym);
     }
 
-    [HttpGet("requests")]
-    public async Task<IActionResult> GetRequests(Guid gymAccountId, string? whichRequest = null) {
+    [HttpGet("requests/{gymAccountId}")]
+    public async Task<IActionResult> GetRequests(Guid gymAccountId, string? type = null) {
         //TODO we need an id of the gym account ^
         //TODO add a get parameter that show whether we need to retrieve all requests, only answered or only unanswered ^
         //TODO retrieve requests only for the provided gym account ^
         //TODO Create a view model (not necessary, but desirable) to return the result ^
-        
-        if (whichRequest != null && whichRequest != "all" && whichRequest != "answered" && whichRequest != "unanswered")
-        {
-            return BadRequest(new
-            {
-                success = false,
-                message = "Invalid filter. Allowed values are 'all', 'answered', or 'unanswered'."
-            });
-        }
 
-        
-        var query = _context.Ownerships
-                                     .Include(o => o.Gym)
-                                     .Include(o => o.RequestedBy)
-                                     .Where(o => o.Gym.OwnedBy == gymAccountId); 
+        if (type != null && type != "answered" && type != "unanswered") type = null;
+        var query = _context.Ownerships.AsNoTracking()
+                            .Include(o => o.Gym)
+                            .Where(o => o.RequestedBy == gymAccountId);
 
-        if (whichRequest == "answered")
-        {
-            query = query.Where(o => o.RespondedAt != null);
-        }
-        else if (whichRequest == "unanswered")
-        {
-            query = query.Where(o => o.RespondedAt == null);
-        }
-        
-        var requests = query.ToList();
-        
-        
-        var response = requests.Select(o => new
-        {
-            id = o.Id.ToString(),
-            requestedAt = o.RequestedAt.ToString("o"),
-            respondedAt = o.RespondedAt?.ToString("o"),
-            decision = o.Decision != null ? (o.Decision.ToString() == "approved" ? "approved" : "rejected") : "pending",
+        if (type == "answered") query = query.Where(o => o.Decision != null);
+        else if (type == "unanswered") query = query.Where(o => o.Decision == null);
+
+        var requests = query.Select(o => new {
+            id = o.Id,
+            requestedAt = o.RequestedAt,
+            respondedAt = o.RespondedAt,
+            decision = o.Decision.HasValue ? o.Decision.ToString() : null,
             message = o.Message,
-            gym = new
-            {
-                id = o.Gym.Id.ToString(),
+            gym = new {
+                id = o.Gym.Id,
                 name = o.Gym.Name,
-                address = o.Gym.Address
+                address = o.Gym.Address,
+                latitude = o.Gym.Latitude,
+                longitude = o.Gym.Longitude
             }
-        });
-        
-        // var accountIds = requests.Select(o => o.Id).Distinct();
-        // var accounts = await _context.Accounts
-        //                              .Where(a => accountIds.Contains(a.Id))
-        //                              .ToDictionaryAsync(a => a.Id, a => a.Email); // Map AccountId -> Email
+        }).ToList();
 
-
-        // var groupedRequests = requests
-        //                       .GroupBy(o => o.Gym.Id)
-        //                       .Select(g => new {
-        //                           GymId = g.Key,
-        //                           Name = g.First().Gym.Name,
-        //                           Address = g.First().Gym.Address,
-        //                           Requests = g.Select(r => new {
-        //                               AccountId = r.Id.ToString(),
-        //                               RequestTime = r.RequestedAt.ToString(),
-        //                               Email = accounts.ContainsKey(r.Id) ? accounts[r.Id] : null,
-        //                               Message = r.Message
-        //                           })
-        //                       }).ToDictionary(
-        //                           g => g.GymId,
-        //                           g => new {
-        //                               name = g.Name,
-        //                               address = g.Address,
-        //                               requests = g.Requests.ToDictionary(
-        //                                   r => r.AccountId,
-        //                                   r => new {
-        //                                       requestTime = r.RequestTime,
-        //                                       email = r.Email,
-        //                                       message = r.Message
-        //                                   }
-        //                               )
-        //                           });
-
-
-        return Ok(new
-            {
-                success = true,
-                filter = whichRequest ?? "all",
-                requests = response
-            });
+        return Ok(requests);
     }
 
-    // [HttpGet("requests")]
-    // public async Task<IActionResult> GetOwnershipRequests() {
-    //     //TODO with the get parameter for the function above this function is not needed
-    //     // im npot sure what you mean by this, i fixed the above function but still 
-    //     var ownershipRequests = await _context.Ownerships
-    //                                           .Include(o => o.Gym)
-    //                                           .ToListAsync();
-    //
-    //     var response = ownershipRequests.Select(o => new {
-    //         id = o.Id.ToString(),
-    //         requestedAt = o.RequestedAt.ToString("o"),
-    //         respondedAt = o.RespondedAt.HasValue ? o.RespondedAt.Value.ToString("o") : null,
-    //         decision = o.Decision.ToString(),
-    //         message = o.Message,
-    //         gym = new {
-    //             name = o.Gym.Name,
-    //             address = o.Gym.Address,
-    //             latitude = o.Gym.Latitude,
-    //             longitude = o.Gym.Longitude
-    //         }
-    //     }).ToList();
-    //
-    //     // Return the result as JSON
-    //     return Ok(response);
-    // }
-    //
-    
-    
-    
-    [HttpPost("requests")]
-    public async Task<IActionResult> AddOwnershipRequest([FromBody] OwnershipRequestDto ownershipRequest)
-    {
-        if (ownershipRequest == null || ownershipRequest.GymId == Guid.Empty || ownershipRequest.AccountId == Guid.Empty)
-        {
+    [HttpPost("own/{gymAccountId}/{gymId}")]
+    public async Task<IActionResult> AddOwnershipRequest(Guid gymAccountId, Guid gymId) {
+        var gym = await _context.Gyms.AsNoTracking().FirstOrDefaultAsync(g => g.Id == gymId && g.OwnedBy == null);
+        if (gym == null) {
             return StatusCode(500, new {
                 success = false,
                 error = new {
-                    message = ErrorMessage.ErrorMessages["EmptyBoxes"]
+                    message = ErrorMessage.ErrorMessages["ManagedGymError"]
                 }
             });
         }
+
+        var existingRequest = await _context.Ownerships
+                                            .Where(o => o.GymId == gymId &&
+                                                        o.RequestedBy == gymAccountId &&
+                                                        o.Decision == null)
+                                            .FirstOrDefaultAsync();
+
+        if (existingRequest != null) {
+            return StatusCode(500, new {
+                success = false,
+                error = new {
+                    message = ErrorMessage.ErrorMessages["RequestPending"]
+                }
+            });
+        }
+
+        var newOwnershipRequest = new Ownership {
+            GymId = gymId,
+            RequestedBy = gymAccountId
+        };
+
+        _context.Ownerships.Add(newOwnershipRequest);
+        await _context.SaveChangesAsync();
         
-        var gym = await _context.Gyms.FindAsync(ownershipRequest.GymId);
-        if (gym == null)
-        {
-            
+        var ownRequestWithGym = _context.Ownerships.AsNoTracking().Include(o => o.Gym)
+                                        .First(o => o.Id == newOwnershipRequest.Id);
+        
+        return Ok( new {
+            id = ownRequestWithGym.Id,
+            requestedAt = ownRequestWithGym.RequestedAt,
+            respondedAt = ownRequestWithGym.RespondedAt,
+            decision = ownRequestWithGym.Decision?.ToString(),
+            message = ownRequestWithGym.Message,
+            gym = new {
+                id = ownRequestWithGym.Gym.Id,
+                name = ownRequestWithGym.Gym.Name,
+                address = ownRequestWithGym.Gym.Address,
+                latitude = ownRequestWithGym.Gym.Latitude,
+                longitude = ownRequestWithGym.Gym.Longitude
+            }
+        });
+    }
+
+
+    [HttpPut("detach/{gymAccountId:guid}/{gymId:guid}")]
+    public async Task<IActionResult> DetachGym(Guid gymAccountId, Guid gymId) {
+        var gym = await _context.Gyms.AsTracking().FirstOrDefaultAsync(g => g.Id == gymId && g.OwnedBy == gymAccountId);
+        if (gym == null) {
             return StatusCode(500, new {
                 success = false,
                 error = new {
@@ -315,79 +270,30 @@ public class GymAccountController : AccountControllerTemplate {
                 }
             });
         }
-        var account = await _context.Accounts.FindAsync(ownershipRequest.AccountId);
-        if (account == null)
-        {
-            
-            return StatusCode(500, new {
-                success = false,
-                error = new {
-                    message = ErrorMessage.ErrorMessages["AccountId"]
-                }
-            });
-        }
-        
-        var existingRequest = await _context.Ownerships
-            .Where(o => o.GymId == ownershipRequest.GymId && o.RequestedBy == ownershipRequest.AccountId && o.RespondedAt == null)//%%%%%%%
-            .FirstOrDefaultAsync();
 
-        if (existingRequest != null)
-        {
-            return StatusCode(500, new {
-                success = false,
-                error = new {
-                    message = ErrorMessage.ErrorMessages["RequestPending"]
-                }
-            });
-            
-        }
-        
-        var newOwnershipRequest = new Ownership
-        {
-            Id = Guid.NewGuid(),
-            GymId = ownershipRequest.GymId,
-            RequestedBy = ownershipRequest.AccountId,
-            RequestedAt = DateTime.UtcNow,
-            Message = ownershipRequest.Message,
-            RespondedBy = null,
-            RespondedAt = null 
-        };
-        
-        _context.Ownerships.Add(newOwnershipRequest);
-        await _context.SaveChangesAsync();
-
-        return Ok(new
-        {
-            success = true,
-            message = "Ownership request submitted successfully.",
-            requestId = newOwnershipRequest.Id
-        });
-    }
-    
-    
-    [HttpPut("detach/{gymId:guid}")]
-    public async Task<IActionResult> DetachGym(Guid gymId)
-    {
-        var gym = await _context.Gyms.FindAsync(gymId);
-        if (gym == null)
-        {
-            return StatusCode(500, new {
-                success = false,
-                error = new {
-                    message = ErrorMessage.ErrorMessages["GymIdError"]
-                }
-            });
-        }
         gym.OwnedBy = null;
         await _context.SaveChangesAsync();
 
-        return Ok(new
-        {
-            success = true,
-            message = $"Gym with ID {gymId} has been detached successfully."
-        });
+        return StatusCode(204);
     }
 
-    
-    
-}//class bracket
+    [HttpDelete("requests/{gymAccountId:guid}/{requestId:guid}")]
+    public async Task<IActionResult> DeleteOwnershipRequest(Guid gymAccountId, Guid requestId) {
+        var ownershipRequest = await _context.Ownerships.AsNoTracking()
+                                             .FirstOrDefaultAsync(o =>
+                                                 o.Id == requestId && o.RequestedBy == gymAccountId);
+        if (ownershipRequest == null) {
+            return StatusCode(500, new {
+                success = false,
+                error = new {
+                    message = ErrorMessage.ErrorMessages["RequestError"]
+                }
+            });
+        }
+
+        _context.Ownerships.Remove(ownershipRequest);
+        await _context.SaveChangesAsync();
+
+        return StatusCode(204);
+    }
+}
