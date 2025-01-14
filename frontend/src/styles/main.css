@@ -490,6 +490,37 @@ button.edit-btn {
     color: #ffffff;
 }
 
+.search-bar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+    padding: 10px;
+    background-color: #a0a8f5;
+    border-radius: 4px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.search-bar input {
+    flex: 1;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 1rem;
+    color: #002147;
+}
+
+.search-bar input:focus {
+    outline: none;
+    border-color: #002147;
+    box-shadow: 0 0 5px rgba(0, 33, 71, 0.5);
+}
+.search-bar .icon{
+    font-size: 1.5rem;
+    color: #f5a042;
+}
+
+
 
 
 /*AccountGym forms*/

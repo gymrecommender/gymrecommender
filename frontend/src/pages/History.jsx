@@ -7,6 +7,7 @@ import {
   faStar,
   faChartBar,
   faFrown,
+  faSearch,
 } from "@fortawesome/free-solid-svg-icons";
 import {useParams} from "react-router-dom";
 import { axiosInternal } from "../services/axios";
@@ -14,6 +15,7 @@ import Button from "../components/simple/Button";
 
 const History = () => {
   const [requests, setRequests] = useState([]);
+  const [searchQuery, setSearchQuery] = useState("");
   const {username} = useParams();
   const [editingId, setEditingId] = useState(null);
   const [newName, setNewName] = useState("");
@@ -127,12 +129,25 @@ const handleSave = async (id) => {
   }
 };
 
+const filteredRequests = requests.filter((request) =>
+  request.name.toLowerCase().includes(searchQuery.toLowerCase())
+);
+
 
 
   return (
     <section className="section">
       <h2 style={{ color: "#ffffff" }}>Your Past Requests:</h2>
-      {requests.length > 0 ? (
+      <div className="search-bar">
+        <FontAwesomeIcon icon={faSearch} className="icon"/>
+        <input
+          type="text"
+          placeholder="Search requests..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+        />
+      </div>
+      {filteredRequests.length > 0 ? (
         <table className="history-table">
           <thead>
             <tr>
@@ -166,7 +181,7 @@ const handleSave = async (id) => {
             </tr>
           </thead>
           <tbody>
-          {requests.map((request) => (
+          {filteredRequests.map((request) => (
               <tr
                 key={request.id}
                 onClick={(e) => {
