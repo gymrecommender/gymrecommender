@@ -455,6 +455,42 @@ input[type="range"]::-moz-range-thumb {
     color: #cdbfff;
 }
 
+/* Button Styles */
+button {
+    background-color: #002147;
+    color: #ffffff;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    margin-top: 10px;
+}
+
+button:hover {
+    background-color: #cdd2fc;
+    color: #002147;
+    transform: scale(1.05);
+}
+
+button:active {
+    transform: scale(0.95);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+button.save-btn {
+    background-color: #a0a8f5;
+    color: #002147;
+}
+
+button.edit-btn {
+    background-color: #f5a042;
+    color: #ffffff;
+}
+
+
 
 /*AccountGym forms*/
 .request-form, .update-form, .unavailable-form {

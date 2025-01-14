@@ -10,10 +10,13 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import {useParams} from "react-router-dom";
 import { axiosInternal } from "../services/axios";
+import Button from "../components/simple/Button";
 
 const History = () => {
   const [requests, setRequests] = useState([]);
   const {username} = useParams();
+  const [editingId, setEditingId] = useState(null);
+  const [newName, setNewName] = useState("");
 
   // Actual useEffect for fetching data from backend
   /*useEffect(() => {
@@ -102,6 +105,28 @@ const handleRequestClick = (id) => {
   window.open(url, '_blank', 'noopener,noreferrer');
 };
 
+const handleEditClick = (id, currentName) => {
+  setEditingId(id);
+  setNewName(currentName);
+};
+
+const handleSave = async (id) => {
+  // Update the backend
+  const updatedRequest = { id, name: newName };
+  const { error } = await axiosInternal("PATCH", `requests/${id}`, updatedRequest);
+
+  if (!error) {
+    setRequests((prevRequests) =>
+      prevRequests.map((request) =>
+        request.id === id ? { ...request, name: newName } : request
+      )
+    );
+    setEditingId(null);
+  } else {
+    console.error("Failed to update request name.");
+  }
+};
+
 
 
   return (
@@ -141,13 +166,43 @@ const handleRequestClick = (id) => {
             </tr>
           </thead>
           <tbody>
-            {requests.map((request) => (
+          {requests.map((request) => (
               <tr
-			  key={request.id}
-			  onClick={() => handleRequestClick(request.id)}
-			  style={{ cursor: "pointer" }}
-			>
-                <td>{request.name || "Unnamed Request"}</td>
+                key={request.id}
+                onClick={(e) => {
+                  if (!e.target.closest(".edit-section")) {
+                    handleRequestClick(request.id);
+                  }
+                }}
+                style={{ cursor: "pointer" }}
+              >
+                <td>
+                  {editingId === request.id ? (
+                    <div className="edit-section" onClick={(e) => e.stopPropagation()}>
+                      <input
+                        type="text"
+                        value={newName}
+                        onChange={(e) => setNewName(e.target.value)}
+                      />
+                      <Button onClick={() => handleSave(request.id)} className="save-btn">
+                        Save
+                      </Button>
+                    </div>
+                  ) : (
+                    <span>
+                      {request.name || "Unnamed Request"}
+                      <Button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleEditClick(request.id, request.name);
+                        }}
+                        className="edit-btn"
+                      >
+                        Edit
+                      </Button>
+                    </span>
+                  )}
+                </td>
                 <td>{request.requestTime || "N/A"}</td>
                 <td>{request.preferences?.departureTime || "N/A"}</td>
                 <td>{request.preferences?.arrivalTime || "N/A"}</td>
