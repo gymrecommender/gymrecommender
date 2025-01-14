@@ -41,21 +41,16 @@ public class RecomendationController : Controller
     /// Retrieves all requests associated with a specific user email.
     /// Accessible only by users with the Admin role.
     /// </summary>
-    /// <param name="email">The email of the user whose requests are to be retrieved.</param>
+    /// <param name="username">The username of the user whose requests are to be retrieved.</param>
     /// <returns>A list of RequestDto objects.</returns>
-    [HttpGet("getRequestsHistory")]
+    [HttpGet("getRequestsHistory/{username}")]
     [Authorize(Policy = "UserOnly")]
-    public async Task<IActionResult> GetRequestsHistory([FromQuery] string email)
+    public async Task<IActionResult> GetRequestsHistory(string username)
     {
         try
         {
-            if (string.IsNullOrWhiteSpace(email))
-            {
-                return BadRequest(new { message = "Email parameter is required." });
-            }
-
             // Retrieve requests using the recommendation service
-            var requests = await _recommendationService.GetRequestsByEmailAsync(email);
+            var requests = await _recommendationService.GetRequestsByUsernameAsync(username);
 
             return Ok(requests);
         }

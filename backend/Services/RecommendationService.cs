@@ -80,23 +80,23 @@ public class RecommendationService
     /// <summary>
     /// Retrieves all requests associated with a specific user email. throws KeyNotFoundException if email doe not exists
     /// </summary>
-    /// <param name="email">The email of the user.</param>
+    /// <param name="username">The username of the user.</param>
     /// <returns>A list of RequestDto objects.</returns>
-    public async Task<List<Request>> GetRequestsByEmailAsync(string email)
+    public async Task<List<Request>> GetRequestsByUsernameAsync(string username)
     {
-        if (string.IsNullOrWhiteSpace(email))
+        if (string.IsNullOrWhiteSpace(username))
         {
-            throw new ArgumentException("Email must be provided.", nameof(email));
+            throw new ArgumentException("Username must be provided.", nameof(username));
         }
 
         // Fetch the user from the database
         var user = await _dbContext.Accounts
             .AsNoTracking()
-            .SingleOrDefaultAsync(u => u.Email == email);
+            .SingleOrDefaultAsync(u => u.Username == username && u.Type == AccountType.user);
 
         if (user == null)
         {
-            throw new KeyNotFoundException($"User with email '{email}' not found.");
+            throw new KeyNotFoundException($"User with username '{username}' not found.");
         }
 
         // Retrieve requests associated with the user's ID
