@@ -4,6 +4,7 @@ using backend.Models;
 using backend.Utilities;
 using backend.ViewModels;
 using backend.ViewModels.WorkingHour;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Microsoft.EntityFrameworkCore;
@@ -13,57 +14,52 @@ namespace backend.Controllers;
 [ApiController]
 [Route("/api/[controller]")]
 public class GymAccountController : AccountControllerTemplate {
-    private readonly GymrecommenderContext _context;
-
     public GymAccountController(GymrecommenderContext context, IOptions<AppSettings> appSettings) :
         base(context, appSettings) {
-        _context = context;
         _accountType = AccountType.gym;
     }
 
-    [HttpGet]
-    public async Task<IActionResult> GetGymData(int page = 1, int sort = 1, bool ascending = true) {
-        return await base.GetData(page, sort, ascending, _accountType);
-    }
-
-    [HttpPost]
-    public async Task<IActionResult> SignUpGym(AccountDto accountDto) {
-        return await SignUp(accountDto, _accountType);
-    }
-
     [HttpGet("{username}")]
+    [Authorize(Policy = "GymOnly")]
     public async Task<IActionResult> GetGymByUsername(string username, AccountType? accountType) {
         return await base.GetByUsername(username, _accountType);
     }
 
-    [HttpPut("{username}")]
-    public async Task<IActionResult> UpdateByUsername(string username, AccountPutDto accountPutDto) {
-        return await base.UpdateByUsername(username, accountPutDto, _accountType);
+    [HttpPut]
+    [Authorize(Policy = "GymOnly")]
+    public async Task<IActionResult> UpdateAccount(AccountPutDto accountPutDto) {
+        return await base.UpdateAccount(accountPutDto, _accountType);
     }
 
-    [HttpDelete("{username}")]
-    public async Task<IActionResult> DeleteByUsername(string username) {
-        return await base.DeleteByUsername(username, _accountType);
+    [HttpDelete]
+    [Authorize(Policy = "GymOnly")]
+    public async Task<IActionResult> DeleteAccount() {
+        return await base.DeleteAccount(_accountType);
     }
 
-    [HttpPost("{username}/login")]
-    public async Task<IActionResult> Login(string username) {
-        return await base.Login(username, _accountType);
+    [HttpPost("login")]
+    [Authorize(Policy = "GymOnly")]
+    public async Task<IActionResult> Login() {
+        return await base.Login(_accountType);
     }
 
-    [HttpDelete("{username}/logout")]
-    public async Task<IActionResult> Logout(string username) {
-        return await base.Logout(username, _accountType);
+    [HttpDelete("logout")]
+    [Authorize(Policy = "GymOnly")]
+    public async Task<IActionResult> Logout() {
+        return await base.Logout(_accountType);
     }
 
-    [HttpGet("{username}/owned")]
-    public async Task<IActionResult> GetOwnedGyms(string username) {
+    [HttpGet("owned")]
+    [Authorize(Policy = "GymOnly")]
+    public async Task<IActionResult> GetOwnedGyms() {
+        var firebaseUid = HttpContext.User.FindFirst("user_id")?.Value;
+        
         var gyms = await _context.Gyms
                                  .Include(g => g.GymWorkingHours).ThenInclude(wh => wh.WorkingHours)
                                  .Include(g => g.Currency)
                                  .Include(g => g.City).ThenInclude(c => c.Country)
                                  .Include(g => g.OwnedByNavigation)
-                                 .Where(g => g.OwnedByNavigation != null && g.OwnedByNavigation.Username == username)
+                                 .Where(g => g.OwnedByNavigation != null && g.OwnedByNavigation.OuterUid == firebaseUid)
                                  .Select(g => new GymViewModel {
                                      Id = g.Id,
                                      Name = g.Name,
@@ -90,17 +86,20 @@ public class GymAccountController : AccountControllerTemplate {
     }
 
 
-    [HttpPut("{username}/gym/{gymId}")]
+    [HttpPut("gym/{gymId}")]
+    [Authorize(Policy = "GymOnly")]
     //TODO add working hours fields to the GymUpdateDto (it should be an array) ^
     //TODO save non-existing working hours ^
     //TODO connect new working hours with the gym in the GymWorkingHoursTable ^
     //TODO a GymViewModel should be returned ^
-    public async Task<IActionResult> UpdateGym(string username, Guid gymId, [FromBody] GymUpdateDto gymUpdateDto) {
+    public async Task<IActionResult> UpdateGym(Guid gymId, [FromBody] GymUpdateDto gymUpdateDto) {
+        var firebaseUid = HttpContext.User.FindFirst("user_id")?.Value;
+
         var gym = _context.Gyms.AsTracking()
                           .Include(g => g.OwnedByNavigation)
                           .Include(g => g.GymWorkingHours).ThenInclude(gwh => gwh.WorkingHours)
                           .FirstOrDefault(g =>
-                              g.Id == gymId && g.OwnedByNavigation != null && g.OwnedByNavigation.Username == username);
+                              g.Id == gymId && g.OwnedByNavigation != null && g.OwnedByNavigation.OuterUid == firebaseUid);
 
         if (gym == null) {
             return StatusCode(500, new {
@@ -175,18 +174,20 @@ public class GymAccountController : AccountControllerTemplate {
         return Ok(updatedGym);
     }
 
-    [HttpGet("{username}/ownership")]
-    public async Task<IActionResult> GetRequests(string username, string? type = null) {
+    [HttpGet("ownership")]
+    [Authorize(Policy = "GymOnly")]
+    public async Task<IActionResult> GetRequests(string? type = null) {
         //TODO we need an id of the gym account ^
         //TODO add a get parameter that show whether we need to retrieve all requests, only answered or only unanswered ^
         //TODO retrieve requests only for the provided gym account ^
         //TODO Create a view model (not necessary, but desirable) to return the result ^
+        var firebaseUid = HttpContext.User.FindFirst("user_id")?.Value;
 
         if (type != null && type != "answered" && type != "unanswered") type = null;
         var query = _context.Ownerships.AsNoTracking()
                             .Include(o => o.RequestedByNavigation)
                             .Include(o => o.Gym)
-                            .Where(o => o.RequestedByNavigation.Username == username);
+                            .Where(o => o.RequestedByNavigation.OuterUid == firebaseUid);
 
         if (type == "answered") query = query.Where(o => o.Decision != null);
         else if (type == "unanswered") query = query.Where(o => o.Decision == null);
@@ -209,8 +210,11 @@ public class GymAccountController : AccountControllerTemplate {
         return Ok(requests);
     }
 
-    [HttpPost("{username}/ownership/{gymId}")]
-    public async Task<IActionResult> AddOwnershipRequest(string username, Guid gymId) {
+    [HttpPost("ownership/{gymId}")]
+    [Authorize(Policy = "GymOnly")]
+    public async Task<IActionResult> AddOwnershipRequest(Guid gymId) {
+        var firebaseUid = HttpContext.User.FindFirst("user_id")?.Value;
+
         var gym = await _context.Gyms
                                 .Include(g => g.OwnedByNavigation)
                                 .FirstOrDefaultAsync(g => g.Id == gymId && g.OwnedBy == null);
@@ -226,7 +230,7 @@ public class GymAccountController : AccountControllerTemplate {
         var existingRequest = await _context.Ownerships
                                             .Include(o => o.RequestedByNavigation)
                                             .Where(o => o.GymId == gymId &&
-                                                        o.RequestedByNavigation.Username == username &&
+                                                        o.RequestedByNavigation.OuterUid == firebaseUid &&
                                                         o.Decision == null)
                                             .FirstOrDefaultAsync();
 
@@ -239,7 +243,7 @@ public class GymAccountController : AccountControllerTemplate {
             });
         }
 
-        var user = _context.Accounts.First(a => a.Username == username);
+        var user = _context.Accounts.First(a => a.OuterUid == firebaseUid);
         var newOwnershipRequest = new Ownership {
             GymId = gymId,
             RequestedByNavigation = user
@@ -268,11 +272,14 @@ public class GymAccountController : AccountControllerTemplate {
     }
 
 
-    [HttpPut("{username}/ownership/{gymId}")]
-    public async Task<IActionResult> DetachGym(string username, Guid gymId) {
+    [HttpPut("ownership/{gymId}")]
+    [Authorize(Policy = "GymOnly")]
+    public async Task<IActionResult> DetachGym(Guid gymId) {
+        var firebaseUid = HttpContext.User.FindFirst("user_id")?.Value;
+
         var gym = _context.Gyms.AsTracking()
                                 .Include(g => g.OwnedByNavigation)
-                                .FirstOrDefault(g => g.Id == gymId && g.OwnedByNavigation != null && g.OwnedByNavigation.Username == username);
+                                .FirstOrDefault(g => g.Id == gymId && g.OwnedByNavigation != null && g.OwnedByNavigation.OuterUid == firebaseUid);
         if (gym == null) {
             return StatusCode(500, new {
                 success = false,
@@ -288,12 +295,15 @@ public class GymAccountController : AccountControllerTemplate {
         return StatusCode(204);
     }
 
-    [HttpDelete("{username}/ownership/{requestId}")]
-    public async Task<IActionResult> DeleteOwnershipRequest(string username, Guid requestId) {
+    [HttpDelete("ownership/{requestId}")]
+    [Authorize(Policy = "GymOnly")]
+    public async Task<IActionResult> DeleteOwnershipRequest(Guid requestId) {
+        var firebaseUid = HttpContext.User.FindFirst("user_id")?.Value;
+        
         var ownershipRequest = await _context.Ownerships.AsNoTracking()
                                              .Include(o => o.RequestedByNavigation)
                                              .FirstOrDefaultAsync(o =>
-                                                 o.Id == requestId && o.RequestedByNavigation.Username == username);
+                                                 o.Id == requestId && o.RequestedByNavigation.OuterUid == firebaseUid);
         if (ownershipRequest == null) {
             return StatusCode(500, new {
                 success = false,

@@ -82,21 +82,16 @@ public class RecommendationService
     /// </summary>
     /// <param name="username">The username of the user.</param>
     /// <returns>A list of RequestDto objects.</returns>
-    public async Task<List<Request>> GetRequestsByUsernameAsync(string username)
+    public async Task<List<Request>> GetRequestsByUsernameAsync(string firebaseUid)
     {
-        if (string.IsNullOrWhiteSpace(username))
-        {
-            throw new ArgumentException("Username must be provided.", nameof(username));
-        }
-
         // Fetch the user from the database
         var user = await _dbContext.Accounts
             .AsNoTracking()
-            .SingleOrDefaultAsync(u => u.Username == username && u.Type == AccountType.user);
+            .SingleOrDefaultAsync(u => u.OuterUid == firebaseUid && u.Type == AccountType.user);
 
         if (user == null)
         {
-            throw new KeyNotFoundException($"User with username '{username}' not found.");
+            throw new KeyNotFoundException($"User has not been found.");
         }
 
         // Retrieve requests associated with the user's ID
