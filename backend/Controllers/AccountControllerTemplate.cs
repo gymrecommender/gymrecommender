@@ -148,20 +148,21 @@ public abstract class AccountControllerTemplate : Controller {
     }
 
     [NonAction]
-    public async Task<IActionResult> GetRoleByUid(string uid) {
+    public async Task<IActionResult> GetRoleByUid() {
         try {
+            var firebaseUid = HttpContext.User.FindFirst("user_id")?.Value;
+
             var account = await _context.Accounts.AsNoTracking()
-                                        .Where(a => a.OuterUid == uid)
+                                        .Where(a => a.OuterUid == firebaseUid)
                                         .FirstOrDefaultAsync();
 
             if (account == null) {
                 return NotFound(new {
                     success = false, error = new {
                         code = "UIDError",
-                        message = ErrorMessage.ErrorMessages["TokenError"] + $"{uid}" //?
+                        message = ErrorMessage.ErrorMessages["TokenError"] //?
                     }
                 });
-                //return NotFound(new { error = $"User with uid {uid} is not found" });
             }
 
             return Ok(new AccountRoleModel {

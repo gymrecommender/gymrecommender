@@ -72,7 +72,7 @@ public class GymAccountController : AccountControllerTemplate {
                                      MonthlyMprice = g.MonthlyMprice,
                                      YearlyMprice = g.YearlyMprice,
                                      SixMonthsMprice = g.SixMonthsMprice,
-                                     Currency = g.Currency.Name,
+                                     Currency = g.Currency.Code,
                                      City = g.City.Name,
                                      Country = g.City.Country.Name,
                                      WorkingHours = g.GymWorkingHours.Select(wh => new GymWorkingHoursViewModel {
@@ -98,6 +98,7 @@ public class GymAccountController : AccountControllerTemplate {
         var gym = _context.Gyms.AsTracking()
                           .Include(g => g.OwnedByNavigation)
                           .Include(g => g.GymWorkingHours).ThenInclude(gwh => gwh.WorkingHours)
+                          .Include(g => g.Currency)
                           .FirstOrDefault(g =>
                               g.Id == gymId && g.OwnedByNavigation != null && g.OwnedByNavigation.OuterUid == firebaseUid);
 
@@ -165,6 +166,7 @@ public class GymAccountController : AccountControllerTemplate {
             MonthlyMprice = gym.MonthlyMprice,
             YearlyMprice = gym.YearlyMprice,
             SixMonthsMprice = gym.SixMonthsMprice,
+            Currency = gym.Currency.Code,
             WorkingHours = gym.GymWorkingHours.Select(gwh => new GymWorkingHoursViewModel {
                 Weekday = gwh.Weekday,
                 OpenFrom = gwh.WorkingHours.OpenFrom,
@@ -300,7 +302,7 @@ public class GymAccountController : AccountControllerTemplate {
     public async Task<IActionResult> DeleteOwnershipRequest(Guid requestId) {
         var firebaseUid = HttpContext.User.FindFirst("user_id")?.Value;
         
-        var ownershipRequest = await _context.Ownerships.AsNoTracking()
+        var ownershipRequest = await _context.Ownerships
                                              .Include(o => o.RequestedByNavigation)
                                              .FirstOrDefaultAsync(o =>
                                                  o.Id == requestId && o.RequestedByNavigation.OuterUid == firebaseUid);

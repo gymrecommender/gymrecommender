@@ -1,6 +1,7 @@
 using backend.DTO;
 using backend.Enums;
 using backend.Models;
+using backend.Services;
 using backend.Utilities;
 using backend.ViewModels;
 using Microsoft.AspNetCore.Authorization;
@@ -13,9 +14,13 @@ namespace backend.Controllers;
 [ApiController]
 [Route("/api/[controller]")]
 public class UserAccountController : AccountControllerTemplate {
-    public UserAccountController(GymrecommenderContext context, IOptions<AppSettings> appSettings) :
+    private readonly RecommendationService _recommendationService;
+
+    public UserAccountController(GymrecommenderContext context, IOptions<AppSettings> appSettings,
+                                 RecommendationService recommendationService) :
         base(context, appSettings) {
         _accountType = AccountType.user;
+        _recommendationService = recommendationService;
     }
 
     [HttpPost]
@@ -26,6 +31,7 @@ public class UserAccountController : AccountControllerTemplate {
             if (firebaseUid == null) {
                 return Forbid("Unauthorized user");
             }
+
             try {
                 var errors = new Dictionary<string, string[]> { };
                 if (!Enum.TryParse<ProviderType>(accountDto.Provider, out var provider)) {
@@ -106,15 +112,35 @@ public class UserAccountController : AccountControllerTemplate {
         return await base.DeleteAccount(_accountType);
     }
 
-    [HttpPost("/login")]
+    [HttpPost("login")]
     [Authorize(Policy = "UserOnly")]
     public async Task<IActionResult> Login() {
         return await base.Login(_accountType);
     }
-    
-    [HttpDelete("/logout")]
+
+    [HttpDelete("logout")]
     [Authorize(Policy = "UserOnly")]
     public async Task<IActionResult> Logout() {
         return await base.Logout(_accountType);
+    }
+
+    /// <summary>
+    /// Retrieves all requests associated with a specific user.
+    /// Accessible only by accounts with the User role.
+    /// </summary>
+    /// <returns>A list of RequestDto objects.</returns>
+    [HttpGet("history")]
+    [Authorize(Policy = "UserOnly")]
+    public async Task<IActionResult> GetRequestsHistory() {
+        var firebaseUid = HttpContext.User.FindFirst("user_id")?.Value;
+
+        try {
+            // Retrieve requests using the recommendation service
+            var requests = await _recommendationService.GetRequestsByUsernameAsync(firebaseUid);
+
+            return Ok(requests);
+        } catch (KeyNotFoundException knfEx) {
+            return NotFound(new { message = knfEx.Message });
+        }
     }
 }

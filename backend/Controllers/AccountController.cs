@@ -20,8 +20,9 @@ public class AccountController : AccountControllerTemplate {
         return await base.GetByUsername(username);
     }
 
-    [HttpGet("{uid}/role")]// GET /api/account/{uid}/role
-    public async Task<IActionResult> GetRoleByUid(string uid) {
-        return await base.GetRoleByUid(uid);
+    [HttpGet("role")]
+    [Authorize]
+    public async Task<IActionResult> GetRole() {
+        return await base.GetRoleByUid();
     }
 }

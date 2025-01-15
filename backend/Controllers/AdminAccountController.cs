@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 
 namespace backend.Controllers;
 
@@ -47,7 +48,7 @@ public class AdminAccountController : AccountControllerTemplate {
         return await base.Logout(_accountType);
     }
     
-    [HttpPut("/requests/{requestId}")]
+    [HttpPut("requests/{requestId}")]
     [Authorize(Policy = "AdminOnly")]
     public async Task<IActionResult> UpdateOwnershipRequest(Guid requestId, [FromBody] UpdateOwnershipRequestDto updateDto) {
         var firebaseUid = HttpContext.User.FindFirst("user_id")?.Value;
@@ -86,7 +87,7 @@ public class AdminAccountController : AccountControllerTemplate {
             });
         }
 
-        if (updateDto.Decision != null) {
+        if (!updateDto.Decision.IsNullOrEmpty()) {
             ownershipRequest.Decision = updateDto.Decision.ToLower() switch {
                 "approved" => OwnershipDecision.approved,
                 "rejected" => OwnershipDecision.rejected,
@@ -100,7 +101,7 @@ public class AdminAccountController : AccountControllerTemplate {
                 gym.OwnedBy = ownershipRequest.RequestedBy;
             }
         }
-        if (ownershipRequest.Message != null) ownershipRequest.Message = updateDto.Message;
+        if (!updateDto.Message.IsNullOrEmpty()) ownershipRequest.Message = updateDto.Message;
         await _context.SaveChangesAsync();
         
         return Ok(new {
@@ -121,29 +122,42 @@ public class AdminAccountController : AccountControllerTemplate {
     
     
     [HttpGet("requests")]
+    [Authorize(Policy = "AdminOnly")]
     public async Task<IActionResult> GetOwnershipRequests() {
-        //TODO with the get parameter for the function above this function is not needed
-        // im npot sure what you mean by this, i fixed the above function but still 
-        var ownershipRequests = await _context.Ownerships
+        var ownershipRequests = _context.Ownerships
             .Include(o => o.Gym)
-            .ToListAsync();
+            .Include(o => o.RequestedByNavigation)
+            .Where(o => o.Decision == null)
+            .ToList();
 
-        var response = ownershipRequests.Select(o => new {
-            id = o.Id,
-            requestedAt = o.RequestedAt,
-            respondedAt = o.RespondedAt,
-            decision = o.Decision?.ToString(),
-            message = o.Message,
-            gym = new {
-                id = o.Gym.Id,
-                name = o.Gym.Name,
-                address = o.Gym.Address,
-                latitude = o.Gym.Latitude,
-                longitude = o.Gym.Longitude
-            }
-        }).ToList();
+        var groupedRequests = ownershipRequests
+                              .GroupBy(o => o.Gym.Id)
+                              .Select(g => new {
+                                  GymId = g.Key,
+                                  Name = g.First().Gym.Name,
+                                  Address = g.First().Gym.Address,
+                                  Requests = g.Select(r => new {
+                                      Id = r.Id,
+                                      requestedAt = r.RequestedAt,
+                                      Email = r.RequestedByNavigation.Email,
+                                      Message = r.Message
+                                  })
+                              }).ToDictionary(
+                                  g => g.GymId,
+                                  g => new {
+                                      name = g.Name,
+                                      address = g.Address,
+                                      requests = g.Requests.ToDictionary(
+                                          r => r.Id,
+                                          r => new {
+                                              requestedAt = r.requestedAt,
+                                              email = r.Email,
+                                              message = r.Message
+                                          }
+                                      )
+                                  });
 
-        // Return the result as JSON
-        return Ok(response);
+
+        return Ok(groupedRequests);
     }
 }
