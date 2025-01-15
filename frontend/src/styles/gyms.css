@@ -49,6 +49,15 @@
     margin: 0 15px;
 }
 
+.section-mg .modal {
+    min-width: 50vw;
+}
+
+.section-mg .modal .modal-body {
+    padding: 20px 0;
+    text-align: center;
+}
+
 .gym-data-header {
     display: flex;
     column-gap: 20px;
@@ -138,6 +147,11 @@
 }
 
 .gym-data-row .gym-data-row-attr-value {
+    color: white;
+    font-weight: bold;
+}
+
+.gym-data-row .gym-data-row-attr-value a {
     color: white;
     font-weight: bold;
 }

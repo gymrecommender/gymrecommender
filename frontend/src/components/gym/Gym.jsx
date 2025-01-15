@@ -1,10 +1,18 @@
+import {displayTimestamp} from "../../services/helpers.jsx";
+
 const Gym = ({weekdays, currencies, data}) => {
-	const currency = currencies.find(item => {
-		return item.value === data.currency
-	}).label
+	const currency = currencies?.find(item => {
+		return item.code === data.currency
+	}).code
 
 	const workingHours = data.workingHours.reduce((acc, item) => {
-		acc[item.weekday] = `${item.openFrom} - ${item.openUntil}`;
+		let value;
+		if (item.openFrom === "00:00:00" && item.openUntil === "23:59:59") {
+			value = "Always open"
+		} else {
+			value = `${item.openFrom.substring(0, 5)} - ${item.openUntil.substring(0, 5)}`
+		}
+		acc[item.weekday] = value;
 		return acc;
 	}, weekdays.map((_) => "Closed"));
 
@@ -23,7 +31,7 @@ const Gym = ({weekdays, currencies, data}) => {
 				</tr>
 				{data.website ? <tr className={"gym-data-row"}>
 					<td className={"gym-data-row-attr-name"}>Website</td>
-					<td className={"gym-data-row-attr-value"}>{data.website}</td>
+					<td className={"gym-data-row-attr-value"}><a href={data.website} target={"_blank"}>{data.website}</a></td>
 				</tr> : ''}
 				{data.monthlyMprice ? <tr className={"gym-data-row"}>
 					<td className={"gym-data-row-attr-name"}>Monthly membership</td>

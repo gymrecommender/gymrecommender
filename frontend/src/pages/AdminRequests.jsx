@@ -12,6 +12,7 @@ import Form from "../components/simple/Form.jsx";
 import AccordionRequests from "../components/simple/AccordionRequests.jsx";
 import {toast} from "react-toastify";
 import {useConfirm} from "../context/ConfirmProvider.jsx";
+import {axiosInternal} from "../services/axios.jsx";
 
 const statuses = [
 	{value: "approved", label: "Approved"},
@@ -59,92 +60,71 @@ const AdminRequests = () => {
 	const {flushData, setValues} = useConfirm();
 
 	useEffect(() => {
-		setGroupedGyms({
-			"gym_uuid_1": {
-				name: "Maplewood gym",
-				address: "1234 Maplewood Avenue Springfield, IL 62701, United States",
-				requests: {
-					"gym_account_id_1": {requestTime: "2024-11-06T14:45:00+05:30", email: "thebestgym@gmail.com"},
-					"gym_account_id_2": {requestTime: "2024-11-06T14:45:00+05:30", email: "nickname@gmail.com"},
-					"gym_account_id_3": {requestTime: "2024-11-06T14:45:00+05:30", email: "anothergym@gmail.com"},
-				}
-			},
-			"gym_uuid_2": {
-				name: "Summit Wellness Center",
-				address: "789 Summit Street, New York, NY 10001, United States",
-				requests: {
-					"gym_account_id_1": {requestTime: "2024-11-06T14:45:00+05:30", email: "thebestgym@gmail.com"},
-					"gym_account_id_2": {requestTime: "2024-11-06T14:45:00+05:30", email: "nickname@gmail.com"},
-					"gym_account_id_3": {requestTime: "2024-11-06T14:45:00+05:30", email: "anothergym@gmail.com"},
-				}
-			},
-			"gym_uuid_3": {
-				name: "Riverside Fitness Center",
-				address: "4567 Riverside Drive, Los Angeles, CA 90012, United States",
-				requests: {
-					"gym_account_id_1": {requestTime: "2024-11-06T14:45:00+05:30", email: "thebestgym@gmail.com"},
-				}
-			},
-		})
+		const retrieveOwnershipRequests = async () => {
+			const result = await axiosInternal("GET", `adminaccount/requests`);
+			if (result.error) toast(result.error.message);
+			else setGroupedGyms(result.data)
+		}
+
+		retrieveOwnershipRequests();
 	}, [])
 
 	const handleShowModal = () => setShowCreateAdminModal(true);
 	const handleCloseModal = () => setShowCreateAdminModal(false);
 
-	const onAccept = (gymId, acceptedAccountId, acceptedMessage) => {
+	const onAccept = async (gymId, acceptedGymRequestId, acceptedMessage) => {
 		flushData();
-		Object.keys(groupedGyms[gymId].requests).forEach(gymAccountId => {
-			const data = groupedGyms[gymId].requests[gymAccountId]
-			if (gymAccountId === acceptedAccountId) {
-				data.message = acceptedMessage;
-				data.status = statuses[0].value;
-			} else {
-				data.status = statuses[1].value;
-			}
-			// TODO save the response for the current gym and handle the response
-		})
-
 		const copy = {...groupedGyms}
-		toast(`Responses for '${copy[gymId].name}' has been successfully submitted`)
-		delete copy[gymId];
+
+		await Promise.all(Object.keys(groupedGyms[gymId].requests).map(async (gymRequestId) => {
+			const isAccepted = gymRequestId === acceptedGymRequestId;
+			const result = await axiosInternal("PUT", `adminaccount/requests/${gymRequestId}`, {
+				message: isAccepted ? acceptedMessage : "The request has been declined",
+				decision: isAccepted ? "approved" : "rejected"
+			});
+
+			if (result.error) toast(result.error.message);
+			else delete copy[gymId].requests[gymRequestId];
+		}))
+
+		console.log(copy[gymId].requests)
+		if (Object.keys(copy[gymId].requests).length === 0) {
+			toast(`Responses for '${copy[gymId].name}' has been successfully submitted`)
+			delete copy[gymId];
+		}
 		setGroupedGyms(copy);
 	}
 
-	const handleOnSubmit = (values, gymId, accountId) => {
+	const handleOnSubmit = async (values, gymId, requestId) => {
 		const copy = {...groupedGyms}
 		const changedRequests = copy[gymId].requests;
-		const isFinish = values.status && values.message;
+		const isComplete = values.status && values.message;
 
-		changedRequests[accountId] = {
-			...changedRequests[accountId],
-			message: values.message,
-			status: values.status
-		};
-		copy[gymId].requests = changedRequests;
-
-		if (isFinish && values.status === statuses[0].value) {
+		if (isComplete && values.status === "approved") {
 			if (Object.keys(changedRequests).length > 1) {
 				setValues(
 					true,
 					`Accepting this ownership request for '${copy[gymId].name}' will automatically reject all the other ownership requests for this gym. Continue?`,
-					() => onAccept(gymId, accountId, values.message),
+					() => onAccept(gymId, requestId, values.message),
 					flushData
 				)
-			} else {
-				onAccept(gymId, accountId, values.message);
-			}
+			} else await onAccept(gymId, requestId, values.message);
 			return;
 		}
 
-		//TODO save data in the db. Proceed if the data has been stored successfully
-		if (isFinish) {
-			delete changedRequests[accountId]
-			if (Object.keys(copy[gymId]).length === 0) {
-				delete copy[gymId];
-			}
+		const result = await axiosInternal("PUT", `adminaccount/requests/${requestId}`, {
+			message: values.message,
+			decision: values.status
+		});
+		if (result.error) toast(result.error.message);
+		else {
+			if (isComplete) delete changedRequests[requestId];
+			else changedRequests[requestId].message = result.data.message;
+			if (Object.keys(copy[gymId].requests).length === 0) delete copy[gymId];
+
+			setGroupedGyms(copy);
+			toast("The response has been saved successfully")
 		}
-		setGroupedGyms(copy);
-		toast("The response has been saved successfully")
 	}
 
 	const handleAccountSubmit = (values) => {

@@ -20,10 +20,10 @@ const AccordionRequests = ({name, requests, address, gymId, onSubmit, statuses})
 				<div className={"accordion-content"}>
 					{
 						Object.keys(requests)?.map((gymAccountId, index) => {
-							const {requestTime, email, message, status} = requests[gymAccountId];
+							const {requestedAt, email, message, status} = requests[gymAccountId];
 							return <div key={gymAccountId} className={"accordion-content-row"}>
 								<span className={"accordion-content-email"}>{email}</span>
-								<span className={"accordion-content-requestTime"}>{displayTimestamp(requestTime)}</span>
+								<span className={"accordion-content-requestedAt"}>{displayTimestamp(requestedAt)}</span>
 								<Form className={"accordion-form"} data={{
 									fields: [
 										{
