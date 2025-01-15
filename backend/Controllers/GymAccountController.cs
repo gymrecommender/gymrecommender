@@ -56,7 +56,7 @@ public class GymAccountController : AccountControllerTemplate {
         return await base.Logout(username, _accountType);
     }
 
-    [HttpGet("owned/{gymId}")]
+    [HttpGet("owned/{gymId}")]//################# this one is ok, i think?
     public async Task<IActionResult> GetOwnedGyms(Guid gymId) {
         var gyms = await _context.Gyms
                                  .Include(g => g.GymWorkingHours).ThenInclude(wh => wh.WorkingHours)
@@ -89,7 +89,7 @@ public class GymAccountController : AccountControllerTemplate {
     }
 
 
-    [HttpPut("{gymAccountId}/{gymId}")]
+    [HttpPut("{gymAccountId}/{gymId}")]//##################### also ok
     //TODO add working hours fields to the GymUpdateDto (it should be an array) ^
     //TODO save non-existing working hours ^
     //TODO connect new working hours with the gym in the GymWorkingHoursTable ^
@@ -171,7 +171,7 @@ public class GymAccountController : AccountControllerTemplate {
         return Ok(updatedGym);
     }
 
-    [HttpGet("requests")]
+    [HttpGet("requests")]//#################also ok?  gymAccountId this should be in api
     public async Task<IActionResult> GetRequests(Guid gymAccountId, string? whichRequest = null) {
         //TODO we need an id of the gym account ^
         //TODO add a get parameter that show whether we need to retrieve all requests, only answered or only unanswered ^
@@ -191,7 +191,7 @@ public class GymAccountController : AccountControllerTemplate {
         var query = _context.Ownerships
                                      .Include(o => o.Gym)
                                      .Include(o => o.RequestedBy)
-                                     .Where(o => o.Gym.OwnedBy == gymAccountId); 
+                                     .Where(o => o.Gym.OwnedBy == gymAccountId); //RequestedBythis in the where check
 
         if (whichRequest == "answered")
         {
@@ -291,7 +291,7 @@ public class GymAccountController : AccountControllerTemplate {
     
     
     
-    [HttpPost("requests")]
+    [HttpPost("requests")]//ok? gym id here and function call always
     public async Task<IActionResult> AddOwnershipRequest([FromBody] OwnershipRequestDto ownershipRequest)
     {
         if (ownershipRequest == null || ownershipRequest.GymId == Guid.Empty || ownershipRequest.AccountId == Guid.Empty)
@@ -365,7 +365,7 @@ public class GymAccountController : AccountControllerTemplate {
     }
     
     
-    [HttpPut("detach/{gymId:guid}")]
+    [HttpPut("detach/{gymId:guid}")]//################## ok? add gymAccount Id
     public async Task<IActionResult> DetachGym(Guid gymId)
     {
         var gym = await _context.Gyms.FindAsync(gymId);
