@@ -3,7 +3,7 @@ import {auth, provider} from "../Firebase.jsx";
 import {signInWithPopup, onAuthStateChanged} from "firebase/auth";
 import {useNavigate} from "react-router-dom";
 import {accountLogin, accountLogout, accountSignUp} from "../services/accountHelpers.jsx";
-import {attachToken, axiosInternal, deattachToken} from "../services/axios.jsx";
+import {attachToken, axiosInternal, detachToken} from "../services/axios.jsx";
 import {useLoader} from "./LoaderProvider.jsx";
 
 const FirebaseContext = createContext();
@@ -35,14 +35,14 @@ const FirebaseProvider = ({children}) => {
 
 					if (result.error) {
 						//TODO the error from here should be somehow propagated and diplayed to the user
-						deattachToken();
+						detachToken();
 						setUser(null);
 					} else {
 						setUser({username: user.displayName, role: result.data.role});
 					}
 				}
 			} else {
-				deattachToken();
+				detachToken();
 				setUser(null);
 			}
 			setLoading(false);

@@ -1,4 +1,4 @@
-import {axiosInternal} from "./axios.jsx";
+import {attachToken, axiosInternal, detachToken} from "./axios.jsx";
 import {
 	createUserWithEmailAndPassword,
 	deleteUser,
@@ -20,7 +20,7 @@ const accountSignUp = async (values, role) => {
 	const result = {data: null, error: null}
 
 	try {
-		if (role === "admin") {
+		if (role !== "user") {
 			result.error = errorsParser({message:"Operation is not allowed"})
 			return result
 		}
@@ -36,7 +36,11 @@ const accountSignUp = async (values, role) => {
 				'provider': 'local',
 				'type': 'user'
 			}
+
+			attachToken(outerUser.user.accessToken)
 			const dbUser = await axiosInternal('POST', `${roleMapper[role]}`, data)
+			detachToken()
+
 			if (dbUser.error) {
 				result.error = errorsParser(dbUser.error);
 				await deleteUser(outerUser.user) //all the data will be lost so we will not be able to align the database and the firebase
@@ -78,6 +82,7 @@ const accountLogin = async (values, role) => {
 			return result;
 		}
 
+		attachToken(signInResult.user.accessToken)
 		//TODO propagate expired datetime from the firebase
 		const login = await axiosInternal('POST', `${roleMapper[role]}/${signInResult.user.displayName}/login`)
 		if (login.error) {
@@ -105,6 +110,7 @@ const accountLogout = async (username, role) => {
 
 			return result;
 		}
+		detachToken();
 
 		await signOut(auth);
 	} catch (e) {
