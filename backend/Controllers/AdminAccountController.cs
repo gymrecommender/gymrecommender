@@ -99,6 +99,11 @@ public class AdminAccountController : AccountControllerTemplate {
             };
             ownershipRequest.RespondedAt = DateTime.UtcNow;
             ownershipRequest.RespondedBy = admin.Id;
+            
+            if (ownershipRequest.Decision == OwnershipDecision.approved) {
+                var gym = _context.Gyms.AsTracking().First(g => g.Id == ownershipRequest.GymId);
+                gym.OwnedBy = ownershipRequest.RequestedBy;
+            }
         }
         if (ownershipRequest.Message != null) ownershipRequest.Message = updateDto.Message;
         await _context.SaveChangesAsync();
