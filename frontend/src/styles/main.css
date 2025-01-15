@@ -73,15 +73,20 @@ body::-webkit-scrollbar {
 
 .sliders {
     background-color: #ccc;
-    height: fit-content;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    max-width: 300px;
+    margin: 0 auto;
+    padding: 0;
+    box-sizing: border-box;
 }
 
 .sliders form {
     display: flex;
     flex-direction: column;
-
     padding: 20px;
-    gap: 20px;
+    gap: 30px;
     align-items: center;
 }
 
@@ -91,14 +96,18 @@ body::-webkit-scrollbar {
 
 .sliders form label {
     font-weight: bold;
+    margin-top: 5px;
 }
 
 .sliders form input[type="range"] {
     width: 100%;
+    margin-top: 5px;
+    margin-bottom: 5px;
 }
 
 .input-field {
     width: 100%;
+    margin-bottom: 10px;
 }
 
 .selector > select, .input-field > input:not([type="range"]) {
@@ -241,7 +250,7 @@ input[type="range"]::-moz-range-thumb {
 }
 
 .location-controls button {
-    padding: 10px 20px;
+    padding: 0px 20px;
     background-color: #00338e;
     color: #ffffff;
     border: none;
@@ -439,6 +448,13 @@ input[type="range"]::-moz-range-thumb {
     background-color: #f0f0f5;
 }
 
+.history-table th:first-child,
+.history-table td:first-child {
+    text-align: left;
+    padding-left: 16px;
+}
+
+
 .no-requests {
     color: #fff;
     font-size: 1.5rem;
@@ -467,7 +483,6 @@ button {
     cursor: pointer;
     transition: background-color 0.3s ease, transform 0.2s ease;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-    margin-top: 10px;
 }
 
 button:hover {
@@ -484,11 +499,13 @@ button:active {
 button.save-btn {
     background-color: #a0a8f5;
     color: #002147;
+    margin-top: 10px;
 }
 
 button.edit-btn {
     background-color: #f5a042;
     color: #ffffff;
+    margin-top: 10px;
 }
 
 .search-bar {

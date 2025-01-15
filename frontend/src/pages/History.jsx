@@ -113,20 +113,12 @@ const handleEditClick = (id, currentName) => {
 };
 
 const handleSave = async (id) => {
-  // Update the backend
-  const updatedRequest = { id, name: newName };
-  const { error } = await axiosInternal("PATCH", `requests/${id}`, updatedRequest);
-
-  if (!error) {
-    setRequests((prevRequests) =>
-      prevRequests.map((request) =>
-        request.id === id ? { ...request, name: newName } : request
-      )
-    );
-    setEditingId(null);
-  } else {
-    console.error("Failed to update request name.");
-  }
+  setRequests((prevRequests) =>
+    prevRequests.map((request) =>
+      request.id === id ? { ...request, name: newName } : request
+    )
+  );
+  setEditingId(null); // Exit edit mode
 };
 
 const filteredRequests = requests.filter((request) =>
@@ -198,10 +190,16 @@ const filteredRequests = requests.filter((request) =>
                         type="text"
                         value={newName}
                         onChange={(e) => setNewName(e.target.value)}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter") handleSave(request.id);
+                        }}
                       />
-                      <Button onClick={() => handleSave(request.id)} className="save-btn">
-                        Save
-                      </Button>
+                     <Button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleSave(request.id);
+                      }}
+                      className="save-btn"> Save </Button>
                     </div>
                   ) : (
                     <span>
