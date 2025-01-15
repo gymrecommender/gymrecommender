@@ -94,7 +94,7 @@ public class UserAccountController : AccountControllerTemplate {
         return await base.GetByUsername(username, _accountType);
     }
 
-    [HttpPut("{username}")]
+    [HttpPut]
     [Authorize(Policy = "UserOnly")]
     public async Task<IActionResult> UpdateAccount(AccountPutDto accountPutDto) {
         return await base.UpdateAccount(accountPutDto, _accountType);
