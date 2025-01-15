@@ -84,7 +84,7 @@ const accountLogin = async (values, role) => {
 
 		attachToken(signInResult.user.accessToken)
 		//TODO propagate expired datetime from the firebase
-		const login = await axiosInternal('POST', `${roleMapper[role]}/${signInResult.user.displayName}/login`)
+		const login = await axiosInternal('POST', `${roleMapper[role]}/login`)
 		if (login.error) {
 			result.error = errorsParser(login.error);
 			await signOut(auth);
@@ -104,13 +104,12 @@ const accountLogin = async (values, role) => {
 const accountLogout = async (username, role) => {
 	const result = {error: null};
 	try {
-		const logoutResult = await axiosInternal('DELETE', `${roleMapper[role]}/${username}/logout`);
+		const logoutResult = await axiosInternal('DELETE', `${roleMapper[role]}/logout`);
 		if (logoutResult.error) {
 			result.error = errorsParser(logoutResult.error);
 
 			return result;
 		}
-		detachToken();
 
 		await signOut(auth);
 	} catch (e) {
