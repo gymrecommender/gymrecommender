@@ -2,6 +2,7 @@ using backend.DTO;
 using backend.Enums;
 using backend.Models;
 using backend.Utilities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Microsoft.EntityFrameworkCore;
@@ -11,52 +12,46 @@ namespace backend.Controllers;
 [ApiController]
 [Route("/api/[controller]")]
 public class AdminAccountController : AccountControllerTemplate {
-    
-    private readonly GymrecommenderContext _context;
     public AdminAccountController(GymrecommenderContext context, IOptions<AppSettings> appSettings) :
         base(context, appSettings) {
         _accountType = AccountType.admin;
-        _context = context;
-    }
-
-    [HttpGet]// GET /api/adminaccount
-    public async Task<IActionResult> GetAdminData(int page = 1, int sort = 1, bool ascending = true) {
-        return await base.GetData(page, sort, ascending, _accountType);
     }
     
-    [HttpPost]// POST /api/adminaccount
-    public async Task<IActionResult> SignUpAdmin(AccountDto accountDto) {
-        return await SignUp(accountDto, _accountType);
-    }
-    
-    [HttpGet("{username}")] // GET /api/adminaccount/{username}
+    [HttpGet("{username}")]
+    [Authorize(Policy = "AdminOnly")]
     public async Task<IActionResult> GetAdminByUsername(string username) {
         return await base.GetByUsername(username, _accountType);
     }
     
-    [HttpPut("{username}")] // PUT /api/adminaccount/{username}
-    public async Task<IActionResult> UpdateByUsername(string username, AccountPutDto accountPutDto) {
-        return await base.UpdateByUsername(username, accountPutDto, _accountType);
+    [HttpPut]
+    [Authorize(Policy = "AdminOnly")]
+    public async Task<IActionResult> UpdateAccount(AccountPutDto accountPutDto) {
+        return await base.UpdateAccount(accountPutDto, _accountType);
     }
     
-    [HttpDelete("{username}")] // DELETE /api/adminaccount/{username}
-    public async Task<IActionResult> DeleteByUsername(string username) {
-        return await base.DeleteByUsername(username, _accountType);
+    [HttpDelete]
+    [Authorize(Policy = "AdminOnly")]
+    public async Task<IActionResult> DeleteAccount() {
+        return await base.DeleteAccount(_accountType);
     }
     
-    [HttpPost("{username}/login")]
-    public async Task<IActionResult> Login(string username) {
-        return await base.Login(username, _accountType);
+    [HttpPost("login")]
+    [Authorize(Policy = "AdminOnly")]
+    public async Task<IActionResult> Login() {
+        return await base.Login(_accountType);
     }
     
-    [HttpDelete("{username}/logout")] // DELETE /api/adminaccount/{username}/logout
-    public async Task<IActionResult> Logout(string username) {
-        return await base.Logout(username, _accountType);
+    [HttpDelete("logout")]
+    [Authorize(Policy = "AdminOnly")]
+    public async Task<IActionResult> Logout() {
+        return await base.Logout(_accountType);
     }
     
-    [HttpPut("{username}/requests/{requestId}")]
-    public async Task<IActionResult> UpdateOwnershipRequest(string username, Guid requestId, [FromBody] UpdateOwnershipRequestDto updateDto)
-    {
+    [HttpPut("/requests/{requestId}")]
+    [Authorize(Policy = "AdminOnly")]
+    public async Task<IActionResult> UpdateOwnershipRequest(Guid requestId, [FromBody] UpdateOwnershipRequestDto updateDto) {
+        var firebaseUid = HttpContext.User.FindFirst("user_id")?.Value;
+
         if (updateDto == null)
         {
             return StatusCode(500, new {
@@ -67,7 +62,7 @@ public class AdminAccountController : AccountControllerTemplate {
             });
         }
         
-        var admin = _context.Accounts.FirstOrDefault(a => a.Username == username && a.Type == AccountType.admin);
+        var admin = _context.Accounts.FirstOrDefault(a => a.OuterUid == firebaseUid && a.Type == AccountType.admin);
         if (admin == null) {
             return StatusCode(500, new {
                 success = false,

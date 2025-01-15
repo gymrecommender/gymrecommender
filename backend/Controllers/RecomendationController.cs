@@ -43,14 +43,16 @@ public class RecomendationController : Controller
     /// </summary>
     /// <param name="username">The username of the user whose requests are to be retrieved.</param>
     /// <returns>A list of RequestDto objects.</returns>
-    [HttpGet("/{username}/history")]
+    [HttpGet("/history")]
     [Authorize(Policy = "UserOnly")]
-    public async Task<IActionResult> GetRequestsHistory(string username)
+    public async Task<IActionResult> GetRequestsHistory()
     {
+        var firebaseUid = HttpContext.User.FindFirst("user_id")?.Value;
+
         try
         {
             // Retrieve requests using the recommendation service
-            var requests = await _recommendationService.GetRequestsByUsernameAsync(username);
+            var requests = await _recommendationService.GetRequestsByUsernameAsync(firebaseUid);
 
             return Ok(requests);
         }

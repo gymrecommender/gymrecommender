@@ -104,10 +104,6 @@ if (!builder.Environment.IsDevelopment())
 var app = builder.ConfigureServices().ConfigurePipeline();
 
 app.UseHttpsRedirection();
-
-app.UseAuthentication();
-app.UseAuthorization();
-
 app.MapControllers();
 
 app.Run();
