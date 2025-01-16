@@ -856,3 +856,79 @@ form .form-disabler:hover .form-disabler-hint {
 .btn-primary:hover {
     background-color: #e66a00; 
 }
+
+/* Delete Account Container */
+.delete-account-container {
+    margin-top: 20px;
+    text-align: center;
+}
+
+/* Danger Button Styling */
+.btn-danger {
+    background-color: #ff4d4d; /* Red */
+    color: #ffffff;
+    border: none;
+    border-radius: 4px;
+    padding: 12px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.btn-danger:hover {
+    background-color: #e63939; /* Darker Red */
+}
+
+/* Email Field - Non-editable */
+.form-group input[readonly] {
+    background-color: #444;
+    color: #ccc;
+    cursor: not-allowed;
+    border: 1px solid #4a4a8e;
+}
+
+/* Modal Form Styling */
+.modal form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.modal .modal-body {
+    overflow: hidden;
+    padding: 20px;
+}
+
+.modal .form-group {
+    text-align: left;
+    margin: 10px;
+}
+
+.modal p {
+    margin-top: 10px;
+}
+
+.modal .form-group label {
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.modal .form-group input {
+    padding: 10px;
+    border: 1px solid #4a4a8e;
+    border-radius: 4px;
+    font-size: 16px;
+    background-color: #28285a;
+    color: #ffffff;
+}
+
+.modal .modal-actions {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+
+
+
+
