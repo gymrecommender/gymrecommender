@@ -472,6 +472,120 @@ input[type="range"]::-moz-range-thumb {
     color: #cdbfff;
 }
 
+/*Bookmarked gyms*/
+.bookmarked-gyms-section {
+    padding: 20px;
+    background-color: #a0a8f5; /* Harmonized background color */
+    border-radius: 8px;
+    position: relative;
+    gap: 16px;
+    padding-bottom: 60px;
+  }
+  
+  .bookmarked-gyms-container {
+    display: flex;
+    gap: 16px;
+    flex-direction: row;
+    overflow-x: auto;
+    padding: 10px 0;
+    scroll-behavior: smooth;
+  }
+  
+  .bookmarked-gyms-card {
+    flex: 0 0 300px;
+    background-color: #cdd2fc;
+    border-radius: 10px;
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: transform 0.2s ease-in-out;
+  }
+
+  .bookmarked-gyms-card p{
+    color: black;
+  }
+  
+  .membership-info ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .membership-info li {
+    font-size: 0.9rem;
+  }
+  
+  .arrow-buttons {
+    position: absolute;
+    width: 100%;
+    height: max-content;
+    margin-top: 10px;
+    display: flex;
+    gap: 1525px;
+    margin-right: 10px;
+  }
+  
+  .scroll-button {
+    width: 40px;
+    height: 40px;
+    background-color: #f5a042;
+    color: #fff;
+    border: none;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    transition: background-color 0.3s ease;
+  }
+  
+  .scroll-button:hover {
+    background-color: #ba711e;
+  }
+  
+  .scroll-button.left {
+    position: absolute;
+    left: 10px;
+  }
+  
+  .scroll-button.right {
+    position: absolute;
+    right: 10px;
+  }
+
+  .demark-button {
+    border: none;
+    padding: 8px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-top: 10px;
+  }
+  
+  .demark-button:hover {
+    background-color: #e04346;
+  }
+  
+  
+  .no-bookmarked-gyms {
+    text-align: center;
+    padding: 20px;
+    color: #cccccc;
+  }
+  
+  .no-bookmarked-gyms p {
+    font-size: 1.5rem;
+    margin-top: 10px;
+  }
+  
+  .no-bookmarked-gyms .icon {
+    font-size: 3rem;
+    color: #f5a042;
+    margin-bottom: 10px;
+  }
+  
+
 /* Button Styles */
 button {
     background-color: #002147;
@@ -839,10 +953,6 @@ form .form-disabler:hover .form-disabler-hint {
 
 /* Button Styling */
 .btn-primary {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
     background-color: #ff7b00;
     color: #ffffff;
     border: none;
@@ -861,11 +971,13 @@ form .form-disabler:hover .form-disabler-hint {
 .delete-account-container {
     margin-top: 20px;
     text-align: center;
+    display: flex;
+    flex-direction: column;
 }
 
 /* Danger Button Styling */
 .btn-danger {
-    background-color: #ff4d4d; /* Red */
+    background-color: #ff4d4d;
     color: #ffffff;
     border: none;
     border-radius: 4px;
@@ -876,7 +988,7 @@ form .form-disabler:hover .form-disabler-hint {
 }
 
 .btn-danger:hover {
-    background-color: #e63939; /* Darker Red */
+    background-color: #e63939;
 }
 
 /* Email Field - Non-editable */
@@ -901,7 +1013,6 @@ form .form-disabler:hover .form-disabler-hint {
 
 .modal .form-group {
     text-align: left;
-    margin: 10px;
 }
 
 .modal p {
@@ -914,7 +1025,6 @@ form .form-disabler:hover .form-disabler-hint {
 }
 
 .modal .form-group input {
-    padding: 10px;
     border: 1px solid #4a4a8e;
     border-radius: 4px;
     font-size: 16px;
@@ -927,8 +1037,3 @@ form .form-disabler:hover .form-disabler-hint {
     justify-content: space-between;
     margin-top: 20px;
 }
-
-
-
-
-
