@@ -10,7 +10,7 @@ const instance = axios.create({
 const attachToken = (token) => {
 	instance.defaults.headers.common['Authorization'] = 'Bearer ' + token;
 }
-const deattachToken = () => {
+const detachToken = () => {
 	delete instance.defaults.headers.common['Authorization'];
 }
 
@@ -60,4 +60,4 @@ const axiosGoogleAPI = async (entity, queryParams={}) => {
 	return result;
 }
 
-export {axiosInternal, axiosGoogleAPI, attachToken, deattachToken};
+export {axiosInternal, axiosGoogleAPI, attachToken, detachToken};

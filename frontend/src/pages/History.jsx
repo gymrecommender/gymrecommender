@@ -40,7 +40,7 @@ const History = () => {
     const dummyData = [
       {
         id: 1,
-        requestTime: "2025-01-09 14:30",
+        requestedAt: "2025-01-09 14:30",
         name: "Evening Workout",
         preferences: {
           departureTime: "17:00",
@@ -54,7 +54,7 @@ const History = () => {
       },
       {
         id: 2,
-        requestTime: "2025-01-08 10:15",
+        requestedAt: "2025-01-08 10:15",
         name: "Morning Session",
         preferences: {
           departureTime: "08:00",
@@ -68,7 +68,7 @@ const History = () => {
       },
       {
         id: 3,
-        requestTime: "2025-01-07 18:00",
+        requestedAt: "2025-01-07 18:00",
         name: "Late Night Cardio",
         preferences: {
           departureTime: "22:00",
@@ -82,7 +82,7 @@ const History = () => {
       },
       {
         id: 4, // Edge case
-        requestTime: "",
+        requestedAt: "",
         name: "",
         preferences: {
           departureTime: "",
@@ -216,7 +216,7 @@ const filteredRequests = requests.filter((request) =>
                     </span>
                   )}
                 </td>
-                <td>{request.requestTime || "N/A"}</td>
+                <td>{request.requestedAt || "N/A"}</td>
                 <td>{request.preferences?.departureTime || "N/A"}</td>
                 <td>{request.preferences?.arrivalTime || "N/A"}</td>
                 <td>{request.preferences?.minPrice || "N/A"}</td>

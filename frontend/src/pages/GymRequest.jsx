@@ -9,6 +9,7 @@ import Loader from "../components/simple/Loader.jsx";
 import GymPopup from "../components/gym/GymPopup.jsx";
 import Button from "../components/simple/Button.jsx";
 import {useMarkersOwnership} from "../context/MarkersOwnershipProvider.jsx";
+import {result} from "lodash";
 
 const GymRequest = () => {
 	const {coordinates, setCoordinates} = useCoordinates();
@@ -16,120 +17,20 @@ const GymRequest = () => {
 	const [loading, setLoading] = useState(false);
 	const {requests, setRequests} = useMarkersOwnership();
 
-	const handleOnClick = (gym) => {
-		//TODO store the request, store the response of the POST function in the requests array
-		const data = {
-			"id": Math.floor(Math.random() * 100),
-			"requestedAt": "2024-11-07T08:15:30+00:00",
-			"respondedAt": null,
-			"decision": null,
-			"message": null,
-			"gym": {
-				"name": gym.name,
-				"address": gym.address,
-				"latitude": gym.latitude,
-				"longitude": gym.longitude,
-			}
-		}
-
-		setRequests([...requests, data])
+	const handleOnClick = async (gym) => {
+		const result = await axiosInternal("POST", `gymaccount/ownership/${gym.id}`);
+		if (result.error) toast(result.error.message);
+		else setRequests([...requests, result.data])
 	}
 
 	useEffect(() => {
-		//TODO retrieve pending requests
-		// setRequests([
-		// 	{
-		// 		"id": "uuid11",
-		// 		"requestedAt": "2024-11-07T08:15:30+00:00",
-		// 		"respondedAt": "2024-11-07T09:00:45+00:00",
-		// 		"decision": "approved",
-		// 		"message": null,
-		// 		"gym": {
-		// 			"name": "Lakeside Fitness",
-		// 			"address": "456 Lakeview Ave, Chicago, IL",
-		// 			"latitude": 41.881832,
-		// 			"longitude": -87.623177
-		// 		}
-		// 	},
-		// 	{
-		// 		"id": "uuid12",
-		// 		"requestedAt": "2024-11-06T14:45:00+05:30",
-		// 		"respondedAt": "2024-11-06T15:30:00+05:30",
-		// 		"decision": "rejected",
-		// 		"message": "Request rejected due to insufficient documentation.",
-		// 		"gym": {
-		// 			"name": "Uptown Strength",
-		// 			"address": "2101 N Halsted St, Chicago, IL",
-		// 			"latitude": 41.920784,
-		// 			"longitude": -87.648333
-		// 		}
-		// 	},
-		// 	{
-		// 		"id": "uuid13",
-		// 		"requestedAt": "2024-11-07T01:10:15-05:00",
-		// 		"respondedAt": null,
-		// 		"decision": null,
-		// 		"message": "Your request is being reviewed.",
-		// 		"gym": {
-		// 			"name": "South Loop Performance",
-		// 			"address": "1325 S State St, Chicago, IL",
-		// 			"latitude": 41.865666,
-		// 			"longitude": -87.627579
-		// 		}
-		// 	},
-		// 	{
-		// 		"id": "uuid187",
-		// 		"requestedAt": "2024-11-06T14:45:00+05:30",
-		// 		"respondedAt": "2024-11-06T15:30:00+05:30",
-		// 		"decision": "rejected",
-		// 		"message": "Request rejected due to insufficient documentation.",
-		// 		"gym": {
-		// 			"name": "River North Athletic Club",
-		// 			"address": "500 W Erie St, Chicago, IL",
-		// 			"latitude": 41.894512,
-		// 			"longitude": -87.642197
-		// 		}
-		// 	},
-		// 	{
-		// 		"id": "uuid1",
-		// 		"requestedAt": "2024-11-06T14:45:00+05:30",
-		// 		"respondedAt": "2024-11-06T15:30:00+05:30",
-		// 		"decision": "rejected",
-		// 		"message": "Request rejected due to insufficient documentation.",
-		// 		"gym": {
-		// 			"name": "River North Athletic Club",
-		// 			"address": "500 W Erie St, Chicago, IL",
-		// 			"latitude": 41.894512,
-		// 			"longitude": -87.642197
-		// 		}
-		// 	},
-		// 	{
-		// 		"id": "uuid14",
-		// 		"requestedAt": "2024-11-06T14:45:00+05:30",
-		// 		"respondedAt": "2024-11-06T15:30:00+05:30",
-		// 		"decision": "rejected",
-		// 		"message": "Request rejected due to insufficient documentation.",
-		// 		"gym": {
-		// 			"name": "River North Athletic Club",
-		// 			"address": "500 W Erie St, Chicago, IL",
-		// 			"latitude": 41.894512,
-		// 			"longitude": -87.642197
-		// 		}
-		// 	},
-		// 	{
-		// 		"id": "uuid15",
-		// 		"requestedAt": "2024-11-06T14:45:00+05:30",
-		// 		"respondedAt": "2024-11-06T15:30:00+05:30",
-		// 		"decision": "rejected",
-		// 		"message": "Request rejected due to insufficient documentation.",
-		// 		"gym": {
-		// 			"name": "River North Athletic Club",
-		// 			"address": "500 W Erie St, Chicago, IL",
-		// 			"latitude": 41.894512,
-		// 			"longitude": -87.642197
-		// 		}
-		// 	},
-		// ])
+		const retrievePendingRequests = async () => {
+			const result = await axiosInternal("GET", `gymaccount/ownership`, {}, {type: "unanswered"});
+			if (result.error) toast(result.error.message);
+			else setRequests(result.data)
+		}
+
+		retrievePendingRequests();
 	}, []);
 
 	useEffect(() => {

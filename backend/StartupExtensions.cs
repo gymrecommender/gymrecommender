@@ -99,6 +99,8 @@ public static class StartupExtensions
             })
             .UseStaticFiles()
             .UseRouting()
+            .UseAuthentication()
+            .UseAuthorization()
             .UseEndpoints(endpoints => { endpoints.MapControllers(); });
         ;
 

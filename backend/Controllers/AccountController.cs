@@ -15,18 +15,14 @@ namespace backend.Controllers;
 public class AccountController : AccountControllerTemplate {
     public AccountController(GymrecommenderContext context, IOptions<AppSettings> appSettings) : base(context, appSettings) {}
     
-    [HttpGet] // GET /api/account
-    public async Task<IActionResult> GetAccounts(int page = 1, int sort = 1, bool ascending = true) {
-        return await base.GetData(page, sort, ascending);
-    }
-    
     [HttpGet("{username}")]// GET /api/account/{username}
     public async Task<IActionResult> GetByUsername(string username) {
         return await base.GetByUsername(username);
     }
 
-    [HttpGet("{uid}/role")]// GET /api/account/{uid}/role
-    public async Task<IActionResult> GetRoleByUid(string uid) {
-        return await base.GetRoleByUid(uid);
+    [HttpGet("role")]
+    [Authorize]
+    public async Task<IActionResult> GetRole() {
+        return await base.GetRoleByUid();
     }
 }

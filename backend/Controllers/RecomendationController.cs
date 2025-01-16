@@ -22,7 +22,6 @@ public class RecomendationController : Controller
     /// <param name="request">User's gym recommendation request containing filters and preferences.</param>
     /// <returns>List of recommended gyms with normalized scores and final scores.</returns>
     [HttpPost("recommendations")]
-    [Authorize(Policy = "UserOnly")]
     public async Task<IActionResult> CreateRecommendationsRequest([FromBody] GymRecommendationRequestDto request)
     {
         if (request == null)
@@ -35,28 +34,5 @@ public class RecomendationController : Controller
 
         // Assuming GetRecomendations returns IActionResult
         return await recommendations;
-    }
-
-    /// <summary>
-    /// Retrieves all requests associated with a specific user email.
-    /// Accessible only by users with the Admin role.
-    /// </summary>
-    /// <param name="username">The username of the user whose requests are to be retrieved.</param>
-    /// <returns>A list of RequestDto objects.</returns>
-    [HttpGet("/{username}/history")]
-    [Authorize(Policy = "UserOnly")]
-    public async Task<IActionResult> GetRequestsHistory(string username)
-    {
-        try
-        {
-            // Retrieve requests using the recommendation service
-            var requests = await _recommendationService.GetRequestsByUsernameAsync(username);
-
-            return Ok(requests);
-        }
-        catch (KeyNotFoundException knfEx)
-        {
-            return NotFound(new { message = knfEx.Message });
-        }
     }
 }

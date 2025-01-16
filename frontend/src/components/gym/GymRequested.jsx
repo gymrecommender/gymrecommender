@@ -8,25 +8,29 @@ import classNames from "classnames";
 import {toast} from "react-toastify";
 import {useConfirm} from "../../context/ConfirmProvider.jsx";
 import {useMarkersOwnership} from "../../context/MarkersOwnershipProvider.jsx";
+import {axiosInternal} from "../../services/axios.jsx";
 
 const GymRequested = ({}) => {
 	const {coordinates} = useCoordinates();
 	const {requests, setRequests} = useMarkersOwnership();
 	const {setValues, flushData} = useConfirm();
 
-	const onConfirm = (id, name) => {
+	const onConfirm = async (id, name) => {
 		flushData();
-		//TODO request deletion of the request from the table
-		setRequests(requests?.reduce((acc, request) => {
-			if (request.id !== id) {
-				acc.push(request);
-			}
-			return acc;
-		}, []))
-		toast(`The ownership request for ${name} has been withdrawn`);
+		const result = await axiosInternal("DELETE", `gymaccount/ownership/${id}`)
+		if (result.error) toast(result.error.message);
+		else {
+			setRequests(requests?.reduce((acc, request) => {
+				if (request.id !== id) {
+					acc.push(request);
+				}
+				return acc;
+			}, []))
+			toast(`The ownership request for ${name} has been withdrawn`);
+		}
 	}
 
-	const content = requests?.map((item) => {
+	const content = requests.length > 0 ? requests.map((item) => {
 		const isSelected = coordinates?.lat === item.gym.latitude && coordinates?.lng === item.gym.longitude;
 		return (
 			<div key={item.id} className={classNames('gym-req', isSelected ? 'gym-req-selected' : '')}>
@@ -49,13 +53,12 @@ const GymRequested = ({}) => {
 				</div>
 			</div>
 		)
-	})
+	}) : <div className={"no-content"}>
+		You have no pending ownership requests
+	</div>;
 	return (
 		<div className={"gyms-req"}>
-			{content.length > 0 ? content : <div className={"no-content"}>
-				You have no pending ownership requests
-			</div>
-			}
+			{content}
 		</div>
 	)
 }
