@@ -58,11 +58,12 @@ public static class StartupExtensions
             // Add Bearer token support
             c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
             {
-                Description = "JWT Authorization header using the Bearer scheme. Example: \"Bearer {token}\"",
                 Name = "Authorization",
+                Type = SecuritySchemeType.Http,
+                Scheme = "Bearer",
+                BearerFormat = "JWT",
                 In = ParameterLocation.Header,
-                Type = SecuritySchemeType.ApiKey,
-                Scheme = "Bearer"
+                Description = "Enter 'Bearer' [space] and your valid token in the text input below.\nExample: \"Bearer abc123\""
             });
 
             c.AddSecurityRequirement(new OpenApiSecurityRequirement()
