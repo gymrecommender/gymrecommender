@@ -60,11 +60,11 @@ button.btn-panel:hover {
 
 .notifications-dropdown {
     position: absolute;
-    top: 70px;
-    right: 20px;
+    top: 90px;
+    right: 270px;
     width: 300px;
-    background-color: white;
-    border: 1px solid #ccc;
+    background-color: #af8fbb;
+    border: 1px solid #9f60b5;
     border-radius: 5px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     z-index: 1000;
@@ -73,7 +73,7 @@ button.btn-panel:hover {
 
 .notification {
     padding: 10px;
-    border-bottom: 1px solid #eee;
+    border-bottom: 1px solid #9f60b5;
     font-size: 14px;
     color: #333;
 }
@@ -83,11 +83,11 @@ button.btn-panel:hover {
 }
 
 .notification.read {
-    background-color: #f9f9f9;
+    background-color: #d9c6e0;
 }
 
 .notification.unread {
-    background-color: #eef6ff;
+    background-color: #d9c6e0;
     font-weight: bold;
 }
 
