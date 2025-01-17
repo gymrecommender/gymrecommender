@@ -12,7 +12,6 @@ public class GymRecommendationRequestDto
     public int MaxMembershipPrice { get; set; } // 0 to 10000 scale
     public int MinOverallRating { get; set; } // 1 to 5 scale
     public int MinCongestionRating { get; set; } // 1 to 5 scale
-    public string City { get; set; }
     public double Latitude { get; set; } // Latitude of the location
     public double Longitude { get; set; } // Longitude of the location
 }

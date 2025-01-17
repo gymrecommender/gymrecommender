@@ -31,7 +31,7 @@ public static class StartupExtensions
 
         var dataSource = dataSourceBuilder.Build();
 
-        builder.Services.AddHttpClient<GoogleApi>();
+        builder.Services.AddHttpClient<GoogleApiService>();
         builder.Services.AddSingleton<NpgsqlDataSource>(dataSource);
         builder.Services.AddDbContext<GymrecommenderContext>(options =>
             options.UseNpgsql(dataSource));

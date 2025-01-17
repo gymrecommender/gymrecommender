@@ -9,11 +9,11 @@ namespace backend.Utilities;
 
 using DotNetEnv;
 
-public class GoogleApi {
+public class GoogleApiService {
     private string _apiKey;
     private readonly HttpClient _client;
 
-    public GoogleApi(HttpClient client) {
+    public GoogleApiService(HttpClient client) {
         _client = client;
 
         Env.Load();

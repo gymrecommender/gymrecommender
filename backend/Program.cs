@@ -89,6 +89,7 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<IAuthorizationHandler, AuthorizationRequestHandler>();
 builder.Services.AddScoped<RecommendationService, RecommendationService>();
 builder.Services.AddScoped<GeoService, GeoService>();
+builder.Services.AddScoped<GymRetrievalService, GymRetrievalService>();
 builder.Services.AddScoped<AuthenticationService, AuthenticationService>();
 
 
