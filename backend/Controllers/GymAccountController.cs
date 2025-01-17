@@ -95,6 +95,19 @@ public class GymAccountController : AccountControllerTemplate {
     public async Task<IActionResult> UpdateGym(Guid gymId, [FromBody] GymUpdateDto gymUpdateDto) {
         var firebaseUid = HttpContext.User.FindFirst("user_id")?.Value;
 
+        // if (gymUpdateDto == null)
+        // {
+        //     Console.WriteLine("Dto is null");
+        // }
+        
+        Console.WriteLine($"Received gymId: {gymId}");
+        Console.WriteLine($"firebaseUid: {firebaseUid}");
+        
+        var dbGym = _context.Gyms.Include(x => x.OwnedByNavigation).FirstOrDefault(x => x.Id == gymId);
+        Console.WriteLine(dbGym == null ? "No gym found." : $"Gym found. OuterUid: {dbGym.OwnedByNavigation?.OuterUid}");
+
+        
+        
         var gym = _context.Gyms.AsTracking()
                           .Include(g => g.OwnedByNavigation)
                           .Include(g => g.GymWorkingHours).ThenInclude(gwh => gwh.WorkingHours)
@@ -125,13 +138,13 @@ public class GymAccountController : AccountControllerTemplate {
             foreach (var workingHourDto in gymUpdateDto.WorkingHours) {
                 var existingWorkingHour = await _context.WorkingHours
                                                         .FirstOrDefaultAsync(wh =>
-                                                            wh.OpenFrom == workingHourDto.WorkingHours.OpenFrom &&
-                                                            wh.OpenUntil == workingHourDto.WorkingHours.OpenUntil);
+                                                            wh.OpenFrom == workingHourDto.OpenFrom &&
+                                                            wh.OpenUntil == workingHourDto.OpenUntil);
 
                 if (existingWorkingHour == null) {
                     existingWorkingHour = new WorkingHour {
-                        OpenFrom = workingHourDto.WorkingHours.OpenFrom,
-                        OpenUntil = workingHourDto.WorkingHours.OpenUntil,
+                        OpenFrom = workingHourDto.OpenFrom,
+                        OpenUntil = workingHourDto.OpenUntil,
                     };
                     _context.WorkingHours.Add(existingWorkingHour);
                     await _context.SaveChangesAsync();

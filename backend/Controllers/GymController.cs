@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Globalization;
 using backend.Enums;
 using backend.Models;
@@ -72,16 +73,24 @@ public class GymController : Controller {
                     }
                 });
             }
+            Console.WriteLine("city succesfuly fetched");
+            
             City city = (City)cityRes.Value;
+            
+            
 
             var gymsRes = await RetrieveGymsByCity(city.Country.Name, city.Name);
+            
             if (!gymsRes.Success) return ParseError(gymsRes);
-
+            
+            Console.WriteLine("gyms in city succesfuly fetched");
             //If we already have at least one gym for the area, considering that we do not have functionality
             //of deleting a gym from the table for any account type, we can conclude that we have already
             //retrieved the gyms for the current city and it is enough to just return these gyms
+            int smth = ((List<GymViewModel>)gymsRes.Value).Count();
             if (((List<GymViewModel>)gymsRes.Value).Count() != 0) return Ok(gymsRes);
-
+            
+            Console.WriteLine($"number of gyms already existing %d", smth);
             // Since we are limited by the number of allowed free requests to the Google API
             // We will retrieve the gyms for the city in general, and for the specific location of the user
             // This way the results will be less personalized and optimal, but we will avoid paying for the services
@@ -91,14 +100,15 @@ public class GymController : Controller {
             //Retrieving the gyms for the current city via the Google API
             var result = await _googleApi.GetGyms(cityMiddleLat, cityMiddleLng, CalculateCityRadius(city), city);
             if (!result.Success) return ParseError(result);
-            
+            Console.WriteLine("2. gyms for city retrieved successfully");
             //Saving retrieved gyms, working hours and their relations to the database
             var save = await SaveNewGyms((List<Tuple<Gym, List<GymWorkingHoursViewModel>>>)result.Value);
             if (!save.Success) return ParseError(save);
-            
+            Console.WriteLine("new gyms saved succesfully");
             //Retrieving the gyms for the city from the database
             gymsRes = await RetrieveGymsByCity(city.Country.Name, city.Name);
             if (!gymsRes.Success) return ParseError(gymsRes);
+            Console.WriteLine("RetrieveGymsByCity success");
             
             return Ok(gymsRes);
         } catch (Exception e) {
@@ -113,23 +123,32 @@ public class GymController : Controller {
     }
 
     [NonAction]
+    
     private async Task<Response> SaveNewGyms(List<Tuple<Gym, List<GymWorkingHoursViewModel>>> data) {
         try {
             var existingWorkingHours = await _context.WorkingHours.AsNoTracking().ToListAsync();
+            var dbWorkingHours = existingWorkingHours
+                                 .Select(wh => new WorkingHour {
+                                     Id = wh.Id,
+                                     OpenFrom = wh.OpenFrom,
+                                     OpenUntil = wh.OpenUntil
+                                 })
+                                 .ToList();
+            
             //TODO currency should be determined in some other way
             var currency = _context.Currencies.AsNoTracking().Where(c => c.Code == "EUR").ToList().First();
-
+ 
             foreach (var dataItem in data) {
                 var gym = dataItem.Item1;
                 gym.CurrencyId = currency.Id;
                 
                 _context.Gyms.Add(gym);
-
+ 
                 var workingHours = dataItem.Item2;
                 foreach (var wHour in workingHours) {
                     var match = existingWorkingHours.FirstOrDefault(wh =>
                         wh.OpenFrom == wHour.OpenFrom && wh.OpenUntil == wHour.OpenUntil);
-
+ 
                     //We are checking whether the working hours for the current gym has already been stored in the table
                     if (match == null) {
                         match = new WorkingHour {
@@ -137,14 +156,16 @@ public class GymController : Controller {
                             OpenUntil = wHour.OpenUntil,
                         };
                         _context.WorkingHours.Add(match);
-
                         existingWorkingHours.Add(match);
                     } else {
                         //We need to track the already existing entries in the WorkingHour table in order for dotnet to
                         //not try to create another instance of it upon saving
-                        _context.Attach(match);
+                        var matchDb = dbWorkingHours.FirstOrDefault(wh =>
+                            wh.OpenFrom == match.OpenFrom && wh.OpenUntil == match.OpenUntil);
+                        
+                            if (matchDb != null) _context.Attach(match);
                     }
-
+ 
                     //Binding working hours with the working hours of the current gym
                     _context.GymWorkingHours.Add(new GymWorkingHour {
                         Gym = gym,
@@ -153,7 +174,7 @@ public class GymController : Controller {
                     });
                 }
             }
-
+ 
             await _context.SaveChangesAsync();
             return new Response("");
         } catch (Exception e) {
@@ -164,6 +185,59 @@ public class GymController : Controller {
             );
         }
     }
+    // private async Task<Response> SaveNewGyms(List<Tuple<Gym, List<GymWorkingHoursViewModel>>> data) {
+    //     try {
+    //         var existingWorkingHours = await _context.WorkingHours.AsTracking().ToListAsync();
+    //         //var existingWorkingHours = await _context.WorkingHours.AsNoTracking().ToListAsync();
+    //
+    //         //TODO currency should be determined in some other way
+    //         var currency = _context.Currencies.AsNoTracking().Where(c => c.Code == "EUR").ToList().First();
+    //
+    //         foreach (var dataItem in data) {
+    //             var gym = dataItem.Item1;
+    //             gym.CurrencyId = currency.Id;
+    //             
+    //             _context.Gyms.Add(gym);
+    //
+    //             var workingHours = dataItem.Item2;
+    //             foreach (var wHour in workingHours) {
+    //                 var match = existingWorkingHours.FirstOrDefault(wh =>
+    //                     wh.OpenFrom == wHour.OpenFrom && wh.OpenUntil == wHour.OpenUntil);
+    //
+    //                 //We are checking whether the working hours for the current gym has already been stored in the table
+    //                 if (match == null) {
+    //                     match = new WorkingHour {
+    //                         OpenFrom = wHour.OpenFrom,
+    //                         OpenUntil = wHour.OpenUntil,
+    //                     };
+    //                     _context.WorkingHours.Add(match);
+    //
+    //                     existingWorkingHours.Add(match);
+    //                 } else {
+    //                     //We need to track the already existing entries in the WorkingHour table in order for dotnet to
+    //                     //not try to create another instance of it upon saving
+    //                     _context.Attach(match);
+    //                 }
+    //
+    //                 //Binding working hours with the working hours of the current gym
+    //                 _context.GymWorkingHours.Add(new GymWorkingHour {
+    //                     Gym = gym,
+    //                     Weekday = wHour.Weekday,
+    //                     WorkingHours = match
+    //                 });
+    //             }
+    //         }
+    //
+    //         await _context.SaveChangesAsync();
+    //         return new Response("");
+    //     } catch (Exception e) {
+    //         return new Response(
+    //             e.Message,
+    //             e.HResult.ToString(),
+    //             true
+    //         );
+    //     }
+    // }
 
     [NonAction]
     private int CalculateCityRadius(City city) {
