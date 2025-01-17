@@ -58,6 +58,7 @@ public class RecommendationService {
                 gymRecommendationRequest.MembershipLength);
 
             Request? requestEntity = null;
+            //Users do not have to be authenticated in order to get the recommendations. In this case we do not save any requested data
             if (account != null) {
                 requestEntity = await SaveRecommendationRequestAsync(gymRecommendationRequest, account.Id);
                 await SaveRecommendationsAsync(requestEntity.Id, recommendations);
@@ -180,6 +181,10 @@ public class RecommendationService {
         };
     }
 
+    private double ScaleToRange(double normalizedValue, double minRange, double maxRange)
+    {
+        return Math.Round(minRange + (normalizedValue * (maxRange - minRange)), 2);
+    }
 
     public List<GymRecommendationDto> FormRatings(List<GymTravelInfoDto> filteredGyms,
                                                   int priceRatingPriority,
@@ -194,7 +199,8 @@ public class RecommendationService {
                                          .ToList();
 
         List<double?> externalRatings = filteredGyms
-                                        .Select(g => (double?)g.Gym.InternalRating)
+                                        .Select(g => (double?)(g.Gym.ExternalRating * g.Gym.ExternalRatingNumber + g.Gym.InternalRating * g.Gym.InternalRatingNumber) /
+                                                     (g.Gym.ExternalRatingNumber + g.Gym.InternalRatingNumber))
                                         .ToList(); // Assuming ExternalRating is non-nullable
 
         List<double?> congestionRatings = filteredGyms
@@ -220,6 +226,12 @@ public class RecommendationService {
         List<double> normalizedTravelPrices = NormalizeCriteria(travelPrices, inverted: true);
         List<double> normalizedTravelTimes = NormalizeCriteria(travelTimes, inverted: true);
 
+        List<double> scaledMembershipPrices = normalizedMembershipPrices.Select(value => ScaleToRange(value, 1, 10)).ToList();
+        List<double> scaledExternalRatings = normalizedExternalRatings.Select(value => ScaleToRange(value, 1, 10)).ToList();
+        List<double> scaledCongestionRatings = normalizedCongestionRatings.Select(value => ScaleToRange(value, 1, 10)).ToList();
+        List<double> scaledTravelPrices = normalizedTravelPrices.Select(value => ScaleToRange(value, 1, 10)).ToList();
+        List<double> scaledTravelTimes = normalizedTravelTimes.Select(value => ScaleToRange(value, 1, 10)).ToList();
+        
         // Adjust weights based on PriceRatingPriority
         // PriceRatingPriority (0-100) determines the balance between price-related and other criteria
         // Higher PriceRatingPriority gives more emphasis to price-related criteria
@@ -257,17 +269,17 @@ public class RecommendationService {
         for (int i = 0; i < filteredGyms.Count; i++) {
             var gym = filteredGyms[i].Gym;
             var recommendation = new GymRecommendationDto(gym) {
-                NormalizedMembershipPrice = normalizedMembershipPrices[i],
-                NormalizedOverallRating = normalizedExternalRatings[i],
-                NormalizedCongestionRating = normalizedCongestionRatings[i],
-                NormalizedTravelPrice = normalizedTravelPrices[i],
-                NormalizedTravelTime = normalizedTravelTimes[i],
-                FinalScore =
-                    (normalizedMembershipPrices[i] * membershipPriceWeight) +
-                    (normalizedExternalRatings[i] * externalRatingWeight) +
-                    (normalizedCongestionRatings[i] * congestionRatingWeight) +
-                    (normalizedTravelPrices[i] * travelPriceWeight) +
-                    (normalizedTravelTimes[i] * travelTimeWeight)
+                NormalizedMembershipPrice = scaledMembershipPrices[i],
+                NormalizedOverallRating = scaledExternalRatings[i],
+                NormalizedCongestionRating = scaledCongestionRatings[i],
+                NormalizedTravelPrice = scaledTravelPrices[i],
+                NormalizedTravelTime = scaledTravelTimes[i],
+                FinalScore = Math.Round(
+                    (scaledMembershipPrices[i] * membershipPriceWeight) +
+                    (scaledExternalRatings[i] * externalRatingWeight) +
+                    (scaledCongestionRatings[i] * congestionRatingWeight) +
+                    (scaledTravelPrices[i] * travelPriceWeight) +
+                    (scaledTravelTimes[i] * travelTimeWeight), 2)
             };
             recommendations.Add(recommendation);
         }
@@ -376,10 +388,10 @@ public class RecommendationService {
             OriginLatitude = requestDto.Latitude,
             OriginLongitude = requestDto.Longitude,
             //TODO: Rename field in db to PriceRatingPriority
-            TimePriority = requestDto.PriceRatingPriority,
+            TimePriority = 100 - requestDto.PriceRatingPriority,
             TotalCostPriority = requestDto.PriceRatingPriority,
-            MinCongestionRating = requestDto.MinCongestionRating,
-            MinRating = requestDto.MinOverallRating,
+            MinCongestionRating = requestDto.MinCongestionRating >= 1 ? requestDto.MinCongestionRating : 1,
+            MinRating = requestDto.MinOverallRating >= 1 ? requestDto.MinOverallRating : 1,
             MinMembershipPrice = (int)requestDto.MaxMembershipPrice,
             //TODO: What is initial purpose if this field? Rename to City if we want to save city name, Name remove request_user_id_name_key constraint from db
             UserId = userId
