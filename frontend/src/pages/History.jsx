@@ -350,6 +350,14 @@ const scrollRight = () => {
 <h2 style={{ color: "#ffffff", marginTop: "40px" }}>Bookmarked Gyms:</h2>
       {bookmarkedGyms.length > 0 ? (
         <div className="bookmarked-gyms-section">
+          <div className="arrow-buttons">
+            <button className="scroll-button" onClick={scrollLeft}>
+              <FontAwesomeIcon icon={faArrowLeft} />
+            </button>
+            <button className="scroll-button" onClick={scrollRight}>
+              <FontAwesomeIcon icon={faArrowRight} />
+            </button>
+          </div>
           <div id="gym-cards-container" className="bookmarked-gyms-container">
             {bookmarkedGyms.map((gym) => (
               <div key={gym.id} className="bookmarked-gyms-card">
@@ -389,14 +397,7 @@ const scrollRight = () => {
               </div>
             ))}
           </div>
-          <div className="arrow-buttons">
-            <button className="scroll-button" onClick={scrollLeft}>
-              <FontAwesomeIcon icon={faArrowLeft} />
-            </button>
-            <button className="scroll-button" onClick={scrollRight}>
-              <FontAwesomeIcon icon={faArrowRight} />
-            </button>
-          </div>
+          
         </div>
       ) : (
         <div className="no-bookmarked-gyms">
