@@ -75,6 +75,7 @@ public class GymAccountController : AccountControllerTemplate {
                                      Currency = g.Currency.Code,
                                      City = g.City.Name,
                                      Country = g.City.Country.Name,
+                                     CurrencyId = g.CurrencyId,
                                      WorkingHours = g.GymWorkingHours.Select(wh => new GymWorkingHoursViewModel {
                                          Weekday = wh.Weekday,
                                          OpenFrom = wh.WorkingHours.OpenFrom,
@@ -167,6 +168,7 @@ public class GymAccountController : AccountControllerTemplate {
             YearlyMprice = gym.YearlyMprice,
             SixMonthsMprice = gym.SixMonthsMprice,
             Currency = gym.Currency.Code,
+            CurrencyId = gym.CurrencyId,
             WorkingHours = gym.GymWorkingHours.Select(gwh => new GymWorkingHoursViewModel {
                 Weekday = gwh.Weekday,
                 OpenFrom = gwh.WorkingHours.OpenFrom,
