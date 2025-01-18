@@ -25,7 +25,7 @@ const roles = {
 		routes: [
 			{path: "rating", component: UserRating, title: "Rating gyms"},
 			{path: "history", component: History, title: "Recommendations history"},
-			{path: "history/recommendations/:id", component: Recommendation, wrapper: SelectedGymProvider, title: "Recommendations History"}
+			{path: "history/:id", component: Recommendation, wrapper: SelectedGymProvider, title: "Recommendations History"}
 		],
 		title: "My account - User",
 		defaultComponent: Account
