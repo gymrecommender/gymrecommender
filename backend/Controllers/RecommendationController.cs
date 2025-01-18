@@ -40,4 +40,25 @@ public class RecommendationController : Controller {
         // Assuming GetRecommendations returns IActionResult
         return await recommendations;
     }
+
+[HttpGet("{requestId:guid}/ratings")]
+public async Task<IActionResult> GetRecommendationRatingsByRequestId(Guid requestId)
+{
+    try
+    {
+        var ratings = await _recommendationService.GetRatingsByRequestIdAsync(requestId);
+        if (ratings == null || ratings.Count == 0)
+        {
+            return NotFound(new { Message = "No ratings found for the given request ID." });
+        }
+
+        return Ok(ratings);
+    }
+    catch (Exception)
+    {
+        return StatusCode(500, new { Message = "An error occurred while processing your request." });
+    }
+}
+
+
 }

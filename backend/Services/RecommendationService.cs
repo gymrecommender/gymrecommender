@@ -468,4 +468,44 @@ public class RecommendationService {
             await _dbContext.SaveChangesAsync();
         }
     }
+public async Task<List<RatingDto>> GetRatingsByRequestIdAsync(Guid requestId)
+{
+    try
+    {
+        // Retrieve the UserId associated with the given requestId
+        var userId = await _dbContext.Requests
+            .Where(req => req.Id == requestId)
+            .Select(req => req.UserId)
+            .FirstOrDefaultAsync();
+
+        if (userId == Guid.Empty)
+        {
+            throw new Exception($"No user found for request ID: {requestId}");
+        }
+
+        // Fetch ratings that match the UserId
+        var ratings = await _dbContext.Ratings
+            .Where(r => r.UserId == userId)
+            .Select(r => new RatingDto
+            {
+                Id = r.Id,
+                Rating1 = r.Rating1, 
+                CreatedAt = r.CreatedAt,
+                UserId = r.UserId,
+                GymId = r.GymId
+            })
+            .ToListAsync();
+
+        if (ratings == null || ratings.Count == 0)
+        {
+            return null; 
+        }
+
+        return ratings;
+    }
+    catch (Exception ex)
+    {
+        throw new Exception($"Error retrieving ratings for request ID: {requestId}", ex);
+    }
+}
 }
