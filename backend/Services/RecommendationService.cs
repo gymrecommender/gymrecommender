@@ -118,7 +118,7 @@ public class RecommendationService {
         query = query.Where(g => g.CityId == city.Id);
 
         // TODO: Convert currencies
-        if (request.MaxMembershipPrice > 0) {
+        if (request.MaxMembershipPrice < 100) {
             // Implement conditional filtering based on MembershipLength
             switch (request.MembershipLength) {
                 case MembershipLength.Month:
@@ -144,9 +144,9 @@ public class RecommendationService {
         }
 
         // Filter by MinOverallRating if specified
-        if (request.MinOverallRating > 0) query = query.Where(g => g.ExternalRating >= request.MinOverallRating);
+        if (request.MinOverallRating > 1) query = query.Where(g => g.ExternalRating >= request.MinOverallRating);
         // Filter by MinCongestionRating if specified
-        if (request.MinCongestionRating > 0)
+        if (request.MinCongestionRating > 1)
             query = query.Where(g => g.CongestionRating >= request.MinCongestionRating);
 
         var gyms = query.ToList();
@@ -250,17 +250,14 @@ public class RecommendationService {
         double totalWeight = totalPriceWeight + regularRatingWeight +
                              congestionRatingWeight +
                              travelTimeWeight;
-
-
+        
         totalPriceWeight /= totalWeight;
         regularRatingWeight /= totalWeight;
         congestionRatingWeight /= totalWeight;
         travelTimeWeight /= totalWeight;
 
-
         // Calculate Final Score for each gym
         List<GymRecommendationDto> recommendations = new List<GymRecommendationDto>();
-
         for (int i = 0; i < filteredGyms.Count; i++) {
             int hourPart = (int)(travelTimes[i] / 60); // Extract hours
             int minutePart = (int)(travelTimes[i] % 60); // Extract minutes
