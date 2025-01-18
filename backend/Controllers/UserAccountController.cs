@@ -4,6 +4,7 @@ using backend.Models;
 using backend.Services;
 using backend.Utilities;
 using backend.ViewModels;
+using backend.ViewModels.WorkingHour;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -95,34 +96,6 @@ public class UserAccountController : AccountControllerTemplate {
         });
     }
 
-    [HttpGet("requests")]
-    [Authorize(Policy = "UserOnly")]
-    public async Task<IActionResult> GetRequests() {
-        var firebaseUid = HttpContext.User.FindFirst("user_id")?.Value;
-
-        var request = _context.Requests
-                              .Include(r => r.User)
-                              .Where(r => r.User.OuterUid == firebaseUid)
-                              .Select(r => new {
-                                  Id = r.Id,
-                                  RequestedAt = r.RequestedAt,
-                                  Name = r.Name,
-                                  Preferences = new {
-                                      MinPrice = r.MinMembershipPrice,
-                                      MinRating = r.MinRating,
-                                      MinCongestion = r.MinCongestionRating,
-                                      PriceTimeRatio = r.TotalCostPriority,
-                                      MembershipLength = r.MembType.ToString(),
-                                      DepartureTime = r.DepartureTime,
-                                      ArrivalTime = r.ArrivalTime,
-                                  }
-                              })
-                              .OrderByDescending(r => r.RequestedAt)
-                              .ToList();
-
-        return Ok(request);
-    }
-    
     [HttpPut]
     [Authorize(Policy = "UserOnly")]
     public async Task<IActionResult> UpdateAccount(AccountPutDto accountPutDto) {
@@ -166,70 +139,155 @@ public class UserAccountController : AccountControllerTemplate {
             return NotFound(new { message = knfEx.Message });
         }
     }
-    [HttpGet("{username}/requests")]
-public async Task<IActionResult> GetRequests(string username)
-{
-    // Ensure the user exists
-    var user = await _context.Accounts.FirstOrDefaultAsync(a => a.Username == username && a.Type == AccountType.user);
-    if (user == null)
-    {
-        return NotFound(new { message = "User not found or not of type 'user'." });
+
+    [HttpGet("requests")]
+    [Authorize(Policy = "UserOnly")]
+    public async Task<IActionResult> GetRequests() {
+        var firebaseUid = HttpContext.User.FindFirst("user_id")?.Value;
+
+        var request = _context.Requests
+                              .Include(r => r.User)
+                              .Where(r => r.User.OuterUid == firebaseUid)
+                              .Select(r => new {
+                                  Id = r.Id,
+                                  RequestedAt = r.RequestedAt,
+                                  Name = r.Name,
+                                  Preferences = new {
+                                      MinPrice = r.MinMembershipPrice,
+                                      MinRating = r.MinRating,
+                                      MinCongestion = r.MinCongestionRating,
+                                      PriceTimeRatio = r.TotalCostPriority,
+                                      MembershipLength = r.MembType.ToString(),
+                                      DepartureTime = r.DepartureTime,
+                                      ArrivalTime = r.ArrivalTime,
+                                  }
+                              })
+                              .OrderByDescending(r => r.RequestedAt)
+                              .ToList();
+
+        return Ok(request);
     }
 
-    // Retrieve requests for the user
-    var requests = await _context.Requests
-        .Where(r => r.UserId == user.Id)
-        .Select(r => new
-        {
-            r.Id,
-            r.RequestedAt,
-            r.OriginLatitude,
-            r.OriginLongitude,
-            r.TimePriority,
-            r.TotalCostPriority,
-            r.MinCongestionRating,
-            r.MinRating,
-            r.MinMembershipPrice,
-            r.Name
-        })
-        .ToListAsync();
+    [HttpPut("requests/{requestId}")]
+    [Authorize(Policy = "UserOnly")]
+    public async Task<IActionResult> UpdateRequest(Guid requestId, UpdateRequestDto updateRequestDto) {
+        try {
+            var firebaseUid = HttpContext.User.FindFirst("user_id")?.Value;
 
-    // Return the list of requests
-    return Ok(requests);
-}
-    [HttpPut("{username}/requests/{requestId}")]
-public async Task<IActionResult> UpdateRequest(string username, Guid requestId, UpdateRequestDto updateRequestDto) {
-    // Fetch the user and validate the username and account type
-    var user = await _context.Accounts.FirstOrDefaultAsync(u => u.Username == username && u.Type == AccountType.user);
-    if (user == null) {
-        return NotFound("User not found or account type is not 'user'.");
+            // Fetch the request by ID and ensure it belongs to the user
+            var request = await _context.Requests
+                                        .Include(r => r.User)
+                                        .FirstOrDefaultAsync(r => r.Id == requestId && r.User.OuterUid == firebaseUid);
+            if (request == null) {
+                return NotFound("Request has not been found or does not belong to the user.");
+            }
+            
+            if (string.IsNullOrWhiteSpace(updateRequestDto.Name)) return BadRequest("The 'Name' field can not be empty.");
+
+            // Update only the Name field of the request
+            request.Name = updateRequestDto.Name;
+            await _context.SaveChangesAsync();
+
+            return Ok(new {
+                Id = request.Id,
+                RequestedAt = request.RequestedAt,
+                Name = request.Name,
+                Preferences = new {
+                    MinPrice = request.MinMembershipPrice,
+                    MinRating = request.MinRating,
+                    MinCongestion = request.MinCongestionRating,
+                    PriceTimeRatio = request.TotalCostPriority,
+                    MembershipLength = request.MembType.ToString(),
+                    DepartureTime = request.DepartureTime,
+                    ArrivalTime = request.ArrivalTime,
+                }
+            });
+        } catch (DbUpdateException) {
+            return StatusCode(500, "An error occurred while updating the request.");
+        }
     }
 
-    // Fetch the request by ID and ensure it belongs to the user
-    var request = await _context.Requests.FirstOrDefaultAsync(r => r.Id == requestId && r.UserId == user.Id);
-    if (request == null) {
-        return NotFound("Request not found or does not belong to the user.");
+    [HttpGet("requests/{requestId:guid}/recommendations")]
+    [Authorize(Policy = "UserOnly")]
+    public async Task<IActionResult> GetRecommendationRatingsByRequestId(Guid requestId) {
+        try {
+            var firebaseUid = HttpContext.User.FindFirst("user_id")?.Value;
+            // Retrieve the UserId associated with the given requestId
+            var request = await _context.Requests
+                                        .Include(r => r.User)
+                                        .Where(req => req.Id == requestId && req.User.OuterUid == firebaseUid)
+                                        .FirstOrDefaultAsync();
+
+            if (request == null) throw new Exception("The request has not been found or does not belong to the user.");
+
+            var recommendations = _context.Recommendations
+                                          .Include(r => r.Gym).ThenInclude(g => g.GymWorkingHours)
+                                          .ThenInclude(gwh => gwh.WorkingHours)
+                                          .Include(r => r.Request)
+                                          .Where(r => r.RequestId == request.Id)
+                                          .Select(r => new {
+                                              Type = r.Type.ToString(),
+                                              Gym = new GymViewModel {
+                                                  Id = r.Gym.Id,
+                                                  Name = r.Gym.Name,
+                                                  Country = r.Gym.City.Country.Name,
+                                                  City = r.Gym.City.Name,
+                                                  Address = r.Gym.Address,
+                                                  IsOwned = r.Gym.OwnedBy.HasValue,
+                                                  Latitude = r.Gym.Latitude,
+                                                  Longitude = r.Gym.Longitude,
+                                                  IsWheelchairAccessible = r.Gym.IsWheelchairAccessible,
+                                                  Currency = r.Gym.Currency.Code,
+                                                  PhoneNumber = r.Gym.PhoneNumber,
+                                                  MonthlyMprice = r.Gym.MonthlyMprice,
+                                                  SixMonthsMprice = r.Gym.SixMonthsMprice,
+                                                  YearlyMprice = r.Gym.YearlyMprice,
+                                                  Website = r.Gym.Website,
+                                                  CurrencyId = r.Gym.CurrencyId,
+                                                  WorkingHours = r.Gym.GymWorkingHours.Select(w =>
+                                                      new GymWorkingHoursViewModel {
+                                                          Weekday = w.Weekday,
+                                                          OpenFrom = w.WorkingHours.OpenFrom,
+                                                          OpenUntil = w.WorkingHours.OpenUntil,
+                                                      }).ToList()
+                                              },
+                                              OverallRating = r.TotalScore,
+                                              TimeRating = r.TimeScore,
+                                              CostRating = r.TcostScore,
+                                              TravellingTime = r.Time,
+                                              TotalCost = r.Tcost,
+                                              CongestionRating = r.CongestionScore,
+                                              RegularRating = r.RatingScore
+                                          }).ToList()
+                                          .GroupBy(r => r.Type)
+                                          .ToDictionary(
+                                              group => group.Key switch {
+                                                  "main" => "mainRecommendations",
+                                                  "alternative" => "additionalRecommendations",
+                                              },
+                                              group => group
+                                                       .Select(r => new {
+                                                           r.Gym,
+                                                           r.OverallRating,
+                                                           r.TimeRating,
+                                                           r.CostRating,
+                                                           r.TravellingTime,
+                                                           r.TotalCost,
+                                                           r.CongestionRating,
+                                                           r.RegularRating
+                                                       })
+                                                       .OrderByDescending(r => r.OverallRating)
+                                                       .ToList());
+
+            if (recommendations.Count == 0) {
+                return Ok(new {
+                    mainRecommendations = new List<int>(),
+                    additionalRecommendations = new List<int>(),
+                });
+            }
+            return Ok(recommendations);
+        } catch (Exception _) {
+            return StatusCode(500, new { Message = "An error occurred while processing your request." });
+        }
     }
-
-    // Validate the Name field in the DTO
-    if (string.IsNullOrWhiteSpace(updateRequestDto.Name)) {
-        return BadRequest("The 'Name' field cannot be null or empty.");
-    }
-
-    // Update only the Name field of the request
-    request.Name = updateRequestDto.Name;
-
-    // Save changes to the database
-    try {
-        await _context.SaveChangesAsync();
-    } catch (DbUpdateException) {
-        return StatusCode(500, "An error occurred while updating the request.");
-    }
-
-        return Ok(new 
-    {
-        message = "Request updated successfully.",
-        updatedName = request.Name
-    });
-}
 }
