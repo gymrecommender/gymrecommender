@@ -33,5 +33,7 @@ public class GymViewModel {
     
     public bool IsOwned { get; set; }
     
+    public Guid CurrencyId { get; set; }
+    
     public List<GymWorkingHoursViewModel> WorkingHours { get; set; } = null!;
 }

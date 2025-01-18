@@ -80,6 +80,7 @@ public class GymRetrievalService {
                                    SixMonthsMprice = g.SixMonthsMprice,
                                    Website = g.Website,
                                    IsOwned = g.OwnedBy.HasValue,
+                                   CurrencyId = g.CurrencyId,
                                    WorkingHours = g.GymWorkingHours.Select(w => new GymWorkingHoursViewModel {
                                        Weekday = w.Weekday,
                                        OpenFrom = w.WorkingHours.OpenFrom,

@@ -1,19 +1,21 @@
 using backend.Models;
+using backend.ViewModels;
 
 namespace backend.DTO;
 
 public class GymRecommendationDto
 {
-    public Gym Gym { get; set; }
+    public GymViewModel Gym { get; set; }
 
-    public double NormalizedMembershipPrice { get; set; }
-    public double NormalizedOverallRating { get; set; }
-    public double NormalizedCongestionRating { get; set; }
-    public double NormalizedTravelPrice { get; set; }
-    public double NormalizedTravelTime { get; set; }
-    public double FinalScore { get; set; }
+    public double CostRating { get; set; }
+    public double OverallRating { get; set; }
+    public double TimeRating { get; set; }
+    public TimeOnly TravellingTime { get; set; }
+    public double TotalCost { get; set; }
+    public double CongestionRating { get; set; }
+    public double RegularRating { get; set; }
 
-    public GymRecommendationDto(Gym gym)
+    public GymRecommendationDto(GymViewModel gym)
     {
         Gym = gym;
     }
