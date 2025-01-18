@@ -370,7 +370,7 @@ input[type="range"]::-moz-range-thumb {
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     gap: 15px;
     border: 5px solid transparent;
-    transition: border-color 0.3s ease, background-color 0.3s ease;
+    transition: background-color 0.3s, border-color 0.3s;
     cursor: pointer;
 }
 
@@ -378,7 +378,7 @@ input[type="range"]::-moz-range-thumb {
     border-color: #ccc;
   }
   .gym-item.selected {
-    border-color: white;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
   }
 
 .gym-item p {

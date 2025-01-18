@@ -362,9 +362,27 @@ const Recommendation = () => {
 		}
 	};
 
+	const getRecommendationStyles = (marker, isSelected) => ({
+		background: isSelected ? marker.background : "#7C5DC6", // Default background is purple
+		borderColor: isSelected ? "white" : marker.borderColor, // Change border to white if selected
+		color: marker.glyphColor,
+	  });
+	  
+
 	const content = Object.keys(recommendations).map((ratingType) => {
 		const mainRating = recommendations[ratingType].map((gym) => {
-			return <li key={gym.Gym.id} className={classNames("gym-item", gymId === gym.Gym.id ? "selected" : "")}
+			const isSelected = gymId === gym.Gym.id;
+			const marker = ratingType === "MainRecommendations" ? mainRatingMarker : secRatingMarket;
+			const styles = getRecommendationStyles(marker, isSelected);
+			
+			return <li key={gym.Gym.id} className={classNames("gym-item", { selected: isSelected })}
+			style={{
+				backgroundColor: styles.background,
+				borderColor: styles.borderColor,
+				color: styles.color,
+				borderWidth: "5px",
+				borderStyle: "solid",
+			  }}
 			onClick={() => setGymId(gymId === gym.Gym.id ? null : gym.Gym.id)}>
 				<h4>{gym.Gym.name}</h4>
 				<p><FontAwesomeIcon icon={faMoneyBillWave}/> Total Cost: {gym.totalCost} {gym.currency}</p>
