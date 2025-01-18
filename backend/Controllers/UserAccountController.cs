@@ -143,4 +143,70 @@ public class UserAccountController : AccountControllerTemplate {
             return NotFound(new { message = knfEx.Message });
         }
     }
+    [HttpGet("{username}/requests")]
+public async Task<IActionResult> GetRequests(string username)
+{
+    // Ensure the user exists
+    var user = await _context.Accounts.FirstOrDefaultAsync(a => a.Username == username && a.Type == AccountType.user);
+    if (user == null)
+    {
+        return NotFound(new { message = "User not found or not of type 'user'." });
+    }
+
+    // Retrieve requests for the user
+    var requests = await _context.Requests
+        .Where(r => r.UserId == user.Id)
+        .Select(r => new
+        {
+            r.Id,
+            r.RequestedAt,
+            r.OriginLatitude,
+            r.OriginLongitude,
+            r.TimePriority,
+            r.TotalCostPriority,
+            r.MinCongestionRating,
+            r.MinRating,
+            r.MinMembershipPrice,
+            r.Name
+        })
+        .ToListAsync();
+
+    // Return the list of requests
+    return Ok(requests);
+}
+    [HttpPut("{username}/requests/{requestId}")]
+public async Task<IActionResult> UpdateRequest(string username, Guid requestId, UpdateRequestDto updateRequestDto) {
+    // Fetch the user and validate the username and account type
+    var user = await _context.Accounts.FirstOrDefaultAsync(u => u.Username == username && u.Type == AccountType.user);
+    if (user == null) {
+        return NotFound("User not found or account type is not 'user'.");
+    }
+
+    // Fetch the request by ID and ensure it belongs to the user
+    var request = await _context.Requests.FirstOrDefaultAsync(r => r.Id == requestId && r.UserId == user.Id);
+    if (request == null) {
+        return NotFound("Request not found or does not belong to the user.");
+    }
+
+    // Validate the Name field in the DTO
+    if (string.IsNullOrWhiteSpace(updateRequestDto.Name)) {
+        return BadRequest("The 'Name' field cannot be null or empty.");
+    }
+
+    // Update only the Name field of the request
+    request.Name = updateRequestDto.Name;
+
+    // Save changes to the database
+    try {
+        await _context.SaveChangesAsync();
+    } catch (DbUpdateException) {
+        return StatusCode(500, "An error occurred while updating the request.");
+    }
+
+        return Ok(new 
+    {
+        message = "Request updated successfully.",
+        updatedName = request.Name
+    });
+}
 }

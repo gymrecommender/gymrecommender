@@ -446,4 +446,34 @@ public class RecommendationService {
             await _dbContext.SaveChangesAsync();
         }
     }
+ public async Task<List<RatingDto>> GetRatingsByRequestIdAsync(Guid requestId)
+    {
+        try
+        {
+            // Assuming Ratings is a DbSet<Rating> in your DbContext and Rating has properties 
+            // that match your RatingDto, such as Id, RatingValue, CreatedAt, UserId, and GymId
+            var ratings = await _dbContext.Ratings
+                .Where(r => r.UserId == requestId)
+                .Select(r => new RatingDto
+                {
+                    Id = r.Id,
+                    Rating1 = r.Rating1,
+                    CreatedAt = r.CreatedAt,
+                    UserId = r.UserId,
+                    GymId = r.GymId
+                })
+                .ToListAsync();
+
+            if (ratings == null || !ratings.Any())
+            {
+                return null;
+            }
+
+            return ratings;
+        }
+        catch (Exception ex)
+        {
+            throw new Exception($"Error retrieving ratings for request ID: {requestId}", ex);
+        }
+    }
 }
