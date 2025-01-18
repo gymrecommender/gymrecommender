@@ -21,39 +21,6 @@ public abstract class AccountControllerTemplate : Controller {
     }
 
     [NonAction]
-    public async Task<IActionResult> GetByUsername(string username, AccountType? accountType = null) {
-        var accountQuery = _context.Accounts.AsNoTracking()
-                                   .Where(a => a.Username == username);
-
-        if (accountType is not null) {
-            accountQuery = accountQuery.Where(a => a.Type == accountType);
-        }
-
-        var account = await accountQuery.FirstOrDefaultAsync();
-
-        if (account == null) {
-            return NotFound(new {
-                success = false, error = new {
-                    code = "UsernameError",
-                    message = ErrorMessage.ErrorMessages["UsernameError"]
-                }
-            }); //new { error = $"User {username} is not found" }
-        }
-
-        return Ok(new AccountViewModel {
-            Id = account.Id,
-            Username = account.Username,
-            Email = account.Email,
-            FirstName = account.FirstName,
-            LastName = account.LastName,
-            IsEmailVerified = account.IsEmailVerified,
-            LastSignIn = account.LastSignIn,
-            Type = account.Type.ToString(),
-            Provider = account.Provider.ToString(),
-        });
-    }
-
-    [NonAction]
     public async Task<IActionResult> UpdateAccount(AccountPutDto accountPutDto,
                                                    AccountType? accountType = null) {
         var firebaseUid = HttpContext.User.FindFirst("user_id")?.Value;

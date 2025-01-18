@@ -19,12 +19,6 @@ public class GymAccountController : AccountControllerTemplate {
         _accountType = AccountType.gym;
     }
 
-    [HttpGet("{username}")]
-    [Authorize(Policy = "GymOnly")]
-    public async Task<IActionResult> GetGymByUsername(string username, AccountType? accountType) {
-        return await base.GetByUsername(username, _accountType);
-    }
-
     [HttpPut]
     [Authorize(Policy = "GymOnly")]
     public async Task<IActionResult> UpdateAccount(AccountPutDto accountPutDto) {

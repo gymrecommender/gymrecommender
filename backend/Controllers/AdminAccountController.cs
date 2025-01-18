@@ -18,12 +18,6 @@ public class AdminAccountController : AccountControllerTemplate {
         _accountType = AccountType.admin;
     }
     
-    [HttpGet("{username}")]
-    [Authorize(Policy = "AdminOnly")]
-    public async Task<IActionResult> GetAdminByUsername(string username) {
-        return await base.GetByUsername(username, _accountType);
-    }
-    
     [HttpPut]
     [Authorize(Policy = "AdminOnly")]
     public async Task<IActionResult> UpdateAccount(AccountPutDto accountPutDto) {

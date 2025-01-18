@@ -46,8 +46,6 @@ public partial class GymrecommenderContext : DbContext
 
     public virtual DbSet<RequestPause> RequestPauses { get; set; }
 
-    public virtual DbSet<RequestPeriod> RequestPeriods { get; set; }
-
     public virtual DbSet<UserToken> UserTokens { get; set; }
 
     public virtual DbSet<WorkingHour> WorkingHours { get; set; }
@@ -549,6 +547,8 @@ public partial class GymrecommenderContext : DbContext
             entity.Property(e => e.TotalCostPriority).HasColumnName("total_cost_priority");
             entity.Property(e => e.UserId).HasColumnName("user_id");
             entity.Property(e => e.MembType).HasColumnName("memb_type");
+            entity.Property(e => e.ArrivalTime).HasColumnName("arrival_time");
+            entity.Property(e => e.DepartureTime).HasColumnName("departure_time");
 
             entity.HasOne(d => d.User).WithMany(p => p.Requests)
                 .HasForeignKey(d => d.UserId)
@@ -584,29 +584,6 @@ public partial class GymrecommenderContext : DbContext
                 .HasConstraintName("request_pause_user_id_fkey");
         });
 
-        modelBuilder.Entity<RequestPeriod>(entity =>
-        {
-            entity.HasKey(e => e.Id).HasName("request_period_pkey");
-
-            entity.ToTable("request_period");
-
-            entity.HasIndex(e => e.RequestId, "idx_request_period_request_id");
-
-            entity.HasIndex(e => new { e.RequestId, e.Weekday }, "request_period_request_id_weekday_key").IsUnique();
-
-            entity.Property(e => e.Id)
-                .HasDefaultValueSql("uuid_generate_v4()")
-                .HasColumnName("id");
-            entity.Property(e => e.ArrivalTime).HasColumnName("arrival_time");
-            entity.Property(e => e.DepartureTime).HasColumnName("departure_time");
-            entity.Property(e => e.RequestId).HasColumnName("request_id");
-            entity.Property(e => e.Weekday).HasColumnName("weekday");
-
-            entity.HasOne(d => d.Request).WithMany(p => p.RequestPeriods)
-                .HasForeignKey(d => d.RequestId)
-                .HasConstraintName("request_period_request_id_fkey");
-        });
-
         modelBuilder.Entity<UserToken>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("user_token_pkey");
@@ -631,10 +608,6 @@ public partial class GymrecommenderContext : DbContext
                 .HasDefaultValueSql("now()")
                 .HasColumnName("updated_at");
             entity.Property(e => e.UserId).HasColumnName("user_id");
-
-            entity.HasOne(d => d.User).WithOne(p => p.UserToken)
-                .HasForeignKey<UserToken>(d => d.UserId)
-                .HasConstraintName("user_token_user_id_fkey");
         });
 
         modelBuilder.Entity<WorkingHour>(entity =>

@@ -72,7 +72,7 @@ public partial class Gym
         return membershipLength switch
         {
             MembershipLength.Month => MonthlyMprice,
-            MembershipLength.HalfYear => SixMonthsMprice,
+            MembershipLength.Halfyear => SixMonthsMprice,
             MembershipLength.Year => YearlyMprice,
             _ => MonthlyMprice
         };

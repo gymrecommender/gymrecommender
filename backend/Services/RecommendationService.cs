@@ -127,7 +127,7 @@ public class RecommendationService {
                         g.MonthlyMprice.HasValue && g.MonthlyMprice.Value <= request.MaxMembershipPrice);
                     break;
 
-                case MembershipLength.HalfYear:
+                case MembershipLength.Halfyear:
                     query = query.Where(g =>
                         g.SixMonthsMprice.HasValue && g.SixMonthsMprice.Value <= request.MaxMembershipPrice);
                     break;
@@ -159,7 +159,7 @@ public class RecommendationService {
             case MembershipLength.Month:
                 mainGymsQuery = mainGymsQuery.Where(g => g.MonthlyMprice.HasValue);
                 break;
-            case MembershipLength.HalfYear:
+            case MembershipLength.Halfyear:
                 mainGymsQuery = mainGymsQuery.Where(g => g.SixMonthsMprice.HasValue);
                 break;
             case MembershipLength.Year:
@@ -414,18 +414,14 @@ public class RecommendationService {
             MinMembershipPrice = (int)requestDto.MaxMembershipPrice,
             //TODO: What is initial purpose if this field? Rename to City if we want to save city name, Name remove request_user_id_name_key constraint from db
             MembType = requestDto.MembershipLength,
-            UserId = userId
-            // Initialize other properties if needed
-        };
-
-        var requestPeriod = new RequestPeriod {
+            UserId = userId,
             ArrivalTime = !requestDto.PreferredArrivalTime.IsNullOrEmpty() ? TimeOnly.Parse(requestDto.PreferredArrivalTime) : null,
             DepartureTime = !requestDto.PreferredDepartureTime.IsNullOrEmpty() ? TimeOnly.Parse(requestDto.PreferredDepartureTime) : null,
-            Request = requestEntity
+            // Initialize other properties if needed
         };
+        
         // Add to DbContext
         _dbContext.Requests.Add(requestEntity);
-        _dbContext.RequestPeriods.Add(requestPeriod);
         await _dbContext.SaveChangesAsync();
 
         return requestEntity;

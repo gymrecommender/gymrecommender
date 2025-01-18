@@ -24,18 +24,6 @@ public class RecommendationController : Controller {
     /// <returns>List of recommended gyms with normalized scores and final scores.</returns>
     [HttpPost]
     public async Task<IActionResult> CreateRecommendationsRequest([FromBody] GymRecommendationRequestDto request) {
-        if (!ModelState.IsValid)
-        {
-            var errors = ModelState
-                         .Where(ms => ms.Value.Errors.Any())
-                         .Select(ms => new
-                         {
-                             Field = ms.Key,
-                             Errors = ms.Value.Errors.Select(e => e.ErrorMessage)
-                         });
-
-            return BadRequest(new { Message = "Validation failed", Errors = errors });
-        }
         if (request == null) {
             return BadRequest("Invalid request data.");
         }

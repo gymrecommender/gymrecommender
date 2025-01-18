@@ -96,6 +96,7 @@ public class UserAccountController : AccountControllerTemplate {
     }
 
     [HttpGet("requests")]
+    [Authorize(Policy = "UserOnly")]
     public async Task<IActionResult> GetRequests() {
         var firebaseUid = HttpContext.User.FindFirst("user_id")?.Value;
 
@@ -110,19 +111,18 @@ public class UserAccountController : AccountControllerTemplate {
                                       MinPrice = r.MinMembershipPrice,
                                       MinRating = r.MinRating,
                                       MinCongestion = r.MinCongestionRating,
-                                      PriceTimeRatio = r.TotalCostPriority
+                                      PriceTimeRatio = r.TotalCostPriority,
+                                      MembershipLength = r.MembType.ToString(),
+                                      DepartureTime = r.DepartureTime,
+                                      ArrivalTime = r.ArrivalTime,
                                   }
                               })
+                              .OrderByDescending(r => r.RequestedAt)
                               .ToList();
 
         return Ok(request);
     }
-
-    [HttpGet("{username}")]
-    public async Task<IActionResult> GetByUsername(string username, AccountType? accountType) {
-        return await base.GetByUsername(username, _accountType);
-    }
-
+    
     [HttpPut]
     [Authorize(Policy = "UserOnly")]
     public async Task<IActionResult> UpdateAccount(AccountPutDto accountPutDto) {

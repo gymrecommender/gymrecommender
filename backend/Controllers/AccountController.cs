@@ -14,11 +14,6 @@ namespace backend.Controllers;
 [Route("/api/[controller]")]
 public class AccountController : AccountControllerTemplate {
     public AccountController(GymrecommenderContext context, IOptions<AppSettings> appSettings) : base(context, appSettings) {}
-    
-    [HttpGet("{username}")]// GET /api/account/{username}
-    public async Task<IActionResult> GetByUsername(string username) {
-        return await base.GetByUsername(username);
-    }
 
     [HttpGet("role")]
     [Authorize]
