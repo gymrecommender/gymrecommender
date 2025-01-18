@@ -464,34 +464,44 @@ public class RecommendationService {
             await _dbContext.SaveChangesAsync();
         }
     }
- public async Task<List<RatingDto>> GetRatingsByRequestIdAsync(Guid requestId)
+public async Task<List<RatingDto>> GetRatingsByRequestIdAsync(Guid requestId)
+{
+    try
     {
-        try
-        {
-            // Assuming Ratings is a DbSet<Rating> in your DbContext and Rating has properties 
-            // that match your RatingDto, such as Id, RatingValue, CreatedAt, UserId, and GymId
-            var ratings = await _dbContext.Ratings
-                .Where(r => r.UserId == requestId)
-                .Select(r => new RatingDto
-                {
-                    Id = r.Id,
-                    Rating1 = r.Rating1,
-                    CreatedAt = r.CreatedAt,
-                    UserId = r.UserId,
-                    GymId = r.GymId
-                })
-                .ToListAsync();
+        // Retrieve the UserId associated with the given requestId
+        var userId = await _dbContext.Requests
+            .Where(req => req.Id == requestId)
+            .Select(req => req.UserId)
+            .FirstOrDefaultAsync();
 
-            if (ratings == null || !ratings.Any())
+        if (userId == Guid.Empty)
+        {
+            throw new Exception($"No user found for request ID: {requestId}");
+        }
+
+        // Fetch ratings that match the UserId
+        var ratings = await _dbContext.Ratings
+            .Where(r => r.UserId == userId)
+            .Select(r => new RatingDto
             {
-                return null;
-            }
+                Id = r.Id,
+                Rating1 = r.Rating1, 
+                CreatedAt = r.CreatedAt,
+                UserId = r.UserId,
+                GymId = r.GymId
+            })
+            .ToListAsync();
 
-            return ratings;
-        }
-        catch (Exception ex)
+        if (ratings == null || ratings.Count == 0)
         {
-            throw new Exception($"Error retrieving ratings for request ID: {requestId}", ex);
+            return null; 
         }
+
+        return ratings;
     }
+    catch (Exception ex)
+    {
+        throw new Exception($"Error retrieving ratings for request ID: {requestId}", ex);
+    }
+}
 }
