@@ -25,15 +25,6 @@ public class RecommendationService {
         _gymRetrievalService = gymRetrievalService;
     }
 
-    // Define static readonly constants for base weights within each group
-    // These represent the distribution within price-related and other-related criteria
-    private static readonly double BaseMembershipPriceWeight = 0.8; // Within price-related group
-    private static readonly double BaseTravelPriceWeight = 0.2; // Within price-related group
-
-    private static readonly double BaseExternalRatingWeight = 0.4; // Within other-related group
-    private static readonly double BaseCongestionRatingWeight = 0.3; // Within other-related group
-    private static readonly double BaseTravelTimeWeight = 0.3; // Within other-related group
-
     /// <summary>
     /// Retrieves gym recommendations based on user preferences.
     /// </summary>
@@ -247,22 +238,22 @@ public class RecommendationService {
 
         // Distribute the proportions within their respective groups
         // Price-related group: MembershipPrice and TravelPrice
-        double totalPriceWeight = BaseMembershipPriceWeight * pricePriorityProportion + BaseTravelPriceWeight * pricePriorityProportion;
+        double totalPriceWeight = pricePriorityProportion * 0.68;
+        double travelTimeWeight = otherPriorityProportion * 0.68;
 
         // Other-related group: ExternalRating, CongestionRating, TravelTime
-        double externalRatingWeight = BaseExternalRatingWeight * otherPriorityProportion;
-        double congestionRatingWeight = BaseCongestionRatingWeight * otherPriorityProportion;
-        double travelTimeWeight = BaseTravelTimeWeight * otherPriorityProportion;
+        double regularRatingWeight = 0.2;
+        double congestionRatingWeight = 0.12;
 
         // Total weight should now sum to 1.0 if pricePriorityProportion + otherPriorityProportion = 1
         // However, due to Base weights, it might not. So, normalize them.
-        double totalWeight = totalPriceWeight + externalRatingWeight +
+        double totalWeight = totalPriceWeight + regularRatingWeight +
                              congestionRatingWeight +
                              travelTimeWeight;
 
 
         totalPriceWeight /= totalWeight;
-        externalRatingWeight /= totalWeight;
+        regularRatingWeight /= totalWeight;
         congestionRatingWeight /= totalWeight;
         travelTimeWeight /= totalWeight;
 
@@ -301,7 +292,7 @@ public class RecommendationService {
             var recommendation = new GymRecommendationDto(gymView) {
                 OverallRating = Math.Round(
                     (scaledTotalPrices[i] * totalPriceWeight) +
-                    (scaledExternalRatings[i] * externalRatingWeight) +
+                    (scaledExternalRatings[i] * regularRatingWeight) +
                     (scaledCongestionRatings[i] * congestionRatingWeight) +
                     (scaledTravelTimes[i] * travelTimeWeight), 2),
                 TimeRating = scaledTravelTimes[i],
