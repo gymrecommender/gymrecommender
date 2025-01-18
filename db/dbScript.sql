@@ -299,6 +299,8 @@ CREATE TABLE public.request (
 	"name" varchar(50) NULL,
 	user_id uuid NOT NULL,
 	memb_type public."membership_type" NOT NULL,
+	departure_time time NULL,
+	arrival_time time NULL,
 	CONSTRAINT request_check CHECK ((((total_cost_priority >= 0) AND (total_cost_priority <= 100)) AND ((total_cost_priority + time_priority) = 100))),
 	CONSTRAINT request_min_congestion_rating_check CHECK (((min_congestion_rating >= (1)::numeric) AND (min_congestion_rating <= (5)::numeric))),
 	CONSTRAINT request_min_membership_price_check CHECK ((min_membership_price >= 0)),
@@ -337,28 +339,6 @@ CREATE TABLE public.request_pause (
 );
 CREATE INDEX idx_request_pause_ip ON public.request_pause USING btree (ip);
 CREATE INDEX idx_request_pause_user_id ON public.request_pause USING btree (user_id);
-
-
--- public.request_period definition
-
--- Drop table
-
--- DROP TABLE public.request_period;
-
-CREATE TABLE public.request_period (
-	id uuid DEFAULT uuid_generate_v4() NOT NULL,
-	request_id uuid NOT NULL,
-	weekday int4 NULL,
-	arrival_time time NULL,
-	departure_time time NULL,
-	CONSTRAINT request_period_check CHECK ((arrival_time > departure_time)),
-	CONSTRAINT request_period_check1 CHECK (((departure_time IS NOT NULL) OR (arrival_time IS NOT NULL))),
-	CONSTRAINT request_period_pkey PRIMARY KEY (id),
-	CONSTRAINT request_period_request_id_weekday_key UNIQUE (request_id, weekday),
-	CONSTRAINT request_period_weekday_check CHECK (((weekday >= 0) AND (weekday <= 6))),
-	CONSTRAINT request_period_request_id_fkey FOREIGN KEY (request_id) REFERENCES public.request(id) ON DELETE CASCADE
-);
-CREATE INDEX idx_request_period_request_id ON public.request_period USING btree (request_id);
 
 
 -- public.availability definition
