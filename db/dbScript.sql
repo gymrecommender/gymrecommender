@@ -18,6 +18,9 @@ BEGIN
 	IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'not_type') THEN
         CREATE TYPE not_type AS ENUM ('message', 'alert', 'reminder');
     END IF;
+    IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'membership_type') THEN
+        CREATE TYPE membership_type AS ENUM ('month', 'halfyear', 'year');
+    END IF;
 END $$;
 
 --Since we will have a lot of gyms stored (potentially) it does not make sense to store working hours for each of them as a text
@@ -295,6 +298,7 @@ CREATE TABLE public.request (
 	min_membership_price int4 NOT NULL,
 	"name" varchar(50) NULL,
 	user_id uuid NOT NULL,
+	memb_type public."membership_type" NOT NULL,
 	CONSTRAINT request_check CHECK ((((total_cost_priority >= 0) AND (total_cost_priority <= 100)) AND ((total_cost_priority + time_priority) = 100))),
 	CONSTRAINT request_min_congestion_rating_check CHECK (((min_congestion_rating >= (1)::numeric) AND (min_congestion_rating <= (5)::numeric))),
 	CONSTRAINT request_min_membership_price_check CHECK ((min_membership_price >= 0)),
