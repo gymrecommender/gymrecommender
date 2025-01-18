@@ -16,10 +16,10 @@ public class GymUpdateDto
 }
 
 
-
 public class GymWorkingHourUpdateDto
 {
     public int Weekday { get; set; }
-    public TimeOnly OpenFrom { get; set; }
-    public TimeOnly OpenUntil { get; set; }
+
+     public TimeOnly OpenFrom { get; set; }
+     public TimeOnly OpenUntil { get; set; }
 }
