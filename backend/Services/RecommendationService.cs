@@ -5,6 +5,7 @@ using backend.ViewModels;
 using backend.ViewModels.WorkingHour;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 
 namespace backend.Services;
 
@@ -412,12 +413,19 @@ public class RecommendationService {
             MinRating = requestDto.MinOverallRating >= 1 ? requestDto.MinOverallRating : 1,
             MinMembershipPrice = (int)requestDto.MaxMembershipPrice,
             //TODO: What is initial purpose if this field? Rename to City if we want to save city name, Name remove request_user_id_name_key constraint from db
+            MembType = requestDto.MembershipLength,
             UserId = userId
             // Initialize other properties if needed
         };
 
+        var requestPeriod = new RequestPeriod {
+            ArrivalTime = !requestDto.PreferredArrivalTime.IsNullOrEmpty() ? TimeOnly.Parse(requestDto.PreferredArrivalTime) : null,
+            DepartureTime = !requestDto.PreferredDepartureTime.IsNullOrEmpty() ? TimeOnly.Parse(requestDto.PreferredDepartureTime) : null,
+            Request = requestEntity
+        };
         // Add to DbContext
         _dbContext.Requests.Add(requestEntity);
+        _dbContext.RequestPeriods.Add(requestPeriod);
         await _dbContext.SaveChangesAsync();
 
         return requestEntity;

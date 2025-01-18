@@ -95,6 +95,29 @@ public class UserAccountController : AccountControllerTemplate {
         });
     }
 
+    [HttpGet("requests")]
+    public async Task<IActionResult> GetRequests() {
+        var firebaseUid = HttpContext.User.FindFirst("user_id")?.Value;
+
+        var request = _context.Requests
+                              .Include(r => r.User)
+                              .Where(r => r.User.OuterUid == firebaseUid)
+                              .Select(r => new {
+                                  Id = r.Id,
+                                  RequestedAt = r.RequestedAt,
+                                  Name = r.Name,
+                                  Preferences = new {
+                                      MinPrice = r.MinMembershipPrice,
+                                      MinRating = r.MinRating,
+                                      MinCongestion = r.MinCongestionRating,
+                                      PriceTimeRatio = r.TotalCostPriority
+                                  }
+                              })
+                              .ToList();
+
+        return Ok(request);
+    }
+
     [HttpGet("{username}")]
     public async Task<IActionResult> GetByUsername(string username, AccountType? accountType) {
         return await base.GetByUsername(username, _accountType);

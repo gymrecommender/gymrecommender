@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using backend.Enums;
 
 namespace backend.Models;
 
@@ -24,6 +25,8 @@ public partial class Request
     public int MinMembershipPrice { get; set; }
 
     public string? Name { get; set; }
+    
+    public MembershipLength MembType { get; set; }
 
     public Guid UserId { get; set; }
 

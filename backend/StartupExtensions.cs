@@ -28,6 +28,7 @@ public static class StartupExtensions
         dataSourceBuilder.MapEnum<RecommendationType>("rec_type");
         dataSourceBuilder.MapEnum<NotificationType>("not_type");
         dataSourceBuilder.MapEnum<ProviderType>("provider_type");
+        dataSourceBuilder.MapEnum<MembershipLength>("membership_type");
 
         var dataSource = dataSourceBuilder.Build();
 

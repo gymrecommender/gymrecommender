@@ -60,6 +60,7 @@ public partial class GymrecommenderContext : DbContext
             .HasPostgresEnum<OwnershipDecision>("public", "own_decision")
             .HasPostgresEnum<ProviderType>("public", "provider_type")
             .HasPostgresEnum<RecommendationType>("public", "rec_type")
+            .HasPostgresEnum<MembershipLength>("public", "membership_type")
 
             .HasPostgresExtension("uuid-ossp");
 
@@ -547,6 +548,7 @@ public partial class GymrecommenderContext : DbContext
             entity.Property(e => e.TimePriority).HasColumnName("time_priority");
             entity.Property(e => e.TotalCostPriority).HasColumnName("total_cost_priority");
             entity.Property(e => e.UserId).HasColumnName("user_id");
+            entity.Property(e => e.MembType).HasColumnName("memb_type");
 
             entity.HasOne(d => d.User).WithMany(p => p.Requests)
                 .HasForeignKey(d => d.UserId)
