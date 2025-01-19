@@ -16,6 +16,7 @@ import {useEffect, useState} from "react";
 import Loader from "../components/simple/Loader.jsx";
 import classNames from "classnames";
 import {useSelectedGym} from "../context/SelectedGymProvider.jsx";
+import {toast} from "react-toastify";
 
 const Recommendation = ({data}) => {
 	const {id} = useParams();
@@ -27,37 +28,33 @@ const Recommendation = ({data}) => {
 
 	useEffect(() => {
 		const fetchRecommendations = async () => {
-			try {
-				let list;
-				console.log(data)
-				if (data) {
-					const {requestId, ...rest} = data;
-					list = rest
-				} else {
-					// TODO do the request to retrieve recommendations
-				}
-				const newMarkers = [];
-				Object.keys(list).forEach((key) => {
-					const markerType = key === "mainRecommendations" ? mainRatingMarker : secRatingMarket
-					list[key].forEach((gym) => {
-						newMarkers.push({
-							lat: gym.gym.latitude,
-							lng: gym.gym.longitude,
-							...markerType,
-							id: gym.gym.id,
-							onClick: (select) => {
-								setGymId(select ? gym.gym.id : null)
-							},
-						})
+			let list;
+			if (data) {
+				const {requestId, ...rest} = data;
+				list = rest
+			} else {
+				const result = await axiosInternal("GET", `useraccount/requests/${id}/recommendations`)
+				if (result.error) toast(result.error.message)
+				else list = result.data
+			}
+			const newMarkers = [];
+			Object.keys(list).forEach((key) => {
+				const markerType = key === "mainRecommendations" ? mainRatingMarker : secRatingMarket
+				list[key].forEach((gym) => {
+					newMarkers.push({
+						lat: gym.gym.latitude,
+						lng: gym.gym.longitude,
+						...markerType,
+						id: gym.gym.id,
+						onClick: (select) => {
+							setGymId(select ? gym.gym.id : null)
+						},
 					})
 				})
-				setMarkers(newMarkers);
-				setRecommendations(list);
-			} catch (err) {
-				setError(err.message || "An error occurred while fetching data.");
-			} finally {
-				setLoading(false);
-			}
+			})
+			setMarkers(newMarkers);
+			setRecommendations(list);
+			setLoading(false);
 		};
 
 		fetchRecommendations();
@@ -88,7 +85,7 @@ const Recommendation = ({data}) => {
 	  fetchRecommendations();
 	}, []);*/
 
-	const content = Object.keys(recommendations).map((ratingType) => {
+	const content = Object.keys(recommendations).sort((a, b) => b.localeCompare(a)).map((ratingType) => {
 		const mainRating = recommendations[ratingType].map((gym) => {
 			return <li key={gym.gym.id} className={classNames("gym-item", gymId === gym.gym.id ? "selected" : "")}
 			           onClick={() => setGymId(gymId === gym.gym.id ? null : gym.gym.id)}>
@@ -108,7 +105,7 @@ const Recommendation = ({data}) => {
 					"Main Recommendations" :
 					"Secondary Recommendations"}</h3>
 				<ul className="gym-list">
-					{mainRating.length > 0 ? mainRating : <p>No complete data available</p>}
+					{mainRating.length > 0 ? mainRating : <p>There are no recommendations to display</p>}
 				</ul>
 			</>
 		</div>
@@ -125,7 +122,7 @@ const Recommendation = ({data}) => {
 					) : content
 				}
 			</aside>
-			<GoogleMap markers={markers}/>
+			<GoogleMap showStartMarker={false} markers={markers}/>
 		</>
 	);
 };
