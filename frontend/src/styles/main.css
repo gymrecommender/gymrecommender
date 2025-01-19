@@ -967,6 +967,7 @@ form .form-disabler:hover .form-disabler-hint {
     font-size: 16px;
     cursor: pointer;
     transition: background-color 0.3s;
+    gap: 5px;
 }
 
 .btn-primary:hover {
@@ -991,6 +992,7 @@ form .form-disabler:hover .form-disabler-hint {
     font-size: 16px;
     cursor: pointer;
     transition: background-color 0.3s;
+    gap: 5px;
 }
 
 .btn-danger:hover {
