@@ -8,6 +8,7 @@ import {axiosInternal} from "../services/axios";
 import Button from "../components/simple/Button";
 import {toast} from "react-toastify";
 import {displayTimestamp} from "../services/helpers.jsx";
+import Form from "../components/simple/Form.jsx";
 
 const History = () => {
 	const [requests, setRequests] = useState([]);
@@ -111,8 +112,7 @@ const History = () => {
 
 	const handleSave = async (id) => {
 		setRequests((prevRequests) => prevRequests.map((request) => request.id === id ? {
-			...request,
-			name: newName
+			...request, name: newName
 		} : request));
 		setEditingId(null); // Exit edit mode
 	};
@@ -128,6 +128,19 @@ const History = () => {
 			alert("Failed to remove gym. Please try again.");
 		}
 	};
+
+	const handleSubmit = async (id, values) => {
+		const result = await axiosInternal("PUT", `useraccount/requests/${id}`, {name: values.name})
+		if (result.error) toast(result.error.message);
+		else {
+			setRequests(requests.map((request) => {
+				if (request.id === id) request.name = result.data.name;
+				return request;
+			}))
+			setEditingId(null);
+			toast(`The name of the request has successfully been edited!`)
+		}
+	}
 
 
 	const scrollLeft = () => {
@@ -186,57 +199,61 @@ const History = () => {
 			</thead>
 			<tbody>
 			{filteredRequests.map(({id, preferences, name, requestedAt}) => {
-				const {departureTime, arrivalTime, minPrice, minRating, minCongestion, priceTimeRatio, membershipLength} = preferences;
-				return <>
-					<tr
-						key={id}
-						onClick={(e) => {
-							if (!e.target.closest(".edit-section")) {
-								handleRequestClick(id);
-							}
-						}}
-						style={{cursor: "pointer"}}
-					>
-						<td>
-							{editingId === id ? (
-								<div className="edit-section" onClick={(e) => e.stopPropagation()}>
-									<input
-										type="text"
-										value={newName}
-										onChange={(e) => setNewName(e.target.value)}
-										onKeyDown={(e) => {
-											if (e.key === "Enter") handleSave(id);
-										}}
-									/>
-									<Button
-										onClick={(e) => {
-											e.stopPropagation();
-											handleSave(id);
-										}}
-										className="save-btn"> Save </Button>
-								</div>) : (<span>
-                      {name || "-"}
+				const {
+					departureTime, arrivalTime, minPrice, minRating, minCongestion, priceTimeRatio, membershipLength
+				} = preferences;
+				return <tr
+					key={id}
+					onClick={(e) => {
+						if (!e.target.closest(".edit-section")) {
+							handleRequestClick(id);
+						}
+					}}
+					style={{cursor: "pointer"}}
+				>
+					<td>
+						{editingId === id ?
+							<div className="edit-section" onClick={(e) => e.stopPropagation()}>
+								<Form onSubmit={(values) => handleSubmit(id, values)} data={{
+									fields: [
+										{
+											pos: 1,
+											type: "text",
+											name: "name",
+											value: name
+										},
+									],
+									button: {
+										type: "submit",
+										text: "Save",
+										className: "btn-name-edit",
+									}
+								}}/>
+								<Button type="submit" onClick={() => setEditingId(null)} className={"btn-submit"}>
+									Cancel
+								</Button>
+							</div> :
+							<span>
+	                                {name || "-"}
 								<Button
 									onClick={(e) => {
 										e.stopPropagation();
-										handleEditClick(id, name);
+										setEditingId(id);
 									}}
-									className="edit-btn"
-								>
-                        Edit
-                      </Button>
-                    </span>)}
-						</td>
-						<td>{displayTimestamp(requestedAt) || "N/A"}</td>
-						<td>{departureTime ? departureTime.substring(0, 5) : "N/A"}</td>
-						<td>{arrivalTime ? arrivalTime.substring(0, 5) : "N/A"}</td>
-						<td>{minPrice !== 100 ? minPrice : "N/A"}</td>
-						<td>{minRating !== 1 ? minRating : "N/A"}</td>
-						<td>{minCongestion !== 1 ? minCongestion : "N/A"}</td>
-						<td>{`${priceTimeRatio}/${100 - priceTimeRatio}`}</td>
-						<td>{membershipLength}</td>
-					</tr>
-				</>
+									className="btn-name-edit"
+								>Edit</Button>
+								</span>
+						}
+					</td>
+					<td>{displayTimestamp(requestedAt) || "N/A"}</td>
+					<td>{departureTime ? departureTime.substring(0, 5) : "N/A"}</td>
+					<td>{arrivalTime ? arrivalTime.substring(0, 5) : "N/A"}</td>
+					<td>{minPrice !== 100 ? minPrice : "N/A"}</td>
+					<td>{minRating !== 1 ? minRating : "N/A"}</td>
+					<td>{minCongestion !== 1 ? minCongestion : "N/A"}</td>
+					<td>{`${priceTimeRatio}/${100 - priceTimeRatio}`}</td>
+					<td>{membershipLength}</td>
+				</tr>
 			})}
 			</tbody>
 		</table>) : (<div className="no-requests">

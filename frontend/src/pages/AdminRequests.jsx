@@ -87,7 +87,6 @@ const AdminRequests = () => {
 			else delete copy[gymId].requests[gymRequestId];
 		}))
 
-		console.log(copy[gymId].requests)
 		if (Object.keys(copy[gymId].requests).length === 0) {
 			toast(`Responses for '${copy[gymId].name}' has been successfully submitted`)
 			delete copy[gymId];

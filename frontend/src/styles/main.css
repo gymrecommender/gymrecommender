@@ -426,6 +426,9 @@ input[type="range"]::-moz-range-thumb {
     background-color: #a0a8f5;
     color: #002147;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    table-layout: fixed;
+
+    word-break: break-all;
 }
 
 .history-table th,
@@ -616,10 +619,12 @@ button.save-btn {
     margin-top: 10px;
 }
 
-button.edit-btn {
+button.btn-name-edit {
     background-color: #f5a042;
     color: #ffffff;
     margin-top: 10px;
+
+    width: 100%;
 }
 
 .search-bar {

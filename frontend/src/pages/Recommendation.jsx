@@ -67,24 +67,6 @@ const Recommendation = ({data}) => {
 		}
 	}, [gymId]);
 
-	/*useEffect(() => {
-	  const fetchRecommendations = async () => {
-		setLoading(true);
-		setError(null);
-
-		try {
-		  const response = await axiosInternal.get("/api/recommendations");
-		  setRecommendations(response.data);
-		} catch (err) {
-		  setError(err.message || "An error occurred while fetching data.");
-		} finally {
-		  setLoading(false);
-		}
-	  };
-
-	  fetchRecommendations();
-	}, []);*/
-
 	const content = Object.keys(recommendations).sort((a, b) => b.localeCompare(a)).map((ratingType) => {
 		const mainRating = recommendations[ratingType].map((gym) => {
 			return <li key={gym.gym.id} className={classNames("gym-item", gymId === gym.gym.id ? "selected" : "")}
