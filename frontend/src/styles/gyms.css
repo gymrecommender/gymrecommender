@@ -79,19 +79,21 @@
 .gym-data input {
     margin-top: 0;
 }
-.gym-data .gym-price {
-    display: grid;
-    align-items: end;
-    grid-template-columns: 4fr 1fr;
+.gym-data .gym-prices {
     column-gap: 5px;
 }
-.gym-data .gym-price .input-field {
+.gym-data .gym-prices .gym-prices-memberships {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    column-gap: 7px;
+}
+.gym-data .gym-prices .input-field {
     margin-top: 0;
 }
 .gym-data select, .gym-data input {
     height: 45px;
 }
-.gym-data .gym-price select {
+.gym-data .gym-prices select {
     padding: 10px;
     border-radius: 5px;
     background-color: white;
