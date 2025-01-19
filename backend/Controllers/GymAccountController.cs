@@ -181,7 +181,19 @@ public class GymAccountController : AccountControllerTemplate {
                     }
                 }
             }
+            
+            var bookmarks = _context.Bookmarks.Where(b => b.GymId == gym.Id).Select(b => new {
+                UserId = b.UserId,
+            }).ToList();
 
+            foreach (var bookmark in bookmarks) {
+                _context.Notifications.Add(new Notification {
+                    Message = $"The bookmarked gym '{gym.Name}' has been updated",
+                    Type = NotificationType.message,
+                    UserId = bookmark.UserId,
+                });
+            }
+            
             await _context.SaveChangesAsync();
 
             var updatedGym = new GymViewModel {
