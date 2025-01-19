@@ -25,7 +25,9 @@ const accountSignUp = async (values, role) => {
 			return result
 		}
 
+		console.log(values, role)
 		const checkUser = await axiosInternal('GET', `${roleMapper[role]}/${values.username}`, values.username);
+		console.log(checkUser, )
 		if (checkUser.error?.status === 404) {
 			const outerUser = await createUserWithEmailAndPassword(auth, values.email, values.password);
 

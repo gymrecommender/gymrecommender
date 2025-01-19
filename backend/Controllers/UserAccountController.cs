@@ -290,4 +290,96 @@ public class UserAccountController : AccountControllerTemplate {
             return StatusCode(500, new { Message = "An error occurred while processing your request." });
         }
     }
+    
+    [HttpDelete("bookmark/{bookmarkId}")]
+    [Authorize(Policy = "UserOnly")]
+    public async Task<IActionResult> DeleteBookmark(Guid bookmarkId)
+    {
+        var firebaseUid = HttpContext.User.FindFirst("user_id")?.Value;
+        if (firebaseUid == null)
+        {
+            return Forbid("Unauthorized user");
+        }
+
+        try
+        {
+            var account = await _context.Accounts.FirstOrDefaultAsync(a => a.OuterUid == firebaseUid);
+            if (account == null)
+            {
+                return NotFound(new { message = "User account not found." });
+            }
+            var bookmark = await _context.Bookmarks.FirstOrDefaultAsync(b => b.Id == bookmarkId && b.UserId == account.Id);
+            if (bookmark == null)
+            {
+                return NotFound(new { message = "Bookmark not found." });
+            }
+            _context.Bookmarks.Remove(bookmark);
+            await _context.SaveChangesAsync();
+
+            return Ok(new { message = "Bookmark deleted successfully." });
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error deleting bookmark: {ex.Message}");
+            return StatusCode(500, new
+            {
+                success = false,
+                error = new { message = "An error occurred while deleting the bookmark." }
+            });
+        }
+    }
+    
+    
+    
+    
+    
+    [HttpGet("bookmarks")]
+    [Authorize(Policy = "UserOnly")]
+    public async Task<IActionResult> GetBookmarkedGyms()
+    {
+        var firebaseUid = HttpContext.User.FindFirst("user_id")?.Value;
+        if (firebaseUid == null)
+        {
+            return Forbid("Unauthorized user");
+        }
+
+        try
+        {
+            var account = await _context.Accounts.FirstOrDefaultAsync(a => a.OuterUid == firebaseUid);
+            if (account == null)
+            {
+                return NotFound(new { message = "User account not found." });
+            }
+            var bookmarkedGyms = await _context.Bookmarks
+                .Where(b => b.UserId == account.Id)
+                .Include(b => b.Gym) // Assuming Bookmark has a navigation property 'Gym'
+                .Select(b => new GymViewModel
+                {
+                    Id = b.Gym.Id,
+                    Name = b.Gym.Name,
+                    Address = b.Gym.Address,
+                    PhoneNumber = b.Gym.PhoneNumber,
+                    Website = b.Gym.Website,
+                    MonthlyMprice = b.Gym.MonthlyMprice,
+                    YearlyMprice = b.Gym.YearlyMprice,
+                    SixMonthsMprice = b.Gym.SixMonthsMprice,
+                    IsWheelchairAccessible = b.Gym.IsWheelchairAccessible,
+                    Longitude = b.Gym.Longitude,
+                    Latitude = b.Gym.Latitude,
+                    Currency = b.Gym.Currency.Code
+                })
+                .ToListAsync();
+
+            return Ok(bookmarkedGyms);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error retrieving bookmarked gyms: {ex.Message}");
+            return StatusCode(500, new
+            {
+                success = false,
+                error = new { message = "An error occurred while retrieving bookmarked gyms." }
+            });
+        }
+    }
 }

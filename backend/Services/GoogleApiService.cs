@@ -164,6 +164,7 @@ public class GoogleApiService {
                         for (int i = 0; i <= 6; i++) {
                             workingHours.Add(new GymWorkingHoursViewModel {
                                 Weekday = i,
+                                
                                 OpenUntil = TimeOnly.Parse("23:59:59"),
                                 OpenFrom = TimeOnly.Parse("00:00:00"),
                             });

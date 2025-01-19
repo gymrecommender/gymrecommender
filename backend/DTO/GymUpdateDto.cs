@@ -12,12 +12,14 @@ public class GymUpdateDto
     public string? PhoneNumber { get; set; }
     public string? Website { get; set; }
     public bool? IsWheelchairAccessible { get; set; }
-    public GymWorkingHour[]? WorkingHours { get; set; } 
+    public GymWorkingHourUpdateDto[]? WorkingHours { get; set; } 
 }
 
-public partial class WorkingHourDto
+
+public class GymWorkingHourUpdateDto
 {
-    public int Weekday { get; set; } // 0 = Sunday, 1 = Monday, ..., 6 = Saturday
-    public TimeOnly OpenFrom { get; set; }
-    public TimeOnly OpenUntil { get; set; }
+    public int Weekday { get; set; }
+
+     public TimeOnly OpenFrom { get; set; }
+     public TimeOnly OpenUntil { get; set; }
 }
