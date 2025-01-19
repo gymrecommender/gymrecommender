@@ -239,6 +239,7 @@ public class GymAccountController : AccountControllerTemplate {
                     message = ErrorMessage.ErrorMessages["RequestPending"]
                 }
             });
+            
         }
 
         var user = _context.Accounts.First(a => a.OuterUid == firebaseUid);
