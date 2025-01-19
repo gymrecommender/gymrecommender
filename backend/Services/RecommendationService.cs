@@ -48,7 +48,8 @@ public class RecommendationService
             GymFilteredTravelInfoDto gymsWithGeoData = _geoService.CalculateTravelingTimeAndPrice(
                 gyms,
                 gymRecommendationRequest.Latitude,
-                gymRecommendationRequest.Longitude
+                gymRecommendationRequest.Longitude,
+                gymRecommendationRequest.PreferredDepartureTime
             );
 
             // Calculate ratings
@@ -212,7 +213,7 @@ public class RecommendationService
                     : null)
             .ToList();
 
-        List<double> travelPrices = filteredGyms
+        List<double?> travelPrices = filteredGyms
             .Select(g => g.TravelPrice)
             .ToList();
         // TODO: separate travelPrices and membershipPrices for weights assigment. MembershipPrice is repetitive and should have higher weight
@@ -234,7 +235,7 @@ public class RecommendationService
             .Select(g => (double?)g.Gym.CongestionRating)
             .ToList(); // Assuming CongestionRating is non-nullable
 
-        List<double> travelTimes = filteredGyms
+        List<double?> travelTimes = filteredGyms
             .Select(g => g.TravelTime)
             .ToList();
 
@@ -249,7 +250,7 @@ public class RecommendationService
             .Select(value => ScaleToRange(value, 1, 10)).ToList();
         List<double> scaledCongestionRatings = NormalizeCriteria(congestionRatings, inverted: false)
             .Select(value => ScaleToRange(value, 1, 10)).ToList();
-        List<double> scaledTravelTimes = NormalizeCriteria(travelTimes.Select(x => (double?)x).ToList(), inverted: true)
+        List<double> scaledTravelTimes = NormalizeCriteria(travelTimes.Select(x => x).ToList(), inverted: true)
             .Select(value => ScaleToRange(value, 1, 10)).ToList();
 
         // Adjust weights based on PriceRatingPriority

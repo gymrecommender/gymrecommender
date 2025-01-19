@@ -1,3 +1,4 @@
+using System.Text;
 using System.Text.Json;
 using backend.Models;
 using backend.ViewModels.WorkingHour;
@@ -233,15 +234,30 @@ public class GoogleApiService
     public async Task<Response> GetDistanceMatrixAsync(
         double originLat,
         double originLng,
-        List<Gym> gyms)
+        List<Gym> gyms,
+        string mode = "driving",
+        long? departureTime = null
+    )
     {
         // Build the list of destinations in "lat,lng|lat,lng|..." format
         var destinations = string.Join("|",
             gyms.Select(g => $"{g.Latitude},{g.Longitude}"));
 
-        // Distance Matrix API endpoint
-        var url = $"https://maps.googleapis.com/maps/api/distancematrix/json?" +
-                  $"origins={originLat},{originLng}&destinations={destinations}&key={_apiKey}";
+        // Start building the request URL
+        var urlBuilder = new StringBuilder("https://maps.googleapis.com/maps/api/distancematrix/json?");
+        urlBuilder.Append($"origins={originLat},{originLng}");
+        urlBuilder.Append($"&destinations={destinations}");
+        urlBuilder.Append($"&mode={mode}");
+
+        // Optional parameters
+        if (departureTime.HasValue)
+        {
+            urlBuilder.Append($"&departure_time={departureTime.Value}");
+        }
+
+        urlBuilder.Append($"&key={_apiKey}");
+
+        string url = urlBuilder.ToString();
 
         // Execute the request
         var response = await _client.GetAsync(url);
