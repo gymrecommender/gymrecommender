@@ -96,110 +96,38 @@ public class GymAccountController : AccountControllerTemplate {
     //TODO save non-existing working hours ^
     //TODO connect new working hours with the gym in the GymWorkingHoursTable ^
     //TODO a GymViewModel should be returned ^
-    public async Task<IActionResult> UpdateGym(Guid gymId, [FromBody] JsonElement rawRequestBody) {
+    public async Task<IActionResult> UpdateGym(Guid gymId, [FromBody] GymUpdateDto gymUpdateDto) {
         try {
             var firebaseUid = HttpContext.User.FindFirst("user_id")?.Value;
 
-            if (rawRequestBody.ValueKind != JsonValueKind.Object) {
-                return BadRequest("Invalid request payload.");
-            }
-
-            var gymUpdateDto = new GymUpdateDto();
-            try {
-                if (rawRequestBody.TryGetProperty("name", out var nameElement))
-                    gymUpdateDto.Name = nameElement.GetString();
-
-                if (rawRequestBody.TryGetProperty("address", out var addressElement))
-                    gymUpdateDto.Address = addressElement.GetString();
-
-                if (rawRequestBody.TryGetProperty("monthlyMprice", out var monthlyMpriceElement) &&
-                    monthlyMpriceElement.TryGetDecimal(out var monthlyMprice))
-                    gymUpdateDto.MonthlyMprice = monthlyMprice;
-
-                if (rawRequestBody.TryGetProperty("yearlyMprice", out var yearlyMpriceElement) &&
-                    yearlyMpriceElement.TryGetDecimal(out var yearlyMprice))
-                    gymUpdateDto.YearlyMprice = yearlyMprice;
-
-                if (rawRequestBody.TryGetProperty("sixMonthsMprice", out var sixMonthsMpriceElement) &&
-                    sixMonthsMpriceElement.TryGetDecimal(out var sixMonthsMprice))
-                    gymUpdateDto.SixMonthsMprice = sixMonthsMprice;
-
-                if (rawRequestBody.TryGetProperty("phoneNumber", out var phoneNumberElement))
-                    gymUpdateDto.PhoneNumber = phoneNumberElement.GetString();
-
-                if (rawRequestBody.TryGetProperty("website", out var websiteElement))
-                    gymUpdateDto.Website = websiteElement.GetString();
-
-                if (rawRequestBody.TryGetProperty("isWheelchairAccessible", out var isWheelchairAccessibleElement)) {
-                    try {
-                        gymUpdateDto.IsWheelchairAccessible = isWheelchairAccessibleElement.GetBoolean();
-                    } catch (Exception ex) {
-                        Console.WriteLine($"Invalid boolean value for 'isWheelchairAccessible': {ex.Message}");
-                    }
-                }
-
-                if (rawRequestBody.TryGetProperty("workingHours", out var workingHoursElement) &&
-                    workingHoursElement.ValueKind == JsonValueKind.Array) {
-                    var workingHours = new List<GymWorkingHourUpdateDto>();
-                    foreach (var workingHourElement in workingHoursElement.EnumerateArray()) {
-                        if (workingHourElement.ValueKind == JsonValueKind.Object &&
-                            workingHourElement.TryGetProperty("weekday", out var weekdayElement) &&
-                            weekdayElement.TryGetInt32(out var weekday) &&
-                            workingHourElement.TryGetProperty("openFrom", out var openFromElement) &&
-                            workingHourElement.TryGetProperty("openUntil", out var openUntilElement)) {
-                            try {
-                                var openFrom = TimeOnly.Parse(openFromElement.GetString());
-                                var openUntil = TimeOnly.Parse(openUntilElement.GetString());
-
-                                workingHours.Add(new GymWorkingHourUpdateDto {
-                                    Weekday = weekday,
-                                    OpenFrom = openFrom,
-                                    OpenUntil = openUntil
-                                });
-                            } catch {
-                                Console.WriteLine($"Invalid time format in workingHours entry: {workingHourElement}");
-                            }
-                        }
-                    }
-
-                    gymUpdateDto.WorkingHours = workingHours.ToArray();
-                }
-            } catch (Exception ex) {
-                Console.WriteLine($"Error parsing request body: {ex.Message}");
-                return BadRequest("Invalid request payload.");
-            }
-
-            var dbGym = _context.Gyms.Include(x => x.OwnedByNavigation).FirstOrDefault(x => x.Id == gymId);
-            if (dbGym == null) {
-                return StatusCode(404, new {
-                    success = false,
-                    error = new { message = "Gym not found." }
-                });
-            }
-
-            var gym = _context.Gyms.AsTracking()
-                              .Include(g => g.OwnedByNavigation)
-                              .Include(g => g.GymWorkingHours).ThenInclude(gwh => gwh.WorkingHours)
-                              .Include(g => g.Currency)
-                              .FirstOrDefault(g =>
-                                  g.Id == gymId && g.OwnedByNavigation != null &&
-                                  g.OwnedByNavigation.OuterUid == firebaseUid);
+            var gym = _context.Gyms.Include(x => x.OwnedByNavigation)
+                              .Include(x => x.GymWorkingHours).ThenInclude(x => x.WorkingHours)
+                              .Include(x => x.Currency)
+                              .FirstOrDefault(x =>
+                                  x.OwnedByNavigation != null && x.OwnedByNavigation.OuterUid == firebaseUid &&
+                                  x.Id == gymId);
 
             if (gym == null) {
-                return StatusCode(403, new {
+                return StatusCode(404, new {
                     success = false,
-                    error = new { message = "Unauthorized to update this gym." }
+                    error = new {
+                        message = "The gym has not been found or the user does not have the right to manage the gym"
+                    }
                 });
             }
 
             // Update properties
+            var currency = _context.Currencies.FirstOrDefault(c => c.Code == gymUpdateDto.Currency);
+            if (currency != null) gym.CurrencyId = currency.Id;
+
             if (gymUpdateDto.Name != null) gym.Name = gymUpdateDto.Name;
             if (gymUpdateDto.Address != null) gym.Address = gymUpdateDto.Address;
+            if (gymUpdateDto.PhoneNumber != null) gym.PhoneNumber = gymUpdateDto.PhoneNumber;
+            if (gymUpdateDto.Website != null) gym.Website = gymUpdateDto.Website;
+
             if (gymUpdateDto.MonthlyMprice.HasValue) gym.MonthlyMprice = gymUpdateDto.MonthlyMprice.Value;
             if (gymUpdateDto.YearlyMprice.HasValue) gym.YearlyMprice = gymUpdateDto.YearlyMprice.Value;
             if (gymUpdateDto.SixMonthsMprice.HasValue) gym.SixMonthsMprice = gymUpdateDto.SixMonthsMprice.Value;
-            if (gymUpdateDto.PhoneNumber != null) gym.PhoneNumber = gymUpdateDto.PhoneNumber;
-            if (gymUpdateDto.Website != null) gym.Website = gymUpdateDto.Website;
             if (gymUpdateDto.IsWheelchairAccessible.HasValue)
                 gym.IsWheelchairAccessible = gymUpdateDto.IsWheelchairAccessible.Value;
 
@@ -210,27 +138,46 @@ public class GymAccountController : AccountControllerTemplate {
                                                             .FirstOrDefaultAsync(wh =>
                                                                 wh.OpenFrom == workingHourDto.OpenFrom &&
                                                                 wh.OpenUntil == workingHourDto.OpenUntil);
-
-                    if (existingWorkingHour == null) {
+                    
+                    bool isDelete = workingHourDto.OpenFrom == null && workingHourDto.OpenUntil == null;
+                    if ((workingHourDto.OpenFrom == null && workingHourDto.OpenUntil != null) ||
+                        (workingHourDto.OpenFrom != null && workingHourDto.OpenUntil == null)) {
+                        return BadRequest("Both OpenFrom and OpenUntil must be either null or have valid values");
+                    }
+                    
+                    if (existingWorkingHour == null && !isDelete) {
                         existingWorkingHour = new WorkingHour {
-                            OpenFrom = workingHourDto.OpenFrom,
-                            OpenUntil = workingHourDto.OpenUntil,
+                            OpenFrom = (TimeOnly)workingHourDto.OpenFrom,
+                            OpenUntil = (TimeOnly)workingHourDto.OpenUntil,
                         };
                         _context.WorkingHours.Add(existingWorkingHour);
                         await _context.SaveChangesAsync();
                     }
 
                     var existingRelation = gym.GymWorkingHours
-                                              .FirstOrDefault(gwh =>
-                                                  gwh.Weekday == workingHourDto.Weekday &&
-                                                  gwh.WorkingHoursId == existingWorkingHour.Id);
+                                              .FirstOrDefault(gwh => gwh.Weekday == workingHourDto.Weekday);
 
-                    if (existingRelation == null) {
-                        gym.GymWorkingHours.Add(new GymWorkingHour {
-                            GymId = gym.Id,
-                            WorkingHoursId = existingWorkingHour.Id,
-                            Weekday = workingHourDto.Weekday
-                        });
+                    bool isSame = existingRelation?.WorkingHours.OpenUntil == workingHourDto.OpenUntil &&
+                                  existingRelation?.WorkingHours.OpenFrom == workingHourDto.OpenFrom;
+
+                    if (isDelete) {
+                        if (existingRelation != null) {
+                            _context.GymWorkingHours.Remove(existingRelation);
+                            await _context.SaveChangesAsync();
+                        }
+                    } else {
+                        if (existingRelation == null) {
+                            gym.GymWorkingHours.Add(new GymWorkingHour {
+                                GymId = gym.Id,
+                                WorkingHoursId = existingWorkingHour.Id,
+                                Weekday = workingHourDto.Weekday
+                            });
+                        } else if (!isSame) {
+                            existingRelation.WorkingHoursId = existingWorkingHour.Id;
+                            existingRelation.ChangedAt = DateTime.UtcNow;
+                            _context.GymWorkingHours.Update(existingRelation);
+                            await _context.SaveChangesAsync();
+                        }
                     }
                 }
             }
@@ -257,6 +204,7 @@ public class GymAccountController : AccountControllerTemplate {
                     OpenUntil = gwh.WorkingHours.OpenUntil
                 }).ToList()
             };
+
             return Ok(updatedGym);
         } catch (Exception _) {
             return StatusCode(500, new {
