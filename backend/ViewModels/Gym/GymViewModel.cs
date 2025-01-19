@@ -35,5 +35,9 @@ public class GymViewModel {
     
     public Guid CurrencyId { get; set; }
     
+    public decimal CongestionRating { get; set; }
+    
+    public decimal Rating { get; set; }
+    
     public List<GymWorkingHoursViewModel> WorkingHours { get; set; } = null!;
 }

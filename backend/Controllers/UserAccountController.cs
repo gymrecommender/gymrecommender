@@ -252,6 +252,11 @@ public class UserAccountController : AccountControllerTemplate {
                                                   YearlyMprice = r.Gym.YearlyMprice,
                                                   Website = r.Gym.Website,
                                                   CurrencyId = r.Gym.CurrencyId,
+                                                  CongestionRating = r.Gym.CongestionRating,
+                                                  Rating = Math.Round(
+                                                      (r.Gym.ExternalRating * r.Gym.ExternalRatingNumber +
+                                                       r.Gym.InternalRating * r.Gym.InternalRatingNumber) /
+                                                      (r.Gym.ExternalRatingNumber + r.Gym.InternalRatingNumber), 2),
                                                   WorkingHours = r.Gym.GymWorkingHours.Select(w =>
                                                       new GymWorkingHoursViewModel {
                                                           Weekday = w.Weekday,
@@ -413,6 +418,55 @@ public class UserAccountController : AccountControllerTemplate {
             return StatusCode(500, new {
                 success = false,
                 error = new { message = "An error occurred while retrieving bookmarks" }
+            });
+        }
+    }
+
+    [HttpPost("ratings/{gymId}")]
+    [Authorize(Policy = "UserOnly")]
+    public async Task<IActionResult> PostRating(Guid gymId, [FromBody]RatingDto ratingDto) {
+        try {
+            var firebaseUid = HttpContext.User.FindFirst("user_id")?.Value;
+
+            var gym = _context.Gyms.AsTracking().FirstOrDefault(g => g.Id == gymId);
+            if (gym == null) return NotFound(new { message = "The gym is not found" });
+            
+            var user = _context.Accounts.First(a => a.OuterUid == firebaseUid);
+            _context.Ratings.Add(new Rating {
+                UserId = user.Id,
+                GymId = gym.Id,
+                Rating1 = ratingDto.Rating
+            });
+            _context.CongestionRatings.Add(new CongestionRating {
+                UserId = user.Id,
+                GymId = gym.Id,
+                AvgWaitingTime = ratingDto.WaitingTime,
+                VisitTime = ratingDto.VisitTime,
+                Crowdedness = ratingDto.Crowdedness,
+            });
+            _context.SaveChanges();
+
+            //TODO not he best idea if two ratings are added for the same gym at the same time
+            var ratings = _context.Ratings.Where(r => r.GymId == gymId);
+            gym.InternalRating = (decimal)Math.Round(ratings.Average(r => r.Rating1), 2);
+            gym.InternalRatingNumber = ratings.Count();
+            
+            var conRatings = _context.CongestionRatings.Where(r => r.GymId == gymId);
+            gym.CongestionRating = (decimal)Math.Round(0.5 * conRatings.Average(cr => cr.AvgWaitingTime) + 0.5 * conRatings.Average(cr => cr.Crowdedness), 2);
+            gym.CongestionRatingNumber = conRatings.Count();
+            
+            _context.SaveChanges();
+
+            return Ok(new {
+                Rating = Math.Round(
+                    (gym.InternalRating * gym.InternalRatingNumber + gym.ExternalRating * gym.ExternalRatingNumber) /
+                    (gym.ExternalRatingNumber + gym.InternalRatingNumber), 2),
+                CongestionRating = gym.CongestionRating,
+            });
+        } catch (Exception _) {
+            return StatusCode(500, new {
+                success = false,
+                error = new { message = "An error occurred while saving ratings" }
             });
         }
     }

@@ -17,7 +17,7 @@ public class GymRetrievalService {
         _context = context;
         _googleApiService = googleApiService;
     }
-    
+
     public int CalculateCityRadius(City city) {
         double ToRadians(double angle) => Math.PI * angle / 180.0;
         double earthRad = 6371 * 1e3;
@@ -81,6 +81,11 @@ public class GymRetrievalService {
                                    Website = g.Website,
                                    IsOwned = g.OwnedBy.HasValue,
                                    CurrencyId = g.CurrencyId,
+                                   CongestionRating = g.CongestionRating,
+                                   Rating = Math.Round(
+                                       (g.ExternalRating * g.ExternalRatingNumber +
+                                        g.InternalRating * g.InternalRatingNumber) /
+                                       (g.ExternalRatingNumber + g.InternalRatingNumber), 2),
                                    WorkingHours = g.GymWorkingHours.Select(w => new GymWorkingHoursViewModel {
                                        Weekday = w.Weekday,
                                        OpenFrom = w.WorkingHours.OpenFrom,
@@ -99,22 +104,22 @@ public class GymRetrievalService {
             );
         }
     }
-    
+
     public async Task<Response> GetCity(double lat, double lng) {
         Response response = await _googleApiService.GetCity(lat, lng);
         if (!response.Success) return response;
 
         Geocode newCity = (Geocode)response.Value;
         var cityCheck = _context.Cities.AsNoTracking()
-                           .Include(c => c.Country)
-                           .Where(c => c.Name == newCity.City && c.Country.Name == newCity.Country)
-                           .Where(c => c.Swlatitude <= lat && lat <= c.Nelatitude)
-                           .Where(c => c.Swlongitude <= lng && lng <= c.Nelongitude)
-                           .FirstOrDefault();
-        
+                                .Include(c => c.Country)
+                                .Where(c => c.Name == newCity.City && c.Country.Name == newCity.Country)
+                                .Where(c => c.Swlatitude <= lat && lat <= c.Nelatitude)
+                                .Where(c => c.Swlongitude <= lng && lng <= c.Nelongitude)
+                                .FirstOrDefault();
+
         if (cityCheck != null) {
             return new Response(cityCheck);
-        } 
+        }
 
         var country = _context.Countries.AsNoTracking()
                               .FirstOrDefault(c => c.Name == newCity.Country);
