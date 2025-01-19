@@ -45,113 +45,126 @@ public class AdminAccountController : AccountControllerTemplate {
     [HttpPut("requests/{requestId}")]
     [Authorize(Policy = "AdminOnly")]
     public async Task<IActionResult> UpdateOwnershipRequest(Guid requestId, [FromBody] UpdateOwnershipRequestDto updateDto) {
-        var firebaseUid = HttpContext.User.FindFirst("user_id")?.Value;
+        try {
+            var firebaseUid = HttpContext.User.FindFirst("user_id")?.Value;
 
-        if (updateDto == null)
-        {
-            return StatusCode(500, new {
-                success = false,
-                error = new {
-                    message = ErrorMessage.ErrorMessages["InvalidRequest"]
-                }
-            });
-        }
-        
-        var admin = _context.Accounts.FirstOrDefault(a => a.OuterUid == firebaseUid && a.Type == AccountType.admin);
-        if (admin == null) {
-            return StatusCode(500, new {
-                success = false,
-                error = new {
-                    message = ErrorMessage.ErrorMessages["UsernameError"]
-                }
-            });
-        }
-        
-        var ownershipRequest = _context.Ownerships.AsTracking()
-                                       .Include(o => o.Gym)
-                                       .FirstOrDefault(o => o.Id == requestId);
-        
-        if (ownershipRequest == null)
-        {
-            return StatusCode(500, new {
-                success = false,
-                error = new {
-                    message = ErrorMessage.ErrorMessages["OwnershipError"]
-                }
-            });
-        }
+            if (updateDto == null) {
+                return StatusCode(500, new {
+                    success = false,
+                    error = new {
+                        message = ErrorMessage.ErrorMessages["InvalidRequest"]
+                    }
+                });
+            }
 
-        if (!updateDto.Decision.IsNullOrEmpty()) {
-            ownershipRequest.Decision = updateDto.Decision.ToLower() switch {
-                "approved" => OwnershipDecision.approved,
-                "rejected" => OwnershipDecision.rejected,
-                _ => throw new ArgumentException("Invalid decision value. Must be 'approved' or 'rejected'.")
-            };
-            ownershipRequest.RespondedAt = DateTime.UtcNow;
-            ownershipRequest.RespondedBy = admin.Id;
-            
-            if (ownershipRequest.Decision == OwnershipDecision.approved) {
-                var gym = _context.Gyms.AsTracking().First(g => g.Id == ownershipRequest.GymId);
-                gym.OwnedBy = ownershipRequest.RequestedBy;
+            var admin = _context.Accounts.FirstOrDefault(a => a.OuterUid == firebaseUid && a.Type == AccountType.admin);
+            if (admin == null) {
+                return StatusCode(500, new {
+                    success = false,
+                    error = new {
+                        message = ErrorMessage.ErrorMessages["UsernameError"]
+                    }
+                });
             }
+
+            var ownershipRequest = _context.Ownerships.AsTracking()
+                                           .Include(o => o.Gym)
+                                           .FirstOrDefault(o => o.Id == requestId);
+
+            if (ownershipRequest == null) {
+                return StatusCode(500, new {
+                    success = false,
+                    error = new {
+                        message = ErrorMessage.ErrorMessages["OwnershipError"]
+                    }
+                });
+            }
+
+            if (!updateDto.Decision.IsNullOrEmpty()) {
+                ownershipRequest.Decision = updateDto.Decision.ToLower() switch {
+                    "approved" => OwnershipDecision.approved,
+                    "rejected" => OwnershipDecision.rejected,
+                    _ => throw new ArgumentException("Invalid decision value. Must be 'approved' or 'rejected'.")
+                };
+                ownershipRequest.RespondedAt = DateTime.UtcNow;
+                ownershipRequest.RespondedBy = admin.Id;
+
+                if (ownershipRequest.Decision == OwnershipDecision.approved) {
+                    var gym = _context.Gyms.AsTracking().First(g => g.Id == ownershipRequest.GymId);
+                    gym.OwnedBy = ownershipRequest.RequestedBy;
+                }
+            }
+
+            if (!updateDto.Message.IsNullOrEmpty()) ownershipRequest.Message = updateDto.Message;
+            await _context.SaveChangesAsync();
+
+            return Ok(new {
+                id = ownershipRequest.Id,
+                requestedAt = ownershipRequest.RequestedAt,
+                respondedAt = ownershipRequest.RespondedAt,
+                decision = ownershipRequest.Decision?.ToString(),
+                message = ownershipRequest.Message,
+                gym = new {
+                    id = ownershipRequest.Gym.Id,
+                    name = ownershipRequest.Gym.Name,
+                    address = ownershipRequest.Gym.Address,
+                    latitude = ownershipRequest.Gym.Latitude,
+                    longitude = ownershipRequest.Gym.Longitude
+                }
+            });
+        } catch (Exception _) {
+            return StatusCode(500, new {
+                success = false,
+                error = new { message = "An error occurred while updating the ownership request" }
+            });
         }
-        if (!updateDto.Message.IsNullOrEmpty()) ownershipRequest.Message = updateDto.Message;
-        await _context.SaveChangesAsync();
-        
-        return Ok(new {
-            id = ownershipRequest.Id,
-            requestedAt = ownershipRequest.RequestedAt,
-            respondedAt = ownershipRequest.RespondedAt,
-            decision = ownershipRequest.Decision?.ToString(),
-            message = ownershipRequest.Message,
-            gym = new {
-                id = ownershipRequest.Gym.Id,
-                name = ownershipRequest.Gym.Name,
-                address = ownershipRequest.Gym.Address,
-                latitude = ownershipRequest.Gym.Latitude,
-                longitude = ownershipRequest.Gym.Longitude
-            }
-        });
     }
     
     
     [HttpGet("requests")]
     [Authorize(Policy = "AdminOnly")]
     public async Task<IActionResult> GetOwnershipRequests() {
-        var ownershipRequests = _context.Ownerships
-            .Include(o => o.Gym)
-            .Include(o => o.RequestedByNavigation)
-            .Where(o => o.Decision == null)
-            .ToList();
+        try {
+            var ownershipRequests = _context.Ownerships
+                                            .Include(o => o.Gym)
+                                            .Include(o => o.RequestedByNavigation)
+                                            .Where(o => o.Decision == null)
+                                            .ToList();
 
-        var groupedRequests = ownershipRequests
-                              .GroupBy(o => o.Gym.Id)
-                              .Select(g => new {
-                                  GymId = g.Key,
-                                  Name = g.First().Gym.Name,
-                                  Address = g.First().Gym.Address,
-                                  Requests = g.Select(r => new {
-                                      Id = r.Id,
-                                      requestedAt = r.RequestedAt,
-                                      Email = r.RequestedByNavigation.Email,
-                                      Message = r.Message
-                                  })
-                              }).ToDictionary(
-                                  g => g.GymId,
-                                  g => new {
-                                      name = g.Name,
-                                      address = g.Address,
-                                      requests = g.Requests.ToDictionary(
-                                          r => r.Id,
-                                          r => new {
-                                              requestedAt = r.requestedAt,
-                                              email = r.Email,
-                                              message = r.Message
-                                          }
-                                      )
-                                  });
+            var groupedRequests = ownershipRequests
+                                  .GroupBy(o => o.Gym.Id)
+                                  .Select(g => new {
+                                      GymId = g.Key,
+                                      Name = g.First().Gym.Name,
+                                      Address = g.First().Gym.Address,
+                                      Requests = g.Select(r => new {
+                                          Id = r.Id,
+                                          requestedAt = r.RequestedAt,
+                                          Email = r.RequestedByNavigation.Email,
+                                          Message = r.Message
+                                      })
+                                  }).ToDictionary(
+                                      g => g.GymId,
+                                      g => new {
+                                          name = g.Name,
+                                          address = g.Address,
+                                          requests = g.Requests.ToDictionary(
+                                              r => r.Id,
+                                              r => new {
+                                                  requestedAt = r.requestedAt,
+                                                  email = r.Email,
+                                                  message = r.Message
+                                              }
+                                          )
+                                      });
 
 
-        return Ok(groupedRequests);
+            return Ok(groupedRequests);
+        } catch (Exception _) {
+            return StatusCode(500, new {
+                success = false,
+                error = new { message = "An error occurred while getting ownership requests" }
+            });
+        }
     }
 }
