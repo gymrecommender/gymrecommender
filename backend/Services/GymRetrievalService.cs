@@ -82,10 +82,12 @@ public class GymRetrievalService {
                                    IsOwned = g.OwnedBy.HasValue,
                                    CurrencyId = g.CurrencyId,
                                    CongestionRating = g.CongestionRating,
-                                   Rating = Math.Round(
-                                       (g.ExternalRating * g.ExternalRatingNumber +
-                                        g.InternalRating * g.InternalRatingNumber) /
-                                       (g.ExternalRatingNumber + g.InternalRatingNumber), 2),
+                                   Rating = (g.ExternalRatingNumber + g.InternalRatingNumber) > 0
+                                       ? (decimal)Math.Round(
+                                           ((double)g.ExternalRating * g.ExternalRatingNumber +
+                                            (double)g.InternalRating * g.InternalRatingNumber) /
+                                           (g.ExternalRatingNumber + g.InternalRatingNumber), 2)
+                                       : 0,
                                    WorkingHours = g.GymWorkingHours.Select(w => new GymWorkingHoursViewModel {
                                        Weekday = w.Weekday,
                                        OpenFrom = w.WorkingHours.OpenFrom,

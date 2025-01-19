@@ -253,10 +253,12 @@ public class UserAccountController : AccountControllerTemplate {
                                                   Website = r.Gym.Website,
                                                   CurrencyId = r.Gym.CurrencyId,
                                                   CongestionRating = r.Gym.CongestionRating,
-                                                  Rating = Math.Round(
-                                                      (r.Gym.ExternalRating * r.Gym.ExternalRatingNumber +
-                                                       r.Gym.InternalRating * r.Gym.InternalRatingNumber) /
-                                                      (r.Gym.ExternalRatingNumber + r.Gym.InternalRatingNumber), 2),
+                                                  Rating = (r.Gym.ExternalRatingNumber + r.Gym.InternalRatingNumber) > 0
+                                                      ? (decimal)Math.Round(
+                                                          ((double)r.Gym.ExternalRating * r.Gym.ExternalRatingNumber +
+                                                           (double)r.Gym.InternalRating * r.Gym.InternalRatingNumber) /
+                                                          (r.Gym.ExternalRatingNumber + r.Gym.InternalRatingNumber), 2)
+                                                      : 0,
                                                   WorkingHours = r.Gym.GymWorkingHours.Select(w =>
                                                       new GymWorkingHoursViewModel {
                                                           Weekday = w.Weekday,

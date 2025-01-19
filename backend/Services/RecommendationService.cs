@@ -282,10 +282,12 @@ public class RecommendationService {
                 Website = gym.Website,
                 CurrencyId = gym.CurrencyId,
                 CongestionRating = gym.CongestionRating,
-                Rating = Math.Round(
-                    (gym.ExternalRating * gym.ExternalRatingNumber +
-                     gym.InternalRating * gym.InternalRatingNumber) /
-                    (gym.ExternalRatingNumber + gym.InternalRatingNumber), 2),
+                Rating = (gym.ExternalRatingNumber + gym.InternalRatingNumber) > 0
+                    ? (decimal)Math.Round(
+                        ((double)gym.ExternalRating * gym.ExternalRatingNumber +
+                         (double)gym.InternalRating * gym.InternalRatingNumber) /
+                        (gym.ExternalRatingNumber + gym.InternalRatingNumber), 2)
+                    : 0,
                 WorkingHours = gym.GymWorkingHours.Select(w => new GymWorkingHoursViewModel {
                     Weekday = w.Weekday,
                     OpenFrom = w.WorkingHours.OpenFrom,

@@ -74,10 +74,12 @@ public class GymAccountController : AccountControllerTemplate {
                                          Country = g.City.Country.Name,
                                          CurrencyId = g.CurrencyId,
                                          CongestionRating = g.CongestionRating,
-                                         Rating = Math.Round(
-                                             (g.ExternalRating * g.ExternalRatingNumber +
-                                              g.InternalRating * g.InternalRatingNumber) /
-                                             (g.ExternalRatingNumber + g.InternalRatingNumber), 2),
+                                         Rating = (g.ExternalRatingNumber + g.InternalRatingNumber) > 0
+                                             ? (decimal)Math.Round(
+                                                 ((double)g.ExternalRating * g.ExternalRatingNumber +
+                                                  (double)g.InternalRating * g.InternalRatingNumber) /
+                                                 (g.ExternalRatingNumber + g.InternalRatingNumber), 2)
+                                             : 0,
                                          WorkingHours = g.GymWorkingHours.Select(wh => new GymWorkingHoursViewModel {
                                              Weekday = wh.Weekday,
                                              OpenFrom = wh.WorkingHours.OpenFrom,
@@ -216,10 +218,12 @@ public class GymAccountController : AccountControllerTemplate {
                 Currency = gym.Currency.Code,
                 CurrencyId = gym.CurrencyId,
                 CongestionRating = gym.CongestionRating,
-                Rating = Math.Round(
-                    (gym.ExternalRating * gym.ExternalRatingNumber +
-                     gym.InternalRating * gym.InternalRatingNumber) /
-                    (gym.ExternalRatingNumber + gym.InternalRatingNumber), 2),
+                Rating = (gym.ExternalRatingNumber + gym.InternalRatingNumber) > 0
+                    ? (decimal)Math.Round(
+                        ((double)gym.ExternalRating * gym.ExternalRatingNumber +
+                         (double)gym.InternalRating * gym.InternalRatingNumber) /
+                        (gym.ExternalRatingNumber + gym.InternalRatingNumber), 2)
+                    : 0,
                 WorkingHours = gym.GymWorkingHours.Select(gwh => new GymWorkingHoursViewModel {
                     Weekday = gwh.Weekday,
                     OpenFrom = gwh.WorkingHours.OpenFrom,
