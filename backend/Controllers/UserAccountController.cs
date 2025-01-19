@@ -470,4 +470,56 @@ public class UserAccountController : AccountControllerTemplate {
             });
         }
     }
+
+    [HttpGet("notifications")]
+    [Authorize(Policy = "UserOnly")]
+    public async Task<IActionResult> GetNotifications() {
+        try {
+            var firebaseUid = HttpContext.User.FindFirst("user_id")?.Value;
+
+            var notifications = _context.Notifications
+                                        .Include(n => n.User)
+                                        .Where(n => n.User.OuterUid == firebaseUid)
+                                        .Select(n => new {
+                                            Id = n.Id,
+                                            Message = n.Message,
+                                            IsRead = n.ReadAt.HasValue
+                                        })
+                                        .ToList();
+            return Ok(notifications);
+        } catch (Exception _) {
+            return StatusCode(500, new {
+                success = false,
+                error = new { message = "An error occurred while retrieving notifications" }
+            });
+        }
+    }
+    
+    [HttpPut("notifications/{notificationId}")]
+    [Authorize(Policy = "UserOnly")]
+    public async Task<IActionResult> MarkNotificationRead(Guid notificationId) {
+        try {
+            var firebaseUid = HttpContext.User.FindFirst("user_id")?.Value;
+
+            var notification = _context.Notifications
+                                        .Include(n => n.User)
+                                        .FirstOrDefault(n => n.User.OuterUid == firebaseUid && n.Id == notificationId);
+            
+            if (notification == null) return NotFound(new { message = "The notification is not found" });
+            notification.ReadAt = DateTime.UtcNow;
+            _context.Notifications.Update(notification);
+            await _context.SaveChangesAsync();
+            
+            return Ok(new {
+                Id = notification.Id,
+                Message = notification.Message,
+                IsRead = notification.ReadAt.HasValue
+            });
+        } catch (Exception _) {
+            return StatusCode(500, new {
+                success = false,
+                error = new { message = "An error occurred while retrieving notifications" }
+            });
+        }
+    }
 }
