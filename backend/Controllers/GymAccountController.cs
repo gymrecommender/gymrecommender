@@ -1,3 +1,4 @@
+using System.Text.Json;
 using backend.DTO;
 using backend.Enums;
 using backend.Models;
@@ -88,7 +89,7 @@ public class GymAccountController : AccountControllerTemplate {
     //TODO connect new working hours with the gym in the GymWorkingHoursTable ^
     //TODO a GymViewModel should be returned ^
     
-    public async Task<IActionResult> UpdateGym(Guid gymId, [FromBody] JsonElement rawRequestBody)
+    public async Task<IActionResult> UpdateGym(Guid gymId, [FromBody]JsonElement rawRequestBody)
     {
         
         var firebaseUid = HttpContext.User.FindFirst("user_id")?.Value;
