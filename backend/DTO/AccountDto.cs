@@ -9,6 +9,4 @@ public class AccountDto {
     public required string FirstName { get; set; }
     public required string LastName { get; set; }
     public required string Provider { get; set; }
-    public required string OuterUid { get; set; }
-    public bool IsEmailVerified { get; set; }
 }

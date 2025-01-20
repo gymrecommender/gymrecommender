@@ -17,83 +17,16 @@ namespace backend.Controllers;
 public class UserAccountController : AccountControllerTemplate {
     private readonly RecommendationService _recommendationService;
 
-    public UserAccountController(GymrecommenderContext context, IOptions<AppSettings> appSettings,
+    public UserAccountController(GymrecommenderContext context, HttpClient httpClient, IOptions<AppSettings> appSettings,
                                  RecommendationService recommendationService) :
-        base(context, appSettings) {
+        base(context, httpClient, appSettings) {
         _accountType = AccountType.user;
         _recommendationService = recommendationService;
     }
 
     [HttpPost]
-    [Authorize]
-    public async Task<IActionResult> SignUp(AccountDto accountDto, AccountType type, Guid? createdBy = null) {
-        if (ModelState.IsValid) {
-            var firebaseUid = HttpContext.User.FindFirst("user_id")?.Value;
-            if (firebaseUid == null) {
-                return Forbid("Unauthorized user");
-            }
-
-            try {
-                var errors = new Dictionary<string, string[]> { };
-                if (!Enum.TryParse<ProviderType>(accountDto.Provider, out var provider)) {
-                    errors["Provider"] = new[] { $"Provider {accountDto.Provider} is not supported" };
-                } //not sure if this can be changed to a smarter way
-
-                if (errors.Count > 0) {
-                    return BadRequest(new {
-                        success = false,
-                        error = new {
-                            code = "ValidationError",
-                            message = "Some fields contain invalid data",
-                            details = errors
-                        }
-                    });
-                }
-
-                var account = new Account {
-                    Username = accountDto.Username,
-                    Email = accountDto.Email,
-                    FirstName = accountDto.FirstName,
-                    LastName = accountDto.LastName,
-                    Type = type,
-                    Provider = provider,
-                    OuterUid = accountDto.OuterUid,
-                    CreatedAt = DateTime.UtcNow,
-                    PasswordHash = BCrypt.Net.BCrypt.HashPassword(accountDto.Password),
-                    IsEmailVerified = accountDto.IsEmailVerified,
-                    CreatedBy = createdBy
-                };
-                _context.Accounts.Add(account);
-                await _context.SaveChangesAsync();
-
-                var role = account.Type.ToString();
-                var response = new AuthResponse() {
-                    Username = account.Username,
-                    Email = account.Email,
-                    FirstName = account.FirstName,
-                    LastName = account.LastName,
-                    Role = role,
-                };
-
-                return Ok(response);
-            } catch (Exception e) {
-                return StatusCode(500, new {
-                    success = false,
-                    error = new {
-                        code = "SignupError",
-                        message = ErrorMessage.ErrorMessages["SignUpError"]
-                    }
-                });
-            }
-        }
-
-        return BadRequest(new {
-            success = false,
-            error = new {
-                code = "ValidationError",
-                message = ErrorMessage.ErrorMessages["ValidationError"],
-            }
-        });
+    public async Task<IActionResult> SignUp(AccountDto accountDto) {
+        return await base.SignUp(accountDto, AccountType.user);
     }
 
     [HttpPut]

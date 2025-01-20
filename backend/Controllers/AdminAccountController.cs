@@ -13,8 +13,8 @@ namespace backend.Controllers;
 [ApiController]
 [Route("/api/[controller]")]
 public class AdminAccountController : AccountControllerTemplate {
-    public AdminAccountController(GymrecommenderContext context, IOptions<AppSettings> appSettings) :
-        base(context, appSettings) {
+    public AdminAccountController(GymrecommenderContext context, HttpClient httpClient, IOptions<AppSettings> appSettings) :
+        base(context, httpClient, appSettings) {
         _accountType = AccountType.admin;
     }
     
@@ -160,5 +160,23 @@ public class AdminAccountController : AccountControllerTemplate {
                 error = new { message = "An error occurred while getting ownership requests" }
             });
         }
+    }
+
+    [HttpPost("create/gym")]
+    [Authorize(Policy = "AdminOnly")]
+    public async Task<IActionResult> CreateNewGym(AccountDto accountDto) {
+        var firebaseUid = HttpContext.User.FindFirst("user_id")?.Value;
+        
+        var account = _context.Accounts.First(a => a.OuterUid == firebaseUid);
+        return await base.SignUp(accountDto, AccountType.gym, account.Id);
+    }
+    
+    [HttpPost("create/admin")]
+    [Authorize(Policy = "AdminOnly")]
+    public async Task<IActionResult> CreateNewAdmin(AccountDto accountDto) {
+        var firebaseUid = HttpContext.User.FindFirst("user_id")?.Value;
+        
+        var account = _context.Accounts.First(a => a.OuterUid == firebaseUid);
+        return await base.SignUp(accountDto, AccountType.admin, account.Id);
     }
 }

@@ -15,16 +15,12 @@ namespace backend.Controllers;
 [ApiController]
 [Route("/api/[controller]")]
 public class AccountController : AccountControllerTemplate {
-    private readonly HttpClient _httpClient;
-
     public AccountController(GymrecommenderContext context, HttpClient httpClient,
-                             IOptions<AppSettings> appSettings) : base(context, appSettings) {
-        _httpClient = httpClient;
-    } 
+                             IOptions<AppSettings> appSettings) : base(context, httpClient, appSettings) { }
 
     [HttpGet("role")]
     [Authorize]
-    public async Task<IActionResult> GetRoleByUid() {
+    public async Task<IActionResult> GetRole() {
         try {
             var firebaseUid = HttpContext.User.FindFirst("user_id")?.Value;
 
@@ -41,8 +37,9 @@ public class AccountController : AccountControllerTemplate {
                 });
             }
 
-            return Ok(new AccountRoleModel {
-                Role = account.Type.ToString()
+            return Ok(new {
+                Role = account.Type.ToString(),
+                Username = account.Username
             });
         } catch (Exception e) {
             return StatusCode(500, new {

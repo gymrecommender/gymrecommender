@@ -15,8 +15,8 @@ namespace backend.Controllers;
 [ApiController]
 [Route("/api/[controller]")]
 public class GymAccountController : AccountControllerTemplate {
-    public GymAccountController(GymrecommenderContext context, IOptions<AppSettings> appSettings) :
-        base(context, appSettings) {
+    public GymAccountController(GymrecommenderContext context, HttpClient httpClient, IOptions<AppSettings> appSettings) :
+        base(context, httpClient, appSettings) {
         _accountType = AccountType.gym;
     }
 
