@@ -102,12 +102,6 @@ public class UserAccountController : AccountControllerTemplate {
         return await base.UpdateAccount(accountPutDto, _accountType);
     }
 
-    [HttpDelete]
-    [Authorize(Policy = "UserOnly")]
-    public async Task<IActionResult> DeleteAccount() {
-        return await base.DeleteAccount(_accountType);
-    }
-
     [HttpPost("login")]
     [Authorize(Policy = "UserOnly")]
     public async Task<IActionResult> Login() {

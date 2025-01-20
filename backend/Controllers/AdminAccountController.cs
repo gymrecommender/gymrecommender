@@ -24,12 +24,6 @@ public class AdminAccountController : AccountControllerTemplate {
         return await base.UpdateAccount(accountPutDto, _accountType);
     }
     
-    [HttpDelete]
-    [Authorize(Policy = "AdminOnly")]
-    public async Task<IActionResult> DeleteAccount() {
-        return await base.DeleteAccount(_accountType);
-    }
-    
     [HttpPost("login")]
     [Authorize(Policy = "AdminOnly")]
     public async Task<IActionResult> Login() {

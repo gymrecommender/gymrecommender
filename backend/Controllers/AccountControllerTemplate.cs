@@ -92,60 +92,6 @@ public abstract class AccountControllerTemplate : Controller {
     }
 
     [NonAction]
-    public async Task<IActionResult> DeleteAccount(AccountType accountType) {
-        var firebaseUid = HttpContext.User.FindFirst("user_id")?.Value;
-
-        var account = _context.Accounts.AsTracking()
-                              .Where(a => a.OuterUid == firebaseUid)
-                              .Where(a => a.Type == accountType).FirstOrDefault();
-
-        if (account == null) {
-            return NotFound(new {
-                success = false, error = new {
-                    code = "UsernameError",
-                    message = ErrorMessage.ErrorMessages["UsernameError"]
-                }
-            });
-        }
-
-        _context.Accounts.Remove(account);
-        await _context.SaveChangesAsync();
-
-        return NoContent();
-    }
-
-    [NonAction]
-    public async Task<IActionResult> GetRoleByUid() {
-        try {
-            var firebaseUid = HttpContext.User.FindFirst("user_id")?.Value;
-
-            var account = await _context.Accounts.AsNoTracking()
-                                        .Where(a => a.OuterUid == firebaseUid)
-                                        .FirstOrDefaultAsync();
-
-            if (account == null) {
-                return NotFound(new {
-                    success = false, error = new {
-                        code = "UIDError",
-                        message = ErrorMessage.ErrorMessages["TokenError"] //?
-                    }
-                });
-            }
-
-            return Ok(new AccountRoleModel {
-                Role = account.Type.ToString()
-            });
-        } catch (Exception e) {
-            return StatusCode(500, new {
-                success = false,
-                error = new {
-                    message = e.Message
-                }
-            });
-        }
-    }
-
-    [NonAction]
     public async Task<IActionResult> Login(AccountType accountType) {
         try {
             var firebaseUid = HttpContext.User.FindFirst("user_id")?.Value;
