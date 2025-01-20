@@ -7,11 +7,15 @@ import {faUser, faLock, faTrash} from "@fortawesome/free-solid-svg-icons";
 import {axiosInternal} from "../services/axios.jsx";
 import {toast} from "react-toastify";
 import Form from "../components/simple/Form.jsx";
+import Loader from "../components/simple/Loader.jsx";
+import {useFirebase} from "../context/FirebaseProvider.jsx";
 
 const Account = () => {
 	const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
 	const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 	const [account, setAccount] = useState({});
+	const [loader, setLoader] = useState(false);
+	const {logout} = useFirebase();
 	const [formFields, setFormFields] = useState({
 		fields: [
 			{pos: 1, type: "text", label: [<FontAwesomeIcon icon={faUser}/>, 'First Name'], name: "firstName"},
@@ -47,8 +51,7 @@ const Account = () => {
 		}
 
 		retrieveInformation();
-	}, [account]);
-
+	}, []);
 
 	const handleSubmit = async (values) => {
 		const {firstName, lastName, ...rest} = values;
@@ -60,10 +63,18 @@ const Account = () => {
 			setAccount(result.data);
 		}
 	}
-	const handlePasswordSubmit = (e) => {
-		e.preventDefault();
-		console.log("Password updated");
-		setIsPasswordModalOpen(false);
+
+	const handlePasswordSubmit = async (values) => {
+		const {passwordRepeat, ...rest} = values;
+		setLoader(true);
+		const result = await axiosInternal("PUT", "account/password", {...rest});
+		if (result.error) toast(result.error.message);
+		else {
+			toast("Your password has been updated successfully");
+			setIsPasswordModalOpen(false);
+			logout();
+		}
+		setLoader(false);
 	};
 
 	const handleDeleteAccount = (e) => {
@@ -75,7 +86,8 @@ const Account = () => {
 	return (
 		<div className="account-container">
 			<h1>Account Settings</h1>
-			{Object.keys(account).length > 0 ? <Form className="account-form" data={formFields} onSubmit={handleSubmit}/> : null}
+			{Object.keys(account).length > 0 ?
+				<Form className="account-form" data={formFields} onSubmit={handleSubmit}/> : null}
 			<div className={"account-actions"}>
 				<Button
 					type="button"
@@ -99,41 +111,28 @@ const Account = () => {
 					headerText="Change Password"
 					onClick={() => setIsPasswordModalOpen(false)}
 				>
-					<form onSubmit={handlePasswordSubmit}>
-						<div className="form-group">
-							<label htmlFor="currentPassword">Current Password</label>
-							<input
-								id="currentPassword"
-								name="currentPassword"
-								type="password"
-								placeholder="Enter your current password"
-								required
-							/>
-						</div>
-						<div className="form-group">
-							<label htmlFor="newPassword">New Password</label>
-							<input
-								id="newPassword"
-								name="newPassword"
-								type="password"
-								placeholder="Enter a new password"
-								required
-							/>
-						</div>
-						<div className="form-group">
-							<label htmlFor="confirmNewPassword">Confirm New Password</label>
-							<input
-								id="confirmNewPassword"
-								name="confirmNewPassword"
-								type="password"
-								placeholder="Confirm your new password"
-								required
-							/>
-						</div>
-						<Button type="submit" className="btn-primary">
-							Save Password
-						</Button>
-					</form>
+					<Form onSubmit={handlePasswordSubmit} data={{
+						fields: [
+							{pos: 1, type: "password", placeholder: "Enter your current password", required: true, label: "Current password", name: "currentPassword"},
+							{pos: 2, type: "password", minLength: 6, placeholder: "Enter a new password", required: true, label: "New password", name: "newPassword"},
+							{
+								pos: 3,
+								type: "password",
+								required: true,
+								minLength: 6,
+								sameAs: {fieldName: "newPassword", message: "The passwords do not match"},
+								label: "Repeat the password",
+								placeholder: "Repeat your new password",
+								name: "passwordRepeat"
+							}
+						],
+						wClassName: "form-group",
+						button: {
+							type: "submit",
+							text: "Change Password",
+							className: "btn-submit",
+						}
+					}}/>
 				</Modal>
 			)}
 
@@ -170,6 +169,7 @@ const Account = () => {
 					</form>
 				</Modal>
 			)}
+			{loader ? <Loader/> : null}
 		</div>
 	);
 };

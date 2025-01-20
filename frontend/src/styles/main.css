@@ -789,6 +789,7 @@ button.btn-action {
     align-items: center;
 
     background-color: rgba(0, 54, 123, 0.7);
+    z-index: 100000;
 }
 
 .loader span {
