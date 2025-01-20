@@ -1,6 +1,5 @@
 import {useParams} from "react-router-dom";
 import {axiosInternal} from "../services/axios";
-import {CoordinatesProvider} from "../context/CoordinatesProvider.jsx";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {
 	faMapMarkerAlt,

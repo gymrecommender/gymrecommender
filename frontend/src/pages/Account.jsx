@@ -9,13 +9,14 @@ import {toast} from "react-toastify";
 import Form from "../components/simple/Form.jsx";
 import Loader from "../components/simple/Loader.jsx";
 import {useNavigate} from "react-router-dom";
+import {useFirebase} from "../context/FirebaseProvider.jsx";
 
 const Account = () => {
 	const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
 	const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 	const [account, setAccount] = useState({});
 	const [loader, setLoader] = useState(false);
-	const navigate = useNavigate();
+	const {logout} = useFirebase();
 	const [formFields, setFormFields] = useState({
 		fields: [
 			{pos: 1, type: "text", label: [<FontAwesomeIcon icon={faUser}/>, 'First Name'], name: "firstName"},
@@ -36,6 +37,7 @@ const Account = () => {
 			className: "btn-submit"
 		}
 	});
+	const navigate = useNavigate();
 
 	useEffect(() => {
 		const retrieveInformation = async () => {
@@ -54,7 +56,7 @@ const Account = () => {
 	}, []);
 
 	const handleSubmit = async (values) => {
-		const {firstName, lastName, ...rest} = values;
+		const {firstName, lastName} = values;
 
 		const result = await axiosInternal("PUT", "account", {firstName, lastName});
 		if (result.error) toast(result.error.message);
@@ -91,8 +93,7 @@ const Account = () => {
 	return (
 		<div className="account-container">
 			<h1>Account Settings</h1>
-			{Object.keys(account).length > 0 ?
-				<Form className="account-form" data={formFields} onSubmit={handleSubmit}/> : null}
+			{Object.keys(account).length > 0 ? <Form className="account-form" data={formFields} onSubmit={handleSubmit}/> : null}
 			<div className={"account-actions"}>
 				<Button
 					type="button"

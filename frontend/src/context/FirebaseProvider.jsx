@@ -29,7 +29,7 @@ const FirebaseProvider = ({children}) => {
 						detachToken();
 						setUser(null);
 					} else {
-						setUser({ username: user.displayName, role: result.data.role });
+						setUser({ username: result.data.username, role: result.data.role });
 					}
 				}
 			} else {

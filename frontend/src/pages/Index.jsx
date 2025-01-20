@@ -134,7 +134,7 @@ const Index = () => {
 		if (result.error) toast(result.error.message);
 		else {
 			const user = getUser();
-			if (user && result.data.requestId) navigate(`account/${user.username}/history/${result.data.requestId}`);
+			if (user && result.data.requestId) navigate(`account/history/${result.data.requestId}`);
 
 			setRecommendations(result.data)
 		}

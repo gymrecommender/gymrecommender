@@ -60,11 +60,11 @@ const Header = () => {
 
     const buttons = [
         {title: "Notifications", icon: faBell, role: "user", action: handleToggleNotifications},
-        {title: "Gyms", icon: faDumbbell, role: "gym", action: () => navigationHandler(`/account/${user.username}/management`)},
-        {title: "Ownership requests", icon: faClipboard, role: "admin", action: () => navigationHandler(`/account/${user.username}/requests`)},
-        {title: "Rate gyms", icon: faStarHalfStroke, role: "user", action: () => navigationHandler(`/account/${user.username}/rating`)},
-        {title: "History", icon: faClockRotateLeft, role: "user", action: () => navigationHandler(`/account/${user.username}/history`)},
-        {title: "Account", icon: faCircleUser, action: () => navigationHandler(`/account/${user.username}`)},
+        {title: "Gyms", icon: faDumbbell, role: "gym", action: () => navigationHandler(`/account/management`)},
+        {title: "Ownership requests", icon: faClipboard, role: "admin", action: () => navigationHandler(`/account/requests`)},
+        {title: "Rate gyms", icon: faStarHalfStroke, role: "user", action: () => navigationHandler(`/account/rating`)},
+        {title: "History", icon: faClockRotateLeft, role: "user", action: () => navigationHandler(`/account/history`)},
+        {title: "Account", icon: faCircleUser, action: () => navigationHandler(`/account`)},
         {title: "Log out", icon: faRightFromBracket, action: () => logout()},
     ];
 
