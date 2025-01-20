@@ -149,7 +149,7 @@ public class AccountController : AccountControllerTemplate {
 
     [HttpPut("password")]
     [Authorize]
-    public async Task<IActionResult> UpdatePassword([FromBody]AccountPwdDto accountPwdDto) {
+    public async Task<IActionResult> UpdatePassword([FromBody]AccountPwdUpdateDto accountPwdUpdateDto) {
         using var transaction = await _context.Database.BeginTransactionAsync();
         
         try {
@@ -157,7 +157,10 @@ public class AccountController : AccountControllerTemplate {
             
             var account = _context.Accounts.AsTracking().First(a => a.OuterUid == firebaseUid);
 
-            if (BCrypt.Net.BCrypt.Verify(accountPwdDto.Password, account.PasswordHash)) {
+            if (!BCrypt.Net.BCrypt.Verify(accountPwdUpdateDto.CurrentPassword, account.PasswordHash)) {
+                return BadRequest(new { message = "Incorrect password" });
+            }
+            if (BCrypt.Net.BCrypt.Verify(accountPwdUpdateDto.NewPassword, account.PasswordHash)) {
                 return BadRequest(new { message = "The password must not match the current one" });
             }
 
@@ -166,7 +169,7 @@ public class AccountController : AccountControllerTemplate {
             var firebaseUrl = $"https://identitytoolkit.googleapis.com/v1/accounts:update?key={firebaseApiKey}";
             var payload = new {
                 idToken = HttpContext.Request.Headers["Authorization"].ToString()?.Replace("Bearer ", ""),
-                password = accountPwdDto.Password,
+                password = accountPwdUpdateDto.NewPassword,
                 returnSecureToken = true
             };
             var response = await _httpClient.PostAsJsonAsync(firebaseUrl, payload);
@@ -176,7 +179,7 @@ public class AccountController : AccountControllerTemplate {
                 return StatusCode((int)response.StatusCode, new { message = "Failed to update password in Firebase", error = errorResponse });
             }
             
-            account.PasswordHash = BCrypt.Net.BCrypt.HashPassword(accountPwdDto.Password);
+            account.PasswordHash = BCrypt.Net.BCrypt.HashPassword(accountPwdUpdateDto.NewPassword);
             await _context.SaveChangesAsync();
             
             await transaction.CommitAsync();

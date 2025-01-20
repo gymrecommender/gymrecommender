@@ -1,5 +1,6 @@
 namespace backend.DTO;
 
-public class AccountPwdDto {
-    public required string Password { get; set; }
+public class AccountPwdUpdateDto {
+    public required string CurrentPassword { get; set; }
+    public required string NewPassword { get; set; }   
 }
