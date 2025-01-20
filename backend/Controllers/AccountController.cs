@@ -112,8 +112,14 @@ public class AccountController : AccountControllerTemplate {
             var firebaseUid = HttpContext.User.FindFirst("user_id")?.Value;
             
             var account = _context.Accounts.AsTracking().First(a => a.OuterUid == firebaseUid);
-            if (BCrypt.Net.BCrypt.Verify(accountPwdDto.Password, account.PasswordHash)) {
+            if (!BCrypt.Net.BCrypt.Verify(accountPwdDto.Password, account.PasswordHash)) {
                 return BadRequest("Incorrect password");
+            }
+
+            if (account.Type == AccountType.gym) {
+                //Remove all ownerships so that other gym accounts can apply for managing those gyms
+                _context.Gyms.AsTracking().Where(g => g.OwnedBy == account.Id).ToList().ForEach(g => g.OwnedBy = null);
+                _context.SaveChanges();
             }
             
             var firebaseApiKey = Environment.GetEnvironmentVariable("FIREBASE_API_KEY")
