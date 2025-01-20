@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Text;
 using System.Text.Json;
 using backend.Models;
@@ -47,8 +48,12 @@ public class GoogleApiService
 
     public async Task<Response> GetCity(double latitude, double longitude)
     {
+        string latFormatted = latitude.ToString(CultureInfo.InvariantCulture);
+        string lonFormatted = longitude.ToString(CultureInfo.InvariantCulture);
+
         //Retrieve the city based on the current location of the user (or any other coordinates provided)
-        var urlCoord = $"https://maps.googleapis.com/maps/api/geocode/json?latlng={latitude},{longitude}&key={_apiKey}";
+        var urlCoord =
+            $"https://maps.googleapis.com/maps/api/geocode/json?latlng={latFormatted},{lonFormatted}&key={_apiKey}";
         var response = await GetRequest(urlCoord);
         if (!response.Success) return response;
 
@@ -241,11 +246,13 @@ public class GoogleApiService
     {
         // Build the list of destinations in "lat,lng|lat,lng|..." format
         var destinations = string.Join("|",
-            gyms.Select(g => $"{g.Latitude},{g.Longitude}"));
+            gyms.Select(g =>
+                $"{g.Latitude.ToString(CultureInfo.InvariantCulture)},{g.Longitude.ToString(CultureInfo.InvariantCulture)}"));
 
         // Start building the request URL
         var urlBuilder = new StringBuilder("https://maps.googleapis.com/maps/api/distancematrix/json?");
-        urlBuilder.Append($"origins={originLat},{originLng}");
+        urlBuilder.Append(
+            $"origins={originLat.ToString(CultureInfo.InvariantCulture)},{originLng.ToString(CultureInfo.InvariantCulture)}");
         urlBuilder.Append($"&destinations={destinations}");
         urlBuilder.Append($"&mode={mode}");
 
