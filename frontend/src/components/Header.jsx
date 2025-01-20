@@ -28,7 +28,7 @@ const Header = () => {
     const [notifications, setNotifications] = useState([]);
 
     useEffect(() => {
-        if (getUser().role === "user") {
+        if (getUser()?.role === "user") {
             const retrieveNotifications = async () => {
                 const result = await axiosInternal("GET", "useraccount/notifications");
                 if (result.error) toast(result.error.message);

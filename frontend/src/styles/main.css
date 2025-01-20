@@ -167,6 +167,8 @@ button[type="submit"].btn-submit {
     cursor: pointer;
     transition: background-color 0.3s;
     width: 100%;
+
+    font-size: 1rem;
 }
 
 button[type="submit"].btn-submit:hover {
@@ -945,7 +947,7 @@ form .form-disabler:hover .form-disabler-hint {
 
 .form-group input {
     padding: 10px;
-    border: 1px solid #4a4a8e;
+    border: 1px solid #4a4a8e !important;
     border-radius: 4px;
     font-size: 16px;
     background-color: #28285a;
@@ -965,9 +967,11 @@ form .form-disabler:hover .form-disabler-hint {
     border: none;
     border-radius: 4px;
     padding: 12px;
-    font-size: 16px;
+    font-size: 1rem;
     cursor: pointer;
     transition: background-color 0.3s;
+
+    width: 100%;
 }
 
 .btn-primary:hover {
@@ -989,9 +993,11 @@ form .form-disabler:hover .form-disabler-hint {
     border: none;
     border-radius: 4px;
     padding: 12px;
-    font-size: 16px;
+    font-size: 1rem;
     cursor: pointer;
     transition: background-color 0.3s;
+
+    width: 100%;
 }
 
 .btn-danger:hover {
@@ -1043,4 +1049,11 @@ form .form-disabler:hover .form-disabler-hint {
     display: flex;
     justify-content: space-between;
     margin-top: 20px;
+}
+
+.account-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 10px;
 }
