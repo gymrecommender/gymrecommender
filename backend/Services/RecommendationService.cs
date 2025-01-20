@@ -358,6 +358,13 @@ public class RecommendationService
                 YearlyMprice = gym.YearlyMprice,
                 Website = gym.Website,
                 CurrencyId = gym.CurrencyId,
+                CongestionRating = gym.CongestionRating,
+                Rating = (gym.ExternalRatingNumber + gym.InternalRatingNumber) > 0
+                    ? (decimal)Math.Round(
+                        ((double)gym.ExternalRating * gym.ExternalRatingNumber +
+                         (double)gym.InternalRating * gym.InternalRatingNumber) /
+                        (gym.ExternalRatingNumber + gym.InternalRatingNumber), 2)
+                    : 0,
                 WorkingHours = gym.GymWorkingHours.Select(w => new GymWorkingHoursViewModel
                 {
                     Weekday = w.Weekday,

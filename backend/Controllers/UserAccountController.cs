@@ -143,29 +143,36 @@ public class UserAccountController : AccountControllerTemplate {
     [HttpGet("requests")]
     [Authorize(Policy = "UserOnly")]
     public async Task<IActionResult> GetRequests() {
-        var firebaseUid = HttpContext.User.FindFirst("user_id")?.Value;
+        try {
+            var firebaseUid = HttpContext.User.FindFirst("user_id")?.Value;
 
-        var request = _context.Requests
-                              .Include(r => r.User)
-                              .Where(r => r.User.OuterUid == firebaseUid)
-                              .Select(r => new {
-                                  Id = r.Id,
-                                  RequestedAt = r.RequestedAt,
-                                  Name = r.Name,
-                                  Preferences = new {
-                                      MinPrice = r.MinMembershipPrice,
-                                      MinRating = r.MinRating,
-                                      MinCongestion = r.MinCongestionRating,
-                                      PriceTimeRatio = r.TotalCostPriority,
-                                      MembershipLength = r.MembType.ToString(),
-                                      DepartureTime = r.DepartureTime,
-                                      ArrivalTime = r.ArrivalTime,
-                                  }
-                              })
-                              .OrderByDescending(r => r.RequestedAt)
-                              .ToList();
+            var request = _context.Requests
+                                  .Include(r => r.User)
+                                  .Where(r => r.User.OuterUid == firebaseUid)
+                                  .Select(r => new {
+                                      Id = r.Id,
+                                      RequestedAt = r.RequestedAt,
+                                      Name = r.Name,
+                                      Preferences = new {
+                                          MinPrice = r.MinMembershipPrice,
+                                          MinRating = r.MinRating,
+                                          MinCongestion = r.MinCongestionRating,
+                                          PriceTimeRatio = r.TotalCostPriority,
+                                          MembershipLength = r.MembType.ToString(),
+                                          DepartureTime = r.DepartureTime,
+                                          ArrivalTime = r.ArrivalTime,
+                                      }
+                                  })
+                                  .OrderByDescending(r => r.RequestedAt)
+                                  .ToList();
 
-        return Ok(request);
+            return Ok(request);
+        } catch (Exception _) {
+            return StatusCode(500, new {
+                success = false,
+                error = new { message = "An error occurred while getting the requests" }
+            });
+        }
     }
 
     [HttpPut("requests/{requestId}")]
@@ -179,10 +186,11 @@ public class UserAccountController : AccountControllerTemplate {
                                         .Include(r => r.User)
                                         .FirstOrDefaultAsync(r => r.Id == requestId && r.User.OuterUid == firebaseUid);
             if (request == null) {
-                return NotFound("Request has not been found or does not belong to the user.");
+                return NotFound(new {message = "Request has not been found or does not belong to the user."});
             }
-            
-            if (string.IsNullOrWhiteSpace(updateRequestDto.Name)) return BadRequest("The 'Name' field can not be empty.");
+
+            if (string.IsNullOrWhiteSpace(updateRequestDto.Name))
+                return BadRequest("The 'Name' field can not be empty.");
 
             // Update only the Name field of the request
             request.Name = updateRequestDto.Name;
@@ -202,7 +210,7 @@ public class UserAccountController : AccountControllerTemplate {
                     ArrivalTime = request.ArrivalTime,
                 }
             });
-        } catch (DbUpdateException) {
+        } catch (Exception _) {
             return StatusCode(500, "An error occurred while updating the request.");
         }
     }
@@ -244,6 +252,13 @@ public class UserAccountController : AccountControllerTemplate {
                                                   YearlyMprice = r.Gym.YearlyMprice,
                                                   Website = r.Gym.Website,
                                                   CurrencyId = r.Gym.CurrencyId,
+                                                  CongestionRating = r.Gym.CongestionRating,
+                                                  Rating = (r.Gym.ExternalRatingNumber + r.Gym.InternalRatingNumber) > 0
+                                                      ? (decimal)Math.Round(
+                                                          ((double)r.Gym.ExternalRating * r.Gym.ExternalRatingNumber +
+                                                           (double)r.Gym.InternalRating * r.Gym.InternalRatingNumber) /
+                                                          (r.Gym.ExternalRatingNumber + r.Gym.InternalRatingNumber), 2)
+                                                      : 0,
                                                   WorkingHours = r.Gym.GymWorkingHours.Select(w =>
                                                       new GymWorkingHoursViewModel {
                                                           Weekday = w.Weekday,
@@ -285,100 +300,227 @@ public class UserAccountController : AccountControllerTemplate {
                     additionalRecommendations = new List<int>(),
                 });
             }
+
             return Ok(recommendations);
         } catch (Exception _) {
             return StatusCode(500, new { Message = "An error occurred while processing your request." });
         }
     }
-    
-    [HttpDelete("bookmark/{bookmarkId}")]
-    [Authorize(Policy = "UserOnly")]
-    public async Task<IActionResult> DeleteBookmark(Guid bookmarkId)
-    {
-        var firebaseUid = HttpContext.User.FindFirst("user_id")?.Value;
-        if (firebaseUid == null)
-        {
-            return Forbid("Unauthorized user");
-        }
 
-        try
-        {
-            var account = await _context.Accounts.FirstOrDefaultAsync(a => a.OuterUid == firebaseUid);
-            if (account == null)
-            {
-                return NotFound(new { message = "User account not found." });
-            }
-            var bookmark = await _context.Bookmarks.FirstOrDefaultAsync(b => b.Id == bookmarkId && b.UserId == account.Id);
-            if (bookmark == null)
-            {
-                return NotFound(new { message = "Bookmark not found." });
+    [HttpDelete("bookmarks/{bookmarkId}")]
+    [Authorize(Policy = "UserOnly")]
+    public async Task<IActionResult> DeleteBookmark(Guid bookmarkId) {
+        try {
+            var firebaseUid = HttpContext.User.FindFirst("user_id")?.Value;
+
+            var bookmark = _context.Bookmarks
+                                        .Include(b => b.User)
+                                        .FirstOrDefault(b => b.Id == bookmarkId && b.User.OuterUid == firebaseUid);
+            if (bookmark == null) {
+                return NotFound(new { message = "Bookmark has not been found or does not belong to the user." });
             }
             _context.Bookmarks.Remove(bookmark);
             await _context.SaveChangesAsync();
 
-            return Ok(new { message = "Bookmark deleted successfully." });
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Error deleting bookmark: {ex.Message}");
-            return StatusCode(500, new
-            {
+            return StatusCode(204);
+        } catch (Exception _) {
+            return StatusCode(500, new {
                 success = false,
-                error = new { message = "An error occurred while deleting the bookmark." }
+                error = new { message = "An error occurred while deleting the bookmark" }
+            });
+        }
+    }
+
+    [HttpPost("bookmarks")]
+    [Authorize(Policy = "UserOnly")]
+    public async Task<IActionResult> AddBookmark(BookmarkAddDto bookmarkAddDto) {
+        try {
+            var firebaseUid = HttpContext.User.FindFirst("user_id")?.Value;
+
+            var account = _context.Accounts.First(a => a.OuterUid == firebaseUid);
+            var bookmark = new Bookmark {
+                GymId = bookmarkAddDto.gymId,
+                UserId = account.Id,
+            };
+            _context.Bookmarks.Add(bookmark);
+            _context.SaveChanges();
+
+            var gym = _context.Gyms
+                              .Include(g => g.Currency)
+                              .Include(g => g.City).ThenInclude(c => c.Country)
+                              .Include(g => g.GymWorkingHours).ThenInclude(w => w.WorkingHours)
+                              .First(g => g.Id == bookmark.GymId);
+
+            return Ok(new {
+                Gym = new {
+                    Id = gym.Id,
+                    Name = gym.Name,
+                    City = gym.City.Name,
+                    Country = gym.City.Country.Name,
+                    Address = gym.Address,
+                    Website = gym.Website,
+                    MonthlyMprice = gym.MonthlyMprice,
+                    YearlyMprice = gym.YearlyMprice,
+                    IsWheelchairAccessible = gym.IsWheelchairAccessible,
+                    SixMonthsMprice = gym.SixMonthsMprice,
+                    Currency = gym.Currency.Code,
+                    WorkingHours = gym.GymWorkingHours.Select(wh => new GymWorkingHoursViewModel {
+                        Weekday = wh.Weekday,
+                        OpenFrom = wh.WorkingHours.OpenFrom,
+                        OpenUntil = wh.WorkingHours.OpenUntil
+                    }).ToList()
+                },
+                Id = bookmark.Id,
+                CreatedAt = bookmark.CreatedAt,
+            });
+        } catch (Exception _) {
+            return StatusCode(500, new {
+                success = false,
+                error = new { message = "An error occurred while adding the bookmark" }
+            });
+        }
+    }
+
+    [HttpGet("bookmarks")]
+    [Authorize(Policy = "UserOnly")]
+    public async Task<IActionResult> GetBookmarks() {
+        try {
+            var firebaseUid = HttpContext.User.FindFirst("user_id")?.Value;
+
+            var bookmarkedGyms = _context.Bookmarks
+                                         .Include(b => b.User)
+                                         .Where(b => b.User.OuterUid == firebaseUid)
+                                         .Include(b => b.Gym).ThenInclude(g => g.Currency)
+                                         .Select(b => new {
+                                             Gym = new {
+                                                 Id = b.Gym.Id,
+                                                 Name = b.Gym.Name,
+                                                 City = b.Gym.City.Name,
+                                                 Country = b.Gym.City.Country.Name,
+                                                 Address = b.Gym.Address,
+                                                 Website = b.Gym.Website,
+                                                 MonthlyMprice = b.Gym.MonthlyMprice,
+                                                 YearlyMprice = b.Gym.YearlyMprice,
+                                                 IsWheelchairAccessible = b.Gym.IsWheelchairAccessible,
+                                                 SixMonthsMprice = b.Gym.SixMonthsMprice,
+                                                 Currency = b.Gym.Currency.Code,
+                                                 WorkingHours = b.Gym.GymWorkingHours.Select(wh =>
+                                                     new GymWorkingHoursViewModel {
+                                                         Weekday = wh.Weekday,
+                                                         OpenFrom = wh.WorkingHours.OpenFrom,
+                                                         OpenUntil = wh.WorkingHours.OpenUntil
+                                                     }).ToList()
+                                             },
+                                             Id = b.Id,
+                                             CreatedAt = b.CreatedAt,
+                                         }).ToList();
+
+            return Ok(bookmarkedGyms);
+        } catch (Exception _) {
+            return StatusCode(500, new {
+                success = false,
+                error = new { message = "An error occurred while retrieving bookmarks" }
+            });
+        }
+    }
+
+    [HttpPost("ratings/{gymId}")]
+    [Authorize(Policy = "UserOnly")]
+    public async Task<IActionResult> PostRating(Guid gymId, [FromBody]RatingDto ratingDto) {
+        try {
+            var firebaseUid = HttpContext.User.FindFirst("user_id")?.Value;
+
+            var gym = _context.Gyms.AsTracking().FirstOrDefault(g => g.Id == gymId);
+            if (gym == null) return NotFound(new { message = "The gym is not found" });
+            
+            var user = _context.Accounts.First(a => a.OuterUid == firebaseUid);
+            _context.Ratings.Add(new Rating {
+                UserId = user.Id,
+                GymId = gym.Id,
+                Rating1 = ratingDto.Rating
+            });
+            _context.CongestionRatings.Add(new CongestionRating {
+                UserId = user.Id,
+                GymId = gym.Id,
+                AvgWaitingTime = ratingDto.WaitingTime,
+                VisitTime = ratingDto.VisitTime,
+                Crowdedness = ratingDto.Crowdedness,
+            });
+            _context.SaveChanges();
+
+            //TODO not he best idea if two ratings are added for the same gym at the same time
+            var ratings = _context.Ratings.Where(r => r.GymId == gymId);
+            gym.InternalRating = (decimal)Math.Round(ratings.Average(r => r.Rating1), 2);
+            gym.InternalRatingNumber = ratings.Count();
+            
+            var conRatings = _context.CongestionRatings.Where(r => r.GymId == gymId);
+            gym.CongestionRating = (decimal)Math.Round(0.5 * conRatings.Average(cr => cr.AvgWaitingTime) + 0.5 * conRatings.Average(cr => cr.Crowdedness), 2);
+            gym.CongestionRatingNumber = conRatings.Count();
+            
+            _context.SaveChanges();
+
+            return Ok(new {
+                Rating = Math.Round(
+                    (gym.InternalRating * gym.InternalRatingNumber + gym.ExternalRating * gym.ExternalRatingNumber) /
+                    (gym.ExternalRatingNumber + gym.InternalRatingNumber), 2),
+                CongestionRating = gym.CongestionRating,
+            });
+        } catch (Exception _) {
+            return StatusCode(500, new {
+                success = false,
+                error = new { message = "An error occurred while saving ratings" }
+            });
+        }
+    }
+
+    [HttpGet("notifications")]
+    [Authorize(Policy = "UserOnly")]
+    public async Task<IActionResult> GetNotifications() {
+        try {
+            var firebaseUid = HttpContext.User.FindFirst("user_id")?.Value;
+
+            var notifications = _context.Notifications
+                                        .Include(n => n.User)
+                                        .Where(n => n.User.OuterUid == firebaseUid)
+                                        .Select(n => new {
+                                            Id = n.Id,
+                                            Message = n.Message,
+                                            IsRead = n.ReadAt.HasValue
+                                        })
+                                        .ToList();
+            return Ok(notifications);
+        } catch (Exception _) {
+            return StatusCode(500, new {
+                success = false,
+                error = new { message = "An error occurred while retrieving notifications" }
             });
         }
     }
     
-    
-    
-    
-    
-    [HttpGet("bookmarks")]
+    [HttpPut("notifications/{notificationId}")]
     [Authorize(Policy = "UserOnly")]
-    public async Task<IActionResult> GetBookmarkedGyms()
-    {
-        var firebaseUid = HttpContext.User.FindFirst("user_id")?.Value;
-        if (firebaseUid == null)
-        {
-            return Forbid("Unauthorized user");
-        }
+    public async Task<IActionResult> MarkNotificationRead(Guid notificationId) {
+        try {
+            var firebaseUid = HttpContext.User.FindFirst("user_id")?.Value;
 
-        try
-        {
-            var account = await _context.Accounts.FirstOrDefaultAsync(a => a.OuterUid == firebaseUid);
-            if (account == null)
-            {
-                return NotFound(new { message = "User account not found." });
-            }
-            var bookmarkedGyms = await _context.Bookmarks
-                .Where(b => b.UserId == account.Id)
-                .Include(b => b.Gym) // Assuming Bookmark has a navigation property 'Gym'
-                .Select(b => new GymViewModel
-                {
-                    Id = b.Gym.Id,
-                    Name = b.Gym.Name,
-                    Address = b.Gym.Address,
-                    PhoneNumber = b.Gym.PhoneNumber,
-                    Website = b.Gym.Website,
-                    MonthlyMprice = b.Gym.MonthlyMprice,
-                    YearlyMprice = b.Gym.YearlyMprice,
-                    SixMonthsMprice = b.Gym.SixMonthsMprice,
-                    IsWheelchairAccessible = b.Gym.IsWheelchairAccessible,
-                    Longitude = b.Gym.Longitude,
-                    Latitude = b.Gym.Latitude,
-                    Currency = b.Gym.Currency.Code
-                })
-                .ToListAsync();
-
-            return Ok(bookmarkedGyms);
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Error retrieving bookmarked gyms: {ex.Message}");
-            return StatusCode(500, new
-            {
+            var notification = _context.Notifications
+                                        .Include(n => n.User)
+                                        .FirstOrDefault(n => n.User.OuterUid == firebaseUid && n.Id == notificationId);
+            
+            if (notification == null) return NotFound(new { message = "The notification is not found" });
+            notification.ReadAt = DateTime.UtcNow;
+            _context.Notifications.Update(notification);
+            await _context.SaveChangesAsync();
+            
+            return Ok(new {
+                Id = notification.Id,
+                Message = notification.Message,
+                IsRead = notification.ReadAt.HasValue
+            });
+        } catch (Exception _) {
+            return StatusCode(500, new {
                 success = false,
-                error = new { message = "An error occurred while retrieving bookmarked gyms." }
+                error = new { message = "An error occurred while retrieving notifications" }
             });
         }
     }

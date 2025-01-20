@@ -22,7 +22,7 @@ const data = {
 	fields: [
 		{pos: 0, type: 'title', text: "Share your experience with others!"},
 		{pos: 1, type: "time", label: "Time of Visit", name: "visitTime", wClassName: "time"},
-		{pos: 2, type: "range", label: "Overall Rating", name: "rating", step: 0.5, min: 1, max: 5, value: 3, required: true},
+		{pos: 2, type: "range", label: "Overall Rating", name: "rating", step: 1, min: 1, max: 5, value: 3, required: true},
 		{pos: 3, type: "select", required: true, label: "Average waiting time for a machine or space", data: wRating, name: "cRatingWait"},
 		{pos: 4, type: "select", required: true, label: "How crowded the gym feels", data: cRating, name: "cRatingCrowd"},
 	],

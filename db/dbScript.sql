@@ -265,7 +265,7 @@ CREATE TABLE public.ownership (
 CREATE TABLE public.rating (
 	id uuid DEFAULT uuid_generate_v4() NOT NULL,
 	created_at timestamptz DEFAULT now() NOT NULL,
-	changed_at timestamptz NOT NULL,
+	changed_at timestamptz NULL,
 	rating int4 NOT NULL,
 	user_id uuid NOT NULL,
 	gym_id uuid NOT NULL,
@@ -356,7 +356,6 @@ CREATE TABLE public.availability (
 	gym_id uuid NOT NULL,
 	marked_by uuid NOT NULL,
 	CONSTRAINT availability_check CHECK (((end_time > start_time) AND (end_time > now()))),
-	CONSTRAINT availability_check1 CHECK (((changed_at > created_at) AND (changed_at <= now()))),
 	CONSTRAINT availability_created_at_check CHECK ((created_at <= now())),
 	CONSTRAINT availability_gym_id_marked_by_key UNIQUE (gym_id, marked_by),
 	CONSTRAINT availability_pkey PRIMARY KEY (id),
