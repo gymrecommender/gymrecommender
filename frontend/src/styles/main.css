@@ -1058,3 +1058,10 @@ form .form-disabler:hover .form-disabler-hint {
     gap: 10px;
     margin-top: 10px;
 }
+
+.modal .modal-delete-text {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    margin: 10px 0;
+}

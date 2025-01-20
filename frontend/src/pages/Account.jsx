@@ -8,14 +8,14 @@ import {axiosInternal} from "../services/axios.jsx";
 import {toast} from "react-toastify";
 import Form from "../components/simple/Form.jsx";
 import Loader from "../components/simple/Loader.jsx";
-import {useFirebase} from "../context/FirebaseProvider.jsx";
+import {useNavigate} from "react-router-dom";
 
 const Account = () => {
 	const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
 	const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 	const [account, setAccount] = useState({});
 	const [loader, setLoader] = useState(false);
-	const {logout} = useFirebase();
+	const navigate = useNavigate();
 	const [formFields, setFormFields] = useState({
 		fields: [
 			{pos: 1, type: "text", label: [<FontAwesomeIcon icon={faUser}/>, 'First Name'], name: "firstName"},
@@ -77,10 +77,15 @@ const Account = () => {
 		setLoader(false);
 	};
 
-	const handleDeleteAccount = (e) => {
-		e.preventDefault();
-		console.log("Account deleted");
-		setIsDeleteModalOpen(false);
+	const handleDeleteAccount = async (values) => {
+		const result = await axiosInternal("DELETE", "account", {...values});
+		if (result.error) toast(result.error.message);
+		else {
+			toast("Your account has been successfully deleted")
+			setIsDeleteModalOpen(false);
+			navigate('/')
+			window.location.reload()
+		}
 	};
 
 	return (
@@ -142,31 +147,21 @@ const Account = () => {
 					headerText="Confirm Deletion"
 					onClick={() => setIsDeleteModalOpen(false)}
 				>
-					<form onSubmit={handleDeleteAccount}>
-						<p>To confirm, please enter your password:</p>
-						<div className="form-group">
-							<label htmlFor="deletePassword">Password</label>
-							<input
-								id="deletePassword"
-								name="deletePassword"
-								type="password"
-								placeholder="Enter your password"
-								required
-							/>
+					<>
+						<div className={"modal-delete-text"}>
+							<span>Are you sure you want to delete this account?</span>
+							<span>Enter your current password to proceed</span>
 						</div>
-						<div className="modal-actions">
-							<Button type="submit" className="btn-danger">
-								Confirm
-							</Button>
-							<Button
-								type="button"
-								className="btn-secondary"
-								onClick={() => setIsDeleteModalOpen(false)}
-							>
-								Cancel
-							</Button>
-						</div>
-					</form>
+						<Form onSubmit={handleDeleteAccount} showAsterisks={false} data={{
+							fields: [{name: "password", required: true, type: "password"}],
+							wClassName: "form-group",
+							button: {
+								text: "Delete account",
+								type: "submit",
+								className: "btn-danger",
+							}
+						}}/>
+					</>
 				</Modal>
 			)}
 			{loader ? <Loader/> : null}
