@@ -522,7 +522,7 @@ input[type="range"]::-moz-range-thumb {
     height: max-content;
     margin-top: 10px;
     display: flex;
-    gap: 1525px;
+    gap: 1125px;
     margin-right: 10px;
   }
   
@@ -1038,4 +1038,121 @@ form .form-disabler:hover .form-disabler-hint {
     display: flex;
     justify-content: space-between;
     margin-top: 20px;
+}
+
+
+@media (max-width: 768px) {
+    .container {
+        width: 95%;
+        padding: 10px;
+    }
+
+    .container .content {
+        flex-direction: column;
+        gap: 10px;
+        padding: 10px;
+        height: auto;
+    }
+
+    .map {
+        height: 60vh;
+    }
+
+    .sliders {
+        max-width: 100%;
+        align-items: center;
+    }
+
+    .sliders form {
+        width: 95%;
+        padding: 10px;
+    }
+
+    .input-field-slider-range {
+        grid-template-columns: 1fr 1fr 1fr;
+        font-size: 0.8em;
+    }
+
+
+    .location-controls button {
+        width: 15%;
+    }
+
+    .recommendation-container {
+        flex-direction: column;
+        /*height: auto;*/
+        height: 80vh;
+    }
+
+    .recommendation-lists {
+        height: auto;
+        padding: 30px;
+    }
+
+    .recommendation-list {
+        margin-bottom: 20px;
+    }
+
+    .bookmarked-gyms-container {
+        flex-direction: column;
+        align-items: center;
+        overflow-x: hidden;
+        height:auto;
+    }
+
+    .bookmarked-gyms-card {
+        width: 90%;
+    }
+
+    .arrow-buttons {
+        display: none;
+    }
+
+    .history-table {
+        width: auto;
+        max-width: 100%;
+    }
+
+    .history-table th,
+    .history-table td {
+        padding: 0.4px;
+        font-size: 0.7em;
+    }
+
+    .history-table button {
+        padding: 5px 10px; 
+        font-size: 10px;
+        margin-top: 5px; 
+    }
+    
+    .search-bar {
+        align-items: stretch;
+    }
+
+    .search-bar input {
+        width: 100%;
+    }
+
+    .account-container {
+        max-width: 100%;
+        padding: 40px;
+    }
+
+    .account-container h1 {
+        font-size: 30px;
+    }
+
+    .form-group label {
+        font-size: 16px;
+    }
+
+    .section.section-info {
+        flex-direction: column;
+        padding: 20px;
+    }
+
+    .footer {
+        padding: 20px;
+    }
+   
 }

@@ -125,3 +125,69 @@
     color: #0d204a;
 }
 
+@media (max-width: 768px) {
+    .section-body {
+        padding: 10px;
+        gap: 2px;
+    }
+
+    .body-header {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+
+    .body-header h2 {
+        font-size: 1.4em;
+        margin-bottom: 10px;
+    }
+
+    
+    .btn-icon.btn-show-modal {
+        font-size: 0.8rem;
+        width: 100%;
+        text-align: center;
+    }
+
+    .accordion .accordion-header {
+        padding: 12px 20px;
+        gap: 10px;
+        font-size: 1.1rem;
+    }
+
+    .accordion-header .accordion-header-number {
+        padding: 5px;
+        font-size: 1rem;
+    }
+
+    .accordion-header-text .accordion-header-name {
+        font-size: 1.2rem;
+    }
+
+    .accordion-header-text .accordion-header-address {
+        font-size: 0.9rem;
+    }
+
+    .accordion .accordion-content {
+        margin-left: 0;
+        padding: 8px;
+        font-size: 1rem;
+    }
+
+    .accordion-content .accordion-content-row {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+        font-size: 1rem;
+    }
+
+    .accordion .accordion-form fieldset {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .accordion .accordion-field {
+        padding: 5px 10px;
+    }
+   
+}

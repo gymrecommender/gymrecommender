@@ -107,3 +107,45 @@ button[type="submit"].btn-login:hover {
     text-align: center;
 }
 
+
+@media (max-width: 768px) {
+    .container-login {
+        padding: 50px; 
+    }
+
+    .form-login {
+        /*width: 100%; */
+        padding: 20px;
+    }
+
+    .login-header-bottom .btn-icon {
+        font-size: 0.8em; 
+    }
+
+    .login-header-bottom .login-title {
+        font-size: 1.5em; 
+    }
+
+    .form-group {
+        margin-bottom: 15px;
+    }
+
+    input.input-login {
+        font-size: 0.9em; 
+    }
+
+    button.btn-login {
+        font-size: 1em; 
+        padding: 12px; 
+    }
+
+    .login-buttons {
+        align-items:end; 
+        justify-content: center;
+    }
+
+    .login-header .login-header-top {
+        font-size: 1em; 
+    }
+}
+
