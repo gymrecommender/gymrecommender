@@ -37,6 +37,12 @@ public class RecommendationService {
         using var transaction = await _dbContext.Database.BeginTransactionAsync();
 
         try {
+            // This will retrieve the gyms if there are none in the city of the current location
+            var retrievalCheck = await _gymRetrievalService.RetrieveGyms(gymRecommendationRequest.Latitude,
+                gymRecommendationRequest.Longitude);
+            if (!retrievalCheck.Success) {
+                return new StatusCodeResult(500);
+            }
             // Get filtered gyms
             var gyms = await GetFilteredGyms(gymRecommendationRequest);
 
