@@ -12,6 +12,7 @@ import {toast} from "react-toastify";
 import {useConfirm} from "../context/ConfirmProvider.jsx";
 import {axiosInternal} from "../services/axios.jsx";
 import {sanitizeData} from "../services/helpers.jsx";
+import {weekdays} from "../services/helpers.jsx";
 
 const GymManagement = () => {
 	const [gyms, setGyms] = useState([]);
@@ -20,7 +21,6 @@ const GymManagement = () => {
 	const {flushData, setValues} = useConfirm();
 
 	const navigate = useNavigate();
-	const weekdays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 
 	useEffect(() => {
 		const retrieveCurrencies = async () => {
