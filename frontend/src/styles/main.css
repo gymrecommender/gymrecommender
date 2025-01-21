@@ -372,7 +372,7 @@ input[type="range"]::-moz-range-thumb {
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     gap: 15px;
     border: 5px solid transparent;
-    transition: border-color 0.3s ease, background-color 0.3s ease;
+    transition: background-color 0.3s, border-color 0.3s;
     cursor: pointer;
 }
 
@@ -380,7 +380,7 @@ input[type="range"]::-moz-range-thumb {
     border-color: #ccc;
   }
   .gym-item.selected {
-    border-color: white;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
   }
 
 .gym-item p {
@@ -484,7 +484,7 @@ input[type="range"]::-moz-range-thumb {
     border-radius: 8px;
     position: relative;
     gap: 16px;
-    padding-bottom: 60px;
+    overflow: hidden;
   }
   
   .bookmarked-gyms-container {
@@ -492,7 +492,9 @@ input[type="range"]::-moz-range-thumb {
     gap: 16px;
     flex-direction: row;
     overflow-x: auto;
-    padding: 10px 0;
+    padding: 16px;
+    margin: 0 auto;
+    width: calc(100% - 80px);
     scroll-behavior: smooth;
   }
   
@@ -505,6 +507,7 @@ input[type="range"]::-moz-range-thumb {
     flex-direction: column;
     justify-content: space-between;
     transition: transform 0.2s ease-in-out;
+    flex-shrink: 0; 
   }
 
   .bookmarked-gyms-card p{
@@ -523,12 +526,14 @@ input[type="range"]::-moz-range-thumb {
   
   .arrow-buttons {
     position: absolute;
-    width: 100%;
-    height: max-content;
-    margin-top: 10px;
+    top: 50%;
     display: flex;
-    gap: 1125px;
-    margin-right: 10px;
+    left: 10px;
+    width: calc(100% - 20px);
+    justify-content: space-between;
+    transform: translateY(-50%);
+    pointer-events: none; 
+
   }
   
   .scroll-button {
@@ -544,6 +549,7 @@ input[type="range"]::-moz-range-thumb {
     cursor: pointer;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
     transition: background-color 0.3s ease;
+    pointer-events: all;
   }
   
   .scroll-button:hover {
@@ -971,8 +977,7 @@ form .form-disabler:hover .form-disabler-hint {
     font-size: 1rem;
     cursor: pointer;
     transition: background-color 0.3s;
-
-    width: 100%;
+    gap: 5px;
 }
 
 .btn-primary:hover {
@@ -997,8 +1002,7 @@ form .form-disabler:hover .form-disabler-hint {
     font-size: 1rem;
     cursor: pointer;
     transition: background-color 0.3s;
-
-    width: 100%;
+    gap: 5px;
 }
 
 .btn-danger:hover {

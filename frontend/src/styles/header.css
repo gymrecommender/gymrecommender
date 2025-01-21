@@ -98,6 +98,7 @@ button.btn-panel:hover {
 
 .btn-panel.btn-icon.unread .icon {
     color: #f08253;
+    margin-right: 0;
 }
 
 .notification-container {
