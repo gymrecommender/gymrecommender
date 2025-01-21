@@ -58,8 +58,10 @@ public class RecommendationService {
                 await SaveRecommendationsAsync(requestEntity.Id, recommendations);
                 await transaction.CommitAsync();
             }
-            
-            return new OkObjectResult(new GymRecommendationResponceDto(requestEntity?.Id, recommendations["MainGyms"], recommendations["AuxGyms"]));
+
+            return new OkObjectResult(new GymRecommendationResponceDto(requestEntity?.Id,
+                gymRecommendationRequest.Latitude, gymRecommendationRequest.Longitude, recommendations["MainGyms"],
+                recommendations["AuxGyms"]));
         } catch (Exception ex) {
             // Rollback the transaction in case of error
             await transaction.RollbackAsync();
@@ -119,7 +121,7 @@ public class RecommendationService {
         query = query.Where(g => g.CityId == city.Id);
 
         // TODO: Convert currencies
-        if (request.MaxMembershipPrice < 100) {
+        if (request.MaxMembershipPrice < 1000) {
             // Implement conditional filtering based on MembershipLength
             switch (request.MembershipLength) {
                 case MembershipLength.Month:
@@ -179,8 +181,7 @@ public class RecommendationService {
         };
     }
 
-    private double ScaleToRange(double normalizedValue, double minRange, double maxRange)
-    {
+    private double ScaleToRange(double normalizedValue, double minRange, double maxRange) {
         return Math.Round(minRange + (normalizedValue * (maxRange - minRange)), 2);
     }
 
@@ -195,11 +196,11 @@ public class RecommendationService {
                                                  ? (double?)g.Gym.GetPrice(membershipLength).Value
                                                  : null)
                                          .ToList();
-        
+
         List<double> travelPrices = filteredGyms
-                                     .Select(g => g.TravelPrice)
-                                     .ToList();
-        
+                                    .Select(g => g.TravelPrice)
+                                    .ToList();
+
         List<double?> totalPrices = membershipPrices
                                     .Zip(travelPrices, (membershipPrice, travelPrice) =>
                                         membershipPrice.HasValue
@@ -208,8 +209,10 @@ public class RecommendationService {
                                     .ToList();
 
         List<double?> externalRatings = filteredGyms
-                                        .Select(g => (double?)(g.Gym.ExternalRating * g.Gym.ExternalRatingNumber + g.Gym.InternalRating * g.Gym.InternalRatingNumber) /
-                                                     (g.Gym.ExternalRatingNumber + g.Gym.InternalRatingNumber))
+                                        .Select(g =>
+                                            (double?)(g.Gym.ExternalRating * g.Gym.ExternalRatingNumber +
+                                                      g.Gym.InternalRating * g.Gym.InternalRatingNumber) /
+                                            (g.Gym.ExternalRatingNumber + g.Gym.InternalRatingNumber))
                                         .ToList(); // Assuming ExternalRating is non-nullable
 
         List<double?> congestionRatings = filteredGyms
@@ -217,19 +220,23 @@ public class RecommendationService {
                                           .ToList(); // Assuming CongestionRating is non-nullable
 
         List<double> travelTimes = filteredGyms
-                                    .Select(g => g.TravelTime)
-                                    .ToList();
+                                   .Select(g => g.TravelTime)
+                                   .ToList();
 
         // Normalize each criterion using the helper method
         // Pass 'inverted' = false for criteria to maximize (ExternalRating, CongestionRating)
         // Pass 'inverted' = true for criteria to minimize (MembershipPrice, TravelPrice, TravelTime)
         // Note: MembershipPrice is typically something to minimize, but based on original code, it was not inverted.
         // Here, we assume MembershipPrice should be minimized. Adjust if necessary.
-        List<double> scaledTotalPrices = NormalizeCriteria(totalPrices, inverted: true).Select(value => ScaleToRange(value, 1, 10)).ToList();
-        List<double> scaledExternalRatings = NormalizeCriteria(externalRatings, inverted: false).Select(value => ScaleToRange(value, 1, 10)).ToList();
-        List<double> scaledCongestionRatings = NormalizeCriteria(congestionRatings, inverted: false).Select(value => ScaleToRange(value, 1, 10)).ToList();
-        List<double> scaledTravelTimes = NormalizeCriteria(travelTimes.Select(x => (double?)x).ToList(), inverted: true).Select(value => ScaleToRange(value, 1, 10)).ToList();
-        
+        List<double> scaledTotalPrices = NormalizeCriteria(totalPrices, inverted: true)
+                                         .Select(value => ScaleToRange(value, 1, 10)).ToList();
+        List<double> scaledExternalRatings = NormalizeCriteria(externalRatings, inverted: false)
+                                             .Select(value => ScaleToRange(value, 1, 10)).ToList();
+        List<double> scaledCongestionRatings = NormalizeCriteria(congestionRatings, inverted: false)
+                                               .Select(value => ScaleToRange(value, 1, 10)).ToList();
+        List<double> scaledTravelTimes = NormalizeCriteria(travelTimes.Select(x => (double?)x).ToList(), inverted: true)
+                                         .Select(value => ScaleToRange(value, 1, 10)).ToList();
+
         // Adjust weights based on PriceRatingPriority
         // PriceRatingPriority (0-100) determines the balance between price-related and other criteria
         // Higher PriceRatingPriority gives more emphasis to price-related criteria
@@ -251,7 +258,7 @@ public class RecommendationService {
         double totalWeight = totalPriceWeight + regularRatingWeight +
                              congestionRatingWeight +
                              travelTimeWeight;
-        
+
         totalPriceWeight /= totalWeight;
         regularRatingWeight /= totalWeight;
         congestionRatingWeight /= totalWeight;
@@ -262,7 +269,7 @@ public class RecommendationService {
         for (int i = 0; i < filteredGyms.Count; i++) {
             int hourPart = (int)(travelTimes[i] / 60); // Extract hours
             int minutePart = (int)(travelTimes[i] % 60); // Extract minutes
-            
+
             var gym = filteredGyms[i].Gym;
             var gymView = new GymViewModel {
                 Id = gym.Id,
@@ -422,11 +429,15 @@ public class RecommendationService {
             //TODO: What is initial purpose if this field? Rename to City if we want to save city name, Name remove request_user_id_name_key constraint from db
             MembType = requestDto.MembershipLength,
             UserId = userId,
-            ArrivalTime = !requestDto.PreferredArrivalTime.IsNullOrEmpty() ? TimeOnly.Parse(requestDto.PreferredArrivalTime) : null,
-            DepartureTime = !requestDto.PreferredDepartureTime.IsNullOrEmpty() ? TimeOnly.Parse(requestDto.PreferredDepartureTime) : null,
+            ArrivalTime = !requestDto.PreferredArrivalTime.IsNullOrEmpty()
+                ? TimeOnly.Parse(requestDto.PreferredArrivalTime)
+                : null,
+            DepartureTime = !requestDto.PreferredDepartureTime.IsNullOrEmpty()
+                ? TimeOnly.Parse(requestDto.PreferredDepartureTime)
+                : null,
             // Initialize other properties if needed
         };
-        
+
         // Add to DbContext
         _dbContext.Requests.Add(requestEntity);
         await _dbContext.SaveChangesAsync();

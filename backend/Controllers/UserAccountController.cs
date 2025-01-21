@@ -221,15 +221,15 @@ public class UserAccountController : AccountControllerTemplate {
                                                        })
                                                        .OrderByDescending(r => r.OverallRating)
                                                        .ToList());
+            var result = new Dictionary<string, object> {
+                ["requestId"] = request.Id,
+                ["latitude"] = request.OriginLatitude,
+                ["longitude"] = request.OriginLongitude,
+            };
 
-            if (recommendations.Count == 0) {
-                return Ok(new {
-                    mainRecommendations = new List<int>(),
-                    additionalRecommendations = new List<int>(),
-                });
-            }
+            foreach (var key in recommendations.Keys) result[key] = recommendations[key];
 
-            return Ok(recommendations);
+            return Ok(result);
         } catch (Exception _) {
             return StatusCode(500, new { Message = "An error occurred while processing your request." });
         }
