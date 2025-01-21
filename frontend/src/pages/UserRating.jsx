@@ -131,6 +131,7 @@ const UserRating = () => {
 			});
 			if (result.data.error) {
 				toast(result.error.message);
+				setLoading(false);
 				return;
 			}
 

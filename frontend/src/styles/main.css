@@ -20,7 +20,6 @@ body::-webkit-scrollbar {
 .container {
     display: flex;
     flex-direction: column;
-    height: 100vh;
     box-sizing: border-box;
 
     width: 90%;
@@ -288,7 +287,7 @@ input[type="range"]::-moz-range-thumb {
     padding: 0;
     flex: 1;
 
-    min-height: 500px;
+    min-height: 400px;
 }
 
 .map {
@@ -463,18 +462,19 @@ input[type="range"]::-moz-range-thumb {
 }
 
 
-.no-requests {
+.no-content {
     color: #fff;
     font-size: 1.5rem;
-    margin-top: 20px;
     text-align: center;
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: center;
+    height: 100%;
     gap: 20px;
 }
 
-.no-requests svg {
+.no-content svg {
     font-size: 3rem;
     margin-bottom: 10px;
     color: #cdbfff;
@@ -903,15 +903,6 @@ form .form-disabler:hover .form-disabler-hint {
     outline: 3px solid red;
 
     padding: 15px;
-}
-
-.no-content {
-    font-weight: bold;
-    text-align: center;
-    text-transform: uppercase;
-    padding: 5px;
-
-    color: white;
 }
 
 .gym-item.selected {

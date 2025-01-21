@@ -191,7 +191,7 @@ const History = () => {
 					})}
 					</tbody>
 				</table>) : (
-				<div className="no-requests">
+				<div className="no-content">
 					<FontAwesomeIcon icon={faFrown}/>
 					<p>Oops! You don't have any requests yet.</p>
 					<p>Why not start by making your first one? We promise it won't bite!</p>

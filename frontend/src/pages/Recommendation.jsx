@@ -7,11 +7,11 @@ import {
 	faStar,
 	faRoute,
 	faMoneyBillWave,
-	faClock
+	faClock, faFrown
 } from "@fortawesome/free-solid-svg-icons";
 import GoogleMap from "../components/simple/GoogleMap.jsx";
 import {mainRatingMarker, secRatingMarket, startMarker} from "../services/markers.jsx";
-import {useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import Loader from "../components/simple/Loader.jsx";
 import classNames from "classnames";
 import {useSelectedGym} from "../context/SelectedGymProvider.jsx";
@@ -22,7 +22,6 @@ const Recommendation = ({data}) => {
 	const [recommendations, setRecommendations] = useState({});
 	const [markers, setMarkers] = useState([]);
 	const [loading, setLoading] = useState(true);
-	const [error, setError] = useState(null);
 	const {gymId, setGymId} = useSelectedGym();
 
 	useEffect(() => {
@@ -108,11 +107,13 @@ const Recommendation = ({data}) => {
 		<>
 			<aside className="recommendation-lists">
 				{
-					loading ? (
-						<Loader type={"container"}/>
-					) : error ? (
-						<p>Error: {error}</p>
-					) : content
+					loading ? <Loader type={"container"}/> : (
+						content.length > 0 ? content :
+						<div className={"no-content"}>
+							<FontAwesomeIcon icon={faFrown}/>
+							Seems like there are no recommendations for this location
+						</div>
+					)
 				}
 			</aside>
 			<GoogleMap showStartMarker={false} markers={markers}/>
