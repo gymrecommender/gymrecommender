@@ -25,8 +25,6 @@ const History = () => {
 
 			if (result.error) toast(result.error.message);
 			else setRequests(result.data);
-
-			console.log(requests)
 		}
 
 		const retrieveBookmarks = async () => {
