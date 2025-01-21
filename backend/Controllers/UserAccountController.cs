@@ -165,7 +165,7 @@ public class UserAccountController : AccountControllerTemplate {
                                               .Where(r => r.RequestId == request.Id)
                                               .AsSplitQuery()
                                               .ToList();
-            
+
             var recommendations = recommendationsData
                                   .Select(r => new {
                                       Type = r.Type.ToString(),
@@ -542,6 +542,75 @@ public class UserAccountController : AccountControllerTemplate {
             return StatusCode(500, new {
                 success = false,
                 error = new { message = "An error occurred while retrieving notifications" }
+            });
+        }
+    }
+
+    [HttpGet("pause")]
+    [Authorize(Policy = "UserOnly")]
+    public async Task<IActionResult> GetPauseByUserId() {
+        try {
+            var firebaseUid = HttpContext.User.FindFirst("user_id")?.Value;
+
+            var pause = await _context.RequestPauses.AsNoTracking()
+                                      .Include(p => p.User)
+                                      .FirstOrDefaultAsync(p => p.User != null && p.User.OuterUid == firebaseUid);
+
+            var timeRemaining = pause == null
+                ? TimeSpan.Zero
+                : TimeSpan.FromMinutes(2) - (DateTime.UtcNow - pause.StartedAt);
+            var timeToDisplay = timeRemaining < TimeSpan.Zero ? TimeSpan.Zero : timeRemaining;
+            
+            return Ok(new {
+                TimeRemaining = timeToDisplay == TimeSpan.Zero
+                    ? TimeOnly.MinValue
+                    : new TimeOnly(timeToDisplay.Hours, timeToDisplay.Minutes, timeToDisplay.Seconds),
+            });
+        } catch (Exception ex) {
+            return StatusCode(500, new {
+                success = false,
+                error = new {
+                    code = "InternalError",
+                    message = ex.Message
+                }
+            });
+        }
+    }
+
+    [HttpPost("pause")]
+    [Authorize(Policy = "UserOnly")]
+    public async Task<IActionResult> AddPause() {
+        try {
+            var firebaseUid = HttpContext.User.FindFirst("user_id")?.Value;
+
+            var user = _context.Accounts.First(a => a.OuterUid == firebaseUid);
+            var pause = _context.RequestPauses.FirstOrDefault(p => p.UserId == user.Id);
+
+            if (pause != null) {
+                pause.StartedAt = DateTime.UtcNow;
+            } else {
+                pause = new RequestPause {
+                    UserId = user.Id,
+                    StartedAt = DateTime.UtcNow,
+                };
+                _context.RequestPauses.Add(pause);
+            }
+
+            await _context.SaveChangesAsync();
+
+            var timeToDisplay = TimeSpan.FromMinutes(2) - (DateTime.UtcNow - pause.StartedAt);
+            return Ok(new {
+                TimeRemaining = timeToDisplay == TimeSpan.Zero
+                    ? TimeOnly.MinValue
+                    : new TimeOnly(timeToDisplay.Hours, timeToDisplay.Minutes, timeToDisplay.Seconds),
+            });
+        } catch (Exception ex) {
+            return StatusCode(500, new {
+                success = false,
+                error = new {
+                    code = "InternalError",
+                    message = ex.Message
+                }
             });
         }
     }

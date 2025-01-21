@@ -32,8 +32,7 @@ public class RecommendationService {
     /// <param name="gymRecommendationRequest">User's gym recommendation request.</param>
     /// <returns>List of recommended gyms with scores.</returns>
     public async Task<IActionResult> GetRecommendations(GymRecommendationRequestDto gymRecommendationRequest,
-        Account? account)
-    {
+                                                        Account? account) {
         _logger.LogInformation(
             "GetRecommendations called with Request: {@GymRecommendationRequest}, Account: {@Account}",
             gymRecommendationRequest, account);
@@ -49,6 +48,7 @@ public class RecommendationService {
             if (!retrievalCheck.Success) {
                 return new StatusCodeResult(500);
             }
+
             // Get filtered gyms
             var gyms = await GetFilteredGyms(gymRecommendationRequest);
             _logger.LogInformation("Filtered gyms retrieved: {Count}", gyms.MainGyms.Count + gyms.AuxGyms.Count);
@@ -79,9 +79,7 @@ public class RecommendationService {
 
                 await transaction.CommitAsync();
                 _logger.LogInformation("Database transaction committed.");
-            }
-            else
-            {
+            } else {
                 _logger.LogInformation("No account provided. Skipping saving recommendation request.");
             }
 
@@ -104,8 +102,7 @@ public class RecommendationService {
     /// </summary>
     /// <param name="username">The username of the user.</param>
     /// <returns>A list of RequestDto objects.</returns>
-    public async Task<List<Request>> GetRequestsByUsernameAsync(string firebaseUid)
-    {
+    public async Task<List<Request>> GetRequestsByUsernameAsync(string firebaseUid) {
         _logger.LogInformation("GetRequestsByUsernameAsync called with FirebaseUid: {FirebaseUid}", firebaseUid);
 
         // Fetch the user from the database
@@ -113,8 +110,7 @@ public class RecommendationService {
                                    .AsNoTracking()
                                    .SingleOrDefaultAsync(u => u.OuterUid == firebaseUid && u.Type == AccountType.user);
 
-        if (user == null)
-        {
+        if (user == null) {
             _logger.LogWarning("User not found for FirebaseUid: {FirebaseUid}", firebaseUid);
             throw new KeyNotFoundException($"User has not been found.");
         }
@@ -139,8 +135,7 @@ public class RecommendationService {
     /// </summary>
     /// <param name="request">GymRecommendationRequestDto containing filter parameters.</param>
     /// <returns>A list of Gym objects that match the filter criteria.</returns>
-    private async Task<GymsFilteredDto> GetFilteredGyms(GymRecommendationRequestDto request)
-    {
+    private async Task<GymsFilteredDto> GetFilteredGyms(GymRecommendationRequestDto request) {
         _logger.LogInformation("GetFilteredGyms called with Request: {@Request}", request);
 
         // Start with all gyms
@@ -159,7 +154,7 @@ public class RecommendationService {
 
         // TODO: Convert currencies
         if (request.MaxMembershipPrice < 1000) {
-        // TODO: Convert currencies, why is it set to 100?
+            // TODO: Convert currencies, why is it set to 100?
             _logger.LogInformation("Applying MaxMembershipPrice filter: {MaxMembershipPrice}",
                 request.MaxMembershipPrice);
             // Implement conditional filtering based on MembershipLength
@@ -223,17 +218,15 @@ public class RecommendationService {
         };
     }
 
-    private double ScaleToRange(double normalizedValue, double minRange, double maxRange)
-    {
+    private double ScaleToRange(double normalizedValue, double minRange, double maxRange) {
         return Math.Round(minRange + (normalizedValue * (maxRange - minRange)), 2);
     }
 
     public List<GymRecommendationDto> FormRatings(List<GymTravelInfoDto> filteredGyms,
-        int priceRatingPriority,
-        MembershipLength membershipLength,
-        int maxSize
-    )
-    {
+                                                  int priceRatingPriority,
+                                                  MembershipLength membershipLength,
+                                                  int maxSize
+    ) {
         _logger.LogInformation(
             "FormRatings called with PriceRatingPriority: {PriceRatingPriority}, MembershipLength: {MembershipLength}, MaxSize: {MaxSize}",
             priceRatingPriority, membershipLength, maxSize);
@@ -245,9 +238,9 @@ public class RecommendationService {
                                                  : null)
                                          .ToList();
 
-        List<double> travelPrices = filteredGyms
-                                    .Select(g => g.TravelPrice)
-                                    .ToList();
+        List<double?> travelPrices = filteredGyms
+                                     .Select(g => g.TravelPrice)
+                                     .ToList();
 
         List<double?> totalPrices = membershipPrices
                                     .Zip(travelPrices, (membershipPrice, travelPrice) =>
@@ -267,7 +260,7 @@ public class RecommendationService {
                                           .Select(g => (double?)g.Gym.CongestionRating)
                                           .ToList(); // Assuming CongestionRating is non-nullable
 
-        List<double> travelTimes = filteredGyms
+        List<double?> travelTimes = filteredGyms
                                     .Select(g => g.TravelTime)
                                     .ToList();
 
@@ -278,10 +271,14 @@ public class RecommendationService {
         // Pass 'inverted' = true for criteria to minimize (MembershipPrice, TravelPrice, TravelTime)
         // Note: MembershipPrice is typically something to minimize, but based on original code, it was not inverted.
         // Here, we assume MembershipPrice should be minimized. Adjust if necessary.
-        List<double> scaledTotalPrices = NormalizeCriteria(totalPrices, inverted: true).Select(value => ScaleToRange(value, 1, 10)).ToList();
-        List<double> scaledExternalRatings = NormalizeCriteria(externalRatings, inverted: false).Select(value => ScaleToRange(value, 1, 10)).ToList();
-        List<double> scaledCongestionRatings = NormalizeCriteria(congestionRatings, inverted: false).Select(value => ScaleToRange(value, 1, 10)).ToList();
-        List<double> scaledTravelTimes = NormalizeCriteria(travelTimes.Select(x => (double?)x).ToList(), inverted: true).Select(value => ScaleToRange(value, 1, 10)).ToList();
+        List<double> scaledTotalPrices = NormalizeCriteria(totalPrices, inverted: true)
+                                         .Select(value => ScaleToRange(value, 1, 10)).ToList();
+        List<double> scaledExternalRatings = NormalizeCriteria(externalRatings, inverted: false)
+                                             .Select(value => ScaleToRange(value, 1, 10)).ToList();
+        List<double> scaledCongestionRatings = NormalizeCriteria(congestionRatings, inverted: false)
+                                               .Select(value => ScaleToRange(value, 1, 10)).ToList();
+        List<double> scaledTravelTimes = NormalizeCriteria(travelTimes.Select(x => (double?)x).ToList(), inverted: true)
+                                         .Select(value => ScaleToRange(value, 1, 10)).ToList();
 
         _logger.LogInformation("Normalization of criteria completed.");
         // Adjust weights based on PriceRatingPriority
@@ -309,7 +306,7 @@ public class RecommendationService {
         double totalWeight = totalPriceWeight + regularRatingWeight +
                              congestionRatingWeight +
                              travelTimeWeight;
-        
+
         totalPriceWeight /= totalWeight;
         regularRatingWeight /= totalWeight;
         congestionRatingWeight /= totalWeight;
@@ -321,12 +318,10 @@ public class RecommendationService {
 
         // Calculate Final Score for each gym
         List<GymRecommendationDto> recommendations = new List<GymRecommendationDto>();
-        for (int i = 0; i < filteredGyms.Count; i++)
-        {
+        for (int i = 0; i < filteredGyms.Count; i++) {
             int hourPart = 0;
             int minutePart = 0;
-            if (travelTimes[i] != null)
-            {
+            if (travelTimes[i] != null) {
                 hourPart = (int)(travelTimes[i] / 60); // Extract hours
                 minutePart = (int)(travelTimes[i] % 60); // Extract minutes
             }
@@ -392,28 +387,24 @@ public class RecommendationService {
     /// <param name="priceRatingPriority">User's priority for price (0-100).</param>
     /// <returns>List of GymRecommendationDto with calculated scores.</returns>
     public Dictionary<string, List<GymRecommendationDto>> GetRatings(GymFilteredTravelInfoDto filteredGyms,
-        int priceRatingPriority,
-        MembershipLength membershipLength)
-    {
+                                                                     int priceRatingPriority,
+                                                                     MembershipLength membershipLength) {
         _logger.LogInformation(
             "GetRatings called with PriceRatingPriority: {PriceRatingPriority}, MembershipLength: {MembershipLength}",
             priceRatingPriority, membershipLength);
 
-        Dictionary<string, List<GymRecommendationDto>> result = new Dictionary<string, List<GymRecommendationDto>>
-        {
+        Dictionary<string, List<GymRecommendationDto>> result = new Dictionary<string, List<GymRecommendationDto>> {
             { "MainGyms", new List<GymRecommendationDto>() },
             { "AuxGyms", new List<GymRecommendationDto>() },
         };
 
-        if (filteredGyms.MainGyms.Any())
-        {
+        if (filteredGyms.MainGyms.Any()) {
             _logger.LogInformation("Processing MainGyms.");
             result["MainGyms"] = FormRatings(filteredGyms.MainGyms, priceRatingPriority, membershipLength, 5);
             _logger.LogInformation("MainGyms processed with count: {MainGymsCount}", result["MainGyms"].Count);
         }
 
-        if (filteredGyms.AuxGyms.Any())
-        {
+        if (filteredGyms.AuxGyms.Any()) {
             _logger.LogInformation("Processing AuxGyms.");
             result["AuxGyms"] = FormRatings(filteredGyms.AuxGyms, priceRatingPriority, membershipLength, 3);
             _logger.LogInformation("AuxGyms processed with count: {AuxGymsCount}", result["AuxGyms"].Count);
@@ -430,15 +421,13 @@ public class RecommendationService {
     /// <param name="values">List of nullable double values to normalize.</param>
     /// <param name="inverted">Indicates whether to invert the normalized values.</param>
     /// <returns>List of normalized (and possibly inverted) double values.</returns>
-    private List<double> NormalizeCriteria(List<double?> values, bool inverted)
-    {
+    private List<double> NormalizeCriteria(List<double?> values, bool inverted) {
         _logger.LogInformation("NormalizeCriteria called with Inverted: {Inverted}", inverted);
 
         // Extract non-null values for calculations
         var nonNullValues = values.Where(v => v.HasValue).Select(v => v.Value).ToList();
 
-        if (!nonNullValues.Any())
-        {
+        if (!nonNullValues.Any()) {
             _logger.LogWarning("All values are null. Assigning default normalized value of 0.5 to all entries.");
             // If all values are null, return a list of 0.5 (midpoint of normalization)
             return values.Select(v => 0.5).ToList();
@@ -450,8 +439,7 @@ public class RecommendationService {
         _logger.LogInformation("Normalization stats - Mean: {Mean}, StdDev: {StdDev}", mean, stdDev);
 
         // Handle case where stdDev is zero to avoid division by zero
-        if (stdDev == 0)
-        {
+        if (stdDev == 0) {
             stdDev = 1;
             _logger.LogWarning("Standard deviation is zero. Set to 1 to avoid division by zero.");
         }
@@ -472,8 +460,7 @@ public class RecommendationService {
         _logger.LogInformation("Z-scores range - Min: {MinZ}, Max: {MaxZ}", minZ, maxZ);
 
         double rangeZ = maxZ - minZ;
-        if (rangeZ == 0)
-        {
+        if (rangeZ == 0) {
             rangeZ = 1;
             _logger.LogWarning("Z-score range is zero. Set to 1 to avoid division by zero.");
         }
@@ -485,8 +472,7 @@ public class RecommendationService {
         _logger.LogInformation("Min-Max normalization completed.");
 
         // Invert the normalized values if required
-        if (inverted)
-        {
+        if (inverted) {
             normalizedValues = normalizedValues.Select(x => 1 - x).ToList();
             _logger.LogInformation("Normalized values inverted.");
         }
@@ -511,8 +497,7 @@ public class RecommendationService {
     /// </summary>
     /// <param name="requestDto">The gym recommendation request DTO.</param>
     /// <returns>The saved Request entity.</returns>
-    private async Task<Request> SaveRecommendationRequestAsync(GymRecommendationRequestDto requestDto, Guid userId)
-    {
+    private async Task<Request> SaveRecommendationRequestAsync(GymRecommendationRequestDto requestDto, Guid userId) {
         _logger.LogInformation("Saving recommendation request for UserId: {UserId}", userId);
 
         // Map DTO to entity
@@ -528,11 +513,15 @@ public class RecommendationService {
             //TODO: What is initial purpose if this field? Rename to City if we want to save city name, Name remove request_user_id_name_key constraint from db
             MembType = requestDto.MembershipLength,
             UserId = userId,
-            ArrivalTime = !requestDto.PreferredArrivalTime.IsNullOrEmpty() ? TimeOnly.Parse(requestDto.PreferredArrivalTime) : null,
-            DepartureTime = !requestDto.PreferredDepartureTime.IsNullOrEmpty() ? TimeOnly.Parse(requestDto.PreferredDepartureTime) : null,
+            ArrivalTime = !requestDto.PreferredArrivalTime.IsNullOrEmpty()
+                ? TimeOnly.Parse(requestDto.PreferredArrivalTime)
+                : null,
+            DepartureTime = !requestDto.PreferredDepartureTime.IsNullOrEmpty()
+                ? TimeOnly.Parse(requestDto.PreferredDepartureTime)
+                : null,
             // Initialize other properties if needed
         };
-        
+
         // Add to DbContext
         _dbContext.Requests.Add(requestEntity);
         await _dbContext.SaveChangesAsync();
@@ -549,55 +538,50 @@ public class RecommendationService {
     /// <param name="recommendations">The list of gym recommendations.</param>
     /// <returns>A task representing the asynchronous operation.</returns>
     private async Task SaveRecommendationsAsync(Guid requestId,
-        Dictionary<string, List<GymRecommendationDto>> recommendations)
-    {
+                                                Dictionary<string, List<GymRecommendationDto>> recommendations) {
         _logger.LogInformation("Saving recommendations for RequestId: {RequestId}", requestId);
 
         var recommendationEntities = new List<Recommendation>();
 
         foreach (var type in new[] { "MainGyms", "AuxGyms" }) {
-            if (!recommendations.ContainsKey(type))
-            {
+            if (!recommendations.ContainsKey(type)) {
                 _logger.LogWarning("Recommendation type {Type} not found in recommendations dictionary.", type);
                 continue;
 
-            var recommendationType = type == "MainGyms"
-                ? RecommendationType.main
-                : RecommendationType.alternative;
+                var recommendationType = type == "MainGyms"
+                    ? RecommendationType.main
+                    : RecommendationType.alternative;
 
-            _logger.LogInformation("Processing {Type} with RecommendationType: {RecommendationType}", type,
-                recommendationType);
+                _logger.LogInformation("Processing {Type} with RecommendationType: {RecommendationType}", type,
+                    recommendationType);
 
-            recommendationEntities.AddRange(recommendations[type].Select(recommendation => new Recommendation
-            {
-                Id = Guid.NewGuid(),
-                GymId = recommendation.Gym.Id,
-                RequestId = requestId,
-                // TODO: Add separate field for NormalizedTravelPrice if needed
-                Tcost = new decimal(recommendation.TotalCost), // Adjust mapping as necessary
-                Time = recommendation.TravellingTime, // Adjust based on actual data
-                TimeScore = new decimal(recommendation.TimeRating),
-                TcostScore = new decimal(recommendation.CostRating),
-                CongestionScore = new decimal(recommendation.CongestionRating),
-                RatingScore = new decimal(recommendation.RegularRating),
-                TotalScore = new decimal(recommendation.OverallRating),
-                Type = recommendationType,
-                // TODO: Evaluate if CurrencyId should be moved to the Request table
-                CurrencyId = recommendation.Gym.CurrencyId,
-            }));
-        }
+                recommendationEntities.AddRange(recommendations[type].Select(recommendation => new Recommendation {
+                    Id = Guid.NewGuid(),
+                    GymId = recommendation.Gym.Id,
+                    RequestId = requestId,
+                    // TODO: Add separate field for NormalizedTravelPrice if needed
+                    Tcost = new decimal(recommendation.TotalCost), // Adjust mapping as necessary
+                    Time = recommendation.TravellingTime, // Adjust based on actual data
+                    TimeScore = new decimal(recommendation.TimeRating),
+                    TcostScore = new decimal(recommendation.CostRating),
+                    CongestionScore = new decimal(recommendation.CongestionRating),
+                    RatingScore = new decimal(recommendation.RegularRating),
+                    TotalScore = new decimal(recommendation.OverallRating),
+                    Type = recommendationType,
+                    // TODO: Evaluate if CurrencyId should be moved to the Request table
+                    CurrencyId = recommendation.Gym.CurrencyId,
+                }));
+            }
 
-        _logger.LogInformation("Total recommendations to save: {Count}", recommendationEntities.Count);
+            _logger.LogInformation("Total recommendations to save: {Count}", recommendationEntities.Count);
 
-        if (recommendationEntities.Any())
-        {
-            _dbContext.Recommendations.AddRange(recommendationEntities);
-            await _dbContext.SaveChangesAsync();
-            _logger.LogInformation("Recommendations saved successfully for RequestId: {RequestId}", requestId);
-        }
-        else
-        {
-            _logger.LogWarning("No recommendations to save for RequestId: {RequestId}", requestId);
+            if (recommendationEntities.Any()) {
+                _dbContext.Recommendations.AddRange(recommendationEntities);
+                await _dbContext.SaveChangesAsync();
+                _logger.LogInformation("Recommendations saved successfully for RequestId: {RequestId}", requestId);
+            } else {
+                _logger.LogWarning("No recommendations to save for RequestId: {RequestId}", requestId);
+            }
         }
     }
 }

@@ -24,7 +24,8 @@ public class GymController : Controller {
     private readonly GoogleApiService _googleApiService;
     private readonly GymRetrievalService _gymRetrievalService;
 
-    public GymController(GymrecommenderContext context, IOptions<AppSettings> appSettings, GoogleApiService googleApiService, GymRetrievalService gymRetrievalService) {
+    public GymController(GymrecommenderContext context, IOptions<AppSettings> appSettings,
+                         GoogleApiService googleApiService, GymRetrievalService gymRetrievalService) {
         _context = context;
         _appData = appSettings.Value;
         _googleApiService = googleApiService;
@@ -71,17 +72,18 @@ public class GymController : Controller {
     }
 
     [HttpGet("location")]
-    public async Task<IActionResult> GetGymsForLocation([FromQuery] double lat, [FromQuery] double lng, [FromQuery]bool gApi = true) {
+    public async Task<IActionResult> GetGymsForLocation([FromQuery] double lat, [FromQuery] double lng,
+                                                        [FromQuery] bool gApi = true) {
         var result = await _gymRetrievalService.RetrieveGyms(lat, lng, gApi);
         if (!result.Success) {
             return StatusCode(int.Parse(result.ErrorCode), new {
                 message = result.Error,
             });
         }
-        
+
         return Ok(result.Value);
     }
-    
+
     [NonAction]
     private async Task<Response> SaveNewGyms(List<Tuple<Gym, List<GymWorkingHoursViewModel>>> data) {
         try {
@@ -93,14 +95,14 @@ public class GymController : Controller {
                                      OpenUntil = wh.OpenUntil
                                  })
                                  .ToList();
-            
+
             //TODO currency should be determined in some other way
             var currency = _context.Currencies.AsNoTracking().Where(c => c.Code == "EUR").ToList().First();
 
             foreach (var dataItem in data) {
                 var gym = dataItem.Item1;
                 gym.CurrencyId = currency.Id;
-                
+
                 _context.Gyms.Add(gym);
 
                 var workingHours = dataItem.Item2;
@@ -121,8 +123,8 @@ public class GymController : Controller {
                         //not try to create another instance of it upon saving
                         var matchDb = dbWorkingHours.FirstOrDefault(wh =>
                             wh.OpenFrom == match.OpenFrom && wh.OpenUntil == match.OpenUntil);
-                        
-                            if (matchDb != null) _context.Attach(match);
+
+                        if (matchDb != null) _context.Attach(match);
                     }
 
                     //Binding working hours with the working hours of the current gym
@@ -145,216 +147,96 @@ public class GymController : Controller {
         }
     }
 
-[HttpGet("api/gym/getpausebyip")]
-public async Task<IActionResult> GetPauseByIp([FromQuery] string? ip = null)
-{
-    try
-    {
-        // Use the provided IP address or fall back to the client's IP address
-        string clientIp = ip ?? HttpContext.Connection.RemoteIpAddress?.ToString();
+    [HttpGet("pause")]
+    public async Task<IActionResult> GetPauseByIp() {
+        try {
+            string? clientIp = HttpContext.Connection.RemoteIpAddress?.ToString();
 
-        // Validation: Ensure the IP address is available
-        if (string.IsNullOrEmpty(clientIp))
-        {
-            return BadRequest(new
-            {
+            if (string.IsNullOrEmpty(clientIp)) {
+                return BadRequest(new {
+                    success = false,
+                    error = new {
+                        code = "InvalidRequest",
+                        message = "Could not retrieve the IP address."
+                    }
+                });
+            }
+
+            // Convert the IP to a byte array
+            byte[] clientIpBytes = System.Net.IPAddress.Parse(clientIp).GetAddressBytes();
+
+            // Query the database for a matching pause entry
+            var pauses = await _context.RequestPauses
+                                       .AsNoTracking()
+                                       .Where(p => p.Ip != null)
+                                       .ToListAsync();
+
+            var pause = pauses.FirstOrDefault(p => p.Ip.SequenceEqual(clientIpBytes));
+            var timeRemaining = pause == null
+                ? TimeSpan.Zero
+                : TimeSpan.FromMinutes(2) - (DateTime.UtcNow - pause.StartedAt);
+            var timeToDisplay = timeRemaining < TimeSpan.Zero ? TimeSpan.Zero : timeRemaining;
+            
+            return Ok(new {
+                TimeRemaining = timeToDisplay == TimeSpan.Zero ? TimeOnly.MinValue :
+                    new TimeOnly(timeToDisplay.Hours, timeToDisplay.Minutes, timeToDisplay.Seconds),
+            });
+        } catch (Exception ex) {
+            return StatusCode(500, new {
                 success = false,
-                error = new
-                {
-                    code = "InvalidRequest",
-                    message = "Could not retrieve the IP address."
+                error = new {
+                    code = "InternalError",
+                    message = ex.Message
                 }
             });
         }
+    }
 
-        // Convert the IP to a byte array
-        byte[] clientIpBytes = clientIp.Contains(":")
-            ? System.Net.IPAddress.Parse(clientIp).GetAddressBytes() // IPv6
-            : System.Net.IPAddress.Parse(clientIp).GetAddressBytes(); // IPv4
+    [HttpPost("pause")]
+    public async Task<IActionResult> AddPause() {
+        try {
+            string? clientIp = HttpContext.Connection.RemoteIpAddress?.ToString();
 
-        // Query the database for a matching pause entry
-        var pause = await _context.RequestPauses
-            .AsNoTracking()
-            .FirstOrDefaultAsync(p => p.Ip != null && p.Ip.SequenceEqual(clientIpBytes));
+            if (string.IsNullOrEmpty(clientIp)) {
+                return BadRequest(new {
+                    success = false,
+                    error = new {
+                        code = "InvalidRequest",
+                        message = "Could not retrieve the IP address."
+                    }
+                });
+            }
 
-        if (pause == null)
-        {
-            return NotFound(new
-            {
-                success = false,
-                message = "No pause found for the given IP address."
+            // Convert the IP to a byte array
+            byte[] clientIpBytes = System.Net.IPAddress.Parse(clientIp).GetAddressBytes();
+            var pauses = _context.RequestPauses.AsTracking().Where(p => p.Ip != null).ToList();
+            var pause = pauses.FirstOrDefault(p => p.Ip.SequenceEqual(clientIpBytes));
+
+            if (pause != null) {
+                pause.StartedAt = DateTime.UtcNow;
+            } else {
+                pause = new RequestPause {
+                    StartedAt = DateTime.UtcNow,
+                    Ip = clientIpBytes
+                };
+                _context.RequestPauses.Add(pause);
+            }
+
+            await _context.SaveChangesAsync();
+
+            var timeToDisplay = TimeSpan.FromMinutes(2) - (DateTime.UtcNow - pause.StartedAt);
+            return Ok(new {
+                TimeRemaining = timeToDisplay == TimeSpan.Zero ? TimeOnly.MinValue :
+                    new TimeOnly(timeToDisplay.Hours, timeToDisplay.Minutes, timeToDisplay.Seconds),
             });
-        }
-
-        return Ok(new
-        {
-            success = true,
-            data = new
-            {
-                pause.Id,
-                Ip = string.Join(".", pause.Ip.Select(b => b.ToString())), // Convert IP bytes back to string
-                pause.StartedAt
-            }
-        });
-    }
-    catch (Exception ex)
-    {
-        return StatusCode(500, new
-        {
-            success = false,
-            error = new
-            {
-                code = "InternalError",
-                message = ex.Message
-            }
-        });
-    }
-}
-
-  [Authorize(Policy = "UserOnly")]
-[HttpGet("pause-by-user/{userId}")]
-public async Task<IActionResult> GetPauseByUserId(Guid userId)
-{
-    try
-    {
-        // Query the database for a matching pause entry by user_id
-        var pause = await _context.RequestPauses
-            .AsNoTracking()
-            .FirstOrDefaultAsync(p => p.UserId == userId);
-
-        if (pause == null)
-        {
-            return NotFound(new
-            {
+        } catch (Exception ex) {
+            return StatusCode(500, new {
                 success = false,
-                message = "No pause found for the given user ID."
-            });
-        }
-
-        return Ok(new
-        {
-            success = true,
-            data = new
-            {
-                pause.Id,
-                pause.UserId,
-                pause.Ip,
-                pause.StartedAt
-            }
-        });
-    }
-    catch (Exception ex)
-    {
-        return StatusCode(500, new
-        {
-            success = false,
-            error = new
-            {
-                code = "InternalError",
-                message = ex.Message
-            }
-        });
-    }
-}
-[HttpPost("save-pause-authenticated")]
-[Authorize(Policy = "UserOnly")]
-public async Task<IActionResult> SavePauseAuthenticated([FromBody] AuthenticatedPauseRequestDto request)
-{
-    try
-    {
-        // Validate the input
-        if (request == null || request.UserId == Guid.Empty)
-        {
-            return BadRequest(new
-            {
-                success = false,
-                error = new
-                {
-                    code = "InvalidRequest",
-                    message = "User ID is required and must be a valid GUID."
+                error = new {
+                    code = "InternalError",
+                    message = ex.Message
                 }
             });
         }
-
-        // Create a new RequestPause instance
-        var pause = new RequestPause
-        {
-            UserId = request.UserId,
-            Ip = null,
-            StartedAt = request.StartedAt ?? DateTime.UtcNow
-        };
-
-        // Add to database
-        _context.RequestPauses.Add(pause);
-        await _context.SaveChangesAsync();
-
-        return Ok(new { success = true, message = "Pause saved successfully." });
     }
-    catch (Exception ex)
-    {
-        return StatusCode(500, new
-        {
-            success = false,
-            error = new
-            {
-                code = "InternalError",
-                message = ex.Message
-            }
-        });
-    }
-}
-    
-[HttpPost("enforcePauseForNonAuthenticatedUser")]
-public async Task<IActionResult> EnforcePauseForNonAuthenticatedUser([FromBody] PauseRequestModel model)
-{
-    try
-    {
-        // Validate the IP address (it should be provided for non-authenticated users)
-        if (string.IsNullOrEmpty(model.Ip))
-        {
-            return BadRequest(new
-            {
-                success = false,
-                error = new
-                {
-                    code = "InvalidRequest",
-                    message = "IP address is required for non-authenticated users."
-                }
-            });
-        }
-
-        // Convert the IP address from string to byte array
-        byte[] ipBytes = System.Net.IPAddress.Parse(model.Ip).GetAddressBytes();
-
-        // Create and save the request pause entry for non-authenticated user
-        var requestPause = new RequestPause
-        {
-            Id = Guid.NewGuid(),
-            UserId = null,  // No userId for non-authenticated users
-            Ip = ipBytes,
-            StartedAt = DateTime.UtcNow
-        };
-
-        _context.RequestPauses.Add(requestPause);
-        await _context.SaveChangesAsync();
-
-        return Ok(new
-        {
-            success = true,
-            message = "Pause enforced successfully for non-authenticated user."
-        });
-    }
-    catch (Exception ex)
-    {
-        return StatusCode(500, new
-        {
-            success = false,
-            error = new
-            {
-                code = "InternalError",
-                message = ex.Message
-            }
-        });
-    }
-}
 }
