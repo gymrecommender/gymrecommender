@@ -64,10 +64,10 @@ const data = {
 			type: "range",
 			label: "Max membership price",
 			name: "maxMembershipPrice",
-			step: 5,
+			step: 10,
 			min: 0,
-			max: 100,
-			value: 100
+			max: 1000,
+			value: 1000
 		},
 		{
 			pos: 7,
@@ -109,18 +109,6 @@ const Index = () => {
 			reason: "Example reason for pause",
 			duration: 5,
 		};
-
-		// try {
-		// 	const response = await axios.post("/api/enforced-pause", enforcedPauseData);
-		//
-		// 	if (response.status === 200) {
-		// 		console.log("Enforced pause saved successfully.");
-		// 	} else {
-		// 		console.error("Failed to save enforced pause.");
-		// 	}
-		// } catch (error) {
-		// 	console.error("Error saving enforced pause:", error);
-		// }
 	};
 
 	const getFormValues = async (values) => {

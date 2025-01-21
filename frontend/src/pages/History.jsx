@@ -38,7 +38,7 @@ const History = () => {
 	}, []);
 
 	const handleRequestClick = (id) => {
-		const url = `/account/${username}/history/${id}`;
+		const url = `/account/history/${id}`;
 		// Open in a new tab
 		window.open(url, '_blank', 'noopener,noreferrer');
 	};

@@ -350,6 +350,7 @@ input[type="range"]::-moz-range-thumb {
 
 .recommendation-list {
     margin-bottom: 20px;
+    word-break: break-word;
 }
 
 .recommendation-lists h3 {

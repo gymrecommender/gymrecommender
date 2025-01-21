@@ -10,7 +10,7 @@ import {
 	faClock
 } from "@fortawesome/free-solid-svg-icons";
 import GoogleMap from "../components/simple/GoogleMap.jsx";
-import {mainRatingMarker, secRatingMarket} from "../services/markers.jsx";
+import {mainRatingMarker, secRatingMarket, startMarker} from "../services/markers.jsx";
 import {useEffect, useState} from "react";
 import Loader from "../components/simple/Loader.jsx";
 import classNames from "classnames";
@@ -29,14 +29,26 @@ const Recommendation = ({data}) => {
 		const fetchRecommendations = async () => {
 			let list;
 			if (data) {
-				const {requestId, ...rest} = data;
-				list = rest
+				list = data
 			} else {
 				const result = await axiosInternal("GET", `useraccount/requests/${id}/recommendations`)
-				if (result.error) toast(result.error.message)
-				else list = result.data
+				if (result.error) {
+					toast(result.error.message);
+					setLoading(false);
+					return;
+				} else {
+					list = result.data
+				}
 			}
-			const newMarkers = [];
+			const {requestId, latitude, longitude, ...rest} = list;
+			list = rest
+
+			const newMarkers = [{
+				lat: latitude,
+				lng: longitude,
+				...startMarker,
+				infoWindow: "Start location"
+			}];
 			Object.keys(list).forEach((key) => {
 				const markerType = key === "mainRecommendations" ? mainRatingMarker : secRatingMarket
 				list[key].forEach((gym) => {
