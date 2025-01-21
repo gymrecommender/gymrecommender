@@ -287,6 +287,8 @@ input[type="range"]::-moz-range-thumb {
     background-color: inherit;
     padding: 0;
     flex: 1;
+
+    min-height: 500px;
 }
 
 .map {
@@ -659,9 +661,6 @@ button.btn-name-edit {
     color: #f5a042;
 }
 
-
-
-
 /*AccountGym forms*/
 .request-form, .update-form, .unavailable-form {
     color: #4f8cff;
@@ -719,6 +718,23 @@ button.btn-icon {
     box-shadow: none;
 }
 
+button.btn-icon-dark {
+    border: none;
+    background-color: inherit;
+
+    color: #9f60b5;
+    font-size: 1.4em;
+    text-transform: uppercase;
+    font-weight: bold;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    box-shadow: none;
+    padding: 0;
+}
+
 button.btn-icon .icon {
     color: inherit;
     background-color: inherit;
@@ -732,9 +748,9 @@ button.btn-icon .icon:not(:last-child) {
     margin-right: 10px;
 }
 
-button.btn-icon:hover {
-    border-color: #9f60b5;
-    color: #9f60b5;
+button.btn-icon-dark:hover {
+    border-color: red;
+    color: red;
     cursor: pointer;
 }
 
@@ -1064,4 +1080,16 @@ form .form-disabler:hover .form-disabler-hint {
     flex-direction: column;
     gap: 5px;
     margin: 10px 0;
+}
+
+button[disabled]:hover {
+    cursor: inherit !important;
+    color: inherit;
+}
+
+.gym-popup-header {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+
 }
