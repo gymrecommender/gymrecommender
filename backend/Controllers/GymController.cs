@@ -12,6 +12,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Sprache;
 using System.Security.Claims;
+using backend.DTOs;
 
 namespace backend.Controllers;
 
@@ -312,5 +313,105 @@ public async Task<IActionResult> GetPauseByUserId(Guid userId)
         });
     }
 }
+[HttpPost("save-pause-authenticated")]
+[Authorize(Policy = "UserOnly")]
+public async Task<IActionResult> SavePauseAuthenticated([FromBody] AuthenticatedPauseRequestDto request)
+{
+    try
+    {
+        // Validate the input
+        if (request == null || request.UserId == Guid.Empty)
+        {
+            return BadRequest(new
+            {
+                success = false,
+                error = new
+                {
+                    code = "InvalidRequest",
+                    message = "User ID is required and must be a valid GUID."
+                }
+            });
+        }
+
+        // Create a new RequestPause instance
+        var pause = new RequestPause
+        {
+            UserId = request.UserId,
+            Ip = null,
+            StartedAt = request.StartedAt ?? DateTime.UtcNow
+        };
+
+        // Add to database
+        _context.RequestPauses.Add(pause);
+        await _context.SaveChangesAsync();
+
+        return Ok(new { success = true, message = "Pause saved successfully." });
+    }
+    catch (Exception ex)
+    {
+        return StatusCode(500, new
+        {
+            success = false,
+            error = new
+            {
+                code = "InternalError",
+                message = ex.Message
+            }
+        });
+    }
+}
     
+[HttpPost("enforcePauseForNonAuthenticatedUser")]
+public async Task<IActionResult> EnforcePauseForNonAuthenticatedUser([FromBody] PauseRequestModel model)
+{
+    try
+    {
+        // Validate the IP address (it should be provided for non-authenticated users)
+        if (string.IsNullOrEmpty(model.Ip))
+        {
+            return BadRequest(new
+            {
+                success = false,
+                error = new
+                {
+                    code = "InvalidRequest",
+                    message = "IP address is required for non-authenticated users."
+                }
+            });
+        }
+
+        // Convert the IP address from string to byte array
+        byte[] ipBytes = System.Net.IPAddress.Parse(model.Ip).GetAddressBytes();
+
+        // Create and save the request pause entry for non-authenticated user
+        var requestPause = new RequestPause
+        {
+            Id = Guid.NewGuid(),
+            UserId = null,  // No userId for non-authenticated users
+            Ip = ipBytes,
+            StartedAt = DateTime.UtcNow
+        };
+
+        _context.RequestPauses.Add(requestPause);
+        await _context.SaveChangesAsync();
+
+        return Ok(new
+        {
+            success = true,
+            message = "Pause enforced successfully for non-authenticated user."
+        });
+    }
+    catch (Exception ex)
+    {
+        return StatusCode(500, new
+        {
+            success = false,
+            error = new
+            {
+                code = "InternalError",
+                message = ex.Message
+            }
+        });
+    }
+}
 }
