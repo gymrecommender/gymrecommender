@@ -1,14 +1,17 @@
 using System.Globalization;
 using backend.Enums;
 using backend.Models;
+using backend.Services;
 using backend.Utilities;
 using backend.ViewModels;
 using backend.ViewModels.WorkingHour;
 using backend.Views;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Sprache;
+using System.Security.Claims;
 
 namespace backend.Controllers;
 
@@ -17,12 +20,14 @@ namespace backend.Controllers;
 public class GymController : Controller {
     private readonly GymrecommenderContext _context;
     private readonly AppSettings _appData;
-    private readonly GoogleApi _googleApi;
+    private readonly GoogleApiService _googleApiService;
+    private readonly GymRetrievalService _gymRetrievalService;
 
-    public GymController(GymrecommenderContext context, IOptions<AppSettings> appSettings, GoogleApi googleApi) {
+    public GymController(GymrecommenderContext context, IOptions<AppSettings> appSettings, GoogleApiService googleApiService, GymRetrievalService gymRetrievalService) {
         _context = context;
         _appData = appSettings.Value;
-        _googleApi = googleApi;
+        _googleApiService = googleApiService;
+        _gymRetrievalService = gymRetrievalService;
     }
 
 
@@ -53,7 +58,7 @@ public class GymController : Controller {
 
     [HttpGet("{country}/{city}")]
     public async Task<IActionResult> GetGymsByCity(string country, string city) {
-        var gymsRes = await RetrieveGymsByCity(country, city);
+        var gymsRes = await _gymRetrievalService.RetrieveGymsByCity(country, city);
         if (!gymsRes.Success) return ParseError(gymsRes);
 
         return Ok(gymsRes.Value);
@@ -62,7 +67,7 @@ public class GymController : Controller {
     [HttpGet("location")]
     public async Task<IActionResult> GetGymsForLocation([FromQuery] double lat, [FromQuery] double lng) {
         try {
-            var cityRes = await GetCity(lat, lng);
+            var cityRes = await _gymRetrievalService.GetCity(lat, lng);
             if (!cityRes.Success) {
                 return StatusCode(Convert.ToInt32(cityRes.ErrorCode), new {
                     success = false,
@@ -74,7 +79,7 @@ public class GymController : Controller {
             }
             City city = (City)cityRes.Value;
 
-            var gymsRes = await RetrieveGymsByCity(city.Country.Name, city.Name);
+            var gymsRes = await _gymRetrievalService.RetrieveGymsByCity(city.Country.Name, city.Name);
             if (!gymsRes.Success) return ParseError(gymsRes);
 
             //If we already have at least one gym for the area, considering that we do not have functionality
@@ -89,7 +94,7 @@ public class GymController : Controller {
             var cityMiddleLng = (city.Nelongitude + city.Swlongitude) / 2;
             
             //Retrieving the gyms for the current city via the Google API
-            var result = await _googleApi.GetGyms(cityMiddleLat, cityMiddleLng, CalculateCityRadius(city), city);
+            var result = await _googleApiService.GetGyms(cityMiddleLat, cityMiddleLng, _gymRetrievalService.CalculateCityRadius(city), city);
             if (!result.Success) return ParseError(result);
             
             //Saving retrieved gyms, working hours and their relations to the database
@@ -97,7 +102,7 @@ public class GymController : Controller {
             if (!save.Success) return ParseError(save);
             
             //Retrieving the gyms for the city from the database
-            gymsRes = await RetrieveGymsByCity(city.Country.Name, city.Name);
+            gymsRes = await _gymRetrievalService.RetrieveGymsByCity(city.Country.Name, city.Name);
             if (!gymsRes.Success) return ParseError(gymsRes);
             
             return Ok(gymsRes);
@@ -113,9 +118,38 @@ public class GymController : Controller {
     }
 
     [NonAction]
+    public IActionResult ParseError(Response gymsRes) {
+        if (gymsRes.ErrorCode == "Internal error") {
+            return StatusCode(500, new {
+                success = false,
+                error = new {
+                    code = gymsRes.ErrorCode,
+                    message = gymsRes.Error,
+                }
+            });
+        }
+
+        return BadRequest(new {
+            success = false,
+            error = new {
+                code = gymsRes.ErrorCode,
+                message = gymsRes.Error,
+            }
+        });
+    }
+    
+    [NonAction]
     private async Task<Response> SaveNewGyms(List<Tuple<Gym, List<GymWorkingHoursViewModel>>> data) {
         try {
             var existingWorkingHours = await _context.WorkingHours.AsNoTracking().ToListAsync();
+            var dbWorkingHours = existingWorkingHours
+                                 .Select(wh => new WorkingHour {
+                                     Id = wh.Id,
+                                     OpenFrom = wh.OpenFrom,
+                                     OpenUntil = wh.OpenUntil
+                                 })
+                                 .ToList();
+            
             //TODO currency should be determined in some other way
             var currency = _context.Currencies.AsNoTracking().Where(c => c.Code == "EUR").ToList().First();
 
@@ -137,12 +171,14 @@ public class GymController : Controller {
                             OpenUntil = wHour.OpenUntil,
                         };
                         _context.WorkingHours.Add(match);
-
                         existingWorkingHours.Add(match);
                     } else {
                         //We need to track the already existing entries in the WorkingHour table in order for dotnet to
                         //not try to create another instance of it upon saving
-                        _context.Attach(match);
+                        var matchDb = dbWorkingHours.FirstOrDefault(wh =>
+                            wh.OpenFrom == match.OpenFrom && wh.OpenUntil == match.OpenUntil);
+                        
+                            if (matchDb != null) _context.Attach(match);
                     }
 
                     //Binding working hours with the working hours of the current gym
@@ -165,152 +201,116 @@ public class GymController : Controller {
         }
     }
 
-    [NonAction]
-    private int CalculateCityRadius(City city) {
-        double ToRadians(double angle) => Math.PI * angle / 180.0;
-        double earthRad = 6371 * 1e3;
+[HttpGet("api/gym/getpausebyip")]
+public async Task<IActionResult> GetPauseByIp([FromQuery] string? ip = null)
+{
+    try
+    {
+        // Use the provided IP address or fall back to the client's IP address
+        string clientIp = ip ?? HttpContext.Connection.RemoteIpAddress?.ToString();
 
-        double lat1 = ToRadians(city.Nelatitude);
-        double lng1 = ToRadians(city.Nelongitude);
-        double lat2 = ToRadians(city.Swlatitude);
-        double lng2 = ToRadians(city.Swlongitude);
-        double deltaLat = lat2 - lat1;
-        double deltaLng = lng2 - lng1;
-
-        //Generally, we want to calculate the approximate radius of the city in order to retrieve as much gyms
-        //as possible from different districts of the city whenever that is possible
-        //Haversine formula is helping us with that
-        double a = Math.Sin(deltaLat / 2) * Math.Sin(deltaLat / 2) +
-                   Math.Cos(lat1) * Math.Cos(lat2) *
-                   Math.Sin(deltaLng / 2) * Math.Sin(deltaLng / 2);
-
-        double c = 2 * Math.Atan2(Math.Sqrt(a), Math.Sqrt(1 - a));
-
-        return int.Min(Convert.ToInt32(earthRad * c / 2), 50000);
-    }
-
-    [NonAction]
-    private IActionResult ParseError(Response gymsRes) {
-        if (gymsRes.ErrorCode == "Internal error") {
-            return StatusCode(500, new {
+        // Validation: Ensure the IP address is available
+        if (string.IsNullOrEmpty(clientIp))
+        {
+            return BadRequest(new
+            {
                 success = false,
-                error = new {
-                    code = gymsRes.ErrorCode,
-                    message = gymsRes.Error,
+                error = new
+                {
+                    code = "InvalidRequest",
+                    message = "Could not retrieve the IP address."
                 }
             });
         }
 
-        return BadRequest(new {
-            success = false,
-            error = new {
-                code = gymsRes.ErrorCode,
-                message = gymsRes.Error,
+        // Convert the IP to a byte array
+        byte[] clientIpBytes = clientIp.Contains(":")
+            ? System.Net.IPAddress.Parse(clientIp).GetAddressBytes() // IPv6
+            : System.Net.IPAddress.Parse(clientIp).GetAddressBytes(); // IPv4
+
+        // Query the database for a matching pause entry
+        var pause = await _context.RequestPauses
+            .AsNoTracking()
+            .FirstOrDefaultAsync(p => p.Ip != null && p.Ip.SequenceEqual(clientIpBytes));
+
+        if (pause == null)
+        {
+            return NotFound(new
+            {
+                success = false,
+                message = "No pause found for the given IP address."
+            });
+        }
+
+        return Ok(new
+        {
+            success = true,
+            data = new
+            {
+                pause.Id,
+                Ip = string.Join(".", pause.Ip.Select(b => b.ToString())), // Convert IP bytes back to string
+                pause.StartedAt
             }
         });
     }
-
-    [NonAction]
-    private async Task<Response> RetrieveGymsByCity(string country, string city) {
-        try {
-            TextInfo textInfo = new CultureInfo("en-US", false).TextInfo;
-            var reqCity = _context.Cities.AsNoTracking()
-                                  .Include(c => c.Country)
-                                  .Where(c => c.Name == textInfo.ToTitleCase(city))
-                                  .Where(c => c.Country.Name == textInfo.ToTitleCase(country))
-                                  .FirstOrDefault();
-
-            if (reqCity == null) {
-                return new Response(
-                    ErrorMessage.ErrorMessages["Location error"],
-                    "Location error",
-                    true
-                );
+    catch (Exception ex)
+    {
+        return StatusCode(500, new
+        {
+            success = false,
+            error = new
+            {
+                code = "InternalError",
+                message = ex.Message
             }
-
-            var gyms = _context.Gyms.AsNoTracking()
-                               .Include(g => g.City).ThenInclude(c => c.Country)
-                               .Include(g => g.Currency)
-                               .Include(g => g.GymWorkingHours).ThenInclude(w => w.WorkingHours)
-                               .Where(g => g.CityId == reqCity.Id)
-                               .OrderBy(g => g.CreatedAt)
-                               .Select(g => new GymViewModel {
-                                   Id = g.Id,
-                                   Name = g.Name,
-                                   Address = g.Address,
-                                   City = g.City.Name,
-                                   Country = g.City.Country.Name,
-                                   Currency = g.Currency.Code,
-                                   Latitude = g.Latitude,
-                                   Longitude = g.Longitude,
-                                   MonthlyMprice = g.MonthlyMprice,
-                                   IsWheelchairAccessible = g.IsWheelchairAccessible,
-                                   PhoneNumber = g.PhoneNumber,
-                                   YearlyMprice = g.YearlyMprice,
-                                   SixMonthsMprice = g.SixMonthsMprice,
-                                   Website = g.Website,
-                                   IsOwned = g.OwnedBy.HasValue,
-                                   WorkingHours = g.GymWorkingHours.Select(w => new GymWorkingHoursViewModel {
-                                       Weekday = w.Weekday,
-                                       OpenFrom = w.WorkingHours.OpenFrom,
-                                       OpenUntil = w.WorkingHours.OpenUntil,
-                                   }).ToList()
-                               })
-                               .AsSplitQuery()
-                               .ToList();
-
-            return new Response(gyms);
-        } catch (Exception e) {
-            return new Response(
-                ErrorMessage.ErrorMessages["Internal error"],
-                "Internal error",
-                true
-            );
-        }
+        });
     }
+}
 
-    [NonAction]
-    private async Task<Response> GetCity(double lat, double lng) {
-        Response response = await _googleApi.GetCity(lat, lng);
-        if (!response.Success) return response;
+  [Authorize(Policy = "UserOnly")]
+[HttpGet("pause-by-user/{userId}")]
+public async Task<IActionResult> GetPauseByUserId(Guid userId)
+{
+    try
+    {
+        // Query the database for a matching pause entry by user_id
+        var pause = await _context.RequestPauses
+            .AsNoTracking()
+            .FirstOrDefaultAsync(p => p.UserId == userId);
 
-        Geocode newCity = (Geocode)response.Value;
-        var cityCheck = _context.Cities.AsNoTracking()
-                           .Include(c => c.Country)
-                           .Where(c => c.Name == newCity.City && c.Country.Name == newCity.Country)
-                           .Where(c => c.Swlatitude <= lat && lat <= c.Nelatitude)
-                           .Where(c => c.Swlongitude <= lng && lng <= c.Nelongitude)
-                           .FirstOrDefault();
-        
-        if (cityCheck != null) {
-            return new Response(cityCheck);
-        } 
-
-        var country = _context.Countries.AsNoTracking()
-                              .FirstOrDefault(c => c.Name == newCity.Country);
-
-        if (country == null) {
-            country = new Country {
-                Name = newCity.Country
-            };
-
-            _context.Countries.Add(country);
-            await _context.SaveChangesAsync();
-        } else {
-            _context.Attach(country);
+        if (pause == null)
+        {
+            return NotFound(new
+            {
+                success = false,
+                message = "No pause found for the given user ID."
+            });
         }
 
-        var city = new City {
-            Name = newCity.City,
-            Country = country,
-            Nelongitude = newCity.Nelongitude,
-            Nelatitude = newCity.Nelatitude,
-            Swlongitude = newCity.Swlongitude,
-            Swlatitude = newCity.Swlatitude,
-        };
-        _context.Cities.Add(city);
-        await _context.SaveChangesAsync();
-
-        return new Response(city);
+        return Ok(new
+        {
+            success = true,
+            data = new
+            {
+                pause.Id,
+                pause.UserId,
+                pause.Ip,
+                pause.StartedAt
+            }
+        });
     }
+    catch (Exception ex)
+    {
+        return StatusCode(500, new
+        {
+            success = false,
+            error = new
+            {
+                code = "InternalError",
+                message = ex.Message
+            }
+        });
+    }
+}
+    
 }

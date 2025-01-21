@@ -167,6 +167,8 @@ button[type="submit"].btn-submit {
     cursor: pointer;
     transition: background-color 0.3s;
     width: 100%;
+
+    font-size: 1rem;
 }
 
 button[type="submit"].btn-submit:hover {
@@ -426,6 +428,9 @@ input[type="range"]::-moz-range-thumb {
     background-color: #a0a8f5;
     color: #002147;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    table-layout: fixed;
+
+    word-break: break-all;
 }
 
 .history-table th,
@@ -616,10 +621,12 @@ button.save-btn {
     margin-top: 10px;
 }
 
-button.edit-btn {
+button.btn-name-edit {
     background-color: #f5a042;
     color: #ffffff;
     margin-top: 10px;
+
+    width: 100%;
 }
 
 .search-bar {
@@ -782,6 +789,7 @@ button.btn-action {
     align-items: center;
 
     background-color: rgba(0, 54, 123, 0.7);
+    z-index: 100000;
 }
 
 .loader span {
@@ -940,7 +948,7 @@ form .form-disabler:hover .form-disabler-hint {
 
 .form-group input {
     padding: 10px;
-    border: 1px solid #4a4a8e;
+    border: 1px solid #4a4a8e !important;
     border-radius: 4px;
     font-size: 16px;
     background-color: #28285a;
@@ -960,9 +968,11 @@ form .form-disabler:hover .form-disabler-hint {
     border: none;
     border-radius: 4px;
     padding: 12px;
-    font-size: 16px;
+    font-size: 1rem;
     cursor: pointer;
     transition: background-color 0.3s;
+
+    width: 100%;
 }
 
 .btn-primary:hover {
@@ -984,9 +994,11 @@ form .form-disabler:hover .form-disabler-hint {
     border: none;
     border-radius: 4px;
     padding: 12px;
-    font-size: 16px;
+    font-size: 1rem;
     cursor: pointer;
     transition: background-color 0.3s;
+
+    width: 100%;
 }
 
 .btn-danger:hover {
@@ -1038,6 +1050,20 @@ form .form-disabler:hover .form-disabler-hint {
     display: flex;
     justify-content: space-between;
     margin-top: 20px;
+}
+
+.account-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.modal .modal-delete-text {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    margin: 10px 0;
 }
 
 

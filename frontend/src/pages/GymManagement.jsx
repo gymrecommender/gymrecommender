@@ -11,6 +11,7 @@ import GymOwnership from "../components/gym/GymOwnership.jsx";
 import {toast} from "react-toastify";
 import {useConfirm} from "../context/ConfirmProvider.jsx";
 import {axiosInternal} from "../services/axios.jsx";
+import {sanitizeData} from "../services/helpers.jsx";
 
 const GymManagement = () => {
 	const [gyms, setGyms] = useState([]);
@@ -26,7 +27,9 @@ const GymManagement = () => {
 			const result = await axiosInternal("GET", "gym/currencies")
 
 			if (result.error) toast(result.error.message);
-			else setCurrencies(result.data);
+			else setCurrencies(result.data.map(elem => {
+				return {id: elem.id, value: elem.code, label: elem.code}
+			}));
 		}
 
 		const retrieveOwnedGyms = async () => {
@@ -39,6 +42,44 @@ const GymManagement = () => {
 		retrieveCurrencies();
 		retrieveOwnedGyms();
 	}, [])
+
+	const handleEditSubmit = async (id, values) => {
+		const sanitizedData = sanitizeData(values);
+
+		const workingHours = []
+		weekdays.forEach((_, index) => {
+			if (sanitizedData[`${index}-openFrom`] && sanitizedData[`${index}-openUntil`]) {
+				workingHours.push({
+					weekday: index,
+					openFrom: sanitizedData[`${index}-openFrom`] + ":00",
+					openUntil: sanitizedData[`${index}-openUntil`] + (sanitizedData[`${index}-openUntil`] === "23:59" ? ":59" : ":00"),
+				})
+			} else {
+				workingHours.push({
+					weekday: index
+				})
+			}
+
+			delete sanitizedData[`${index}-openFrom`]
+			delete sanitizedData[`${index}-openUntil`]
+		});
+
+		const {congestionRating, rating, currencyId, isOwned, country, city, ...rest} = sanitizedData
+		const formattedValues = {
+			...rest,
+			"workingHours": workingHours
+		}
+
+		const result = await axiosInternal("PUT", `gymaccount/gym/${id}`, formattedValues);
+		if (result.error) toast(result.error.message);
+		else {
+			toast("The gym has been updated successfully");
+			setGyms(gyms.map((oneGym) => {
+				if (oneGym.id === id) return result.data
+				return oneGym
+			}))
+		}
+	}
 
 	const onConfirm = async (gymId, gymName) => {
 		flushData();
@@ -66,7 +107,9 @@ const GymManagement = () => {
 			                   );
 		                   }}
 		                   weekdays={weekdays} data={gym}
-		                   currencies={currencies}/>
+		                   currencies={currencies}
+		                   handleEditSubmit={handleEditSubmit}
+		/>
 	})
 	return (
 		<div className="section">

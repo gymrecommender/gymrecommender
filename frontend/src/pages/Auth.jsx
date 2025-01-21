@@ -51,11 +51,12 @@ const Auth = () => {
 				[
 					{pos: 1, type: "text", minLength: 2, label: "First name", required: true, name: "firstName"},
 					{pos: 2, type: "text", label: "Last name", required: true, name: "lastName"},
-					{pos: 3, type: "text", required: true, label: "Username", name: "username"},
+					{pos: 3, type: "text", minLength: 8, required: true, label: "Username", name: "username"},
 					{
 						pos: 6,
 						type: "password",
 						required: true,
+						minLength: 6,
 						sameAs: {fieldName: "password", message: "The passwords do not match"},
 						label: "Repeat the password",
 						name: "passwordRepeat"
@@ -69,7 +70,7 @@ const Auth = () => {
 				label: "Email",
 				name: "email"
 			},
-			{pos: 5, type: "password", required: true, label: "Password", name: "password"},
+			{pos: 5, type: "password", minLength: 6, required: true, label: "Password", name: "password"},
 		],
 		fieldClass: "input-login",
 		wClassName: "form-group",

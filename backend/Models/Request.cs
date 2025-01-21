@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using backend.Enums;
 
 namespace backend.Models;
 
@@ -24,12 +25,16 @@ public partial class Request
     public int MinMembershipPrice { get; set; }
 
     public string? Name { get; set; }
+    
+    public MembershipLength MembType { get; set; }
 
     public Guid UserId { get; set; }
+    
+    public TimeOnly? DepartureTime { get; set; }
+    
+    public TimeOnly? ArrivalTime { get; set; }
 
     public virtual ICollection<Recommendation> Recommendations { get; set; } = new List<Recommendation>();
-
-    public virtual ICollection<RequestPeriod> RequestPeriods { get; set; } = new List<RequestPeriod>();
 
     public virtual Account User { get; set; } = null!;
 }

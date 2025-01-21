@@ -1,3 +1,4 @@
+using System.Text;
 using backend.DTO;
 using backend.Enums;
 using backend.Models;
@@ -6,6 +7,8 @@ using backend.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
+using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace backend.Controllers;
 
@@ -14,42 +17,138 @@ public abstract class AccountControllerTemplate : Controller {
     protected AccountType _accountType;
     protected readonly GymrecommenderContext _context;
     protected readonly AppSettings _appData;
+    protected readonly HttpClient _httpClient;
 
-    public AccountControllerTemplate(GymrecommenderContext context, IOptions<AppSettings> appSettings) {
+    public AccountControllerTemplate(GymrecommenderContext context, HttpClient httpClient,
+                                     IOptions<AppSettings> appSettings) {
         _context = context;
         _appData = appSettings.Value;
+        _httpClient = httpClient;
     }
 
     [NonAction]
-    public async Task<IActionResult> GetByUsername(string username, AccountType? accountType = null) {
-        var accountQuery = _context.Accounts.AsNoTracking()
-                                   .Where(a => a.Username == username);
+    protected async Task<IActionResult> SignUp(AccountDto accountDto, AccountType type, Guid? createdBy = null) {
+        using var transaction = await _context.Database.BeginTransactionAsync();
+        
+        if (ModelState.IsValid) {
+            try {
+                var errors = new Dictionary<string, string[]> { };
+                if (!Enum.TryParse<ProviderType>(accountDto.Provider, out var provider)) {
+                    errors["Provider"] = new[] { $"Provider {accountDto.Provider} is not supported" };
+                } //not sure if this can be changed to a smarter way
 
-        if (accountType is not null) {
-            accountQuery = accountQuery.Where(a => a.Type == accountType);
-        }
-
-        var account = await accountQuery.FirstOrDefaultAsync();
-
-        if (account == null) {
-            return NotFound(new {
-                success = false, error = new {
-                    code = "UsernameError",
-                    message = ErrorMessage.ErrorMessages["UsernameError"]
+                if (errors.Count > 0) {
+                    return BadRequest(new {
+                        success = false,
+                        error = new {
+                            code = "ValidationError",
+                            message = "Some fields contain invalid data",
+                            details = errors
+                        }
+                    });
                 }
-            }); //new { error = $"User {username} is not found" }
+
+                var firebaseApiKey = Environment.GetEnvironmentVariable("FIREBASE_API_KEY")
+                                     ?? throw new InvalidOperationException("FIREBASE_API_KEY not set.");
+                var firebaseApiUrl =
+                    $"https://identitytoolkit.googleapis.com/v1/accounts:signUp?key={firebaseApiKey}";
+
+                // Prepare request payload for Firebase sign-up
+                var payload = new {
+                    email = accountDto.Email,
+                    password = accountDto.Password,
+                    returnSecureToken = true
+                };
+                
+                var jsonPayload = JsonConvert.SerializeObject(payload);
+                var content = new StringContent(jsonPayload, Encoding.UTF8, "application/json");
+                
+                var firebaseResponse = await _httpClient.PostAsync(firebaseApiUrl, content);
+
+                if (!firebaseResponse.IsSuccessStatusCode) {
+                    var errorResponse = await firebaseResponse.Content.ReadAsStringAsync();
+                    return StatusCode(500, new {
+                        success = false,
+                        error = new {
+                            code = "SignupError",
+                            message = "Error creating Firebase user",
+                            details = errorResponse
+                        }
+                    });
+                }
+                var responseContent = await firebaseResponse.Content.ReadAsStringAsync();
+                var signUpResponse = JsonConvert.DeserializeObject<FirebaseSignUpResponse>(responseContent);
+
+                var firebaseUrl = $"https://identitytoolkit.googleapis.com/v1/accounts:sendOobCode?key={firebaseApiKey}";
+                var requestBody = new
+                {
+                    requestType = "VERIFY_EMAIL",
+                    email = accountDto.Email,
+                    idToken = signUpResponse.idToken
+                };
+
+                var contentEmail = new StringContent(JsonSerializer.Serialize(requestBody), Encoding.UTF8, "application/json");
+                var responseEmail = await _httpClient.PostAsync(firebaseUrl, contentEmail);
+
+                if (!responseEmail.IsSuccessStatusCode)
+                {
+                    var errorContent = await responseEmail.Content.ReadAsStringAsync();
+                    return StatusCode(500, new {
+                        success = false,
+                        error = new {
+                            code = "SignupError",
+                            message = "Error creating Firebase user",
+                            details = errorContent
+                        }
+                    });
+                }
+                
+                var account = new Account {
+                    Username = accountDto.Username,
+                    Email = accountDto.Email,
+                    FirstName = accountDto.FirstName,
+                    LastName = accountDto.LastName,
+                    Type = type,
+                    Provider = provider,
+                    CreatedAt = DateTime.UtcNow,
+                    PasswordHash = BCrypt.Net.BCrypt.HashPassword(accountDto.Password),
+                    IsEmailVerified = false,
+                    CreatedBy = createdBy,
+                    OuterUid = signUpResponse.localId
+                };
+                _context.Accounts.Add(account);
+                await _context.SaveChangesAsync();
+
+                await transaction.CommitAsync();
+                
+                var role = account.Type.ToString();
+                var response = new AuthResponse() {
+                    Username = account.Username,
+                    Email = account.Email,
+                    FirstName = account.FirstName,
+                    LastName = account.LastName,
+                    Role = role,
+                };
+                return Ok(response);
+            } catch (Exception _) {
+                await transaction.RollbackAsync();
+                
+                return StatusCode(500, new {
+                    success = false,
+                    error = new {
+                        code = "SignupError",
+                        message = ErrorMessage.ErrorMessages["SignUpError"]
+                    }
+                });
+            }
         }
 
-        return Ok(new AccountViewModel {
-            Id = account.Id,
-            Username = account.Username,
-            Email = account.Email,
-            FirstName = account.FirstName,
-            LastName = account.LastName,
-            IsEmailVerified = account.IsEmailVerified,
-            LastSignIn = account.LastSignIn,
-            Type = account.Type.ToString(),
-            Provider = account.Provider.ToString(),
+        return BadRequest(new {
+            success = false,
+            error = new {
+                code = "ValidationError",
+                message = ErrorMessage.ErrorMessages["ValidationError"],
+            }
         });
     }
 
@@ -122,60 +221,6 @@ public abstract class AccountControllerTemplate : Controller {
                 //details = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage)
             }
         });
-    }
-
-    [NonAction]
-    public async Task<IActionResult> DeleteAccount(AccountType accountType) {
-        var firebaseUid = HttpContext.User.FindFirst("user_id")?.Value;
-
-        var account = _context.Accounts.AsTracking()
-                              .Where(a => a.OuterUid == firebaseUid)
-                              .Where(a => a.Type == accountType).FirstOrDefault();
-
-        if (account == null) {
-            return NotFound(new {
-                success = false, error = new {
-                    code = "UsernameError",
-                    message = ErrorMessage.ErrorMessages["UsernameError"]
-                }
-            });
-        }
-
-        _context.Accounts.Remove(account);
-        await _context.SaveChangesAsync();
-
-        return NoContent();
-    }
-
-    [NonAction]
-    public async Task<IActionResult> GetRoleByUid() {
-        try {
-            var firebaseUid = HttpContext.User.FindFirst("user_id")?.Value;
-
-            var account = await _context.Accounts.AsNoTracking()
-                                        .Where(a => a.OuterUid == firebaseUid)
-                                        .FirstOrDefaultAsync();
-
-            if (account == null) {
-                return NotFound(new {
-                    success = false, error = new {
-                        code = "UIDError",
-                        message = ErrorMessage.ErrorMessages["TokenError"] //?
-                    }
-                });
-            }
-
-            return Ok(new AccountRoleModel {
-                Role = account.Type.ToString()
-            });
-        } catch (Exception e) {
-            return StatusCode(500, new {
-                success = false,
-                error = new {
-                    message = e.Message
-                }
-            });
-        }
     }
 
     [NonAction]

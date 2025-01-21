@@ -2,8 +2,8 @@ import {displayTimestamp} from "../../services/helpers.jsx";
 
 const Gym = ({weekdays, currencies, data}) => {
 	const currency = currencies?.find(item => {
-		return item.code === data.currency
-	}).code
+		return item.value === data.currency
+	}).value
 
 	const workingHours = data.workingHours.reduce((acc, item) => {
 		let value;

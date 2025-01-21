@@ -1,4 +1,4 @@
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import "../styles/header.css";
 import Button from "./simple/Button.jsx";
 import {useNavigate, useLocation} from "react-router-dom";
@@ -16,6 +16,8 @@ import {
     faClipboard
 } from "@fortawesome/free-solid-svg-icons";
 import {useFirebase} from "../context/FirebaseProvider.jsx";
+import {axiosInternal} from "../services/axios.jsx";
+import {toast} from "react-toastify";
 
 const Header = () => {
     const {getUser, logout} = useFirebase();
@@ -23,15 +25,28 @@ const Header = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const [showNotifications, setShowNotifications] = useState(false);
-    const [notifications, setNotifications] = useState([
-        {id: 1, message: "Your gym membership is expiring soon.", read: false},
-        {id: 2, message: "New gym added near your location!", read: false},
-    ]);
+    const [notifications, setNotifications] = useState([]);
 
-    const handleToggleNotifications = () => {
+    useEffect(() => {
+        if (getUser()?.role === "user") {
+            const retrieveNotifications = async () => {
+                const result = await axiosInternal("GET", "useraccount/notifications");
+                if (result.error) toast(result.error.message);
+                else setNotifications(result.data);
+            }
+
+            retrieveNotifications()
+        }
+    }, []);
+
+    const handleToggleNotifications = async () => {
         setShowNotifications((prev) => !prev);
         // Mark all notifications as read
-        setNotifications((prev) => prev.map((notif) => ({...notif, read: true})));
+        await Promise.all(notifications.filter(not => !not.isRead).map(async (notification) => {
+            await axiosInternal("PUT", `useraccount/notifications/${notification.id}`);
+        }))
+
+        setNotifications((prev) => prev.map((notif) => ({...notif, isRead: true})));
     };
 
     const navigationHandler = (path) => {
@@ -41,15 +56,15 @@ const Header = () => {
         window.scrollTo({top: 0, left: 0, behavior: "smooth"});
     };
 
-    const unreadNotifications = notifications.some((notif) => !notif.read);
+    const unreadNotifications = notifications.some((notif) => !notif.isRead);
 
     const buttons = [
-        {title: "Notifications", icon: faBell, action: handleToggleNotifications},
-        {title: "Gyms", icon: faDumbbell, role: "gym", action: () => navigationHandler(`/account/${user.username}/management`)},
-        {title: "Ownership requests", icon: faClipboard, role: "admin", action: () => navigationHandler(`/account/${user.username}/requests`)},
-        {title: "Rate gyms", icon: faStarHalfStroke, role: "user", action: () => navigationHandler(`/account/${user.username}/rating`)},
-        {title: "History", icon: faClockRotateLeft, role: "user", action: () => navigationHandler(`/account/${user.username}/history`)},
-        {title: "Account", icon: faCircleUser, action: () => navigationHandler(`/account/${user.username}`)},
+        {title: "Notifications", icon: faBell, role: "user", action: handleToggleNotifications},
+        {title: "Gyms", icon: faDumbbell, role: "gym", action: () => navigationHandler(`/account/management`)},
+        {title: "Ownership requests", icon: faClipboard, role: "admin", action: () => navigationHandler(`/account/requests`)},
+        {title: "Rate gyms", icon: faStarHalfStroke, role: "user", action: () => navigationHandler(`/account/rating`)},
+        {title: "History", icon: faClockRotateLeft, role: "user", action: () => navigationHandler(`/account/history`)},
+        {title: "Account", icon: faCircleUser, action: () => navigationHandler(`/account`)},
         {title: "Log out", icon: faRightFromBracket, action: () => logout()},
     ];
 
@@ -72,7 +87,7 @@ const Header = () => {
 								/>
 								{title === "Notifications" && unreadNotifications && (
 									<span className="notification-badge">
-										{notifications.filter((notif) => !notif.read).length}
+										{notifications.filter((notif) => !notif.isRead).length}
 									</span>
 								)}
 

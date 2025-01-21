@@ -3,7 +3,6 @@ import GoogleMap from "./simple/GoogleMap.jsx";
 import {getLocation} from "../services/helpers.jsx";
 import {useCoordinates} from "../context/CoordinatesProvider.jsx";
 import {toast} from "react-toastify";
-import {forRatings, mainRatingMarker, secRatingMarket, startMarker} from "../services/markers.jsx";
 
 //expected structure of markers
 // [

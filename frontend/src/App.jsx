@@ -27,7 +27,7 @@ const App = () => {
 								<Index/>
 							</TitleSetter>
 						}/>
-						<Route path='account/:username/*' element={<RoleBasedRoutes/>}/>
+						<Route path='account/*' element={<RoleBasedRoutes/>}/>
 						<Route path={"*"} element={
 							<TitleSetter title={"404|Not Found"}>
 								<NotFound/>

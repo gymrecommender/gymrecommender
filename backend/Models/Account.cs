@@ -53,6 +53,4 @@ public partial class Account
     public virtual RequestPause? RequestPause { get; set; }
 
     public virtual ICollection<Request> Requests { get; set; } = new List<Request>();
-
-    public virtual UserToken? UserToken { get; set; }
 }

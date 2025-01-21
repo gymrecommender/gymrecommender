@@ -3,6 +3,6 @@ namespace backend.Enums;
 public enum MembershipLength
 {
     Month,
-    HalfYear,
+    Halfyear,
     Year
 }

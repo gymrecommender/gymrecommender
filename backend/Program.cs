@@ -16,6 +16,15 @@ builder.Logging.ClearProviders();
 builder.Logging.AddConsole();
 builder.Logging.AddDebug();
 
+//================================================
+
+builder.Services.AddControllers().AddJsonOptions(options =>
+{
+    options.JsonSerializerOptions.Converters.Add(new backend.Utilities.TimeOnlyJsonConverter());
+});
+
+//================================================
+
 builder.Services.AddControllers().AddJsonOptions(options =>
 {
     options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.CamelCase,
@@ -89,6 +98,7 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<IAuthorizationHandler, AuthorizationRequestHandler>();
 builder.Services.AddScoped<RecommendationService, RecommendationService>();
 builder.Services.AddScoped<GeoService, GeoService>();
+builder.Services.AddScoped<GymRetrievalService, GymRetrievalService>();
 builder.Services.AddScoped<AuthenticationService, AuthenticationService>();
 
 

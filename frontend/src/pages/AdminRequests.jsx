@@ -13,6 +13,8 @@ import AccordionRequests from "../components/simple/AccordionRequests.jsx";
 import {toast} from "react-toastify";
 import {useConfirm} from "../context/ConfirmProvider.jsx";
 import {axiosInternal} from "../services/axios.jsx";
+import {accountSignUp} from "../services/accountHelpers.jsx";
+import Loader from "../components/simple/Loader.jsx";
 
 const statuses = [
 	{value: "approved", label: "Approved"},
@@ -57,7 +59,8 @@ const accountData = {
 const AdminRequests = () => {
 	const [showCreateAdminModal, setShowCreateAdminModal] = useState(false);
 	const [groupedGyms, setGroupedGyms] = useState({});
-	const {flushData, setValues} = useConfirm();
+	const [loader, setLoader] = useState(false);
+	const {setValues, flushData} = useConfirm();
 
 	useEffect(() => {
 		const retrieveOwnershipRequests = async () => {
@@ -87,7 +90,6 @@ const AdminRequests = () => {
 			else delete copy[gymId].requests[gymRequestId];
 		}))
 
-		console.log(copy[gymId].requests)
 		if (Object.keys(copy[gymId].requests).length === 0) {
 			toast(`Responses for '${copy[gymId].name}' has been successfully submitted`)
 			delete copy[gymId];
@@ -127,8 +129,16 @@ const AdminRequests = () => {
 		}
 	}
 
-	const handleAccountSubmit = (values) => {
-		console.log(values);
+	const handleAccountSubmit = async (values) => {
+		const {passwordRepeat, ...rest} = values;
+		setLoader(true)
+		const result = await axiosInternal("POST", `adminaccount/create/${rest.type}`, {...rest, provider: "local"})
+		if (result.error) toast(result.error.message);
+		else {
+			toast("The new account has been successfully created");
+			setShowCreateAdminModal(false);
+		}
+		setLoader(false);
 	}
 
 	const requests = Object.keys(groupedGyms)?.map((gymId) => {
@@ -160,6 +170,8 @@ const AdminRequests = () => {
 					<Form className={"modal-form"} data={accountData} onSubmit={handleAccountSubmit}/>
 				</Modal>
 			)}
+
+			{loader ? <Loader/> : null}
 		</div>
 	);
 };
