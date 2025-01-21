@@ -6,10 +6,13 @@ using backend.Utilities;
 using backend.ViewModels;
 using backend.ViewModels.WorkingHour;
 using backend.Views;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Sprache;
+using System.Security.Claims;
+using backend.DTOs;
 
 namespace backend.Controllers;
 
@@ -83,6 +86,14 @@ public class GymController : Controller {
     private async Task<Response> SaveNewGyms(List<Tuple<Gym, List<GymWorkingHoursViewModel>>> data) {
         try {
             var existingWorkingHours = await _context.WorkingHours.AsNoTracking().ToListAsync();
+            var dbWorkingHours = existingWorkingHours
+                                 .Select(wh => new WorkingHour {
+                                     Id = wh.Id,
+                                     OpenFrom = wh.OpenFrom,
+                                     OpenUntil = wh.OpenUntil
+                                 })
+                                 .ToList();
+            
             //TODO currency should be determined in some other way
             var currency = _context.Currencies.AsNoTracking().Where(c => c.Code == "EUR").ToList().First();
 
@@ -104,12 +115,14 @@ public class GymController : Controller {
                             OpenUntil = wHour.OpenUntil,
                         };
                         _context.WorkingHours.Add(match);
-
                         existingWorkingHours.Add(match);
                     } else {
                         //We need to track the already existing entries in the WorkingHour table in order for dotnet to
                         //not try to create another instance of it upon saving
-                        _context.Attach(match);
+                        var matchDb = dbWorkingHours.FirstOrDefault(wh =>
+                            wh.OpenFrom == match.OpenFrom && wh.OpenUntil == match.OpenUntil);
+                        
+                            if (matchDb != null) _context.Attach(match);
                     }
 
                     //Binding working hours with the working hours of the current gym
@@ -131,4 +144,217 @@ public class GymController : Controller {
             );
         }
     }
+
+[HttpGet("api/gym/getpausebyip")]
+public async Task<IActionResult> GetPauseByIp([FromQuery] string? ip = null)
+{
+    try
+    {
+        // Use the provided IP address or fall back to the client's IP address
+        string clientIp = ip ?? HttpContext.Connection.RemoteIpAddress?.ToString();
+
+        // Validation: Ensure the IP address is available
+        if (string.IsNullOrEmpty(clientIp))
+        {
+            return BadRequest(new
+            {
+                success = false,
+                error = new
+                {
+                    code = "InvalidRequest",
+                    message = "Could not retrieve the IP address."
+                }
+            });
+        }
+
+        // Convert the IP to a byte array
+        byte[] clientIpBytes = clientIp.Contains(":")
+            ? System.Net.IPAddress.Parse(clientIp).GetAddressBytes() // IPv6
+            : System.Net.IPAddress.Parse(clientIp).GetAddressBytes(); // IPv4
+
+        // Query the database for a matching pause entry
+        var pause = await _context.RequestPauses
+            .AsNoTracking()
+            .FirstOrDefaultAsync(p => p.Ip != null && p.Ip.SequenceEqual(clientIpBytes));
+
+        if (pause == null)
+        {
+            return NotFound(new
+            {
+                success = false,
+                message = "No pause found for the given IP address."
+            });
+        }
+
+        return Ok(new
+        {
+            success = true,
+            data = new
+            {
+                pause.Id,
+                Ip = string.Join(".", pause.Ip.Select(b => b.ToString())), // Convert IP bytes back to string
+                pause.StartedAt
+            }
+        });
+    }
+    catch (Exception ex)
+    {
+        return StatusCode(500, new
+        {
+            success = false,
+            error = new
+            {
+                code = "InternalError",
+                message = ex.Message
+            }
+        });
+    }
+}
+
+  [Authorize(Policy = "UserOnly")]
+[HttpGet("pause-by-user/{userId}")]
+public async Task<IActionResult> GetPauseByUserId(Guid userId)
+{
+    try
+    {
+        // Query the database for a matching pause entry by user_id
+        var pause = await _context.RequestPauses
+            .AsNoTracking()
+            .FirstOrDefaultAsync(p => p.UserId == userId);
+
+        if (pause == null)
+        {
+            return NotFound(new
+            {
+                success = false,
+                message = "No pause found for the given user ID."
+            });
+        }
+
+        return Ok(new
+        {
+            success = true,
+            data = new
+            {
+                pause.Id,
+                pause.UserId,
+                pause.Ip,
+                pause.StartedAt
+            }
+        });
+    }
+    catch (Exception ex)
+    {
+        return StatusCode(500, new
+        {
+            success = false,
+            error = new
+            {
+                code = "InternalError",
+                message = ex.Message
+            }
+        });
+    }
+}
+[HttpPost("save-pause-authenticated")]
+[Authorize(Policy = "UserOnly")]
+public async Task<IActionResult> SavePauseAuthenticated([FromBody] AuthenticatedPauseRequestDto request)
+{
+    try
+    {
+        // Validate the input
+        if (request == null || request.UserId == Guid.Empty)
+        {
+            return BadRequest(new
+            {
+                success = false,
+                error = new
+                {
+                    code = "InvalidRequest",
+                    message = "User ID is required and must be a valid GUID."
+                }
+            });
+        }
+
+        // Create a new RequestPause instance
+        var pause = new RequestPause
+        {
+            UserId = request.UserId,
+            Ip = null,
+            StartedAt = request.StartedAt ?? DateTime.UtcNow
+        };
+
+        // Add to database
+        _context.RequestPauses.Add(pause);
+        await _context.SaveChangesAsync();
+
+        return Ok(new { success = true, message = "Pause saved successfully." });
+    }
+    catch (Exception ex)
+    {
+        return StatusCode(500, new
+        {
+            success = false,
+            error = new
+            {
+                code = "InternalError",
+                message = ex.Message
+            }
+        });
+    }
+}
+    
+[HttpPost("enforcePauseForNonAuthenticatedUser")]
+public async Task<IActionResult> EnforcePauseForNonAuthenticatedUser([FromBody] PauseRequestModel model)
+{
+    try
+    {
+        // Validate the IP address (it should be provided for non-authenticated users)
+        if (string.IsNullOrEmpty(model.Ip))
+        {
+            return BadRequest(new
+            {
+                success = false,
+                error = new
+                {
+                    code = "InvalidRequest",
+                    message = "IP address is required for non-authenticated users."
+                }
+            });
+        }
+
+        // Convert the IP address from string to byte array
+        byte[] ipBytes = System.Net.IPAddress.Parse(model.Ip).GetAddressBytes();
+
+        // Create and save the request pause entry for non-authenticated user
+        var requestPause = new RequestPause
+        {
+            Id = Guid.NewGuid(),
+            UserId = null,  // No userId for non-authenticated users
+            Ip = ipBytes,
+            StartedAt = DateTime.UtcNow
+        };
+
+        _context.RequestPauses.Add(requestPause);
+        await _context.SaveChangesAsync();
+
+        return Ok(new
+        {
+            success = true,
+            message = "Pause enforced successfully for non-authenticated user."
+        });
+    }
+    catch (Exception ex)
+    {
+        return StatusCode(500, new
+        {
+            success = false,
+            error = new
+            {
+                code = "InternalError",
+                message = ex.Message
+            }
+        });
+    }
+}
 }
