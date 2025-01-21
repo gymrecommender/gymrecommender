@@ -51,37 +51,39 @@ public class GymAccountController : AccountControllerTemplate {
                                      .Include(g => g.OwnedByNavigation)
                                      .Where(g => g.OwnedByNavigation != null &&
                                                  g.OwnedByNavigation.OuterUid == firebaseUid)
-                                     .Select(g => new GymViewModel {
-                                         Id = g.Id,
-                                         Name = g.Name,
-                                         Longitude = g.Longitude,
-                                         Latitude = g.Latitude,
-                                         Address = g.Address,
-                                         PhoneNumber = g.PhoneNumber,
-                                         IsWheelchairAccessible = g.IsWheelchairAccessible,
-                                         Website = g.Website,
-                                         MonthlyMprice = g.MonthlyMprice,
-                                         YearlyMprice = g.YearlyMprice,
-                                         SixMonthsMprice = g.SixMonthsMprice,
-                                         Currency = g.Currency.Code,
-                                         City = g.City.Name,
-                                         Country = g.City.Country.Name,
-                                         CurrencyId = g.CurrencyId,
-                                         CongestionRating = g.CongestionRating,
-                                         Rating = (g.ExternalRatingNumber + g.InternalRatingNumber) > 0
-                                             ? (decimal)Math.Round(
-                                                 ((double)g.ExternalRating * g.ExternalRatingNumber +
-                                                  (double)g.InternalRating * g.InternalRatingNumber) /
-                                                 (g.ExternalRatingNumber + g.InternalRatingNumber), 2)
-                                             : 0,
-                                         WorkingHours = g.GymWorkingHours.Select(wh => new GymWorkingHoursViewModel {
-                                             Weekday = wh.Weekday,
-                                             OpenFrom = wh.WorkingHours.OpenFrom,
-                                             OpenUntil = wh.WorkingHours.OpenUntil
-                                         }).ToList()
-                                     })
                                      .ToListAsync();
-            return Ok(gyms);
+
+            var gymsViewModels = gyms.Select(g => new GymViewModel {
+                Id = g.Id,
+                Name = g.Name,
+                Longitude = g.Longitude,
+                Latitude = g.Latitude,
+                Address = g.Address,
+                PhoneNumber = g.PhoneNumber,
+                IsWheelchairAccessible = g.IsWheelchairAccessible,
+                Website = g.Website,
+                MonthlyMprice = g.MonthlyMprice,
+                YearlyMprice = g.YearlyMprice,
+                SixMonthsMprice = g.SixMonthsMprice,
+                Currency = g.Currency.Code,
+                City = g.City.Name,
+                Country = g.City.Country.Name,
+                CurrencyId = g.CurrencyId,
+                CongestionRating = g.CongestionRating,
+                Rating = (g.ExternalRatingNumber + g.InternalRatingNumber) > 0
+                    ? (decimal)Math.Round(
+                        ((double)g.ExternalRating * g.ExternalRatingNumber +
+                         (double)g.InternalRating * g.InternalRatingNumber) /
+                        (g.ExternalRatingNumber + g.InternalRatingNumber), 2)
+                    : 0,
+                WorkingHours = g.GymWorkingHours.Select(wh => new GymWorkingHoursViewModel {
+                    Weekday = wh.Weekday,
+                    OpenFrom = wh.WorkingHours.OpenFrom,
+                    OpenUntil = wh.WorkingHours.OpenUntil
+                }).ToList()
+            }).ToList();
+            
+            return Ok(gymsViewModels);
         } catch (Exception _) {
             return StatusCode(500, new {
                 success = false,

@@ -57,83 +57,26 @@ public class GymController : Controller {
     [HttpGet("{country}/{city}")]
     public async Task<IActionResult> GetGymsByCity(string country, string city) {
         var gymsRes = await _gymRetrievalService.RetrieveGymsByCity(country, city);
-        if (!gymsRes.Success) return ParseError(gymsRes);
+        if (!gymsRes.Success) {
+            var error = _gymRetrievalService.ParseError(gymsRes);
+            return StatusCode(int.Parse(error.ErrorCode), new {
+                message = error.Error,
+            });
+        }
 
         return Ok(gymsRes.Value);
     }
 
     [HttpGet("location")]
-    public async Task<IActionResult> GetGymsForLocation([FromQuery] double lat, [FromQuery] double lng) {
-        try {
-            var cityRes = await _gymRetrievalService.GetCity(lat, lng);
-            if (!cityRes.Success) {
-                return StatusCode(Convert.ToInt32(cityRes.ErrorCode), new {
-                    success = false,
-                    error = new {
-                        code = cityRes.ErrorCode,
-                        message = cityRes.Error,
-                    }
-                });
-            }
-            City city = (City)cityRes.Value;
-
-            var gymsRes = await _gymRetrievalService.RetrieveGymsByCity(city.Country.Name, city.Name);
-            if (!gymsRes.Success) return ParseError(gymsRes);
-
-            //If we already have at least one gym for the area, considering that we do not have functionality
-            //of deleting a gym from the table for any account type, we can conclude that we have already
-            //retrieved the gyms for the current city and it is enough to just return these gyms
-            if (((List<GymViewModel>)gymsRes.Value).Count() != 0) return Ok(gymsRes);
-
-            // Since we are limited by the number of allowed free requests to the Google API
-            // We will retrieve the gyms for the city in general, and for the specific location of the user
-            // This way the results will be less personalized and optimal, but we will avoid paying for the services
-            var cityMiddleLat = (city.Nelatitude + city.Swlatitude) / 2;
-            var cityMiddleLng = (city.Nelongitude + city.Swlongitude) / 2;
-            
-            //Retrieving the gyms for the current city via the Google API
-            var result = await _googleApiService.GetGyms(cityMiddleLat, cityMiddleLng, _gymRetrievalService.CalculateCityRadius(city), city);
-            if (!result.Success) return ParseError(result);
-            
-            //Saving retrieved gyms, working hours and their relations to the database
-            var save = await SaveNewGyms((List<Tuple<Gym, List<GymWorkingHoursViewModel>>>)result.Value);
-            if (!save.Success) return ParseError(save);
-            
-            //Retrieving the gyms for the city from the database
-            gymsRes = await _gymRetrievalService.RetrieveGymsByCity(city.Country.Name, city.Name);
-            if (!gymsRes.Success) return ParseError(gymsRes);
-            
-            return Ok(gymsRes);
-        } catch (Exception e) {
-            return StatusCode(500, new {
-                success = false,
-                error = new {
-                    code = "Internal error",
-                    message = e.Message,
-                }
+    public async Task<IActionResult> GetGymsForLocation([FromQuery] double lat, [FromQuery] double lng, [FromQuery]bool gApi = true) {
+        var result = await _gymRetrievalService.RetrieveGyms(lat, lng, gApi);
+        if (!result.Success) {
+            return StatusCode(int.Parse(result.ErrorCode), new {
+                message = result.Error,
             });
         }
-    }
-
-    [NonAction]
-    public IActionResult ParseError(Response gymsRes) {
-        if (gymsRes.ErrorCode == "Internal error") {
-            return StatusCode(500, new {
-                success = false,
-                error = new {
-                    code = gymsRes.ErrorCode,
-                    message = gymsRes.Error,
-                }
-            });
-        }
-
-        return BadRequest(new {
-            success = false,
-            error = new {
-                code = gymsRes.ErrorCode,
-                message = gymsRes.Error,
-            }
-        });
+        
+        return Ok(result.Value);
     }
     
     [NonAction]

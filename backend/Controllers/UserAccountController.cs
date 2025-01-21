@@ -156,71 +156,78 @@ public class UserAccountController : AccountControllerTemplate {
 
             if (request == null) throw new Exception("The request has not been found or does not belong to the user.");
 
-            var recommendations = _context.Recommendations
-                                          .Include(r => r.Gym).ThenInclude(g => g.GymWorkingHours)
-                                          .ThenInclude(gwh => gwh.WorkingHours)
-                                          .Include(r => r.Request)
-                                          .Where(r => r.RequestId == request.Id)
-                                          .Select(r => new {
-                                              Type = r.Type.ToString(),
-                                              Gym = new GymViewModel {
-                                                  Id = r.Gym.Id,
-                                                  Name = r.Gym.Name,
-                                                  Country = r.Gym.City.Country.Name,
-                                                  City = r.Gym.City.Name,
-                                                  Address = r.Gym.Address,
-                                                  IsOwned = r.Gym.OwnedBy.HasValue,
-                                                  Latitude = r.Gym.Latitude,
-                                                  Longitude = r.Gym.Longitude,
-                                                  IsWheelchairAccessible = r.Gym.IsWheelchairAccessible,
-                                                  Currency = r.Gym.Currency.Code,
-                                                  PhoneNumber = r.Gym.PhoneNumber,
-                                                  MonthlyMprice = r.Gym.MonthlyMprice,
-                                                  SixMonthsMprice = r.Gym.SixMonthsMprice,
-                                                  YearlyMprice = r.Gym.YearlyMprice,
-                                                  Website = r.Gym.Website,
-                                                  CurrencyId = r.Gym.CurrencyId,
-                                                  CongestionRating = r.Gym.CongestionRating,
-                                                  Rating = (r.Gym.ExternalRatingNumber + r.Gym.InternalRatingNumber) > 0
-                                                      ? (decimal)Math.Round(
-                                                          ((double)r.Gym.ExternalRating * r.Gym.ExternalRatingNumber +
-                                                           (double)r.Gym.InternalRating * r.Gym.InternalRatingNumber) /
-                                                          (r.Gym.ExternalRatingNumber + r.Gym.InternalRatingNumber), 2)
-                                                      : 0,
-                                                  WorkingHours = r.Gym.GymWorkingHours.Select(w =>
-                                                      new GymWorkingHoursViewModel {
-                                                          Weekday = w.Weekday,
-                                                          OpenFrom = w.WorkingHours.OpenFrom,
-                                                          OpenUntil = w.WorkingHours.OpenUntil,
-                                                      }).ToList()
-                                              },
-                                              OverallRating = r.TotalScore,
-                                              TimeRating = r.TimeScore,
-                                              CostRating = r.TcostScore,
-                                              TravellingTime = r.Time,
-                                              TotalCost = r.Tcost,
-                                              CongestionRating = r.CongestionScore,
-                                              RegularRating = r.RatingScore
-                                          }).ToList()
-                                          .GroupBy(r => r.Type)
-                                          .ToDictionary(
-                                              group => group.Key switch {
-                                                  "main" => "mainRecommendations",
-                                                  "alternative" => "additionalRecommendations",
-                                              },
-                                              group => group
-                                                       .Select(r => new {
-                                                           r.Gym,
-                                                           r.OverallRating,
-                                                           r.TimeRating,
-                                                           r.CostRating,
-                                                           r.TravellingTime,
-                                                           r.TotalCost,
-                                                           r.CongestionRating,
-                                                           r.RegularRating
-                                                       })
-                                                       .OrderByDescending(r => r.OverallRating)
-                                                       .ToList());
+            var recommendationsData = _context.Recommendations
+                                              .Include(r => r.Gym).ThenInclude(g => g.GymWorkingHours)
+                                              .ThenInclude(gwh => gwh.WorkingHours)
+                                              .Include(r => r.Gym).ThenInclude(g => g.City).ThenInclude(c => c.Country)
+                                              .Include(r => r.Gym).ThenInclude(g => g.Currency)
+                                              .Include(r => r.Request)
+                                              .Where(r => r.RequestId == request.Id)
+                                              .AsSplitQuery()
+                                              .ToList();
+            
+            var recommendations = recommendationsData
+                                  .Select(r => new {
+                                      Type = r.Type.ToString(),
+                                      Gym = new GymViewModel {
+                                          Id = r.Gym.Id,
+                                          Name = r.Gym.Name,
+                                          Country = r.Gym.City.Country.Name,
+                                          City = r.Gym.City.Name,
+                                          Address = r.Gym.Address,
+                                          IsOwned = r.Gym.OwnedBy.HasValue,
+                                          Latitude = r.Gym.Latitude,
+                                          Longitude = r.Gym.Longitude,
+                                          IsWheelchairAccessible = r.Gym.IsWheelchairAccessible,
+                                          Currency = r.Gym.Currency.Code,
+                                          PhoneNumber = r.Gym.PhoneNumber,
+                                          MonthlyMprice = r.Gym.MonthlyMprice,
+                                          SixMonthsMprice = r.Gym.SixMonthsMprice,
+                                          YearlyMprice = r.Gym.YearlyMprice,
+                                          Website = r.Gym.Website,
+                                          CurrencyId = r.Gym.CurrencyId,
+                                          CongestionRating = r.Gym.CongestionRating,
+                                          Rating = (r.Gym.ExternalRatingNumber + r.Gym.InternalRatingNumber) > 0
+                                              ? (decimal)Math.Round(
+                                                  ((double)r.Gym.ExternalRating * r.Gym.ExternalRatingNumber +
+                                                   (double)r.Gym.InternalRating * r.Gym.InternalRatingNumber) /
+                                                  (r.Gym.ExternalRatingNumber + r.Gym.InternalRatingNumber), 2)
+                                              : 0,
+                                          WorkingHours = r.Gym.GymWorkingHours.Select(w =>
+                                              new GymWorkingHoursViewModel {
+                                                  Weekday = w.Weekday,
+                                                  OpenFrom = w.WorkingHours.OpenFrom,
+                                                  OpenUntil = w.WorkingHours.OpenUntil,
+                                              }).ToList()
+                                      },
+                                      OverallRating = r.TotalScore,
+                                      TimeRating = r.TimeScore,
+                                      CostRating = r.TcostScore,
+                                      TravellingTime = r.Time,
+                                      TotalCost = r.Tcost,
+                                      CongestionRating = r.CongestionScore,
+                                      RegularRating = r.RatingScore
+                                  })
+                                  .GroupBy(r => r.Type)
+                                  .ToDictionary(
+                                      group => group.Key switch {
+                                          "main" => "mainRecommendations",
+                                          "alternative" => "additionalRecommendations",
+                                      },
+                                      group => group
+                                               .Select(r => new {
+                                                   r.Gym,
+                                                   r.OverallRating,
+                                                   r.TimeRating,
+                                                   r.CostRating,
+                                                   r.TravellingTime,
+                                                   r.TotalCost,
+                                                   r.CongestionRating,
+                                                   r.RegularRating
+                                               })
+                                               .OrderByDescending(r => r.OverallRating)
+                                               .ToList()
+                                  );
             var result = new Dictionary<string, object> {
                 ["requestId"] = request.Id,
                 ["latitude"] = request.OriginLatitude,
