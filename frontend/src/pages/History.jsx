@@ -25,6 +25,8 @@ const History = () => {
 
 			if (result.error) toast(result.error.message);
 			else setRequests(result.data);
+
+			console.log(requests)
 		}
 
 		const retrieveBookmarks = async () => {
@@ -227,16 +229,16 @@ const History = () => {
 												<li>Yearly: {gym.yearlyMprice !== null ? `${gym.yearlyMprice} ${gym.currency}` : '-'}</li>
 											</ul>
 										</div>
-										<p>
+										<div>
 											{
 												workingHours.map((time, index) => {
-													return <div className={"bookmarked-gym-wh"}>
+													return <div key={index} className={"bookmarked-gym-wh"}>
 														<span className={"bookmarked-gym-wh-w"}>{weekdays[index]}</span>
 														<span className={"bookmarked-gym-wh-h"}>{time}</span>
 													</div>
 												})
 											}
-										</p>
+										</div>
 									</div>
 									<Button className="btn-remove" onClick={() => removeBookmark(gym.id, id)}>
 										Remove Bookmark

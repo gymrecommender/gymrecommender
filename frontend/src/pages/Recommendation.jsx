@@ -82,7 +82,7 @@ const Recommendation = ({data}) => {
 			return <li key={gym.gym.id} className={classNames("gym-item", gymId === gym.gym.id ? "selected" : "")}
 			           onClick={() => setGymId(gymId === gym.gym.id ? null : gym.gym.id)}>
 				<h4>{gym.gym.name}</h4>
-				<p><FontAwesomeIcon icon={faMoneyBillWave}/> Total Cost: {gym.totalCost} {gym.currency}</p>
+				<p><FontAwesomeIcon icon={faMoneyBillWave}/> Total Cost: {gym.totalCost === -1 ? 'N/A' : `${gym.totalCost} ${gym.gym.currency}`}</p>
 				<p><FontAwesomeIcon icon={faRoute}/>Travelling Time: {gym.travellingTime} min</p>
 				<p><FontAwesomeIcon icon={faMapMarkerAlt}/> {gym.gym.address}</p>
 				<p><FontAwesomeIcon icon={faStar}/> Overall Rating: {gym.overallRating}</p>
