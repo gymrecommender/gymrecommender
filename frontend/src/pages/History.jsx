@@ -3,7 +3,6 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {
 	faClock, faCalendarAlt, faDollarSign, faStar, faChartBar, faFrown, faSearch, faArrowLeft, faArrowRight
 } from "@fortawesome/free-solid-svg-icons";
-import {useParams} from "react-router-dom";
 import {axiosInternal} from "../services/axios";
 import Button from "../components/simple/Button";
 import {toast} from "react-toastify";
@@ -16,6 +15,7 @@ const History = () => {
 	const [searchQuery, setSearchQuery] = useState("");
 	const [editingId, setEditingId] = useState(null);
 	const [bookmarkedGyms, setBookmarkedGyms] = useState({});
+
 
 	// Dummy data preview/styling purposes, delete when implementing backend
 	useEffect(() => {
@@ -200,6 +200,14 @@ const History = () => {
 			<h2 style={{color: "#ffffff", marginTop: "40px"}}>Bookmarked Gyms:</h2>
 			{Object.keys(bookmarkedGyms).length > 0 ? (
 				<div className="bookmarked-gyms-section">
+					<div className="arrow-buttons">
+						<button className="scroll-button" onClick={scrollLeft}>
+							<FontAwesomeIcon icon={faArrowLeft}/>
+						</button>
+						<button className="scroll-button" onClick={scrollRight}>
+							<FontAwesomeIcon icon={faArrowRight}/>
+						</button>
+					</div>
 					<div id="gym-cards-container" className="bookmarked-gyms-container">
 						{Object.keys(bookmarkedGyms).map((gymId) => {
 								const {gym, id, createdAt} = bookmarkedGyms[gymId];
@@ -243,14 +251,6 @@ const History = () => {
 								</div>
 							}
 						)}
-					</div>
-					<div className="arrow-buttons">
-						<button className="scroll-button" onClick={scrollLeft}>
-							<FontAwesomeIcon icon={faArrowLeft}/>
-						</button>
-						<button className="scroll-button" onClick={scrollRight}>
-							<FontAwesomeIcon icon={faArrowRight}/>
-						</button>
 					</div>
 				</div>) : (
 				<div className="no-bookmarked-gyms">
