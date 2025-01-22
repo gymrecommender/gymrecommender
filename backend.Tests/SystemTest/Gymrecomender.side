@@ -220,7 +220,7 @@
         ["xpath=//div[@id='root']/div/div/form/fieldset/div/input", "xpath:idRelative"],
         ["xpath=//input", "xpath:position"]
       ],
-      "value": "nnnnnn"
+      "value": "firstname"
     }, {
       "id": "d588466c-08d5-442e-8fc5-550c1ebd35ee",
       "comment": "",
@@ -246,7 +246,7 @@
         ["xpath=//div[@id='root']/div/div/form/fieldset/div[2]/input", "xpath:idRelative"],
         ["xpath=//div[2]/input", "xpath:position"]
       ],
-      "value": "aaaaaa"
+      "value": "lastname"
     }, {
       "id": "c5eec2e4-a019-459f-ae29-a39ee7593959",
       "comment": "",
@@ -272,7 +272,7 @@
         ["xpath=//div[@id='root']/div/div/form/fieldset/div[3]/input", "xpath:idRelative"],
         ["xpath=//div[3]/input", "xpath:position"]
       ],
-      "value": "aa"
+      "value": "fname"
     }, {
       "id": "51e366f9-7125-4d22-9d9d-6c864b2cfbd5",
       "comment": "",
@@ -425,7 +425,7 @@
         ["xpath=//div[@id='root']/div/div/form/fieldset/div/input", "xpath:idRelative"],
         ["xpath=//input", "xpath:position"]
       ],
-      "value": "nikla"
+      "value": "firstname"
     }, {
       "id": "9382aa61-af03-4592-a7d6-d816cf60b104",
       "comment": "",
@@ -451,7 +451,7 @@
         ["xpath=//div[@id='root']/div/div/form/fieldset/div[2]/input", "xpath:idRelative"],
         ["xpath=//div[2]/input", "xpath:position"]
       ],
-      "value": "mag"
+      "value": "lastname"
     }, {
       "id": "8c055e5c-cd6c-484b-8256-47de7c1ed011",
       "comment": "",
@@ -490,7 +490,7 @@
         ["xpath=//div[@id='root']/div/div/form/fieldset/div[3]/input", "xpath:idRelative"],
         ["xpath=//div[3]/input", "xpath:position"]
       ],
-      "value": "aaaaaaaaaa"
+      "value": "firstname"
     }, {
       "id": "79caea8e-35a9-46b6-8a89-79b47c338408",
       "comment": "",
@@ -676,7 +676,7 @@
         ["xpath=//div[@id='root']/div/div/form/fieldset/div/input", "xpath:idRelative"],
         ["xpath=//input", "xpath:position"]
       ],
-      "value": "nikla"
+      "value": "firstname"
     }, {
       "id": "8c6aab3d-ba5a-47c8-8db1-f4e3aca65e49",
       "comment": "",
@@ -702,7 +702,7 @@
         ["xpath=//div[@id='root']/div/div/form/fieldset/div[2]/input", "xpath:idRelative"],
         ["xpath=//div[2]/input", "xpath:position"]
       ],
-      "value": "mag"
+      "value": "lastname"
     }, {
       "id": "459d4e08-d501-4533-9fd8-124773c36c92",
       "comment": "",
@@ -728,7 +728,7 @@
         ["xpath=//div[@id='root']/div/div/form/fieldset/div[3]/input", "xpath:idRelative"],
         ["xpath=//div[3]/input", "xpath:position"]
       ],
-      "value": "adminAcc"
+      "value": "firstnme"
     }, {
       "id": "cd2acfd8-9918-44f8-96cd-0aea01f6dedf",
       "comment": "",
