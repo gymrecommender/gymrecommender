@@ -14,7 +14,6 @@ import {weekdays} from "../services/helpers.jsx";
 const History = () => {
 	const [requests, setRequests] = useState([]);
 	const [searchQuery, setSearchQuery] = useState("");
-	const {username} = useParams();
 	const [editingId, setEditingId] = useState(null);
 	const [bookmarkedGyms, setBookmarkedGyms] = useState({});
 

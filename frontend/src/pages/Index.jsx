@@ -2,7 +2,7 @@ import MapSection from '../components/MapSection.jsx';
 import React, {useEffect, useState} from "react";
 import Form from "../components/simple/Form.jsx";
 import {useCoordinates} from "../context/CoordinatesProvider.jsx";
-import axios from "axios";
+import moment from "moment";
 import {axiosInternal} from "../services/axios.jsx";
 import {toast} from "react-toastify";
 import {useNavigate} from "react-router-dom";
@@ -100,34 +100,44 @@ const Index = () => {
 	const {coordinates} = useCoordinates();
 	const navigate = useNavigate();
 	const {getUser} = useFirebase();
-	const [countdownComplete, setCountdownComplete] = useState(false);
 	const [recommendations, setRecommendations] = useState({});
 	const [showLoader, setShowLoader] = useState(false);
+	const [pauseLength, setPauseLength] = useState(0);
 
-	const saveEnforcedPause = async () => {
-		const enforcedPauseData = {
-			reason: "Example reason for pause",
-			duration: 5,
-		};
-	};
+	useEffect(() => {
+		const retrievePause = async () => {
+			const url = getUser()?.username ? 'gym/pause' : 'useraccount/pause'
+			const result = await axiosInternal("GET", url);
+			if (result.error) toast(result.error.message);
+			else {
+				const sec = moment.duration(result.data.timeRemaining).asSeconds()
+				setPauseLength(sec);
+			}
+		}
+
+		retrievePause();
+	}, [])
 
 	const getFormValues = async (values) => {
 		values.longitude = coordinates.lng;
 		values.latitude = coordinates.lat;
 
-		setShowLoader(true);
-		const result = await axiosInternal("POST", "recommendation", values);
-		setShowLoader(false);
+		// setShowLoader(true);
+		// const result = await axiosInternal("POST", "recommendation", values);
+		// setShowLoader(false);
+		//
+		// if (result.error) toast(result.error.message);
+		// else {
+		// 	const user = getUser();
+		// 	if (user && result.data.requestId) navigate(`account/history/${result.data.requestId}`);
+		//
+		// 	setRecommendations(result.data)
+		// }
 
-		if (result.error) toast(result.error.message);
-		else {
-			const user = getUser();
-			if (user && result.data.requestId) navigate(`account/history/${result.data.requestId}`);
-
-			setRecommendations(result.data)
-		}
-		setCountdownComplete(false);
-		await saveEnforcedPause();
+		const url = getUser()?.username ? 'gym/pause' : 'useraccount/pause'
+		const res = await axiosInternal("POST", url);
+		if (res.error) toast(res.error.message);
+		else return moment.duration(res.data.timeRemaining).asSeconds();
 	};
 	return (
 		<>
@@ -135,17 +145,15 @@ const Index = () => {
 				Object.keys(recommendations).length === 0 ?
 					<>
 						<aside className="sliders">
-							<Form
-								data={data}
-								showAsterisks={false}
-								disabledFormHint={"Select the starting location"}
-								isDisabled={!coordinates.lat}
-								enableCountdown={true}
-								onSubmit={async (values) => {
-									await getFormValues(values);
-									setCountdownComplete(false);
-								}}
-							/>
+							{pauseLength !== 0 ?
+								<Form
+									data={data}
+									showAsterisks={false}
+									disabledFormHint={"Select the starting location"}
+									isDisabled={!coordinates.lat}
+									countdownStart={pauseLength}
+									onSubmit={async (values) => await getFormValues(values)}
+								/> : <Loader type={"container"}/>}
 						</aside>
 						<MapSection/>
 						{showLoader ? <Loader type={"hover"}/> : null}

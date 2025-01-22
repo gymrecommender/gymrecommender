@@ -1,4 +1,4 @@
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import classNames from 'classnames';
 import {useForm, FormProvider} from 'react-hook-form';
 import {memo} from "react";
@@ -34,8 +34,9 @@ const Field = memo(({item, fieldClass, wClassName}) => {
   return <Component key={item.name} {...commonProps} />;
 });
 
-const Form = ({data, onSubmit, className, showAsterisks = true, isDisabled, disabledFormHint, enableCountdown = false}) => {
-  const [isCountdownActive, setCountdownActive] = useState(false);
+const Form = ({data, onSubmit, className, showAsterisks = true, isDisabled, disabledFormHint, countdownStart = 0}) => {
+  const [secondsToGo, setSecondsToGo] = useState(countdownStart);
+
   const methods = useForm({
     defaultValues: {
       ...data.fields.reduce((acc, item) => {
@@ -47,17 +48,22 @@ const Form = ({data, onSubmit, className, showAsterisks = true, isDisabled, disa
     },
   });
 
+  useEffect(() => {
+	  if (secondsToGo) {
+        const timer = setTimeout(() => {
+          setSecondsToGo(0)
+        }, secondsToGo * 1000);
+
+        return () => clearTimeout(timer);
+	  }
+  }, [secondsToGo])
+
   const flushForm = () => {
     methods.reset();
   };
 
-  const customHandleSubmit = (formData) => {
-    onSubmit(sanitizeData(formData), flushForm);
-    if (enableCountdown) setCountdownActive(true);
-  };
-
-  const handleCountdownComplete = () => {
-    setCountdownActive(false);
+  const customHandleSubmit = async (formData) => {
+    setSecondsToGo(await onSubmit(sanitizeData(formData), flushForm) ?? 0);
   };
 
   const {text: buttonText, className: btnClassName, ...buttonRest} = data.button ?? {};
@@ -65,7 +71,7 @@ const Form = ({data, onSubmit, className, showAsterisks = true, isDisabled, disa
     <FormProvider {...methods}>
       <form noValidate className={classNames(className, isDisabled ? "form-disabled" : null)}
             onSubmit={methods.handleSubmit(customHandleSubmit)}>
-        <fieldset disabled={isDisabled}>
+        <fieldset disabled={isDisabled || secondsToGo}>
           {data.fields.sort((a, b) => a.pos - b.pos).map(({pos, value, ...item}, index) => {
             item.showAsterisks = showAsterisks;
             return <Field
@@ -75,8 +81,8 @@ const Form = ({data, onSubmit, className, showAsterisks = true, isDisabled, disa
               wClassName={classNames(data.wClassName, item.wClassName)}
             />;
           })}
-          {enableCountdown && isCountdownActive ? (
-            <CountdownTimer initialTime={120} onComplete={handleCountdownComplete} />
+          {secondsToGo ? (
+            <CountdownTimer initialTime={secondsToGo}/>
           ) : (
             buttonText && (
               <Button
