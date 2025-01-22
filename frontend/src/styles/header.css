@@ -55,6 +55,68 @@ button.btn-panel {
 }
 
 button.btn-panel:hover {
-
     color: #9f60b5;
 }
+
+.notifications-dropdown {
+    position: absolute;
+    top: 90px;
+    right: 270px;
+    width: 300px;
+    background-color: #af8fbb;
+    border: 1px solid #9f60b5;
+    border-radius: 5px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    padding: 10px;
+}
+
+.notification {
+    padding: 10px;
+    border-bottom: 1px solid #9f60b5;
+    font-size: 14px;
+    color: #333;
+}
+
+.notification:last-child {
+    border-bottom: none;
+}
+
+.notification.read {
+    background-color: #d9c6e0;
+}
+
+.notification.unread {
+    background-color: #d9c6e0;
+    font-weight: bold;
+}
+
+.notification.empty {
+    text-align: center;
+    color: #999;
+}
+
+.btn-panel.btn-icon.unread .icon {
+    color: #f08253;
+    margin-right: 0;
+}
+
+.notification-container {
+    position: relative;
+    display: inline-block;
+}
+
+.notification-badge {
+    position: absolute;
+    top: -5px;
+    right: 5px;
+    background-color: #f08253;
+    color: white;
+    border-radius: 50%;
+    padding: 2px 6px;
+    font-size: 15px;
+    font-weight: bold;
+    z-index: 1;
+}
+
+

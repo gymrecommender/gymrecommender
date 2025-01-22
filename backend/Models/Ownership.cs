@@ -14,7 +14,7 @@ public partial class Ownership
 
     public string? Message { get; set; }
     
-    public OwnershipDecision Decision { get; set; }
+    public OwnershipDecision? Decision { get; set; }
 
     public Guid? RespondedBy { get; set; }
 

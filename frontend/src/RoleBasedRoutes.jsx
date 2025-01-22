@@ -1,28 +1,41 @@
-import AccountGymRequest from "./pages/accounts/AccountGymRequest.jsx";
-import AccountGym from "./pages/accounts/AccountGym.jsx";
+import GymRequest from "./pages/GymRequest.jsx";
 import History from "./pages/History.jsx";
-import AccountUser from "./pages/accounts/AccountUser.jsx";
-import AccountAdmin from "./pages/accounts/AccountAdmin.jsx";
 import {useFirebase} from "./context/FirebaseProvider.jsx";
 import {Navigate, Route, Routes} from "react-router-dom";
 import NotFound from "./pages/NotFound.jsx";
+import GymManagement from "./pages/GymManagement.jsx";
+import Account from "./pages/Account.jsx";
+import UserRating from "./pages/UserRating.jsx";
+import AdminRequests from "./pages/AdminRequests.jsx";
+import TitleSetter from "./TitleSetter.jsx";
+import Recommendation from "./pages/Recommendation.jsx";
+import {SelectedGymProvider} from "./context/SelectedGymProvider.jsx";
+import {MarkersOwnershipProvider} from "./context/MarkersOwnershipProvider.jsx";
 
 const roles = {
 	gym: {
 		routes: [
-			{path: "add", component: AccountGymRequest}
+			{path: "management", component: GymManagement, title: "Managed gyms"},
+			{path: "management/request", component: GymRequest, wrapper: MarkersOwnershipProvider, title: "Request management"},
 		],
-		defaultComponent: AccountGym
+		title: "My account - Gym",
+		defaultComponent: Account
 	},
 	user: {
 		routes: [
-			{path: "history", component: History}
+			{path: "rating", component: UserRating, title: "Rating gyms"},
+			{path: "history", component: History, title: "Recommendations history"},
+			{path: "history/:id", component: Recommendation, wrapper: SelectedGymProvider, title: "Recommendations History"}
 		],
-		defaultComponent: AccountUser
+		title: "My account - User",
+		defaultComponent: Account
 	},
 	admin: {
-		routes: [],
-		defaultComponent: AccountAdmin
+		routes: [
+			{path: "requests", component: AdminRequests, title: "Ownership requests"}
+		],
+		title: "My account - Admin",
+		defaultComponent: Account
 	}
 }
 
@@ -39,18 +52,35 @@ const RoleBasedRoutes = () => {
 		return <Navigate to={'/'}/>;
 	}
 
-	const {routes, defaultComponent: DefaultComponent} = roleRoutes;
+	const {routes, title: indexTitle, defaultComponent: DefaultComponent} = roleRoutes;
 	return (
 		<Routes>
-			{routes.map(({path, component: Component}) => (
+			{routes.map(({path, title: routeTitle, component: Component, wrapper: Wrapper}) => (
 				<Route
 					key={path}
 					path={path}
-					element={<Component/>}
+					element={
+						<TitleSetter title={routeTitle}>
+							{Wrapper ?
+								<Wrapper>
+									<Component/>
+								</Wrapper>
+								: <Component/>}
+						</TitleSetter>
+					}
 				/>
 			))}
-			<Route index element={<DefaultComponent/>}/>
-			<Route path={"*"} element={<NotFound/>}/> //TODO make sure that this absolutely must be duplicated in this component
+			<Route index element={
+				<TitleSetter title={indexTitle}>
+					<DefaultComponent/>
+				</TitleSetter>
+			}/>
+			<Route path={"*"} element={
+				<TitleSetter title={"404|Not Found"}>
+					<NotFound/>
+				</TitleSetter>
+			}/> //TODO make sure that this absolutely must be duplicated in this
+			component
 		</Routes>
 	)
 }

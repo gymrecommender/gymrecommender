@@ -1,4 +1,5 @@
-import "../styles/header.css"
+import {useEffect, useState} from "react";
+import "../styles/header.css";
 import Button from "./simple/Button.jsx";
 import {useNavigate, useLocation} from "react-router-dom";
 import logo from "../logo.png";
@@ -9,58 +10,109 @@ import {
 	faCircleUser,
 	faHome,
 	faClockRotateLeft,
-	faBell
+	faBell,
+	faDumbbell,
+	faStarHalfStroke,
+	faClipboard
 } from "@fortawesome/free-solid-svg-icons";
 import {useFirebase} from "../context/FirebaseProvider.jsx";
+import {axiosInternal} from "../services/axios.jsx";
+import {toast} from "react-toastify";
 
 const Header = () => {
 	const {getUser, logout} = useFirebase();
 	const user = getUser();
 	const navigate = useNavigate();
 	const location = useLocation();
+	const [showNotifications, setShowNotifications] = useState(false);
+	const [notifications, setNotifications] = useState([]);
 
-	const buttons = [
-		{title: "Account", icon: faCircleUser, action: () => navigationHandler(`/account/${user.username}`)},
-		{title: "Notifications", icon: faBell, action: () => alert("Notifications!")},
-		{title: "History", icon: faClockRotateLeft, role: "user", action: () => navigationHandler(`/account/${user.username}/history`)},
-		{title: "Log out", icon: faRightFromBracket, action: () => logout()},
-	]
+	useEffect(() => {
+		if (getUser()?.role === "user") {
+			const retrieveNotifications = async () => {
+				const result = await axiosInternal("GET", "useraccount/notifications");
+				if (result.error) toast(result.error.message);
+				else setNotifications(result.data);
+			}
+
+			retrieveNotifications()
+		}
+	}, []);
+
+	const handleToggleNotifications = async () => {
+		setShowNotifications((prev) => !prev);
+		// Mark all notifications as read
+		await Promise.all(notifications.filter(not => !not.isRead).map(async (notification) => {
+			await axiosInternal("PUT", `useraccount/notifications/${notification.id}`);
+		}))
+
+		setNotifications((prev) => prev.map((notif) => ({...notif, isRead: true})));
+	};
 
 	const navigationHandler = (path) => {
-		//we do not want to register multiple instances of the same page in row in the navigation's history
-		//so we use navigate only when we want to redirect to another page
 		if ((path === '/' && path !== location.pathname) || location.pathname !== path) {
 			navigate(path);
 		}
-		//scroll to the top of the page if the requested page is the same as the current one
 		window.scrollTo({top: 0, left: 0, behavior: "smooth"});
-	}
+	};
 
-	//conditional rendering of the button - if we are logged in, we need a "Log out" button, not a "Sign up" one
-	//#TODO the condition should be different once we implement logging in (the one that can't be changed through React Dev panel or in any other way)
+	const unreadNotifications = notifications.some((notif) => !notif.isRead);
+
+	const buttons = [
+		{title: "Notifications", icon: faBell, role: "user", action: handleToggleNotifications},
+		{title: "Gyms", icon: faDumbbell, role: "gym", action: () => navigationHandler(`/account/management`)},
+		{
+			title: "Ownership requests",
+			icon: faClipboard,
+			role: "admin",
+			action: () => navigationHandler(`/account/requests`)
+		},
+		{title: "Rate gyms", icon: faStarHalfStroke, role: "user", action: () => navigationHandler(`/account/rating`)},
+		{title: "History", icon: faClockRotateLeft, role: "user", action: () => navigationHandler(`/account/history`)},
+		{title: "Account", icon: faCircleUser, action: () => navigationHandler(`/account`)},
+		{title: "Log out", icon: faRightFromBracket, action: () => logout()},
+	];
+
 	const authButton = user ? (
-			<>
-				{
-					buttons.map(({action, title, icon, role}) => {
-						if (!role || role === user.role) {
-							return <Button key={title}
-								           type={"btn"}
-							               title={title}
-							               className={"btn-panel btn-icon"}
-							               onClick={action}
+		<>
+			{buttons.map(({action, title, icon, role}) => {
+				if (!role || role === user.role) {
+					return (
+						<div className="notification-container" key={title}>
+							<Button
+								type={"btn"}
+								title={title}
+								className={`btn-panel btn-icon ${title === "Notifications" && unreadNotifications ? "unread" : ""}`}
+								onClick={action}
 							>
-								<FontAwesomeIcon className={"icon"} size={"lg"} icon={icon}/>
+								<FontAwesomeIcon
+									className={"icon"}
+									size={"lg"}
+									icon={icon}
+								/>
+								{title === "Notifications" && unreadNotifications && (
+									<span className="notification-badge">
+										{notifications.filter((notif) => !notif.isRead).length}
+									</span>
+								)}
+
 							</Button>
-						}
-					})
+						</div>
+					);
 				}
-			</>
-		) :
-		<Button type={"button"}
-		        className={"btn-panel btn-icon"}
-		        title={"Log in"}
-		        onClick={() => navigationHandler("/login")}
-		><FontAwesomeIcon className={"icon"} size={"lg"} icon={faRightToBracket}/></Button>
+			})}
+		</>
+	) : (
+		<Button
+			type={"button"}
+			className={"btn-panel btn-icon"}
+			title={"Log in"}
+			onClick={() => navigationHandler("/login")}
+		>
+			<FontAwesomeIcon className={"icon"} size={"lg"} icon={faRightToBracket}/>
+		</Button>
+	);
+
 
 	return (
 		<header className={"header"}>
@@ -82,8 +134,22 @@ const Header = () => {
 					{authButton}
 				</div>
 			</div>
+			{showNotifications && (
+				<div className="notifications-dropdown">
+					{notifications.length > 0 ?
+						(
+							notifications.map((notif) => (
+								<div key={notif.id} className={`notification ${notif.read ? "read" : "unread"}`}>
+									{notif.message}
+								</div>
+							))
+						) : (
+							<div className="notification no-content">You do not have any notification</div>
+						)}
+				</div>
+			)}
 		</header>
-	)
-}
+	);
+};
 
 export default Header;

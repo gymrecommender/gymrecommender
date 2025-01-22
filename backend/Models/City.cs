@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Text.Json.Serialization;
 
 namespace backend.Models;
 
@@ -21,5 +20,5 @@ public partial class City
 
     public virtual Country Country { get; set; } = null!;
 
-    public virtual ICollection<Gym> Gyms { get; set; } = new List<Gym>();
+    [JsonIgnore] public virtual ICollection<Gym> Gyms { get; set; } = new List<Gym>();
 }

@@ -4,54 +4,40 @@ import Button from "../simple/Button.jsx";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faTrashCan} from "@fortawesome/free-solid-svg-icons";
 import {toast} from "react-toastify";
+import {useConfirm} from "../../context/ConfirmProvider.jsx";
+import {axiosInternal} from "../../services/axios.jsx";
 
 const GymOwnership = ({}) => {
 	const [requests, setRequests] = useState([]);
+	const {setValues, flushData} = useConfirm();
+
 	useEffect(() => {
-		//TODO retrieve all the requests for the current gym
-		setRequests([
-			{
-				"id": "uuid11",
-				"requestedAt": "2024-11-07T08:15:30+00:00",
-				"respondedAt": "2024-11-07T09:00:45+00:00",
-				"decision": "approved",
-				"message": null,
-				"gym": {
-					"name": "Mountain Valley",
-					"address": "123 Mountain Rd, Boulder, CO"
-				}
-			},
-			{
-				"id": "uuid12",
-				"requestedAt": "2024-11-06T14:45:00+05:30",
-				"respondedAt": "2024-11-06T15:30:00+05:30",
-				"decision": "rejected",
-				"message": "Request rejected due to insufficient documentation.",
-				"gym": {
-					"name": "Lakeside Fitness",
-					"address": "456 Lakeview Ave, Chicago, IL"
-				}
-			},
-			{
-				"id": "uuid13",
-				"requestedAt": "2024-11-07T01:10:15-05:00",
-				"respondedAt": null,
-				"decision": null,
-				"message": "Your request is being reviewed.",
-				"gym": {
-					"name": "Urban Core Gym",
-					"address": "789 Downtown St, New York, NY"
-				}
-			}
-		])
+		const retrieveOwnership = async () => {
+			const result = await axiosInternal("GET", "gymaccount/ownership")
+
+			if (result.error) toast(result.error.message);
+			else setRequests(result.data);
+		}
+
+		retrieveOwnership();
 	}, []);
 
-	const handleDelete = (id) => {
-		//TODO handle delete logic
-		toast(`${id} is deleted`);
+	const onConfirm = async (id, name) => {
+		flushData();
+		const result = await axiosInternal("DELETE", `gymaccount/ownership/${id}`)
+		if (result.error) toast(result.error.message);
+		else {
+			setRequests(requests?.reduce((acc, request) => {
+				if (request.id !== id) {
+					acc.push(request);
+				}
+				return acc;
+			}, []))
+			toast(`The ownership request for ${name} has been withdrawn`);
+		}
 	}
 
-	const content = (
+	const content = requests?.length > 0 ? (
 		<table>
 			<thead>
 			<tr className={"gym-own-hd"}>
@@ -100,8 +86,15 @@ const GymOwnership = ({}) => {
 						<td className={"gym-own-req-item "}>
 							{
 								!item.decision ? (
-									<Button title={"Delete the row"} className={"btn-icon"} onClick={() => handleDelete(item.id)}>
-										<FontAwesomeIcon className={"icon"} size={"L"} icon={faTrashCan}/>
+									<Button title={"Cancel the ownership request"} className={"btn-icon"} onClick={() => {
+										setValues(
+											true,
+											`Are you sure that you want to withdraw the ownership request for '${item.gym.name}'?'`,
+											() => onConfirm(item.id, item.gym.name),
+											flushData
+										)
+									}}>
+										<FontAwesomeIcon className={"icon"} size={"lg"} icon={faTrashCan}/>
 									</Button>
 								) : ''
 							}
@@ -111,7 +104,7 @@ const GymOwnership = ({}) => {
 			})}
 			</tbody>
 		</table>
-	)
+	) : "You do not have any ownership requests submitted";
 	return (
 		<div className={"gym-own"}>
 			{content}

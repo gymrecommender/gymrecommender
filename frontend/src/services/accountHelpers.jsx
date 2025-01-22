@@ -1,4 +1,4 @@
-import {axiosInternal} from "./axios.jsx";
+import {attachToken, axiosInternal, detachToken} from "./axios.jsx";
 import {
 	createUserWithEmailAndPassword,
 	deleteUser,
@@ -9,6 +9,7 @@ import {
 } from "firebase/auth";
 import {auth} from "../Firebase.jsx";
 import {errorsParser, firebaseErrors} from "./helpers.jsx";
+import {toast} from "react-toastify";
 
 const roleMapper = {
 	"admin": "adminaccount",
@@ -20,36 +21,22 @@ const accountSignUp = async (values, role) => {
 	const result = {data: null, error: null}
 
 	try {
-		if (role === "admin") {
+		if (role !== "user") {
 			result.error = errorsParser({message:"Operation is not allowed"})
 			return result
 		}
-		const checkUser = await axiosInternal('GET', `${roleMapper[role]}/${values.username}`, values.username);
-		if (checkUser.error?.status === 404) {
-			const outerUser = await createUserWithEmailAndPassword(auth, values.email, values.password);
+		const checkUser = await axiosInternal('GET', `account/role`);
 
-			const data = {
+		if (checkUser.error?.status === 404 || checkUser.error?.status === 401) {
+			const result = await axiosInternal("POST", 'useraccount', {
 				...values,
-				'IsEmailVerified': outerUser.user.emailVerified,
-				'OuterUid': outerUser.user.uid,
-				'provider': 'local',
-				'type': 'user'
-			}
-			const dbUser = await axiosInternal('POST', `${roleMapper[role]}`, data)
-			if (dbUser.error) {
-				result.error = errorsParser(dbUser.error);
-				await deleteUser(outerUser.user) //all the data will be lost so we will not be able to align the database and the firebase
-				return dbUser
-			}
-
-			await updateProfile(outerUser.user, {
-				displayName: values.username
+				'provider': 'local'
 			})
-			await sendEmailVerification(outerUser.user)
 
-			//we want to enforce the verification of the email, and for that reason we need to force user to log in
-			//plus updateProfile does not trigger onAuthStateChanged which means that before it is triggerred by something else, displayName in the app will be set to null
-			await signOut(auth)
+			if (result.error) toast(result.error.message);
+			else {
+				toast("Success! Check your email for the confirmation link")
+			}
 		} else {
 			result.error = {"message": checkUser.data.length > 0 ? `The user with username ${values.username} already exists` : errorsParser(checkUser.error)}
 
@@ -77,10 +64,9 @@ const accountLogin = async (values, role) => {
 			return result;
 		}
 
+		attachToken(signInResult.user.accessToken)
 		//TODO propagate expired datetime from the firebase
-		const login = await axiosInternal('POST', `${roleMapper[role]}/${signInResult.user.displayName}/login`, {
-			token: signInResult.user.accessToken
-		})
+		const login = await axiosInternal('POST', `${roleMapper[role]}/login`)
 		if (login.error) {
 			result.error = errorsParser(login.error);
 			await signOut(auth);
@@ -100,7 +86,7 @@ const accountLogin = async (values, role) => {
 const accountLogout = async (username, role) => {
 	const result = {error: null};
 	try {
-		const logoutResult = await axiosInternal('DELETE', `${roleMapper[role]}/${username}/logout`);
+		const logoutResult = await axiosInternal('DELETE', `${roleMapper[role]}/logout`);
 		if (logoutResult.error) {
 			result.error = errorsParser(logoutResult.error);
 

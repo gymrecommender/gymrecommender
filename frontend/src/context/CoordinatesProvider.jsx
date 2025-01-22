@@ -2,7 +2,7 @@ import {createContext, useContext, useState} from "react";
 
 const CoordinatesContext = createContext();
 const CoordinatesProvider = ({children}) => {
-	const [coordinates, setCoordinates] = useState({lat: -33.860664, lng: 151.208138});
+	const [coordinates, setCoordinates] = useState({lat: null, lng: null});
 
 	return (
 		<CoordinatesContext.Provider value={{coordinates, setCoordinates}}>

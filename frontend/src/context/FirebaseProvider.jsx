@@ -1,14 +1,14 @@
-import { useEffect, useState, createContext, useContext } from "react";
+import {useEffect, useState, createContext, useContext} from "react";
 import {auth, provider} from "../Firebase.jsx";
 import {signInWithPopup, onAuthStateChanged} from "firebase/auth";
 import {useNavigate} from "react-router-dom";
 import {accountLogin, accountLogout, accountSignUp} from "../services/accountHelpers.jsx";
-import {axiosInternal} from "../services/axios.jsx";
+import {attachToken, axiosInternal, detachToken} from "../services/axios.jsx";
 import {useLoader} from "./LoaderProvider.jsx";
+import {debounce} from "lodash";
 
 const FirebaseContext = createContext();
 const useFirebase = () => useContext(FirebaseContext);
-
 
 const FirebaseProvider = ({children}) => {
 	const [user, setUser] = useState(null);
@@ -19,34 +19,33 @@ const FirebaseProvider = ({children}) => {
 	const {setLoader} = useLoader();
 
 	useEffect(() => {
-		/*
-		We need onAuthStateChange it order to be able to
-		a) track the changes made by the Firebase (for example, session expiration)
-		b) retrieve the login status upon the reloading of the page, for example
-		*/
-		const unsubscribe = onAuthStateChanged(auth, async (user) => {
-			//TODO handle changes of the token (propagate it to the db)
+		const debouncedAuthHandler = debounce(async (user) => {
 			if (user) {
 				if (user.emailVerified) {
-					const result = await axiosInternal('GET', `account/${user.uid}/role`);
+					attachToken(user.accessToken);
+					const result = await axiosInternal('GET', `account/role`);
 
 					if (result.error) {
-						//TODO the error from here should be somehow propagated and diplayed to the user
+						detachToken();
 						setUser(null);
 					} else {
-						setUser({username: user.displayName, role: result.data.role});
+						setUser({ username: result.data.username, role: result.data.role });
 					}
 				}
 			} else {
+				detachToken();
 				setUser(null);
 			}
 			setLoading(false);
-		})
+		}, 300);
 
-		//We need this listener for the sake of tracking outer changes of state (for instance, if Firebase tells us that the session has expired)
-		//And we return this function in order for the listener to be cleaned up when the component is unmounted
-		return () => unsubscribe();
-	}, [])
+		const unsubscribe = onAuthStateChanged(auth, debouncedAuthHandler);
+
+		return () => {
+			debouncedAuthHandler.cancel();
+			unsubscribe();
+		};
+	}, []);
 
 	const signUp = async (values, role) => {
 		setLoader(true);
@@ -73,7 +72,7 @@ const FirebaseProvider = ({children}) => {
 	}
 
 	const signInWithGoogle = () => signInWithPopup(auth, provider);
-	const logout = async () =>  {
+	const logout = async () => {
 		setLoader(true);
 		const result = await accountLogout(user.username, user.role);
 		setLoader(false);
@@ -87,7 +86,7 @@ const FirebaseProvider = ({children}) => {
 	const getUser = () => user
 	const getLoading = () => loading
 	return (
-		<FirebaseContext.Provider value={{ signInWithGoogle, signIn, logout, getUser, signUp, getLoading}}>
+		<FirebaseContext.Provider value={{signInWithGoogle, signIn, logout, getUser, signUp, getLoading}}>
 			{children}
 		</FirebaseContext.Provider>
 	)

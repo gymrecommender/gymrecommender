@@ -1,8 +1,6 @@
 import InfoSection from "./InfoSection.jsx";
-import {pingBackend} from "../scripts/ping.js";
 
 const Footer = () => {
-	pingBackend()
 	return (
 		<footer className="footer">
 			<InfoSection/>

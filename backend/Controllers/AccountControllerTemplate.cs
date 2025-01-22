@@ -1,97 +1,41 @@
+using System.Text;
 using backend.DTO;
 using backend.Enums;
 using backend.Models;
+using backend.Utilities;
 using backend.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
+using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace backend.Controllers;
 
 [ApiController]
 public abstract class AccountControllerTemplate : Controller {
     protected AccountType _accountType;
-    protected readonly GymrecommenderContext context;
-    protected readonly AppSettings appData;
+    protected readonly GymrecommenderContext _context;
+    protected readonly AppSettings _appData;
+    protected readonly HttpClient _httpClient;
 
-    public AccountControllerTemplate(GymrecommenderContext context, IOptions<AppSettings> appSettings) {
-        this.context = context;
-        appData = appSettings.Value;
+    public AccountControllerTemplate(GymrecommenderContext context, HttpClient httpClient,
+                                     IOptions<AppSettings> appSettings) {
+        _context = context;
+        _appData = appSettings.Value;
+        _httpClient = httpClient;
     }
 
-    public async Task<IActionResult> GetData(int page = 1, int sort = 1, bool ascending = true,
-        AccountType? type = null) {
-        int pagesize = appData.PageSize;
-        var query = context.Accounts.AsNoTracking();
-        if (type is not null) {
-            query = query.Where(a => a.Type == type);
-        }
-
-        int count = await query.CountAsync();
-
-        var pagingInfo = new PagingInfo {
-            CurrentPage = page,
-            Sort = sort,
-            Ascending = ascending,
-            ItemsPerPage = pagesize,
-            TotalItems = count
-        };
-
-        var accounts = await query
-            .Select(p => new AccountRegularModel {
-                Id = p.Id,
-                Username = p.Username,
-                Email = p.Email,
-                FirstName = p.FirstName,
-                LastName = p.LastName,
-                IsEmailVerified = p.IsEmailVerified,
-                LastSignIn = p.LastSignIn,
-                Type = p.Type.ToString(),
-                Provider = p.Provider.ToString(),
-            })
-            .OrderBy(b => b.Username)
-            .Skip((page - 1) * pagesize)
-            .Take(pagesize)
-            .AsSplitQuery()
-            .ToListAsync();
-
-        return Ok(new { data = accounts, paging = pagingInfo });
-    }
-
-    public async Task<IActionResult> GetByUsername(string username, AccountType? accountType = null) {
-        var accountQuery = context.Accounts.AsNoTracking()
-            .Where(a => a.Username == username);
-
-        if (accountType is not null) {
-            accountQuery = accountQuery.Where(a => a.Type == accountType);
-        }
-
-        var account = await accountQuery.FirstOrDefaultAsync();
-
-        if (account == null) {
-            return NotFound(new { error = $"User {username} is not found" });
-        }
-
-        return Ok(new AccountRegularModel {
-            Id = account.Id,
-            Username = account.Username,
-            Email = account.Email,
-            FirstName = account.FirstName,
-            LastName = account.LastName,
-            IsEmailVerified = account.IsEmailVerified,
-            LastSignIn = account.LastSignIn,
-            Type = account.Type.ToString(),
-            Provider = account.Provider.ToString(),
-        });
-    }
-
+    [NonAction]
     protected async Task<IActionResult> SignUp(AccountDto accountDto, AccountType type, Guid? createdBy = null) {
+        using var transaction = await _context.Database.BeginTransactionAsync();
+        
         if (ModelState.IsValid) {
             try {
                 var errors = new Dictionary<string, string[]> { };
                 if (!Enum.TryParse<ProviderType>(accountDto.Provider, out var provider)) {
                     errors["Provider"] = new[] { $"Provider {accountDto.Provider} is not supported" };
-                }
+                } //not sure if this can be changed to a smarter way
 
                 if (errors.Count > 0) {
                     return BadRequest(new {
@@ -104,6 +48,61 @@ public abstract class AccountControllerTemplate : Controller {
                     });
                 }
 
+                var firebaseApiKey = Environment.GetEnvironmentVariable("FIREBASE_API_KEY")
+                                     ?? throw new InvalidOperationException("FIREBASE_API_KEY not set.");
+                var firebaseApiUrl =
+                    $"https://identitytoolkit.googleapis.com/v1/accounts:signUp?key={firebaseApiKey}";
+
+                // Prepare request payload for Firebase sign-up
+                var payload = new {
+                    email = accountDto.Email,
+                    password = accountDto.Password,
+                    returnSecureToken = true
+                };
+                
+                var jsonPayload = JsonConvert.SerializeObject(payload);
+                var content = new StringContent(jsonPayload, Encoding.UTF8, "application/json");
+                
+                var firebaseResponse = await _httpClient.PostAsync(firebaseApiUrl, content);
+
+                if (!firebaseResponse.IsSuccessStatusCode) {
+                    var errorResponse = await firebaseResponse.Content.ReadAsStringAsync();
+                    return StatusCode(500, new {
+                        success = false,
+                        error = new {
+                            code = "SignupError",
+                            message = "Error creating Firebase user",
+                            details = errorResponse
+                        }
+                    });
+                }
+                var responseContent = await firebaseResponse.Content.ReadAsStringAsync();
+                var signUpResponse = JsonConvert.DeserializeObject<FirebaseSignUpResponse>(responseContent);
+
+                var firebaseUrl = $"https://identitytoolkit.googleapis.com/v1/accounts:sendOobCode?key={firebaseApiKey}";
+                var requestBody = new
+                {
+                    requestType = "VERIFY_EMAIL",
+                    email = accountDto.Email,
+                    idToken = signUpResponse.idToken
+                };
+
+                var contentEmail = new StringContent(JsonSerializer.Serialize(requestBody), Encoding.UTF8, "application/json");
+                var responseEmail = await _httpClient.PostAsync(firebaseUrl, contentEmail);
+
+                if (!responseEmail.IsSuccessStatusCode)
+                {
+                    var errorContent = await responseEmail.Content.ReadAsStringAsync();
+                    return StatusCode(500, new {
+                        success = false,
+                        error = new {
+                            code = "SignupError",
+                            message = "Error creating Firebase user",
+                            details = errorContent
+                        }
+                    });
+                }
+                
                 var account = new Account {
                     Username = accountDto.Username,
                     Email = accountDto.Email,
@@ -111,61 +110,57 @@ public abstract class AccountControllerTemplate : Controller {
                     LastName = accountDto.LastName,
                     Type = type,
                     Provider = provider,
-                    OuterUid = accountDto.OuterUid,
                     CreatedAt = DateTime.UtcNow,
                     PasswordHash = BCrypt.Net.BCrypt.HashPassword(accountDto.Password),
-                    IsEmailVerified = accountDto.IsEmailVerified,
-                    CreatedBy = createdBy
+                    IsEmailVerified = false,
+                    CreatedBy = createdBy,
+                    OuterUid = signUpResponse.localId
                 };
-                context.Accounts.Add(account);
-                await context.SaveChangesAsync();
+                _context.Accounts.Add(account);
+                await _context.SaveChangesAsync();
 
-                var result = new AccountRegularModel {
-                    Id = account.Id,
+                await transaction.CommitAsync();
+                
+                var role = account.Type.ToString();
+                var response = new AuthResponse() {
                     Username = account.Username,
                     Email = account.Email,
                     FirstName = account.FirstName,
                     LastName = account.LastName,
-                    IsEmailVerified = account.IsEmailVerified,
-                    Type = account.Type.ToString(),
-                    Provider = account.Provider.ToString(),
-                    LastSignIn = account.LastSignIn,
+                    Role = role,
                 };
-
-                return Ok(result);
-            }
-            catch (Exception e) {
+                return Ok(response);
+            } catch (Exception _) {
+                await transaction.RollbackAsync();
+                
                 return StatusCode(500, new {
                     success = false,
                     error = new {
-                        code = "InternalError",
-                        message = "An unexpected error occurred. Please try again later."
+                        code = "SignupError",
+                        message = ErrorMessage.ErrorMessages["SignUpError"]
                     }
                 });
             }
         }
 
-        var modelErrors = ModelState.Values.SelectMany(v => v.Errors)
-            .Select(e => "Invalid field data")
-            .Distinct()
-            .ToArray();
-
         return BadRequest(new {
             success = false,
             error = new {
                 code = "ValidationError",
-                message = "Some required fields are missing or incorrect.",
-                details = modelErrors
+                message = ErrorMessage.ErrorMessages["ValidationError"],
             }
         });
     }
 
-    public async Task<IActionResult> UpdateByUsername(string username, AccountPutDto accountPutDto,
-        AccountType? accountType = null) {
+    [NonAction]
+    public async Task<IActionResult> UpdateAccount(AccountPutDto accountPutDto,
+                                                   AccountType? accountType = null) {
+        var firebaseUid = HttpContext.User.FindFirst("user_id")?.Value;
+
         if (ModelState.IsValid) {
             try {
-                var accountQuery = context.Accounts.AsTracking()
-                    .Where(a => a.Username == username);
+                var accountQuery = _context.Accounts.AsTracking()
+                                           .Where(a => a.OuterUid == firebaseUid);
 
                 if (accountType is not null) {
                     accountQuery = accountQuery.Where(a => a.Type == accountType);
@@ -174,7 +169,12 @@ public abstract class AccountControllerTemplate : Controller {
                 var account = await accountQuery.FirstOrDefaultAsync();
 
                 if (account == null) {
-                    return NotFound(new { success = false, error = $"User {username} is not found" });
+                    return NotFound(new {
+                        success = false, error = new {
+                            code = "UsernameError",
+                            message = ErrorMessage.ErrorMessages["UsernameError"]
+                        }
+                    });
                 }
 
 
@@ -190,9 +190,9 @@ public abstract class AccountControllerTemplate : Controller {
                 account.LastSignIn = accountPutDto?.LastSignIn ?? account.LastSignIn;
                 account.Email = accountPutDto?.Email ?? account.Email;
 
-                await context.SaveChangesAsync();
+                await _context.SaveChangesAsync();
 
-                return Ok(new AccountRegularModel {
+                return Ok(new AccountViewModel {
                     Id = account.Id,
                     Username = account.Username,
                     Email = account.Email,
@@ -203,8 +203,7 @@ public abstract class AccountControllerTemplate : Controller {
                     Type = account.Type.ToString(),
                     Provider = account.Provider.ToString()
                 });
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 return StatusCode(500, new {
                     success = false,
                     error = new {
@@ -218,208 +217,82 @@ public abstract class AccountControllerTemplate : Controller {
             success = false,
             error = new {
                 code = "ValidationError",
-                message = "Invalid data",
-                details = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage)
+                message = ErrorMessage.ErrorMessages["ValidationError"],
+                //details = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage)
             }
         });
     }
 
-    public async Task<IActionResult> DeleteByUsername(string username, AccountType accountType) {
-        var account = context.Accounts.AsTracking()
-            .Where(a => a.Username == username)
-            .Where(a => a.Type == accountType).FirstOrDefault();
-
-        if (account == null) {
-            return NotFound(new { success = false, error = $"User {username} is not found" });
-        }
-
-        context.Accounts.Remove(account);
-        await context.SaveChangesAsync();
-
-        return NoContent();
-    }
-
-    public async Task<IActionResult> GetTokenByUsername(string username, AccountType accountType) {
+    [NonAction]
+    public async Task<IActionResult> Login(AccountType accountType) {
         try {
-            var account = await context.Accounts.AsNoTracking()
-                .Where(a => a.Username == username)
-                .Where(a => a.Type == accountType)
-                .FirstOrDefaultAsync();
+            var firebaseUid = HttpContext.User.FindFirst("user_id")?.Value;
+
+            var account = await _context.Accounts.AsTracking()
+                                        .Where(a => a.OuterUid == firebaseUid)
+                                        .Where(a => a.Type == accountType)
+                                        .FirstOrDefaultAsync();
 
             if (account == null) {
-                return NotFound(new { error = $"User {username} is not found" });
+                return NotFound(new {
+                    success = false, error = new {
+                        code = "UsernameError",
+                        message = ErrorMessage.ErrorMessages["UsernameError"]
+                    }
+                });
             }
 
-            var token = await context.UserTokens.AsNoTracking()
-                .Where(a => a.UserId == account.Id).FirstOrDefaultAsync();
+            account.LastSignIn = DateTime.UtcNow;
+            account.IsEmailVerified = true; //TODO this should be handled in a smarter way
+            await _context.SaveChangesAsync();
 
-            if (token == null) {
-                return NotFound(new { error = $"The token for {username} is not found" });
-            }
+            var role = account.Type.ToString();
+            var response = new AuthResponse() {
+                Username = account.Username,
+                Role = role,
+                Email = account.Email,
+                FirstName = account.FirstName,
+                LastName = account.LastName,
+            };
 
-            return Ok(new UserTokenViewModel {
-                Token = token.OuterToken
-            });
-        }
-        catch (Exception e) {
+            return Ok(response);
+        } catch (Exception e) {
             return StatusCode(500, new {
                 success = false,
                 error = new {
-                    message = e.Message
+                    code = "LoginError",
+                    message = ErrorMessage.ErrorMessages["LoginError"],
                 }
             });
         }
     }
 
-    public async Task<IActionResult> GetRoleByUid(string uid) {
+    [NonAction]
+    public async Task<IActionResult> Logout(AccountType accountType) {
         try {
-            var account = await context.Accounts.AsNoTracking()
-                .Where(a => a.OuterUid == uid)
-                .FirstOrDefaultAsync();
+            var firebaseUid = HttpContext.User.FindFirst("user_id")?.Value;
+
+            var account = await _context.Accounts.AsTracking()
+                                        .Where(a => a.OuterUid == firebaseUid)
+                                        .Where(a => a.Type == accountType)
+                                        .FirstOrDefaultAsync();
 
             if (account == null) {
-                return NotFound(new { error = $"User with uid {uid} is not found" });
-            }
-
-            return Ok(new AccountRoleModel {
-                Role = account.Type.ToString()
-            });
-        }
-        catch (Exception e) {
-            return StatusCode(500, new {
-                success = false,
-                error = new {
-                    message = e.Message
-                }
-            });
-        }
-    }
-
-    public async Task<IActionResult> UpdateTokenByUsername(string username, AccountTokenDto accountTokenDto,
-        AccountType accountType) {
-        if (ModelState.IsValid) {
-            try {
-                var account = await context.Accounts.AsNoTracking()
-                    .Where(a => a.Username == username)
-                    .Where(a => a.Type == accountType)
-                    .FirstOrDefaultAsync();
-
-                if (account == null) {
-                    return NotFound(new { error = $"User {username} is not found" });
-                }
-
-                var token = await context.UserTokens.AsTracking()
-                    .Where(a => a.UserId == account.Id).FirstOrDefaultAsync();
-
-                if (token == null) {
-                    return NotFound(new { error = $"The token for {username} is not found" });
-                }
-
-                token.OuterToken = accountTokenDto.Token;
-                token.UpdatedAt = DateTime.UtcNow;
-
-                await context.SaveChangesAsync();
-
-                return Ok(new UserTokenViewModel {
-                    Token = token.OuterToken
-                });
-            }
-            catch (Exception e) {
-                return StatusCode(500, new {
-                    success = false,
-                    error = new {
-                        message = e.Message
+                return NotFound(new {
+                    success = false, error = new {
+                        code = "UsernameError",
+                        message = ErrorMessage.ErrorMessages["UsernameError"]
                     }
                 });
             }
-        }
-
-        return BadRequest(new {
-            success = false,
-            error = new {
-                code = "ValidationError",
-                message = "Invalid data",
-                details = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage)
-            }
-        });
-    }
-
-    public async Task<IActionResult> Login(string username, AccountTokenDto accountTokenDto, AccountType accountType) {
-        if (ModelState.IsValid) {
-            try {
-                var account = await context.Accounts.AsTracking()
-                    .Where(a => a.Username == username)
-                    .Where(a => a.Type == accountType)
-                    .FirstOrDefaultAsync();
-
-                if (account == null) {
-                    return NotFound(new { error = $"User {username} is not found" });
-                }
-
-                account.LastSignIn = DateTime.UtcNow;
-                account.IsEmailVerified = true; //TODO this should be handled in a smarter way
-
-                var token = new UserToken {
-                    CreatedAt = DateTime.UtcNow,
-                    UserId = account.Id,
-                    OuterToken = accountTokenDto.Token
-                };
-
-                context.UserTokens.Add(token);
-                await context.SaveChangesAsync();
-                //TODO some login logic
-
-                return Ok();
-            }
-            catch (Exception e) {
-                return StatusCode(500, new {
-                    success = false,
-                    error = new {
-                        message = e.Message
-                    }
-                });
-            }
-        }
-
-        return BadRequest(new {
-            success = false,
-            error = new {
-                code = "ValidationError",
-                message = "Invalid data",
-                details = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage)
-            }
-        });
-    }
-
-    public async Task<IActionResult> Logout(string username, AccountType accountType) {
-        try {
-            var account = await context.Accounts.AsTracking()
-                .Where(a => a.Username == username)
-                .Where(a => a.Type == accountType)
-                .FirstOrDefaultAsync();
-
-            if (account == null) {
-                return NotFound(new { error = $"User {username} is not found" });
-            }
-
-            var token = await context.UserTokens.AsTracking()
-                .Where(a => a.UserId == account.Id).FirstOrDefaultAsync();
-
-            if (token == null) {
-                return NotFound(new { error = $"The token for {username} is not found" });
-            }
-
-            context.UserTokens.Remove(token);
-            await context.SaveChangesAsync();
-            //TODO some logout logic
 
             return NoContent();
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             return StatusCode(500, new {
                 success = false,
                 error = new {
-                    message = e.Message
+                    code = "LogoutError",
+                    message = ErrorMessage.ErrorMessages["LogoutError"]
                 }
             });
         }

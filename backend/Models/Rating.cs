@@ -9,7 +9,7 @@ public partial class Rating
 
     public DateTime CreatedAt { get; set; }
 
-    public DateTime ChangedAt { get; set; }
+    public DateTime? ChangedAt { get; set; }
 
     public int Rating1 { get; set; }
 

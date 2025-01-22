@@ -1,0 +1,44 @@
+.confirm-window {
+    position: fixed;
+    top: 0;
+    right: 0;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    width: 100vw;
+    height: 100vh;
+
+    background-color: rgba(0, 0, 0, 0.7);
+    z-index: 1000;
+}
+
+.confirm-window .confirm-content {
+    color: white;
+    font-weight: bold;
+
+    border: 3px solid white;
+    border-radius: 10px;
+    padding: 30px 20px;
+
+    background-color: #411351;
+    width: 30%;
+    text-align: center;
+}
+
+.confirm-content .confirm-message {
+    margin-bottom: 30px;
+
+    font-size: 1.5rem;
+}
+
+.confirm-content .confirm-buttons {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    column-gap: 10px;
+}
+
+.confirm-buttons .btn-confirm {
+
+}

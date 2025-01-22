@@ -19,7 +19,6 @@ const buttons = [
 const Auth = () => {
 	const location = useLocation();
 	const navigate = useNavigate();
-	const {setLoader} = useLoader();
 
 	//TODO check whether there is better way to implement these 3 rows
 	const isLogin = location.pathname.startsWith("/login")
@@ -52,11 +51,12 @@ const Auth = () => {
 				[
 					{pos: 1, type: "text", minLength: 2, label: "First name", required: true, name: "firstName"},
 					{pos: 2, type: "text", label: "Last name", required: true, name: "lastName"},
-					{pos: 3, type: "text", required: true, label: "Username", name: "username"},
+					{pos: 3, type: "text", minLength: 8, required: true, label: "Username", name: "username"},
 					{
 						pos: 6,
 						type: "password",
 						required: true,
+						minLength: 6,
 						sameAs: {fieldName: "password", message: "The passwords do not match"},
 						label: "Repeat the password",
 						name: "passwordRepeat"
@@ -70,7 +70,7 @@ const Auth = () => {
 				label: "Email",
 				name: "email"
 			},
-			{pos: 5, type: "password", required: true, label: "Password", name: "password"},
+			{pos: 5, type: "password", minLength: 6, required: true, label: "Password", name: "password"},
 		],
 		fieldClass: "input-login",
 		wClassName: "form-group",
@@ -95,7 +95,7 @@ const Auth = () => {
 						</Button>
 						<h2 className={"login-title"}>{titleText}</h2>
 						<div className={"login-buttons"}>
-							{role === "admin" ? ''
+							{role !== "user" ? ''
 								: <Button onClick={() => {
 									//forms the link for the button of the respective role
 									navigate(`/${isLogin ? "signup" : "login"}/${role === "user" ? "" : role}`);
@@ -108,8 +108,8 @@ const Auth = () => {
 							}
 							{
 								buttons.map(({title, icon, isLogInOnly, ...rest}) => {
-									//We must not show a sign-up button on admin login page
-									if (role !== rest.role && !(rest.role === "admin" && !isLogin)) {
+									//We must not show a sign-up button on admin and gym login page
+									if (role !== rest.role && !(rest.role !== "user" && !isLogin)) {
 										return <Button
 											key={title}
 											type={"button"}
@@ -123,7 +123,7 @@ const Auth = () => {
 						</div>
 					</div>
 				</div>
-				<Form data={data} onSubmit={getFormValues}/>
+				<Form data={data} showAsterisks={!isLogin} onSubmit={getFormValues}/>
 			</div>
 		</div>
 	)

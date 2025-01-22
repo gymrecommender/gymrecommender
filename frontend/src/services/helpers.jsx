@@ -1,6 +1,19 @@
 import DOMPurify from "dompurify";
 
 export const emailRegEx = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+const weekdays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+const slimWorkingHours = (workingHours) => {
+	return workingHours.reduce((acc, item) => {
+		let value;
+		if (item.openFrom === "00:00:00" && item.openUntil === "23:59:59") {
+			value = "Always open"
+		} else {
+			value = `${item.openFrom.substring(0, 5)} - ${item.openUntil.substring(0, 5)}`
+		}
+		acc[item.weekday] = value;
+		return acc;
+	}, weekdays.map((_) => "Closed"));
+}
 
 const displayTimestamp = (timestamp, isShort = false) => {
 	if (!timestamp) {
@@ -128,5 +141,18 @@ const errorsParser = ({request, response, message}) => {
 	return errorDetails;
 }
 
-export {displayTimestamp, errorsParser, sanitizeData, getLocation, firebaseErrors, generateValidationRules}
+const calculateCenter = (markers) => {
+	const result = markers?.reduce((acc, marker) => {
+		acc.lat += marker.lat;
+		acc.lng += marker.lng;
+		return acc;
+	}, {lat: 0, lng: 0});
+
+	if (!result) {
+		return null;
+	}
+	return {lat: result.lat / markers.length, lng: result.lng / markers.length};
+}
+
+export {displayTimestamp, slimWorkingHours, weekdays, errorsParser, sanitizeData, getLocation, firebaseErrors, generateValidationRules, calculateCenter}
 

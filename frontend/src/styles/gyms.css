@@ -49,6 +49,15 @@
     margin: 0 15px;
 }
 
+.section-mg .modal {
+    min-width: 50vw;
+}
+
+.section-mg .modal .modal-body {
+    padding: 20px 0;
+    text-align: center;
+}
+
 .gym-data-header {
     display: flex;
     column-gap: 20px;
@@ -70,17 +79,21 @@
 .gym-data input {
     margin-top: 0;
 }
-.gym-data .gym-price {
-    display: flex;
-    align-items: end;
+.gym-data .gym-prices {
+    column-gap: 5px;
 }
-.gym-data .gym-price .input-field {
+.gym-data .gym-prices .gym-prices-memberships {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    column-gap: 7px;
+}
+.gym-data .gym-prices .input-field {
     margin-top: 0;
 }
 .gym-data select, .gym-data input {
     height: 45px;
 }
-.gym-data .gym-price select {
+.gym-data .gym-prices select {
     padding: 10px;
     border-radius: 5px;
     background-color: white;
@@ -136,6 +149,11 @@
 }
 
 .gym-data-row .gym-data-row-attr-value {
+    color: white;
+    font-weight: bold;
+}
+
+.gym-data-row .gym-data-row-attr-value a {
     color: white;
     font-weight: bold;
 }
@@ -238,12 +256,18 @@
 
     gap: 20px;
     max-height: 500px;
+    min-height: 500px;
 
     overflow-y: scroll;
     -ms-overflow-style: none;
     scrollbar-width: none;
 
     flex: 0.5;
+}
+
+.container .gyms-req:has(.no-content) {
+    justify-content: center;
+    align-items: center;
 }
 
 .gyms-req::-webkit-scrollbar {
@@ -256,9 +280,6 @@
 
     background-color: #7C5DC6;
     color: white;
-}
-.gyms-req .gym-req:hover {
-    cursor: pointer;
 }
 .gyms-req .gym-req-selected {
     background-color: #7C5DC6;
@@ -293,4 +314,7 @@
 
 .gym-req .gym-req-title, .gym-req .gym-req-address {
     word-break: break-all;
+}
+.icon.icon-delete {
+    font-size: 1.8rem;
 }
