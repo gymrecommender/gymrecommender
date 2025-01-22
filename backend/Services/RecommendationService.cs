@@ -243,10 +243,14 @@ public class RecommendationService {
                                      .ToList();
 
         List<double?> totalPrices = membershipPrices
-                                    .Zip(travelPrices, (membershipPrice, travelPrice) =>
-                                        membershipPrice.HasValue
-                                            ? (double?)(membershipPrice.Value + travelPrice)
-                                            : null)
+                                    .Zip(travelPrices, (membershipPrice, travelPrice) => {
+                                        if (!membershipPrice.HasValue) return (double?)null;
+                                        double? sum = membershipPrice.Value;
+
+                                        //It does affect the rating and total price but not enough to discard the whole membership when there was no traver time retrieved
+                                        if (travelPrice.HasValue) sum += travelPrice.Value;
+                                        return sum;
+                                    })
                                     .ToList();
 
         List<double?> externalRatings = filteredGyms
@@ -575,6 +579,7 @@ public class RecommendationService {
 
             _logger.LogInformation("Total recommendations to save: {Count}", recommendationEntities.Count);
         }
+
         if (recommendationEntities.Any()) {
             _dbContext.Recommendations.AddRange(recommendationEntities);
             await _dbContext.SaveChangesAsync();
