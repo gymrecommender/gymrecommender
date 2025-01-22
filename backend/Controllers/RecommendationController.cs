@@ -35,9 +35,9 @@ public class RecommendationController : Controller {
         }
 
         // Call the service to get recommendations
-        var recommendations = _recommendationService.GetRecommendations(request, account);
+        var recommendations = await _recommendationService.GetRecommendations(request, account);
 
         // Assuming GetRecommendations returns IActionResult
-        return await recommendations;
+        return recommendations;
     }
 }

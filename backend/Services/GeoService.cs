@@ -7,14 +7,12 @@ using backend.Utilities;
 
 namespace backend.Services;
 
-public class GeoService
-{
+public class GeoService {
     private readonly GoogleApiService _googleApiService;
     private readonly ILogger<GeoService> _logger;
 
     // Constructor injection for GoogleApiService and ILogger
-    public GeoService(GoogleApiService googleApiService, ILogger<GeoService> logger)
-    {
+    public GeoService(GoogleApiService googleApiService, ILogger<GeoService> logger) {
         _googleApiService = googleApiService;
         _logger = logger;
     }
@@ -32,8 +30,7 @@ public class GeoService
         GymsFilteredDto gyms,
         double userLatitude,
         double userLongitude,
-        string? departureTime)
-    {
+        string? departureTime) {
         _logger.LogInformation("Calculating traveling time and price for gyms.");
 
         long unixDepartureTime = ParseDepartureTime(departureTime);
@@ -47,8 +44,7 @@ public class GeoService
 
         _logger.LogInformation("Completed calculation of traveling time and price for gyms.");
 
-        return new GymFilteredTravelInfoDto
-        {
+        return new GymFilteredTravelInfoDto {
             MainGyms = mainGyms,
             AuxGyms = auxGyms,
         };
@@ -60,25 +56,19 @@ public class GeoService
     /// </summary>
     /// <param name="departureTimeStr">Departure time as a string.</param>
     /// <returns>Unix timestamp as long?, or null if unable to set a valid departure time.</returns>
-    private long ParseDepartureTime(string? departureTimeStr)
-    {
-        if (!string.IsNullOrWhiteSpace(departureTimeStr))
-        {
+    private long ParseDepartureTime(string? departureTimeStr) {
+        if (!string.IsNullOrWhiteSpace(departureTimeStr)) {
             _logger.LogDebug("Attempting to parse departure time string: {DepartureTimeStr}", departureTimeStr);
 
             // Attempt to parse the departure time string
-            if (DateTime.TryParse(departureTimeStr, out DateTime parsedTime))
-            {
+            if (DateTime.TryParse(departureTimeStr, out DateTime parsedTime)) {
                 _logger.LogDebug("Successfully parsed departure time: {ParsedTime}", parsedTime);
 
                 // Convert to UTC if the parsed time has a kind of Local or Unspecified
-                if (parsedTime.Kind == DateTimeKind.Unspecified)
-                {
+                if (parsedTime.Kind == DateTimeKind.Unspecified) {
                     parsedTime = DateTime.SpecifyKind(parsedTime, DateTimeKind.Utc);
                     _logger.LogDebug("Specified DateTimeKind as UTC: {ParsedTime}", parsedTime);
-                }
-                else
-                {
+                } else {
                     parsedTime = parsedTime.ToUniversalTime();
                     _logger.LogDebug("Converted parsed time to UTC: {ParsedTime}", parsedTime);
                 }
@@ -87,32 +77,31 @@ public class GeoService
                 long unixTime = new DateTimeOffset(parsedTime).ToUnixTimeSeconds();
                 _logger.LogInformation("Using provided departure time Unix timestamp: {UnixTime}", unixTime);
                 return unixTime;
-            }
-            else
-            {
+            } else {
                 _logger.LogWarning("Invalid departureTime format: {DepartureTimeStr}. Defaulting to 5 PM UTC.",
                     departureTimeStr);
             }
-        }
-        else
-        {
+        } else {
             _logger.LogInformation("No departureTime provided. Defaulting to 5 PM UTC.");
         }
 
         // If departureTimeStr is null or invalid, set to 5 PM UTC
+
+        // I think, it makes more sense to set it for the current time as if the user were to go to the gym right now
+        // It is always possible to specify the departure time explicitly, and setting the default one to something static
+        // is quite limiting, I think
+        // But generally, since it is possible to specify the departure time explicitly, I do not think that the default value is really important
+        // So this is just nitpicking and a matter of taste)
         var now = DateTime.UtcNow;
         var fivePmToday = new DateTime(now.Year, now.Month, now.Day, 17, 0, 0, DateTimeKind.Utc);
 
         // If current time is after 5 PM UTC, set to 5 PM next day
-        if (now > fivePmToday)
-        {
+        if (now > fivePmToday) {
             fivePmToday = fivePmToday.AddDays(1);
             _logger.LogInformation(
                 "Current time is after 5 PM UTC. Setting departure time to 5 PM UTC next day: {FivePmToday}",
                 fivePmToday);
-        }
-        else
-        {
+        } else {
             _logger.LogInformation("Setting departure time to 5 PM UTC today: {FivePmToday}", fivePmToday);
         }
 
@@ -134,8 +123,7 @@ public class GeoService
         List<Gym> gyms,
         double userLatitude,
         double userLongitude,
-        long departureTime)
-    {
+        long departureTime) {
         _logger.LogInformation("Calculating traveling time and price for {GymCount} gyms.", gyms.Count);
 
         // Call GoogleApiService to get distance matrix in transit mode
@@ -151,8 +139,7 @@ public class GeoService
             departureTime: departureTime
         ).GetAwaiter().GetResult();
 
-        if (!distanceMatrixResponse.Success)
-        {
+        if (!distanceMatrixResponse.Success) {
             _logger.LogError("Google Distance Matrix API error: {Error}", distanceMatrixResponse.Value);
             // Handle error as needed; throw, log, or return an empty list.
             throw new Exception($"Google Distance Matrix API error: {distanceMatrixResponse.Value}");
@@ -166,49 +153,44 @@ public class GeoService
         var result = new List<GymTravelInfoDto>();
 
         // Safely parse the array of rows (should be only 1 row if there's 1 origin).
-        if (root.TryGetProperty("rows", out var rows) && rows.GetArrayLength() > 0)
-        {
+        if (root.TryGetProperty("rows", out var rows) && rows.GetArrayLength() > 0) {
             _logger.LogDebug("Parsing distance matrix response rows.");
 
             var elements = rows[0].GetProperty("elements");
 
             // Iterate through each gym's corresponding element
-            for (int i = 0; i < gyms.Count; i++)
-            {
+            for (int i = 0; i < gyms.Count; i++) {
                 var gym = gyms[i];
                 var element = elements[i];
 
                 // Check individual element status
                 var statusProperty = element.GetProperty("status").GetString();
-                if (statusProperty != "OK")
-                {
+                if (statusProperty != "OK") {
                     _logger.LogWarning(
                         "Distance Matrix element status for Gym ID {GymId} is {Status}. Setting TravelTime and TravelPrice to null.",
                         gym.Id, statusProperty);
                     // If status is not OK, set TravelTime and TravelPrice to null
-                    result.Add(new GymTravelInfoDto
-                    {
+                    result.Add(new GymTravelInfoDto {
                         Gym = gym,
                         TravelTime = null,
                         TravelPrice = null,
-                        Currency = "USD"
+                        Currency = "EUR"
                     });
                     continue;
                 }
 
-                try
-                {
+                try {
                     // Extract distance in meters
                     double distanceInMeters = element
-                        .GetProperty("distance")
-                        .GetProperty("value")
-                        .GetDouble();
+                                              .GetProperty("distance")
+                                              .GetProperty("value")
+                                              .GetDouble();
 
                     // Extract duration in seconds
                     double timeInSeconds = element
-                        .GetProperty("duration")
-                        .GetProperty("value")
-                        .GetDouble();
+                                           .GetProperty("duration")
+                                           .GetProperty("value")
+                                           .GetDouble();
 
                     _logger.LogDebug(
                         "Gym ID {GymId}: Distance = {DistanceInMeters} meters, Duration = {TimeInSeconds} seconds.",
@@ -216,13 +198,12 @@ public class GeoService
 
                     // Initialize fare variables
                     double? fareValue = null;
-                    string fareCurrency = "USD"; // Default currency
+                    string fareCurrency = "EUR"; // Default currency
 
                     // Extract fare if available
-                    if (element.TryGetProperty("fare", out var fare))
-                    {
+                    if (element.TryGetProperty("fare", out var fare)) {
                         fareValue = fare.GetProperty("value").GetDouble();
-                        fareCurrency = fare.GetProperty("currency").GetString() ?? "USD";
+                        fareCurrency = fare.GetProperty("currency").GetString() ?? "EUR";
                         _logger.LogDebug("Gym ID {GymId}: Fare = {FareValue} {FareCurrency}.", gym.Id, fareValue,
                             fareCurrency);
                     }
@@ -231,31 +212,25 @@ public class GeoService
                     double travelTimeInMinutes = timeInSeconds / 60.0;
 
                     // Add the travel info to the result list
-                    result.Add(new GymTravelInfoDto
-                    {
+                    result.Add(new GymTravelInfoDto {
                         Gym = gym,
                         TravelTime = travelTimeInMinutes,
                         TravelPrice = fareValue,
                         Currency = fareCurrency
                     });
-                }
-                catch (Exception ex)
-                {
+                } catch (Exception ex) {
                     _logger.LogError(ex,
                         "Error processing distance matrix element for Gym ID {GymId}. Setting TravelTime and TravelPrice to null.",
                         gym.Id);
-                    result.Add(new GymTravelInfoDto
-                    {
+                    result.Add(new GymTravelInfoDto {
                         Gym = gym,
                         TravelTime = null,
                         TravelPrice = null,
-                        Currency = "USD"
+                        Currency = "EUR"
                     });
                 }
             }
-        }
-        else
-        {
+        } else {
             _logger.LogWarning("No rows found in distance matrix response.");
         }
 

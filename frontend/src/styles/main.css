@@ -20,7 +20,6 @@ body::-webkit-scrollbar {
 .container {
     display: flex;
     flex-direction: column;
-    height: 100vh;
     box-sizing: border-box;
 
     width: 90%;
@@ -167,6 +166,8 @@ button[type="submit"].btn-submit {
     cursor: pointer;
     transition: background-color 0.3s;
     width: 100%;
+
+    font-size: 1rem;
 }
 
 button[type="submit"].btn-submit:hover {
@@ -285,6 +286,8 @@ input[type="range"]::-moz-range-thumb {
     background-color: inherit;
     padding: 0;
     flex: 1;
+
+    min-height: 400px;
 }
 
 .map {
@@ -346,6 +349,7 @@ input[type="range"]::-moz-range-thumb {
 
 .recommendation-list {
     margin-bottom: 20px;
+    word-break: break-word;
 }
 
 .recommendation-lists h3 {
@@ -357,8 +361,8 @@ input[type="range"]::-moz-range-thumb {
 
 .gym-list {
     list-style: none; /* Removes the default bullet points */
-    padding: 0;       /* Removes default padding */
-    margin: 0;        /* Aligns with parent container */
+    padding: 0; /* Removes default padding */
+    margin: 0; /* Aligns with parent container */
 }
 
 
@@ -376,10 +380,11 @@ input[type="range"]::-moz-range-thumb {
 
 .gym-item:hover {
     border-color: #ccc;
-  }
-  .gym-item.selected {
+}
+
+.gym-item.selected {
     box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
-  }
+}
 
 .gym-item p {
     display: flex;
@@ -426,6 +431,9 @@ input[type="range"]::-moz-range-thumb {
     background-color: #a0a8f5;
     color: #002147;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    table-layout: fixed;
+
+    word-break: break-all;
 }
 
 .history-table th,
@@ -455,18 +463,19 @@ input[type="range"]::-moz-range-thumb {
 }
 
 
-.no-requests {
+.no-content {
     color: #fff;
     font-size: 1.5rem;
-    margin-top: 20px;
     text-align: center;
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: center;
+    height: 100%;
     gap: 20px;
 }
 
-.no-requests svg {
+.no-content svg {
     font-size: 3rem;
     margin-bottom: 10px;
     color: #cdbfff;
@@ -480,9 +489,9 @@ input[type="range"]::-moz-range-thumb {
     position: relative;
     gap: 16px;
     overflow: hidden;
-  }
-  
-  .bookmarked-gyms-container {
+}
+
+.bookmarked-gyms-container {
     display: flex;
     gap: 16px;
     flex-direction: row;
@@ -491,10 +500,13 @@ input[type="range"]::-moz-range-thumb {
     margin: 0 auto;
     width: calc(100% - 80px);
     scroll-behavior: smooth;
-  }
-  
-  .bookmarked-gyms-card {
-    flex: 0 0 300px;
+
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.bookmarked-gym-card {
+    flex: 0 0 350px;
     background-color: #cdd2fc;
     border-radius: 10px;
     padding: 15px;
@@ -502,24 +514,30 @@ input[type="range"]::-moz-range-thumb {
     flex-direction: column;
     justify-content: space-between;
     transition: transform 0.2s ease-in-out;
-    flex-shrink: 0; 
-  }
+    flex-shrink: 0;
+}
 
-  .bookmarked-gyms-card p{
+.bookmarked-gym-content {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.bookmarked-gym-card p {
     color: black;
-  }
-  
-  .membership-info ul {
+}
+
+.membership-info ul {
     list-style-type: none;
     padding: 0;
     margin: 0;
-  }
-  
-  .membership-info li {
+}
+
+.membership-info li {
     font-size: 0.9rem;
-  }
-  
-  .arrow-buttons {
+}
+
+.arrow-buttons {
     position: absolute;
     top: 50%;
     display: flex;
@@ -527,11 +545,11 @@ input[type="range"]::-moz-range-thumb {
     width: calc(100% - 20px);
     justify-content: space-between;
     transform: translateY(-50%);
-    pointer-events: none; 
+    pointer-events: none;
 
-  }
-  
-  .scroll-button {
+}
+
+.scroll-button {
     width: 40px;
     height: 40px;
     background-color: #f5a042;
@@ -545,52 +563,52 @@ input[type="range"]::-moz-range-thumb {
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
     transition: background-color 0.3s ease;
     pointer-events: all;
-  }
-  
-  .scroll-button:hover {
+}
+
+.scroll-button:hover {
     background-color: #ba711e;
-  }
-  
-  .scroll-button.left {
+}
+
+.scroll-button.left {
     position: absolute;
     left: 10px;
-  }
-  
-  .scroll-button.right {
+}
+
+.scroll-button.right {
     position: absolute;
     right: 10px;
-  }
+}
 
-  .demark-button {
+.btn-remove {
     border: none;
     padding: 8px 12px;
     border-radius: 4px;
     cursor: pointer;
     margin-top: 10px;
-  }
-  
-  .demark-button:hover {
+}
+
+.btn-remove:hover {
     background-color: #e04346;
-  }
-  
-  
-  .no-bookmarked-gyms {
+}
+
+
+.no-bookmarked-gyms {
     text-align: center;
     padding: 20px;
     color: #cccccc;
-  }
-  
-  .no-bookmarked-gyms p {
+}
+
+.no-bookmarked-gyms p {
     font-size: 1.5rem;
     margin-top: 10px;
-  }
-  
-  .no-bookmarked-gyms .icon {
+}
+
+.no-bookmarked-gyms .icon {
     font-size: 3rem;
     color: #f5a042;
     margin-bottom: 10px;
-  }
-  
+}
+
 
 /* Button Styles */
 button {
@@ -622,10 +640,12 @@ button.save-btn {
     margin-top: 10px;
 }
 
-button.edit-btn {
+button.btn-name-edit {
     background-color: #f5a042;
     color: #ffffff;
     margin-top: 10px;
+
+    width: 100%;
 }
 
 .search-bar {
@@ -653,13 +673,11 @@ button.edit-btn {
     border-color: #002147;
     box-shadow: 0 0 5px rgba(0, 33, 71, 0.5);
 }
-.search-bar .icon{
+
+.search-bar .icon {
     font-size: 1.5rem;
     color: #f5a042;
 }
-
-
-
 
 /*AccountGym forms*/
 .request-form, .update-form, .unavailable-form {
@@ -714,6 +732,25 @@ button.btn-icon {
     display: inline-flex;
     align-items: center;
     justify-content: center;
+
+    box-shadow: none;
+}
+
+button.btn-icon-dark {
+    border: none;
+    background-color: inherit;
+
+    color: #9f60b5;
+    font-size: 1.4em;
+    text-transform: uppercase;
+    font-weight: bold;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    box-shadow: none;
+    padding: 0;
 }
 
 button.btn-icon .icon {
@@ -729,9 +766,9 @@ button.btn-icon .icon:not(:last-child) {
     margin-right: 10px;
 }
 
-button.btn-icon:hover {
-    border-color: #9f60b5;
-    color: #9f60b5;
+button.btn-icon-dark:hover {
+    border-color: red;
+    color: red;
     cursor: pointer;
 }
 
@@ -786,6 +823,7 @@ button.btn-action {
     align-items: center;
 
     background-color: rgba(0, 54, 123, 0.7);
+    z-index: 100000;
 }
 
 .loader span {
@@ -799,6 +837,7 @@ button.btn-action {
 
     background-color: inherit;
 }
+
 .loader.loader-hover {
     position: absolute;
     z-index: 10;
@@ -878,15 +917,6 @@ form .form-disabler:hover .form-disabler-hint {
     padding: 15px;
 }
 
-.no-content {
-    font-weight: bold;
-    text-align: center;
-    text-transform: uppercase;
-    padding: 5px;
-
-    color: white;
-}
-
 .gym-item.selected {
     border: 10px solid white;
 }
@@ -944,7 +974,7 @@ form .form-disabler:hover .form-disabler-hint {
 
 .form-group input {
     padding: 10px;
-    border: 1px solid #4a4a8e;
+    border: 1px solid #4a4a8e !important;
     border-radius: 4px;
     font-size: 16px;
     background-color: #28285a;
@@ -964,14 +994,16 @@ form .form-disabler:hover .form-disabler-hint {
     border: none;
     border-radius: 4px;
     padding: 12px;
-    font-size: 16px;
+    font-size: 1rem;
     cursor: pointer;
     transition: background-color 0.3s;
+
+    width: 100%;
     gap: 5px;
 }
 
 .btn-primary:hover {
-    background-color: #e66a00; 
+    background-color: #e66a00;
 }
 
 /* Delete Account Container */
@@ -989,9 +1021,11 @@ form .form-disabler:hover .form-disabler-hint {
     border: none;
     border-radius: 4px;
     padding: 12px;
-    font-size: 16px;
+    font-size: 1rem;
     cursor: pointer;
     transition: background-color 0.3s;
+
+    width: 100%;
     gap: 5px;
 }
 
@@ -1044,4 +1078,39 @@ form .form-disabler:hover .form-disabler-hint {
     display: flex;
     justify-content: space-between;
     margin-top: 20px;
+}
+
+.account-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.modal .modal-delete-text {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    margin: 10px 0;
+}
+
+button[disabled]:hover {
+    cursor: inherit !important;
+    color: inherit;
+}
+
+.gym-popup-header {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+
+}
+
+.bookmarked-gym-wh {
+    display: flex;
+    justify-content: space-between;
+}
+
+.bookmarked-gym-wh .bookmarked-gym-wh-h {
+    font-weight: bold;
 }

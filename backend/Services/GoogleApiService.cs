@@ -8,25 +8,21 @@ using DotNetEnv;
 
 namespace backend.Utilities;
 
-public class GoogleApiService
-{
+public class GoogleApiService {
     private string _apiKey;
     private readonly HttpClient _client;
 
-    public GoogleApiService(HttpClient client)
-    {
+    public GoogleApiService(HttpClient client) {
         _client = client;
 
         Env.Load();
         _apiKey = Environment.GetEnvironmentVariable("GOOGLE_API_KEY");
     }
 
-    private async Task<Response> GetRequest(string url)
-    {
+    private async Task<Response> GetRequest(string url) {
         HttpResponseMessage response = await _client.GetAsync(url);
 
-        if (response.IsSuccessStatusCode)
-        {
+        if (response.IsSuccessStatusCode) {
             var res = new Dictionary<string, object>();
             string json = await response.Content.ReadAsStringAsync();
             var jsonDoc = JsonDocument.Parse(json).RootElement;
@@ -46,8 +42,7 @@ public class GoogleApiService
         );
     }
 
-    public async Task<Response> GetCity(double latitude, double longitude)
-    {
+    public async Task<Response> GetCity(double latitude, double longitude) {
         string latFormatted = latitude.ToString(CultureInfo.InvariantCulture);
         string lonFormatted = longitude.ToString(CultureInfo.InvariantCulture);
 
@@ -61,28 +56,19 @@ public class GoogleApiService
         var result = ((JsonElement.ArrayEnumerator)((Dictionary<string, object>)response.Value)["results"]).First();
         var addressComponents = result.GetProperty("address_components");
         var geocode = new Geocode();
-        foreach (var component in addressComponents.EnumerateArray())
-        {
+        foreach (var component in addressComponents.EnumerateArray()) {
             var types = component.GetProperty("types").EnumerateArray()
-                .Select(type => type.GetString());
+                                 .Select(type => type.GetString());
 
-            if (geocode.City == null)
-            {
-                if (types.Any(type => type == "administrative_area_level_1"))
-                {
+            if (geocode.City == null) {
+                if (types.Any(type => type == "administrative_area_level_1")) {
+                    geocode.City = component.GetProperty("long_name").GetString();
+                } else if (types.Any(type => type == "administrative_area_level_2")) {
+                    geocode.City = component.GetProperty("long_name").GetString();
+                } else if (types.Any(type => type == "locality")) {
                     geocode.City = component.GetProperty("long_name").GetString();
                 }
-                else if (types.Any(type => type == "administrative_area_level_2"))
-                {
-                    geocode.City = component.GetProperty("long_name").GetString();
-                }
-                else if (types.Any(type => type == "locality"))
-                {
-                    geocode.City = component.GetProperty("long_name").GetString();
-                }
-            }
-            else if (types.Any(type => type == "country"))
-            {
+            } else if (types.Any(type => type == "country")) {
                 geocode.Country = component.GetProperty("long_name").GetString();
             }
         }
@@ -94,8 +80,7 @@ public class GoogleApiService
         if (!response.Success) return response;
 
         //We may have multiple cities with the same name in the same country, so we need to additionally check the coordinates
-        foreach (var city in ((JsonElement.ArrayEnumerator)((Dictionary<string, object>)response.Value)["results"]))
-        {
+        foreach (var city in ((JsonElement.ArrayEnumerator)((Dictionary<string, object>)response.Value)["results"])) {
             var viewport = city.GetProperty("geometry").GetProperty("viewport");
             var northeast = viewport.GetProperty("northeast");
             double nelat = northeast.GetProperty("lat").GetDouble();
@@ -107,8 +92,7 @@ public class GoogleApiService
 
             //We check whether the requested location actually lies within the viewport of the city
             if ((swlat <= latitude && latitude <= nelat) &&
-                (swlng <= longitude && longitude <= nelng))
-            {
+                (swlng <= longitude && longitude <= nelng)) {
                 geocode.Nelatitude = nelat;
                 geocode.Nelongitude = nelng;
                 geocode.Swlongitude = swlng;
@@ -120,8 +104,7 @@ public class GoogleApiService
         return new Response(geocode);
     }
 
-    public async Task<Response> GetGyms(double latitude, double longitude, int rad, City city)
-    {
+    public async Task<Response> GetGyms(double latitude, double longitude, int rad, City city) {
         var placesUrl =
             $"https://maps.googleapis.com/maps/api/place/nearbysearch/json?location={latitude},{longitude}&radius={rad}&type=gym&keyword=gym&key={_apiKey}";
         var placesDetailUrl =
@@ -129,8 +112,7 @@ public class GoogleApiService
 
         string? token = null;
         var returnResult = new List<Tuple<Gym, List<GymWorkingHoursViewModel>>>();
-        do
-        {
+        do {
             //We retrieve the list of the gyms for the current location
             var response = await GetRequest($"{placesUrl}{(string.IsNullOrEmpty(token) ? "" : $"&pagetoken={token}")}");
             if (!response.Success) return response;
@@ -143,8 +125,7 @@ public class GoogleApiService
             token = responseDict.ContainsKey("nextPageToken") ? responseDict["nextPageToken"].ToString() : null;
             var gyms = (JsonElement.ArrayEnumerator)responseDict["results"];
 
-            foreach (var oneGym in gyms)
-            {
+            foreach (var oneGym in gyms) {
                 Gym gym = new Gym();
                 gym.ExternalPlaceId = oneGym.GetProperty("place_id").GetString();
 
@@ -154,13 +135,11 @@ public class GoogleApiService
                 var placeDetail = (JsonElement)((Dictionary<string, object>)detResponse.Value)["result"];
 
                 gym.Address = placeDetail.GetProperty("formatted_address").GetString();
-                if (placeDetail.TryGetProperty("formatted_phone_number", out var phone))
-                {
+                if (placeDetail.TryGetProperty("formatted_phone_number", out var phone)) {
                     gym.PhoneNumber = phone.GetString();
                 }
 
-                if (placeDetail.TryGetProperty("website", out var website))
-                {
+                if (placeDetail.TryGetProperty("website", out var website)) {
                     gym.Website = website.GetString();
                 }
 
@@ -169,32 +148,24 @@ public class GoogleApiService
                 //We will need to also store working hours that are related to the gym
                 //Since they are stored in a separate table, it makes sense to have a separate list of working hours
                 var workingHours = new List<GymWorkingHoursViewModel>();
-                if (placeDetail.TryGetProperty("opening_hours", out var openingHours))
-                {
+                if (placeDetail.TryGetProperty("opening_hours", out var openingHours)) {
                     var openHoursList = openingHours.GetProperty("periods")
-                        .EnumerateArray();
+                                                    .EnumerateArray();
                     // In this case we have regular opening and closing hours, no 24 hours options
-                    if (openHoursList.Count() > 1 && !openHoursList.First().TryGetProperty("close", out _))
-                    {
-                        foreach (var oneDay in openHoursList)
-                        {
-                            workingHours.Add(new GymWorkingHoursViewModel
-                            {
+                    if (openHoursList.Count() > 1 && !openHoursList.First().TryGetProperty("close", out _)) {
+                        foreach (var oneDay in openHoursList) {
+                            workingHours.Add(new GymWorkingHoursViewModel {
                                 Weekday = Convert.ToInt32(oneDay.GetProperty("close").GetProperty("day")),
                                 OpenUntil = TimeOnly.Parse(oneDay.GetProperty("close").GetProperty("time").GetString()
-                                    .Insert(2, ":")),
+                                                                 .Insert(2, ":")),
                                 OpenFrom = TimeOnly.Parse(oneDay.GetProperty("open").GetProperty("time").GetString()
-                                    .Insert(2, ":"))
+                                                                .Insert(2, ":"))
                             });
                         }
-                    }
-                    else
-                    {
+                    } else {
                         //if there is only one element in the opening hours and there is no close attribute, it means that the gym works 24/7
-                        for (int i = 0; i <= 6; i++)
-                        {
-                            workingHours.Add(new GymWorkingHoursViewModel
-                            {
+                        for (int i = 0; i <= 6; i++) {
+                            workingHours.Add(new GymWorkingHoursViewModel {
                                 Weekday = i,
 
                                 OpenUntil = TimeOnly.Parse("23:59:59"),
@@ -204,21 +175,15 @@ public class GoogleApiService
                     }
                 }
 
-                if (placeDetail.TryGetProperty("rating", out var rating))
-                {
+                if (placeDetail.TryGetProperty("rating", out var rating)) {
                     gym.ExternalRating = oneGym.GetProperty("rating").GetDecimal();
-                }
-                else
-                {
+                } else {
                     gym.ExternalRating = 0;
                 }
 
-                if (placeDetail.TryGetProperty("user_ratings_total", out var ratingsTotal))
-                {
+                if (placeDetail.TryGetProperty("user_ratings_total", out var ratingsTotal)) {
                     gym.ExternalRatingNumber = oneGym.GetProperty("user_ratings_total").GetInt32();
-                }
-                else
-                {
+                } else {
                     gym.ExternalRatingNumber = 0;
                 }
 
@@ -242,46 +207,67 @@ public class GoogleApiService
         List<Gym> gyms,
         string mode = "driving",
         long? departureTime = null
-    )
-    {
-        // Build the list of destinations in "lat,lng|lat,lng|..." format
-        var destinations = string.Join("|",
-            gyms.Select(g =>
-                $"{g.Latitude.ToString(CultureInfo.InvariantCulture)},{g.Longitude.ToString(CultureInfo.InvariantCulture)}"));
+    ) {
+        const int maxDestinations = 25;
+        var combinedResults = new List<JsonElement>();
 
-        // Start building the request URL
-        var urlBuilder = new StringBuilder("https://maps.googleapis.com/maps/api/distancematrix/json?");
-        urlBuilder.Append(
-            $"origins={originLat.ToString(CultureInfo.InvariantCulture)},{originLng.ToString(CultureInfo.InvariantCulture)}");
-        urlBuilder.Append($"&destinations={destinations}");
-        urlBuilder.Append($"&mode={mode}");
+        // Split gyms into chunks of 25 or less
+        var gymChunks = gyms
+                        .Select((gym, index) => new { gym, index })
+                        .GroupBy(x => x.index / maxDestinations)
+                        .Select(group => group.Select(x => x.gym).ToList())
+                        .ToList();
 
-        // Optional parameters
-        if (departureTime.HasValue)
-        {
-            urlBuilder.Append($"&departure_time={departureTime.Value}");
+        foreach (var chunk in gymChunks) {
+            // Build the destinations for this chunk
+            var destinations = string.Join("|",
+                chunk.Select(g =>
+                    $"{g.Latitude.ToString(CultureInfo.InvariantCulture)},{g.Longitude.ToString(CultureInfo.InvariantCulture)}"));
+
+            // Build the request URL
+            var urlBuilder = new StringBuilder("https://maps.googleapis.com/maps/api/distancematrix/json?");
+            urlBuilder.Append(
+                $"origins={originLat.ToString(CultureInfo.InvariantCulture)},{originLng.ToString(CultureInfo.InvariantCulture)}");
+            urlBuilder.Append($"&destinations={destinations}");
+            urlBuilder.Append($"&mode={mode}");
+
+            if (departureTime.HasValue) {
+                urlBuilder.Append($"&departure_time={departureTime}");
+            }
+
+            urlBuilder.Append($"&key={_apiKey}");
+
+            string url = urlBuilder.ToString();
+
+            // Execute the request
+            var response = await _client.GetAsync(url);
+            if (!response.IsSuccessStatusCode) {
+                return new Response(
+                    response.ReasonPhrase ?? "Unknown external error",
+                    response.StatusCode.ToString(),
+                    true
+                );
+            }
+
+            // Parse the response as JSON
+            var json = await response.Content.ReadAsStringAsync();
+            var jsonDoc = JsonDocument.Parse(json).RootElement;
+
+            // Collect the rows for merging
+            if (jsonDoc.TryGetProperty("rows", out var rows)) {
+                foreach (var row in rows.EnumerateArray()) {
+                    if (row.TryGetProperty("elements", out var elements)) {
+                        combinedResults.AddRange(elements.EnumerateArray());
+                    }
+                }
+            }
         }
 
-        urlBuilder.Append($"&key={_apiKey}");
-
-        string url = urlBuilder.ToString();
-
-        // Execute the request
-        var response = await _client.GetAsync(url);
-        if (!response.IsSuccessStatusCode)
-        {
-            return new Response(
-                response.ReasonPhrase ?? "Unknown external error",
-                response.StatusCode.ToString(),
-                true
-            );
-        }
-
-        // Read the response as JSON
-        var json = await response.Content.ReadAsStringAsync();
-        var jsonDoc = JsonDocument.Parse(json).RootElement;
-
+        // Merge all elements into a single "rows" object
+        var finalResult = JsonDocument.Parse(
+            JsonSerializer.Serialize(new { rows = new[] { new { elements = combinedResults } } })
+        ).RootElement;
         // Return the entire parsed JSON so we can handle it in the service layer
-        return new Response(jsonDoc);
+        return new Response(finalResult);
     }
 }
