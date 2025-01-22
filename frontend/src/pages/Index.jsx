@@ -102,11 +102,11 @@ const Index = () => {
 	const {getUser} = useFirebase();
 	const [recommendations, setRecommendations] = useState({});
 	const [showLoader, setShowLoader] = useState(false);
-	const [pauseLength, setPauseLength] = useState(0);
+	const [pauseLength, setPauseLength] = useState(null);
 
 	useEffect(() => {
 		const retrievePause = async () => {
-			const url = getUser()?.username ? 'gym/pause' : 'useraccount/pause'
+			const url = getUser()?.role === "user" ? 'useraccount/pause' : 'gym/pause';
 			const result = await axiosInternal("GET", url);
 			if (result.error) toast(result.error.message);
 			else {
@@ -122,19 +122,22 @@ const Index = () => {
 		values.longitude = coordinates.lng;
 		values.latitude = coordinates.lat;
 
-		// setShowLoader(true);
-		// const result = await axiosInternal("POST", "recommendation", values);
-		// setShowLoader(false);
-		//
-		// if (result.error) toast(result.error.message);
-		// else {
-		// 	const user = getUser();
-		// 	if (user && result.data.requestId) navigate(`account/history/${result.data.requestId}`);
-		//
-		// 	setRecommendations(result.data)
-		// }
+		setShowLoader(true);
+		const result = await axiosInternal("POST", "recommendation", values);
+		setShowLoader(false);
 
-		const url = getUser()?.username ? 'gym/pause' : 'useraccount/pause'
+		if (result.error) {
+			toast(result.error.message);
+			return;
+		}
+		else {
+			const user = getUser();
+			if (user && result.data.requestId) navigate(`account/history/${result.data.requestId}`);
+
+			setRecommendations(result.data)
+		}
+
+		const url = getUser()?.role === "user" ? 'useraccount/pause' : 'gym/pause';
 		const res = await axiosInternal("POST", url);
 		if (res.error) toast(res.error.message);
 		else return moment.duration(res.data.timeRemaining).asSeconds();
@@ -145,7 +148,7 @@ const Index = () => {
 				Object.keys(recommendations).length === 0 ?
 					<>
 						<aside className="sliders">
-							{pauseLength !== 0 ?
+							{pauseLength !== null ?
 								<Form
 									data={data}
 									showAsterisks={false}

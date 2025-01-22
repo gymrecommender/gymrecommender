@@ -361,8 +361,8 @@ input[type="range"]::-moz-range-thumb {
 
 .gym-list {
     list-style: none; /* Removes the default bullet points */
-    padding: 0;       /* Removes default padding */
-    margin: 0;        /* Aligns with parent container */
+    padding: 0; /* Removes default padding */
+    margin: 0; /* Aligns with parent container */
 }
 
 
@@ -380,10 +380,11 @@ input[type="range"]::-moz-range-thumb {
 
 .gym-item:hover {
     border-color: #ccc;
-  }
-  .gym-item.selected {
+}
+
+.gym-item.selected {
     box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
-  }
+}
 
 .gym-item p {
     display: flex;
@@ -488,9 +489,9 @@ input[type="range"]::-moz-range-thumb {
     position: relative;
     gap: 16px;
     overflow: hidden;
-  }
-  
-  .bookmarked-gyms-container {
+}
+
+.bookmarked-gyms-container {
     display: flex;
     gap: 16px;
     flex-direction: row;
@@ -499,9 +500,12 @@ input[type="range"]::-moz-range-thumb {
     margin: 0 auto;
     width: calc(100% - 80px);
     scroll-behavior: smooth;
-  }
-  
-  .bookmarked-gym-card {
+
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.bookmarked-gym-card {
     flex: 0 0 350px;
     background-color: #cdd2fc;
     border-radius: 10px;
@@ -511,29 +515,29 @@ input[type="range"]::-moz-range-thumb {
     justify-content: space-between;
     transition: transform 0.2s ease-in-out;
     flex-shrink: 0;
-  }
+}
 
-  .bookmarked-gym-content {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-  }
+.bookmarked-gym-content {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
 
-  .bookmarked-gym-card p{
+.bookmarked-gym-card p {
     color: black;
-  }
-  
-  .membership-info ul {
+}
+
+.membership-info ul {
     list-style-type: none;
     padding: 0;
     margin: 0;
-  }
-  
-  .membership-info li {
+}
+
+.membership-info li {
     font-size: 0.9rem;
-  }
-  
-  .arrow-buttons {
+}
+
+.arrow-buttons {
     position: absolute;
     top: 50%;
     display: flex;
@@ -543,9 +547,9 @@ input[type="range"]::-moz-range-thumb {
     transform: translateY(-50%);
     pointer-events: none;
 
-  }
-  
-  .scroll-button {
+}
+
+.scroll-button {
     width: 40px;
     height: 40px;
     background-color: #f5a042;
@@ -559,52 +563,52 @@ input[type="range"]::-moz-range-thumb {
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
     transition: background-color 0.3s ease;
     pointer-events: all;
-  }
-  
-  .scroll-button:hover {
+}
+
+.scroll-button:hover {
     background-color: #ba711e;
-  }
-  
-  .scroll-button.left {
+}
+
+.scroll-button.left {
     position: absolute;
     left: 10px;
-  }
-  
-  .scroll-button.right {
+}
+
+.scroll-button.right {
     position: absolute;
     right: 10px;
-  }
+}
 
-  .btn-remove {
+.btn-remove {
     border: none;
     padding: 8px 12px;
     border-radius: 4px;
     cursor: pointer;
     margin-top: 10px;
-  }
-  
-  .btn-remove:hover {
+}
+
+.btn-remove:hover {
     background-color: #e04346;
-  }
-  
-  
-  .no-bookmarked-gyms {
+}
+
+
+.no-bookmarked-gyms {
     text-align: center;
     padding: 20px;
     color: #cccccc;
-  }
-  
-  .no-bookmarked-gyms p {
+}
+
+.no-bookmarked-gyms p {
     font-size: 1.5rem;
     margin-top: 10px;
-  }
-  
-  .no-bookmarked-gyms .icon {
+}
+
+.no-bookmarked-gyms .icon {
     font-size: 3rem;
     color: #f5a042;
     margin-bottom: 10px;
-  }
-  
+}
+
 
 /* Button Styles */
 button {
@@ -669,7 +673,8 @@ button.btn-name-edit {
     border-color: #002147;
     box-shadow: 0 0 5px rgba(0, 33, 71, 0.5);
 }
-.search-bar .icon{
+
+.search-bar .icon {
     font-size: 1.5rem;
     color: #f5a042;
 }
@@ -832,6 +837,7 @@ button.btn-action {
 
     background-color: inherit;
 }
+
 .loader.loader-hover {
     position: absolute;
     z-index: 10;
@@ -997,7 +1003,7 @@ form .form-disabler:hover .form-disabler-hint {
 }
 
 .btn-primary:hover {
-    background-color: #e66a00; 
+    background-color: #e66a00;
 }
 
 /* Delete Account Container */
