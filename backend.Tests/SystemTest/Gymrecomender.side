@@ -54,7 +54,7 @@
         ["xpath=//div[@id='root']/div/div/form/fieldset/div/input", "xpath:idRelative"],
         ["xpath=//input", "xpath:position"]
       ],
-      "value": "niklamag@gmail.com"
+      "value": "testmail1@gmail.com"
     }, {
       "id": "a1485065-293f-4312-9221-ad806d4ebf12",
       "comment": "",
@@ -298,7 +298,7 @@
         ["xpath=//div[@id='root']/div/div/form/fieldset/div[4]/input", "xpath:idRelative"],
         ["xpath=//div[4]/input", "xpath:position"]
       ],
-      "value": "zsfollowme@gmail.com"
+      "value": "testmail2@gmail.com"
     }, {
       "id": "c57a5df6-bb39-4bc5-b46e-c8a53bbc2ca0",
       "comment": "",
@@ -516,7 +516,7 @@
         ["xpath=//div[@id='root']/div/div/form/fieldset/div[4]/input", "xpath:idRelative"],
         ["xpath=//div[4]/input", "xpath:position"]
       ],
-      "value": "niklamg#mail.gg"
+      "value": "testml#mail.gg"
     }, {
       "id": "b55ae241-ddf6-41fc-83e0-61462959a2eb",
       "comment": "",
@@ -754,7 +754,7 @@
         ["xpath=//div[@id='root']/div/div/form/fieldset/div[4]/input", "xpath:idRelative"],
         ["xpath=//div[4]/input", "xpath:position"]
       ],
-      "value": "magyarxzsolt@gmail.com"
+      "value": "testmail2@gmail.com"
     }, {
       "id": "85124d98-9ca9-4190-b6de-677966e31314",
       "comment": "",
@@ -872,7 +872,7 @@
         ["xpath=//div[@id='root']/div/div/form/fieldset/div/input", "xpath:idRelative"],
         ["xpath=//input", "xpath:position"]
       ],
-      "value": "magyarxzsolt@gmail.com"
+      "value": "testmail2@gmail.com"
     }, {
       "id": "ede1470f-1359-48f9-89da-609e12fd5731",
       "comment": "",
