@@ -125,7 +125,7 @@ const UserRating = () => {
 	useEffect(() => {
 		const getGyms = async () => {
 			setLoading(true);
-			const result = await axiosInternal("GET", "/gym/location", {}, {
+			const result = await axiosInternal("GET", "gym/location", {}, {
 				lat: coordinates.lat,
 				lng: coordinates.lng
 			});

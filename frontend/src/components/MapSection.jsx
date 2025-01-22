@@ -11,7 +11,10 @@ const MapSection = ({markers, showStartMarker=true, forceClick=false}) => {
 		//getLocation has to be an async function since the flow goes further after executing a getCurrentLocation function
 		//hence, to get the result we need to wait for the execution of that function to be finished
 		const result = await getLocation()
-		if (result.error) toast(result.error.message)
+		if (result.error) {
+			setCoordinates({lat: null, lng: null})
+			toast(result.error.message)
+		}
 		else setCoordinates(result.data)
 	}
 	return (

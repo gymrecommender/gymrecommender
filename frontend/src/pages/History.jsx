@@ -45,7 +45,7 @@ const History = () => {
 	const filteredRequests = requests.filter((request) => searchQuery.length > 0 ? request.name?.toLowerCase().includes(searchQuery.toLowerCase()) : true);
 
 	const removeBookmark = async (gymId, bookmarkId) => {
-		const result = await axiosInternal("DELETE", `/useraccount/bookmarks/${bookmarkId}`);
+		const result = await axiosInternal("DELETE", `useraccount/bookmarks/${bookmarkId}`);
 		if (result.error) toast(result.error.message);
 		else {
 			toast("The bookmark has successfully been removed")
