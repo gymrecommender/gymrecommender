@@ -123,6 +123,10 @@ public class GoogleApiService {
             //In order to access the next page, a token for the next page is sent, and it needs to be added as a get parameter in the subsequent request
             //The token is also an indicator of the absence of more gyms related to the specified parameters
             token = responseDict.ContainsKey("nextPageToken") ? responseDict["nextPageToken"].ToString() : null;
+            if (!string.IsNullOrEmpty(token)) {
+                await Task.Delay(1000); // Delay to allow nextPageToken to become valid
+            }
+            Console.Write(token);
             var gyms = (JsonElement.ArrayEnumerator)responseDict["results"];
 
             foreach (var oneGym in gyms) {
