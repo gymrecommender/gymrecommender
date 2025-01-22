@@ -7,7 +7,7 @@ import {
 	faStar,
 	faRoute,
 	faMoneyBillWave,
-	faClock, faFrown
+	faClock, faFrown, faFaceSmile
 } from "@fortawesome/free-solid-svg-icons";
 import GoogleMap from "../components/simple/GoogleMap.jsx";
 import {mainRatingMarker, secRatingMarket, startMarker} from "../services/markers.jsx";
@@ -16,6 +16,7 @@ import Loader from "../components/simple/Loader.jsx";
 import classNames from "classnames";
 import {useSelectedGym} from "../context/SelectedGymProvider.jsx";
 import {toast} from "react-toastify";
+import moment from "moment";
 
 const Recommendation = ({data}) => {
 	const {id} = useParams();
@@ -82,12 +83,14 @@ const Recommendation = ({data}) => {
 			return <li key={gym.gym.id} className={classNames("gym-item", gymId === gym.gym.id ? "selected" : "")}
 			           onClick={() => setGymId(gymId === gym.gym.id ? null : gym.gym.id)}>
 				<h4>{gym.gym.name}</h4>
-				<p><FontAwesomeIcon icon={faMoneyBillWave}/> Total Cost: {gym.totalCost === -1 ? 'N/A' : `${gym.totalCost} ${gym.gym.currency}`}</p>
-				<p><FontAwesomeIcon icon={faRoute}/>Travelling Time: {gym.travellingTime} min</p>
-				<p><FontAwesomeIcon icon={faMapMarkerAlt}/> {gym.gym.address}</p>
 				<p><FontAwesomeIcon icon={faStar}/> Overall Rating: {gym.overallRating}</p>
-				<p><FontAwesomeIcon icon={faClock}/> Time Rating: {gym.timeRating}</p>
+				<p><FontAwesomeIcon icon={faMoneyBillWave}/> Total Cost: {gym.totalCost === -1 ? 'N/A' : `${gym.totalCost} ${gym.gym.currency}`}</p>
+				<p><FontAwesomeIcon icon={faRoute}/>Travelling Time: {moment.duration(gym.travellingTime).asMinutes()} min</p>
+				<p><FontAwesomeIcon icon={faMapMarkerAlt}/> {gym.gym.address}</p>
 				<p><FontAwesomeIcon icon={faDollarSign}/> Cost Rating: {gym.costRating}</p>
+				<p><FontAwesomeIcon icon={faClock}/> Time Rating: {gym.timeRating}</p>
+				<p><FontAwesomeIcon icon={faFaceSmile}/> User's Rating: {gym.regularRating !== 0 ? gym.regularRating : "N/A"}</p>
+				<p><FontAwesomeIcon icon={faClock}/> User's congestion Rating: {gym.congestionRating !== 0 ? gym.congestionRating : "N/A"}</p>
 			</li>
 		});
 
