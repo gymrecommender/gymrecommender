@@ -88,6 +88,14 @@ public class GymRetrievalService {
     private async Task<Response> SaveNewGyms(List<Tuple<Gym, List<GymWorkingHoursViewModel>>> data) {
         try {
             var existingWorkingHours = await _context.WorkingHours.AsNoTracking().ToListAsync();
+            var dbWorkingHours = existingWorkingHours
+                                 .Select(wh => new WorkingHour {
+                                     Id = wh.Id,
+                                     OpenFrom = wh.OpenFrom,
+                                     OpenUntil = wh.OpenUntil
+                                 })
+                                 .ToList();
+            
             //TODO currency should be determined in some other way
             var currency = _context.Currencies.AsNoTracking().Where(c => c.Code == "EUR").ToList().First();
 
@@ -109,12 +117,14 @@ public class GymRetrievalService {
                             OpenUntil = wHour.OpenUntil,
                         };
                         _context.WorkingHours.Add(match);
-
                         existingWorkingHours.Add(match);
                     } else {
                         //We need to track the already existing entries in the WorkingHour table in order for dotnet to
                         //not try to create another instance of it upon saving
-                        _context.Attach(match);
+                        var matchDb = dbWorkingHours.FirstOrDefault(wh =>
+                            wh.OpenFrom == match.OpenFrom && wh.OpenUntil == match.OpenUntil);
+
+                        if (matchDb != null) _context.Attach(match);
                     }
 
                     //Binding working hours with the working hours of the current gym
