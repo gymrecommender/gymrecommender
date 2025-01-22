@@ -126,7 +126,6 @@ public class GoogleApiService {
             if (!string.IsNullOrEmpty(token)) {
                 await Task.Delay(1000); // Delay to allow nextPageToken to become valid
             }
-            Console.Write(token);
             var gyms = (JsonElement.ArrayEnumerator)responseDict["results"];
 
             foreach (var oneGym in gyms) {
