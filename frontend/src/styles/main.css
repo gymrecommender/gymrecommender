@@ -20,6 +20,7 @@ body::-webkit-scrollbar {
 .container {
     display: flex;
     flex-direction: column;
+    height: 100vh;
     box-sizing: border-box;
 
     width: 90%;
@@ -166,8 +167,6 @@ button[type="submit"].btn-submit {
     cursor: pointer;
     transition: background-color 0.3s;
     width: 100%;
-
-    font-size: 1rem;
 }
 
 button[type="submit"].btn-submit:hover {
@@ -286,8 +285,6 @@ input[type="range"]::-moz-range-thumb {
     background-color: inherit;
     padding: 0;
     flex: 1;
-
-    min-height: 400px;
 }
 
 .map {
@@ -349,7 +346,6 @@ input[type="range"]::-moz-range-thumb {
 
 .recommendation-list {
     margin-bottom: 20px;
-    word-break: break-word;
 }
 
 .recommendation-lists h3 {
@@ -374,7 +370,7 @@ input[type="range"]::-moz-range-thumb {
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     gap: 15px;
     border: 5px solid transparent;
-    transition: border-color 0.3s ease, background-color 0.3s ease;
+    transition: background-color 0.3s, border-color 0.3s;
     cursor: pointer;
 }
 
@@ -382,7 +378,7 @@ input[type="range"]::-moz-range-thumb {
     border-color: #ccc;
   }
   .gym-item.selected {
-    border-color: white;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
   }
 
 .gym-item p {
@@ -430,9 +426,6 @@ input[type="range"]::-moz-range-thumb {
     background-color: #a0a8f5;
     color: #002147;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-    table-layout: fixed;
-
-    word-break: break-all;
 }
 
 .history-table th,
@@ -462,19 +455,18 @@ input[type="range"]::-moz-range-thumb {
 }
 
 
-.no-content {
+.no-requests {
     color: #fff;
     font-size: 1.5rem;
+    margin-top: 20px;
     text-align: center;
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
-    height: 100%;
     gap: 20px;
 }
 
-.no-content svg {
+.no-requests svg {
     font-size: 3rem;
     margin-bottom: 10px;
     color: #cdbfff;
@@ -487,7 +479,7 @@ input[type="range"]::-moz-range-thumb {
     border-radius: 8px;
     position: relative;
     gap: 16px;
-    padding-bottom: 60px;
+    overflow: hidden;
   }
   
   .bookmarked-gyms-container {
@@ -495,12 +487,14 @@ input[type="range"]::-moz-range-thumb {
     gap: 16px;
     flex-direction: row;
     overflow-x: auto;
-    padding: 10px 0;
+    padding: 16px;
+    margin: 0 auto;
+    width: calc(100% - 80px);
     scroll-behavior: smooth;
   }
   
-  .bookmarked-gym-card {
-    flex: 0 0 350px;
+  .bookmarked-gyms-card {
+    flex: 0 0 300px;
     background-color: #cdd2fc;
     border-radius: 10px;
     padding: 15px;
@@ -508,15 +502,10 @@ input[type="range"]::-moz-range-thumb {
     flex-direction: column;
     justify-content: space-between;
     transition: transform 0.2s ease-in-out;
+    flex-shrink: 0; 
   }
 
-  .bookmarked-gym-content {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-  }
-
-  .bookmarked-gym-card p{
+  .bookmarked-gyms-card p{
     color: black;
   }
   
@@ -532,12 +521,14 @@ input[type="range"]::-moz-range-thumb {
   
   .arrow-buttons {
     position: absolute;
-    width: 100%;
-    height: max-content;
-    margin-top: 10px;
+    top: 50%;
     display: flex;
-    gap: 1525px;
-    margin-right: 10px;
+    left: 10px;
+    width: calc(100% - 20px);
+    justify-content: space-between;
+    transform: translateY(-50%);
+    pointer-events: none; 
+
   }
   
   .scroll-button {
@@ -553,6 +544,7 @@ input[type="range"]::-moz-range-thumb {
     cursor: pointer;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
     transition: background-color 0.3s ease;
+    pointer-events: all;
   }
   
   .scroll-button:hover {
@@ -569,7 +561,7 @@ input[type="range"]::-moz-range-thumb {
     right: 10px;
   }
 
-  .btn-remove {
+  .demark-button {
     border: none;
     padding: 8px 12px;
     border-radius: 4px;
@@ -577,7 +569,7 @@ input[type="range"]::-moz-range-thumb {
     margin-top: 10px;
   }
   
-  .btn-remove:hover {
+  .demark-button:hover {
     background-color: #e04346;
   }
   
@@ -630,12 +622,10 @@ button.save-btn {
     margin-top: 10px;
 }
 
-button.btn-name-edit {
+button.edit-btn {
     background-color: #f5a042;
     color: #ffffff;
     margin-top: 10px;
-
-    width: 100%;
 }
 
 .search-bar {
@@ -667,6 +657,9 @@ button.btn-name-edit {
     font-size: 1.5rem;
     color: #f5a042;
 }
+
+
+
 
 /*AccountGym forms*/
 .request-form, .update-form, .unavailable-form {
@@ -721,25 +714,6 @@ button.btn-icon {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-
-    box-shadow: none;
-}
-
-button.btn-icon-dark {
-    border: none;
-    background-color: inherit;
-
-    color: #9f60b5;
-    font-size: 1.4em;
-    text-transform: uppercase;
-    font-weight: bold;
-
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-
-    box-shadow: none;
-    padding: 0;
 }
 
 button.btn-icon .icon {
@@ -755,9 +729,9 @@ button.btn-icon .icon:not(:last-child) {
     margin-right: 10px;
 }
 
-button.btn-icon-dark:hover {
-    border-color: red;
-    color: red;
+button.btn-icon:hover {
+    border-color: #9f60b5;
+    color: #9f60b5;
     cursor: pointer;
 }
 
@@ -812,7 +786,6 @@ button.btn-action {
     align-items: center;
 
     background-color: rgba(0, 54, 123, 0.7);
-    z-index: 100000;
 }
 
 .loader span {
@@ -905,6 +878,15 @@ form .form-disabler:hover .form-disabler-hint {
     padding: 15px;
 }
 
+.no-content {
+    font-weight: bold;
+    text-align: center;
+    text-transform: uppercase;
+    padding: 5px;
+
+    color: white;
+}
+
 .gym-item.selected {
     border: 10px solid white;
 }
@@ -962,7 +944,7 @@ form .form-disabler:hover .form-disabler-hint {
 
 .form-group input {
     padding: 10px;
-    border: 1px solid #4a4a8e !important;
+    border: 1px solid #4a4a8e;
     border-radius: 4px;
     font-size: 16px;
     background-color: #28285a;
@@ -982,11 +964,10 @@ form .form-disabler:hover .form-disabler-hint {
     border: none;
     border-radius: 4px;
     padding: 12px;
-    font-size: 1rem;
+    font-size: 16px;
     cursor: pointer;
     transition: background-color 0.3s;
-
-    width: 100%;
+    gap: 5px;
 }
 
 .btn-primary:hover {
@@ -1008,11 +989,10 @@ form .form-disabler:hover .form-disabler-hint {
     border: none;
     border-radius: 4px;
     padding: 12px;
-    font-size: 1rem;
+    font-size: 16px;
     cursor: pointer;
     transition: background-color 0.3s;
-
-    width: 100%;
+    gap: 5px;
 }
 
 .btn-danger:hover {
@@ -1064,39 +1044,4 @@ form .form-disabler:hover .form-disabler-hint {
     display: flex;
     justify-content: space-between;
     margin-top: 20px;
-}
-
-.account-actions {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    margin-top: 10px;
-}
-
-.modal .modal-delete-text {
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
-    margin: 10px 0;
-}
-
-button[disabled]:hover {
-    cursor: inherit !important;
-    color: inherit;
-}
-
-.gym-popup-header {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 10px;
-
-}
-
-.bookmarked-gym-wh {
-    display: flex;
-    justify-content: space-between;
-}
-
-.bookmarked-gym-wh .bookmarked-gym-wh-h {
-    font-weight: bold;
 }
