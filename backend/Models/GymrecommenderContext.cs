@@ -472,7 +472,8 @@ public partial class GymrecommenderContext : DbContext
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("uuid_generate_v4()")
-                .HasColumnName("id");
+                .HasColumnName("id")
+                .ValueGeneratedOnAdd();
             entity.Property(e => e.CongestionScore)
                 .HasPrecision(4, 2)
                 .HasColumnName("congestion_score");
@@ -582,32 +583,6 @@ public partial class GymrecommenderContext : DbContext
                 .HasForeignKey<RequestPause>(d => d.UserId)
                 .OnDelete(DeleteBehavior.Cascade)
                 .HasConstraintName("request_pause_user_id_fkey");
-        });
-
-        modelBuilder.Entity<UserToken>(entity =>
-        {
-            entity.HasKey(e => e.Id).HasName("user_token_pkey");
-
-            entity.ToTable("user_token");
-
-            entity.HasIndex(e => e.UserId, "idx_user_token_user_id");
-
-            entity.HasIndex(e => e.OuterToken, "user_token_outer_token_key").IsUnique();
-
-            entity.HasIndex(e => e.UserId, "user_token_user_id_key").IsUnique();
-
-            entity.Property(e => e.Id)
-                .HasDefaultValueSql("uuid_generate_v4()")
-                .HasColumnName("id");
-            entity.Property(e => e.CreatedAt)
-                .HasDefaultValueSql("now()")
-                .HasColumnName("created_at");
-            entity.Property(e => e.ExpiresAt).HasColumnName("expires_at");
-            entity.Property(e => e.OuterToken).HasColumnName("outer_token");
-            entity.Property(e => e.UpdatedAt)
-                .HasDefaultValueSql("now()")
-                .HasColumnName("updated_at");
-            entity.Property(e => e.UserId).HasColumnName("user_id");
         });
 
         modelBuilder.Entity<WorkingHour>(entity =>

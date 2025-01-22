@@ -70,7 +70,7 @@ public class RecommendationService {
 
             Request? requestEntity = null;
             //Users do not have to be authenticated in order to get the recommendations. In this case we do not save any requested data
-            if (account != null) {
+            if (account != null && account.Type == AccountType.user) {
                 requestEntity = await SaveRecommendationRequestAsync(gymRecommendationRequest, account.Id);
                 _logger.LogInformation("Recommendation request saved with RequestId: {RequestId}", requestEntity.Id);
 
@@ -547,41 +547,40 @@ public class RecommendationService {
             if (!recommendations.ContainsKey(type)) {
                 _logger.LogWarning("Recommendation type {Type} not found in recommendations dictionary.", type);
                 continue;
-
-                var recommendationType = type == "MainGyms"
-                    ? RecommendationType.main
-                    : RecommendationType.alternative;
-
-                _logger.LogInformation("Processing {Type} with RecommendationType: {RecommendationType}", type,
-                    recommendationType);
-
-                recommendationEntities.AddRange(recommendations[type].Select(recommendation => new Recommendation {
-                    Id = Guid.NewGuid(),
-                    GymId = recommendation.Gym.Id,
-                    RequestId = requestId,
-                    // TODO: Add separate field for NormalizedTravelPrice if needed
-                    Tcost = new decimal(recommendation.TotalCost), // Adjust mapping as necessary
-                    Time = recommendation.TravellingTime, // Adjust based on actual data
-                    TimeScore = new decimal(recommendation.TimeRating),
-                    TcostScore = new decimal(recommendation.CostRating),
-                    CongestionScore = new decimal(recommendation.CongestionRating),
-                    RatingScore = new decimal(recommendation.RegularRating),
-                    TotalScore = new decimal(recommendation.OverallRating),
-                    Type = recommendationType,
-                    // TODO: Evaluate if CurrencyId should be moved to the Request table
-                    CurrencyId = recommendation.Gym.CurrencyId,
-                }));
             }
+
+            var recommendationType = type == "MainGyms"
+                ? RecommendationType.main
+                : RecommendationType.alternative;
+
+            _logger.LogInformation("Processing {Type} with RecommendationType: {RecommendationType}", type,
+                recommendationType);
+
+            recommendationEntities.AddRange(recommendations[type].Select(recommendation => new Recommendation {
+                GymId = recommendation.Gym.Id,
+                RequestId = requestId,
+                // TODO: Add separate field for NormalizedTravelPrice if needed
+                Tcost = new decimal(recommendation.TotalCost), // Adjust mapping as necessary
+                Time = recommendation.TravellingTime, // Adjust based on actual data
+                TimeScore = new decimal(recommendation.TimeRating),
+                TcostScore = new decimal(recommendation.CostRating),
+                CongestionScore = new decimal(recommendation.CongestionRating),
+                RatingScore = new decimal(recommendation.RegularRating),
+                TotalScore = new decimal(recommendation.OverallRating),
+                Type = recommendationType,
+                // TODO: Evaluate if CurrencyId should be moved to the Request table
+                CurrencyId = recommendation.Gym.CurrencyId,
+            }));
+
 
             _logger.LogInformation("Total recommendations to save: {Count}", recommendationEntities.Count);
-
-            if (recommendationEntities.Any()) {
-                _dbContext.Recommendations.AddRange(recommendationEntities);
-                await _dbContext.SaveChangesAsync();
-                _logger.LogInformation("Recommendations saved successfully for RequestId: {RequestId}", requestId);
-            } else {
-                _logger.LogWarning("No recommendations to save for RequestId: {RequestId}", requestId);
-            }
+        }
+        if (recommendationEntities.Any()) {
+            _dbContext.Recommendations.AddRange(recommendationEntities);
+            await _dbContext.SaveChangesAsync();
+            _logger.LogInformation("Recommendations saved successfully for RequestId: {RequestId}", requestId);
+        } else {
+            _logger.LogWarning("No recommendations to save for RequestId: {RequestId}", requestId);
         }
     }
 }
