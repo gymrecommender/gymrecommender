@@ -39,12 +39,7 @@ public abstract class AccountControllerTemplate : Controller {
 
                 if (errors.Count > 0) {
                     return BadRequest(new {
-                        success = false,
-                        error = new {
-                            code = "ValidationError",
-                            message = "Some fields contain invalid data",
-                            details = errors
-                        }
+                        message = "Some fields contain invalid data"
                     });
                 }
 
@@ -69,11 +64,7 @@ public abstract class AccountControllerTemplate : Controller {
                     var errorResponse = await firebaseResponse.Content.ReadAsStringAsync();
                     return StatusCode(500, new {
                         success = false,
-                        error = new {
-                            code = "SignupError",
-                            message = "Error creating Firebase user",
-                            details = errorResponse
-                        }
+                        message = "Error creating Firebase user"
                     });
                 }
                 var responseContent = await firebaseResponse.Content.ReadAsStringAsync();
@@ -95,11 +86,7 @@ public abstract class AccountControllerTemplate : Controller {
                     var errorContent = await responseEmail.Content.ReadAsStringAsync();
                     return StatusCode(500, new {
                         success = false,
-                        error = new {
-                            code = "SignupError",
-                            message = "Error creating Firebase user",
-                            details = errorContent
-                        }
+                        message = "Error creating Firebase user"
                     });
                 }
                 
@@ -135,20 +122,13 @@ public abstract class AccountControllerTemplate : Controller {
                 
                 return StatusCode(500, new {
                     success = false,
-                    error = new {
-                        code = "SignupError",
-                        message = ErrorMessage.ErrorMessages["SignUpError"]
-                    }
+                    message = ErrorMessage.ErrorMessages["SignUpError"]
                 });
             }
         }
 
         return BadRequest(new {
-            success = false,
-            error = new {
-                code = "ValidationError",
-                message = ErrorMessage.ErrorMessages["ValidationError"],
-            }
+            message = ErrorMessage.ErrorMessages["ValidationError"]
         });
     }
 
@@ -170,10 +150,7 @@ public abstract class AccountControllerTemplate : Controller {
 
                 if (account == null) {
                     return NotFound(new {
-                        success = false, error = new {
-                            code = "UsernameError",
-                            message = ErrorMessage.ErrorMessages["UsernameError"]
-                        }
+                        message = ErrorMessage.ErrorMessages["UsernameError"]
                     });
                 }
 
@@ -206,20 +183,13 @@ public abstract class AccountControllerTemplate : Controller {
             } catch (Exception e) {
                 return StatusCode(500, new {
                     success = false,
-                    error = new {
-                        message = e.Message
-                    }
+                    message = e.Message
                 });
             }
         }
 
         return BadRequest(new {
-            success = false,
-            error = new {
-                code = "ValidationError",
-                message = ErrorMessage.ErrorMessages["ValidationError"],
-                //details = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage)
-            }
+            message = ErrorMessage.ErrorMessages["ValidationError"]
         });
     }
 
@@ -235,10 +205,7 @@ public abstract class AccountControllerTemplate : Controller {
 
             if (account == null) {
                 return NotFound(new {
-                    success = false, error = new {
-                        code = "UsernameError",
-                        message = ErrorMessage.ErrorMessages["UsernameError"]
-                    }
+                    message = ErrorMessage.ErrorMessages["UsernameError"]
                 });
             }
 
@@ -259,10 +226,7 @@ public abstract class AccountControllerTemplate : Controller {
         } catch (Exception e) {
             return StatusCode(500, new {
                 success = false,
-                error = new {
-                    code = "LoginError",
-                    message = ErrorMessage.ErrorMessages["LoginError"],
-                }
+                message = ErrorMessage.ErrorMessages["LoginError"]
             });
         }
     }
@@ -279,10 +243,7 @@ public abstract class AccountControllerTemplate : Controller {
 
             if (account == null) {
                 return NotFound(new {
-                    success = false, error = new {
-                        code = "UsernameError",
-                        message = ErrorMessage.ErrorMessages["UsernameError"]
-                    }
+                    message = ErrorMessage.ErrorMessages["UsernameError"]
                 });
             }
 
@@ -290,10 +251,7 @@ public abstract class AccountControllerTemplate : Controller {
         } catch (Exception e) {
             return StatusCode(500, new {
                 success = false,
-                error = new {
-                    code = "LogoutError",
-                    message = ErrorMessage.ErrorMessages["LogoutError"]
-                }
+                message = ErrorMessage.ErrorMessages["LogoutError"]
             });
         }
     }

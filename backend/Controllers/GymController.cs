@@ -49,10 +49,7 @@ public class GymController : Controller {
         } catch (Exception ex) {
             return StatusCode(500, new {
                 success = false,
-                error = new {
-                    code = "InternalError",
-                    message = ex.Message
-                }
+                message = ex.Message
             });
         }
     }
@@ -154,11 +151,7 @@ public class GymController : Controller {
 
             if (string.IsNullOrEmpty(clientIp)) {
                 return BadRequest(new {
-                    success = false,
-                    error = new {
-                        code = "InvalidRequest",
-                        message = "Could not retrieve the IP address."
-                    }
+                    message = "Could not retrieve the IP address."
                 });
             }
 
@@ -184,10 +177,7 @@ public class GymController : Controller {
         } catch (Exception ex) {
             return StatusCode(500, new {
                 success = false,
-                error = new {
-                    code = "InternalError",
-                    message = ex.Message
-                }
+                message = ex.Message
             });
         }
     }
@@ -199,11 +189,7 @@ public class GymController : Controller {
 
             if (string.IsNullOrEmpty(clientIp)) {
                 return BadRequest(new {
-                    success = false,
-                    error = new {
-                        code = "InvalidRequest",
-                        message = "Could not retrieve the IP address."
-                    }
+                    message = "Could not retrieve the IP address."
                 });
             }
 
@@ -232,10 +218,7 @@ public class GymController : Controller {
         } catch (Exception ex) {
             return StatusCode(500, new {
                 success = false,
-                error = new {
-                    code = "InternalError",
-                    message = ex.Message
-                }
+                message = ex.Message
             });
         }
     }

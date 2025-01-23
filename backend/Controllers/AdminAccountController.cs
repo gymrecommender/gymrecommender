@@ -45,9 +45,7 @@ public class AdminAccountController : AccountControllerTemplate {
             if (updateDto == null) {
                 return StatusCode(500, new {
                     success = false,
-                    error = new {
-                        message = ErrorMessage.ErrorMessages["InvalidRequest"]
-                    }
+                    message = ErrorMessage.ErrorMessages["InvalidRequest"]
                 });
             }
 
@@ -55,9 +53,7 @@ public class AdminAccountController : AccountControllerTemplate {
             if (admin == null) {
                 return StatusCode(500, new {
                     success = false,
-                    error = new {
-                        message = ErrorMessage.ErrorMessages["UsernameError"]
-                    }
+                    message = ErrorMessage.ErrorMessages["UsernameError"]
                 });
             }
 
@@ -68,9 +64,7 @@ public class AdminAccountController : AccountControllerTemplate {
             if (ownershipRequest == null) {
                 return StatusCode(500, new {
                     success = false,
-                    error = new {
-                        message = ErrorMessage.ErrorMessages["OwnershipError"]
-                    }
+                    message = ErrorMessage.ErrorMessages["OwnershipError"]
                 });
             }
 
@@ -109,7 +103,7 @@ public class AdminAccountController : AccountControllerTemplate {
         } catch (Exception _) {
             return StatusCode(500, new {
                 success = false,
-                error = new { message = "An error occurred while updating the ownership request" }
+                message = "An error occurred while updating the ownership request"
             });
         }
     }
@@ -157,7 +151,7 @@ public class AdminAccountController : AccountControllerTemplate {
         } catch (Exception _) {
             return StatusCode(500, new {
                 success = false,
-                error = new { message = "An error occurred while getting ownership requests" }
+                message = "An error occurred while getting ownership requests"
             });
         }
     }

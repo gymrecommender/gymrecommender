@@ -30,10 +30,8 @@ public class AccountController : AccountControllerTemplate {
 
             if (account == null) {
                 return NotFound(new {
-                    success = false, error = new {
-                        code = "UIDError",
-                        message = ErrorMessage.ErrorMessages["TokenError"] //?
-                    }
+                    success = false,
+                    message = ErrorMessage.ErrorMessages["TokenError"]
                 });
             }
 
@@ -44,9 +42,7 @@ public class AccountController : AccountControllerTemplate {
         } catch (Exception e) {
             return StatusCode(500, new {
                 success = false,
-                error = new {
-                    message = e.Message
-                }
+                message = e.Message
             });
         }
     }
@@ -68,7 +64,7 @@ public class AccountController : AccountControllerTemplate {
         } catch (Exception _) {
             return StatusCode(500, new {
                 success = false,
-                error = new { message = "An error occurred while retrieving the account's data" }
+                message = "An error occurred while retrieving the account's data"
             });
         }
     }
@@ -95,7 +91,7 @@ public class AccountController : AccountControllerTemplate {
         } catch (Exception _) {
             return StatusCode(500, new {
                 success = false,
-                error = new { message = "An error occurred while updating the account's data"}
+                message = "An error occurred while updating the account's data"
             });
         }
     }
@@ -110,7 +106,7 @@ public class AccountController : AccountControllerTemplate {
             
             var account = _context.Accounts.AsTracking().First(a => a.OuterUid == firebaseUid);
             if (!BCrypt.Net.BCrypt.Verify(accountPwdDto.Password, account.PasswordHash)) {
-                return BadRequest("Incorrect password");
+                return BadRequest(new {message = "Incorrect password"});
             }
 
             if (account.Type == AccountType.gym) {
@@ -145,7 +141,7 @@ public class AccountController : AccountControllerTemplate {
             
             return StatusCode(500, new {
                 success = false,
-                error = new { message = "An error occurred while deleting the account"}
+                message = "An error occurred while deleting the account"
             });
         }
     }
@@ -193,7 +189,7 @@ public class AccountController : AccountControllerTemplate {
             
             return StatusCode(500, new {
                 success = false,
-                error = new { message = "An error occurred while updating the password"}
+                message = "An error occurred while updating the password"
             });
         }
     }

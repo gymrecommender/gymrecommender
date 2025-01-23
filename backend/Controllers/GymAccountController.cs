@@ -87,7 +87,7 @@ public class GymAccountController : AccountControllerTemplate {
         } catch (Exception _) {
             return StatusCode(500, new {
                 success = false,
-                error = new { message = "An error occurred while retrieving owned gyms" }
+                message = "An error occurred while retrieving owned gyms"
             });
         }
     }
@@ -111,11 +111,8 @@ public class GymAccountController : AccountControllerTemplate {
                                   x.Id == gymId);
 
             if (gym == null) {
-                return StatusCode(404, new {
-                    success = false,
-                    error = new {
-                        message = "The gym has not been found or the user does not have the right to manage the gym"
-                    }
+                return NotFound(new {
+                    message = "The gym has not been found or the user does not have the right to manage the gym"
                 });
             }
 
@@ -145,7 +142,7 @@ public class GymAccountController : AccountControllerTemplate {
                     bool isDelete = workingHourDto.OpenFrom == null && workingHourDto.OpenUntil == null;
                     if ((workingHourDto.OpenFrom == null && workingHourDto.OpenUntil != null) ||
                         (workingHourDto.OpenFrom != null && workingHourDto.OpenUntil == null)) {
-                        return BadRequest("Both OpenFrom and OpenUntil must be either null or have valid values");
+                        return BadRequest(new {message = "Both OpenFrom and OpenUntil must be either null or have valid values"});
                     }
                     
                     if (existingWorkingHour == null && !isDelete) {
@@ -231,7 +228,7 @@ public class GymAccountController : AccountControllerTemplate {
         } catch (Exception _) {
             return StatusCode(500, new {
                 success = false,
-                error = new { message = "An error occurred while updating the gym" }
+                message = "An error occurred while updating the gym"
             });
         }
     }
@@ -274,7 +271,7 @@ public class GymAccountController : AccountControllerTemplate {
         } catch (Exception _) {
             return StatusCode(500, new {
                 success = false,
-                error = new { message = "An error occurred while getting ownership requests" }
+                message = "An error occurred while getting ownership requests"
             });
         }
     }
@@ -291,9 +288,7 @@ public class GymAccountController : AccountControllerTemplate {
             if (gym == null) {
                 return StatusCode(500, new {
                     success = false,
-                    error = new {
-                        message = ErrorMessage.ErrorMessages["ManagedGymError"]
-                    }
+                    message = ErrorMessage.ErrorMessages["ManagedGymError"]
                 });
             }
 
@@ -307,9 +302,7 @@ public class GymAccountController : AccountControllerTemplate {
             if (existingRequest != null) {
                 return StatusCode(500, new {
                     success = false,
-                    error = new {
-                        message = ErrorMessage.ErrorMessages["RequestPending"]
-                    }
+                    message = ErrorMessage.ErrorMessages["RequestPending"]
                 });
             }
 
@@ -342,7 +335,7 @@ public class GymAccountController : AccountControllerTemplate {
         } catch (Exception _) {
             return StatusCode(500, new {
                 success = false,
-                error = new { message = "An error occurred while adding ownership requests" }
+                message = "An error occurred while adding ownership requests"
             });
         }
     }
@@ -362,9 +355,7 @@ public class GymAccountController : AccountControllerTemplate {
             if (gym == null) {
                 return StatusCode(500, new {
                     success = false,
-                    error = new {
-                        message = ErrorMessage.ErrorMessages["OwnedGymError"]
-                    }
+                    message = ErrorMessage.ErrorMessages["OwnedGymError"]
                 });
             }
 
@@ -375,7 +366,7 @@ public class GymAccountController : AccountControllerTemplate {
         } catch (Exception _) {
             return StatusCode(500, new {
                 success = false,
-                error = new { message = "An error occurred while detaching the gym" }
+                message = "An error occurred while detaching the gym"
             });
         }
     }
@@ -394,9 +385,7 @@ public class GymAccountController : AccountControllerTemplate {
             if (ownershipRequest == null) {
                 return StatusCode(500, new {
                     success = false,
-                    error = new {
-                        message = ErrorMessage.ErrorMessages["RequestError"]
-                    }
+                    message = ErrorMessage.ErrorMessages["RequestError"]
                 });
             }
 
@@ -407,7 +396,7 @@ public class GymAccountController : AccountControllerTemplate {
         } catch (Exception _) {
             return StatusCode(500, new {
                 success = false,
-                error = new { message = "An error occurred while deleting the ownership request" }
+                message = "An error occurred while deleting the ownership request"
             });
         }
     }

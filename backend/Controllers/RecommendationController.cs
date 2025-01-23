@@ -24,20 +24,24 @@ public class RecommendationController : Controller {
     /// <returns>List of recommended gyms with normalized scores and final scores.</returns>
     [HttpPost]
     public async Task<IActionResult> CreateRecommendationsRequest([FromBody] GymRecommendationRequestDto request) {
-        if (request == null) {
-            return BadRequest("Invalid request data.");
-        }
-        
-        var firebaseUid = HttpContext.User.FindFirst("user_id")?.Value;
-        Account? account = null;
-        if (firebaseUid != null) {
-            account = _context.Accounts.AsNoTracking().First(a => a.OuterUid == firebaseUid);
-        }
+        try {
+            if (request == null) {
+                return BadRequest(new { message = "Invalid request data." });
+            }
 
-        // Call the service to get recommendations
-        var recommendations = await _recommendationService.GetRecommendations(request, account);
+            var firebaseUid = HttpContext.User.FindFirst("user_id")?.Value;
+            Account? account = null;
+            if (firebaseUid != null) {
+                account = _context.Accounts.AsNoTracking().First(a => a.OuterUid == firebaseUid);
+            }
 
-        // Assuming GetRecommendations returns IActionResult
-        return recommendations;
+            // Call the service to get recommendations
+            var recommendations = await _recommendationService.GetRecommendations(request, account);
+
+            // Assuming GetRecommendations returns IActionResult
+            return recommendations;
+        } catch (Exception e) {
+            return StatusCode(500, new { message = e.Message });
+        }
     }
 }

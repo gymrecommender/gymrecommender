@@ -98,7 +98,7 @@ public class UserAccountController : AccountControllerTemplate {
         } catch (Exception _) {
             return StatusCode(500, new {
                 success = false,
-                error = new { message = "An error occurred while getting the requests" }
+                message = "An error occurred while getting the requests"
             });
         }
     }
@@ -118,7 +118,7 @@ public class UserAccountController : AccountControllerTemplate {
             }
 
             if (string.IsNullOrWhiteSpace(updateRequestDto.Name))
-                return BadRequest("The 'Name' field can not be empty.");
+                return BadRequest(new {message = "The 'Name' field can not be empty."});
 
             // Update only the Name field of the request
             request.Name = updateRequestDto.Name;
@@ -139,7 +139,7 @@ public class UserAccountController : AccountControllerTemplate {
                 }
             });
         } catch (Exception _) {
-            return StatusCode(500, "An error occurred while updating the request.");
+            return StatusCode(500, new {message = "An error occurred while updating the request."});
         }
     }
 
@@ -154,7 +154,7 @@ public class UserAccountController : AccountControllerTemplate {
                                         .Where(req => req.Id == requestId && req.User.OuterUid == firebaseUid)
                                         .FirstOrDefaultAsync();
 
-            if (request == null) throw new Exception("The request has not been found or does not belong to the user.");
+            if (request == null) return BadRequest(new {mesage = "The request has not been found or does not belong to the user."});
 
             var recommendationsData = _context.Recommendations
                                               .Include(r => r.Gym).ThenInclude(g => g.GymWorkingHours)
@@ -238,7 +238,7 @@ public class UserAccountController : AccountControllerTemplate {
 
             return Ok(result);
         } catch (Exception _) {
-            return StatusCode(500, new { Message = "An error occurred while processing your request." });
+            return StatusCode(500, new { message = "An error occurred while processing your request." });
         }
     }
 
@@ -262,7 +262,7 @@ public class UserAccountController : AccountControllerTemplate {
         } catch (Exception _) {
             return StatusCode(500, new {
                 success = false,
-                error = new { message = "An error occurred while deleting the bookmark" }
+                message = "An error occurred while deleting the bookmark"
             });
         }
     }
@@ -317,7 +317,7 @@ public class UserAccountController : AccountControllerTemplate {
         } catch (Exception _) {
             return StatusCode(500, new {
                 success = false,
-                error = new { message = "An error occurred while adding the bookmark" }
+                message = "An error occurred while adding the bookmark"
             });
         }
     }
@@ -367,7 +367,7 @@ public class UserAccountController : AccountControllerTemplate {
         } catch (Exception _) {
             return StatusCode(500, new {
                 success = false,
-                error = new { message = "An error occurred while retrieving bookmarks" }
+                message = "An error occurred while retrieving bookmarks"
             });
         }
     }
@@ -433,7 +433,7 @@ public class UserAccountController : AccountControllerTemplate {
         } catch (Exception _) {
             return StatusCode(500, new {
                 success = false,
-                error = new { message = "An error occurred while saving ratings" }
+                message = "An error occurred while saving ratings"
             });
         }
     }
@@ -489,7 +489,7 @@ public class UserAccountController : AccountControllerTemplate {
         } catch (Exception _) {
             return StatusCode(500, new {
                 success = false,
-                error = new { message = "An error occurred while retrieving ratings" }
+                message = "An error occurred while retrieving ratings"
             });
         }
     }
@@ -513,7 +513,7 @@ public class UserAccountController : AccountControllerTemplate {
         } catch (Exception _) {
             return StatusCode(500, new {
                 success = false,
-                error = new { message = "An error occurred while retrieving notifications" }
+                message = "An error occurred while retrieving notifications"
             });
         }
     }
@@ -541,7 +541,7 @@ public class UserAccountController : AccountControllerTemplate {
         } catch (Exception _) {
             return StatusCode(500, new {
                 success = false,
-                error = new { message = "An error occurred while retrieving notifications" }
+                message = "An error occurred while retrieving notifications"
             });
         }
     }
@@ -569,10 +569,7 @@ public class UserAccountController : AccountControllerTemplate {
         } catch (Exception ex) {
             return StatusCode(500, new {
                 success = false,
-                error = new {
-                    code = "InternalError",
-                    message = ex.Message
-                }
+                message = ex.Message
             });
         }
     }
@@ -607,10 +604,7 @@ public class UserAccountController : AccountControllerTemplate {
         } catch (Exception ex) {
             return StatusCode(500, new {
                 success = false,
-                error = new {
-                    code = "InternalError",
-                    message = ex.Message
-                }
+                message = ex.Message
             });
         }
     }
