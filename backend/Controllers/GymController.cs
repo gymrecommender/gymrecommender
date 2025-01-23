@@ -147,7 +147,8 @@ public class GymController : Controller {
     [HttpGet("pause")]
     public async Task<IActionResult> GetPauseByIp() {
         try {
-            string? clientIp = HttpContext.Connection.RemoteIpAddress?.ToString();
+            var forwardedFor = HttpContext.Request.Headers["X-Forwarded-For"].FirstOrDefault();
+            var clientIp = forwardedFor ?? HttpContext.Connection.RemoteIpAddress?.ToString();
 
             if (string.IsNullOrEmpty(clientIp)) {
                 return BadRequest(new {
@@ -185,7 +186,8 @@ public class GymController : Controller {
     [HttpPost("pause")]
     public async Task<IActionResult> AddPause() {
         try {
-            string? clientIp = HttpContext.Connection.RemoteIpAddress?.ToString();
+            var forwardedFor = HttpContext.Request.Headers["X-Forwarded-For"].FirstOrDefault();
+            var clientIp = forwardedFor ?? HttpContext.Connection.RemoteIpAddress?.ToString();
 
             if (string.IsNullOrEmpty(clientIp)) {
                 return BadRequest(new {
