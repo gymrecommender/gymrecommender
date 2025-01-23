@@ -150,6 +150,9 @@ public class GymController : Controller {
             var forwardedFor = HttpContext.Request.Headers["X-Forwarded-For"].FirstOrDefault();
             var clientIp = forwardedFor ?? HttpContext.Connection.RemoteIpAddress?.ToString();
 
+            Console.WriteLine(forwardedFor);
+            Console.WriteLine(clientIp);
+            Console.WriteLine(HttpContext.Request.Headers["X-Forwarded-For"]);
             if (string.IsNullOrEmpty(clientIp)) {
                 return BadRequest(new {
                     message = "Could not retrieve the IP address."
