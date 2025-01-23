@@ -1,4 +1,4 @@
-import {useEffect, useState} from "react";
+import {useEffect, useRef, useState} from "react";
 import "../styles/header.css";
 import Button from "./simple/Button.jsx";
 import {useNavigate, useLocation} from "react-router-dom";
@@ -26,6 +26,7 @@ const Header = () => {
 	const location = useLocation();
 	const [showNotifications, setShowNotifications] = useState(false);
 	const [notifications, setNotifications] = useState([]);
+	const notifRef = useRef(null);
 
 	useEffect(() => {
 		if (getUser()?.role === "user") {
@@ -37,6 +38,20 @@ const Header = () => {
 
 			retrieveNotifications()
 		}
+	}, []);
+
+	const handleClickOutside = (event) => {
+		if (notifRef.current && !notifRef.current.contains(event.target)) {
+			setShowNotifications(false);
+		}
+	};
+
+	useEffect(() => {
+		document.addEventListener("mousedown", handleClickOutside);
+
+		return () => {
+			document.removeEventListener("mousedown", handleClickOutside);
+		};
 	}, []);
 
 	const handleToggleNotifications = async () => {
@@ -135,7 +150,7 @@ const Header = () => {
 				</div>
 			</div>
 			{showNotifications && (
-				<div className="notifications-dropdown">
+				<div ref={notifRef} className="notifications-dropdown">
 					{notifications.length > 0 ?
 						(
 							notifications.map((notif) => (
