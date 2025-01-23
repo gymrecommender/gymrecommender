@@ -30,11 +30,12 @@ const accountData = {
 	fields: [
 		{pos: 1, type: "text", minLength: 2, label: "First name", required: true, name: "firstName"},
 		{pos: 2, type: "text", label: "Last name", required: true, name: "lastName"},
-		{pos: 3, type: "text", required: true, label: "Username", name: "username"},
+		{pos: 3, type: "text", required: true, minLength: 8, label: "Username", name: "username"},
 		{
 			pos: 6,
 			type: "password",
 			required: true,
+			minLength: 6,
 			sameAs: {fieldName: "password", message: "The passwords do not match"},
 			label: "Repeat the password",
 			name: "passwordRepeat"
@@ -43,6 +44,7 @@ const accountData = {
 			pos: 4,
 			type: "email",
 			required: true,
+			minLength: 6,
 			pattern: {regEx: emailRegEx, message: "Invalid email format"},
 			label: "Email",
 			name: "email"
@@ -168,7 +170,7 @@ const AdminRequests = () => {
 
 			{/* Use Modal component for the Create Admin form */}
 			{showCreateAdminModal && (
-				<Modal onClick={handleCloseModal} headerText="New Admin Account">
+				<Modal onClick={handleCloseModal} headerText="New Account">
 					<Form className={"modal-form"} data={accountData} onSubmit={handleAccountSubmit}/>
 				</Modal>
 			)}
