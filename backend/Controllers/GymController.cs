@@ -147,12 +147,11 @@ public class GymController : Controller {
     [HttpGet("pause")]
     public async Task<IActionResult> GetPauseByIp() {
         try {
-            var forwardedFor = HttpContext.Request.Headers["X-Forwarded-For"].FirstOrDefault();
-            var clientIp = forwardedFor ?? HttpContext.Connection.RemoteIpAddress?.ToString();
+            var xForwardedForHeader = HttpContext.Request.Headers["X-Forwarded-For"].FirstOrDefault();
+            string? clientIp = null;
+            if (!string.IsNullOrEmpty(xForwardedForHeader)) clientIp = xForwardedForHeader.Split(',').First().Trim();
+            else clientIp = HttpContext.Connection.RemoteIpAddress?.ToString();
 
-            Console.WriteLine(forwardedFor);
-            Console.WriteLine(clientIp);
-            Console.WriteLine(HttpContext.Request.Headers["X-Forwarded-For"]);
             if (string.IsNullOrEmpty(clientIp)) {
                 return BadRequest(new {
                     message = "Could not retrieve the IP address."
@@ -173,10 +172,11 @@ public class GymController : Controller {
                 ? TimeSpan.Zero
                 : TimeSpan.FromMinutes(2) - (DateTime.UtcNow - pause.StartedAt);
             var timeToDisplay = timeRemaining < TimeSpan.Zero ? TimeSpan.Zero : timeRemaining;
-            
+
             return Ok(new {
-                TimeRemaining = timeToDisplay == TimeSpan.Zero ? TimeOnly.MinValue :
-                    new TimeOnly(timeToDisplay.Hours, timeToDisplay.Minutes, timeToDisplay.Seconds),
+                TimeRemaining = timeToDisplay == TimeSpan.Zero
+                    ? TimeOnly.MinValue
+                    : new TimeOnly(timeToDisplay.Hours, timeToDisplay.Minutes, timeToDisplay.Seconds),
             });
         } catch (Exception ex) {
             return StatusCode(500, new {
@@ -189,9 +189,11 @@ public class GymController : Controller {
     [HttpPost("pause")]
     public async Task<IActionResult> AddPause() {
         try {
-            var forwardedFor = HttpContext.Request.Headers["X-Forwarded-For"].FirstOrDefault();
-            var clientIp = forwardedFor ?? HttpContext.Connection.RemoteIpAddress?.ToString();
-
+            var xForwardedForHeader = HttpContext.Request.Headers["X-Forwarded-For"].FirstOrDefault();
+            string? clientIp = null;
+            if (!string.IsNullOrEmpty(xForwardedForHeader)) clientIp = xForwardedForHeader.Split(',').First().Trim();
+            else clientIp = HttpContext.Connection.RemoteIpAddress?.ToString();
+            
             if (string.IsNullOrEmpty(clientIp)) {
                 return BadRequest(new {
                     message = "Could not retrieve the IP address."
@@ -217,8 +219,9 @@ public class GymController : Controller {
 
             var timeToDisplay = TimeSpan.FromMinutes(2) - (DateTime.UtcNow - pause.StartedAt);
             return Ok(new {
-                TimeRemaining = timeToDisplay == TimeSpan.Zero ? TimeOnly.MinValue :
-                    new TimeOnly(timeToDisplay.Hours, timeToDisplay.Minutes, timeToDisplay.Seconds),
+                TimeRemaining = timeToDisplay == TimeSpan.Zero
+                    ? TimeOnly.MinValue
+                    : new TimeOnly(timeToDisplay.Hours, timeToDisplay.Minutes, timeToDisplay.Seconds),
             });
         } catch (Exception ex) {
             return StatusCode(500, new {
