@@ -1,9 +1,10 @@
-import {useState, useEffect} from "react";
+import React, {useState, useEffect} from "react";
 import Button from "../components/simple/Button.jsx";
 import Modal from "../components/simple/Modal.jsx";
 import "../styles/admin.css";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {
+	faFrown,
 	faPlus,
 	faUserGear,
 } from "@fortawesome/free-solid-svg-icons";
@@ -159,6 +160,7 @@ const AdminRequests = () => {
 			<section className="gym-requests">
 				{
 					requests.length > 0 ? requests : <div className={"no-content"}>
+						<FontAwesomeIcon icon={faFrown}/>
 						There are no ownership requests at the moment
 					</div>
 				}

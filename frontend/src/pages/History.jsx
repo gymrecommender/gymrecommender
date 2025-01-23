@@ -69,12 +69,12 @@ const History = () => {
 
 	const scrollLeft = () => {
 		const container = document.getElementById("gym-cards-container");
-		container.scrollBy({left: -300, behavior: "smooth"});
+		container.scrollBy({left: -350, behavior: "smooth"});
 	};
 
 	const scrollRight = () => {
 		const container = document.getElementById("gym-cards-container");
-		container.scrollBy({left: 300, behavior: "smooth"});
+		container.scrollBy({left: 350, behavior: "smooth"});
 	};
 
 
@@ -104,9 +104,6 @@ const History = () => {
 							<FontAwesomeIcon icon={faClock}/> Preferred Departure
 						</th>
 						<th>
-							<FontAwesomeIcon icon={faClock}/> Preferred Arrival
-						</th>
-						<th>
 							<FontAwesomeIcon icon={faDollarSign}/> Max Price
 						</th>
 						<th>
@@ -127,7 +124,6 @@ const History = () => {
 					{filteredRequests.map(({id, preferences, name, requestedAt}) => {
 						const {
 							departureTime,
-							arrivalTime,
 							minPrice,
 							minRating,
 							minCongestion,
@@ -180,7 +176,6 @@ const History = () => {
 							</td>
 							<td>{displayTimestamp(requestedAt) || "N/A"}</td>
 							<td>{departureTime ? departureTime.substring(0, 5) : "N/A"}</td>
-							<td>{arrivalTime ? arrivalTime.substring(0, 5) : "N/A"}</td>
 							<td>{minPrice !== 100 ? minPrice : "N/A"}</td>
 							<td>{minRating !== 1 ? minRating : "N/A"}</td>
 							<td>{minCongestion !== 1 ? minCongestion : "N/A"}</td>

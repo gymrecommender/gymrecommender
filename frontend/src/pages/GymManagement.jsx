@@ -5,7 +5,7 @@ import {useNavigate} from "react-router-dom";
 import GymManager from "../components/gym/GymManager.jsx";
 import Button from "../components/simple/Button.jsx";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faCircleInfo, faPlus} from "@fortawesome/free-solid-svg-icons";
+import {faCircleInfo, faFrown, faPlus} from "@fortawesome/free-solid-svg-icons";
 import Modal from "../components/simple/Modal.jsx";
 import GymOwnership from "../components/gym/GymOwnership.jsx";
 import {toast} from "react-toastify";
@@ -130,7 +130,10 @@ const GymManagement = () => {
 
 				</div>
 				<div className={"section-mg-list"}>
-					{list}
+					{list.length > 0 ? list : <div className={"no-content"}>
+						<FontAwesomeIcon icon={faFrown}/>
+						You do not have any gyms under your management
+					</div>}
 				</div>
 				{isShowRequests ? (
 					<Modal headerText={"Submitted requests"} onClick={() => setIsShowRequests(false)}>

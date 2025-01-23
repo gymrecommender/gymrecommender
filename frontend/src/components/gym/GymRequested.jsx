@@ -1,7 +1,7 @@
-import {useState, useEffect} from "react";
+import React, {useState, useEffect} from "react";
 import Button from "../simple/Button.jsx";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faClose} from "@fortawesome/free-solid-svg-icons";
+import {faClose, faFrown} from "@fortawesome/free-solid-svg-icons";
 import {displayTimestamp} from "../../services/helpers.jsx";
 import {useCoordinates} from "../../context/CoordinatesProvider.jsx";
 import classNames from "classnames";
@@ -54,6 +54,7 @@ const GymRequested = ({}) => {
 			</div>
 		)
 	}) : <div className={"no-content"}>
+		<FontAwesomeIcon icon={faFrown}/>
 		You have no pending ownership requests
 	</div>;
 	return (

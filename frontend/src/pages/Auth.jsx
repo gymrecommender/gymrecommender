@@ -12,7 +12,7 @@ import {useLoader} from "../context/LoaderProvider.jsx";
 
 const buttons = [
 	{icon: faUser, title: (action) => `${action} as a user`, role: "user"},
-	{icon: faDumbbell, title: (action) => `${action} as a gyms manager`, role: "gym"},
+	{icon: faDumbbell, title: (action) => `${action} as a gyms' manager`, role: "gym"},
 	{icon: faUserGear, title: (action) => `${action} as an administrator`, role: "admin"},
 ];
 

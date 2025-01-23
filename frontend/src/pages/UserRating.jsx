@@ -177,7 +177,7 @@ const UserRating = () => {
 			{loading ? <Loader type={"hover"}/> : null}
 
 			{Object.keys(rateGym).length > 0 ?
-				<Modal headerText={`Rate the ${rateGym.name}`} onClick={() => setRateGym({})}>
+				<Modal headerText={`Rate  '${rateGym.name}'`} onClick={() => setRateGym({})}>
 					<Form data={data} showAsterisks={false} onSubmit={handleSubmit}/>
 				</Modal> : null}
 		</>

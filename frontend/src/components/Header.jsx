@@ -144,7 +144,7 @@ const Header = () => {
 								</div>
 							))
 						) : (
-							<div className="notification no-content">You do not have any notification</div>
+							<div className="notification no-content">You do not have any notifications</div>
 						)}
 				</div>
 			)}

@@ -52,14 +52,6 @@ const data = {
 			wClassName: "time"
 		},
 		{
-			pos: 5,
-			type: "time",
-			label: "Preferred arrival time",
-			name: "preferredArrivalTime",
-			className: "time",
-			wClassName: "time"
-		},
-		{
 			pos: 6,
 			type: "range",
 			label: "Max membership price",
@@ -108,7 +100,10 @@ const Index = () => {
 		const retrievePause = async () => {
 			const url = getUser()?.role === "user" ? 'useraccount/pause' : 'gym/pause';
 			const result = await axiosInternal("GET", url);
-			if (result.error) toast(result.error.message);
+			if (result.error) {
+				toast(result.error.message);
+				setPauseLength(0);
+			}
 			else {
 				const sec = moment.duration(result.data.timeRemaining).asSeconds()
 				setPauseLength(sec);
@@ -126,16 +121,16 @@ const Index = () => {
 		const result = await axiosInternal("POST", "recommendation", values);
 		setShowLoader(false);
 
-		if (result.error) {
-			toast(result.error.message);
-			return;
-		}
-		else {
-			const user = getUser();
-			if (user && result.data.requestId) navigate(`account/history/${result.data.requestId}`);
-
-			setRecommendations(result.data)
-		}
+		// if (result.error) {
+		// 	toast(result.error.message);
+		// 	return;
+		// }
+		// else {
+		// 	const user = getUser();
+		// 	if (user && result.data.requestId) navigate(`account/history/${result.data.requestId}`);
+		//
+		// 	setRecommendations(result.data)
+		// }
 
 		const url = getUser()?.role === "user" ? 'useraccount/pause' : 'gym/pause';
 		const res = await axiosInternal("POST", url);

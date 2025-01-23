@@ -29,7 +29,7 @@ const Marker = ({lat, lng, background, borderColor, glyphColor, id, onClick, inf
 			{...(glyphColor && {glyphColor})}
 			scale={scale}
 		/>
-		{showPopup ? <InfoWindow anchor={marker} onClose={() => {
+		{showPopup ? <InfoWindow disableAutoPan={true} anchor={marker} onClose={() => {
 			if (!onClick) setShowPopup(false)
 			setScale(1)
 		}}>
