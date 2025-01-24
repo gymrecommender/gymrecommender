@@ -12,7 +12,7 @@
     border-radius: 15px;
     background-color:#411351;
 
-    width: 540px;
+    width: 510px;
     min-height: 590px;
 
     display: flex;
@@ -313,4 +313,49 @@
 }
 .icon.icon-delete {
     font-size: 1.8rem;
+}
+@media (max-width: 768px) {
+   
+    .section-mg-list {
+        flex-direction: column;
+        align-items: center;
+        column-gap: 0;
+        row-gap: 15px;
+    }
+
+    .section-mg-list .gym-data {
+        width: 90%; 
+        padding: 15px;
+        min-height: auto; 
+    }
+
+    .section-mg-hd {
+        grid-template-columns: 1fr;
+        text-align: center;
+        row-gap: 10px;
+    }
+
+    .section-mg-hd-title {
+        font-size: 1.2em;  
+    }
+
+    .section-mg-hd-btns {
+        justify-content: center;
+        margin-top: 10px;
+        flex-direction: column;
+        align-items: center;
+        row-gap: 15px; 
+    }
+
+    
+    .section-mg-hd-btns button {
+        width: 80%; 
+        font-size: 0.9em; 
+        padding: 8px 30px;
+    }
+
+    .container .gyms-req {
+        font-size: 14px;
+    }
+    
 }

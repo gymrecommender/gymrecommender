@@ -42,3 +42,21 @@
 .confirm-buttons .btn-confirm {
 
 }
+
+
+@media  (max-width: 768px) {
+    .confirm-window .confirm-content {
+        width: 80%; 
+        padding: 20px; 
+    }
+
+    .confirm-content .confirm-message {
+        font-size: 1.2rem; 
+        margin-bottom: 20px; 
+    }
+
+    .confirm-content .confirm-buttons {
+        grid-template-columns: 1fr; 
+        row-gap: 10px; 
+    }
+}

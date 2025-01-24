@@ -43,3 +43,30 @@
     font-size: 1.2rem;
   }
   
+  @media screen and (max-width: 768px) {
+    .not-found-container {
+        padding: 1rem; 
+    }
+
+    .not-found-icon {
+        font-size: 3rem; 
+    }
+
+    .not-found-header {
+        font-size: 2rem; 
+    }
+
+    .not-found-message {
+        font-size: 1rem; 
+        margin: 1.4rem 0; 
+    }
+
+    .not-found-button {
+        padding: 0.5rem 1.5rem; 
+        font-size: 1.1rem; 
+    }
+
+    .not-found-button-icon {
+        font-size: 1rem; 
+    }
+}

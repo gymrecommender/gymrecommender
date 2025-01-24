@@ -28,3 +28,23 @@
     color: #D9C4E4;
     margin-top: 10px;
   }
+
+  @media screen and (max-width: 768px) {
+    .countdown-container {
+        width: 100%; 
+        padding: 12px; 
+    }
+
+    .countdown-header {
+        font-size: 14px; 
+    }
+
+    .countdown-timer {
+        font-size: 28px; 
+        padding: 8px; 
+    }
+
+    .countdown-message {
+        font-size: 14px; 
+    }
+}
