@@ -125,6 +125,8 @@ body::-webkit-scrollbar {
     font-family: SansSerif, sans-serif;
     font-weight: bold;
     font-size: 0.8em;
+
+    width: 100%;
 }
 
 .input-field-slider-range .slider-max {
