@@ -87,7 +87,7 @@ const Recommendation = ({data}) => {
 				<p><FontAwesomeIcon icon={faMoneyBillWave}/> Total Cost: {gym.totalCost === -1 ? 'N/A' : `${gym.totalCost} ${gym.gym.currency}`}</p>
 				<p><FontAwesomeIcon icon={faRoute}/>Travelling Time: {moment.duration(gym.travellingTime).asMinutes()} min</p>
 				<p><FontAwesomeIcon icon={faMapMarkerAlt}/> {gym.gym.address}</p>
-				<p><FontAwesomeIcon icon={faDollarSign}/> Cost Rating: {gym.costRating}</p>
+				<p><FontAwesomeIcon icon={faDollarSign}/> Cost Rating: {gym.costRating === -1 ? 'N/A' : gym.costRating}</p>
 				<p><FontAwesomeIcon icon={faClock}/> Time Rating: {gym.timeRating}</p>
 				<p><FontAwesomeIcon icon={faFaceSmile}/> User's Rating: {gym.regularRating !== 0 ? gym.regularRating : "N/A"}</p>
 				<p><FontAwesomeIcon icon={faClock}/> User's congestion Rating: {gym.congestionRating !== 0 ? gym.congestionRating : "N/A"}</p>
