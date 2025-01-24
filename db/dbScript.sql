@@ -435,7 +435,7 @@ CREATE TABLE public.recommendation (
 	CONSTRAINT recommendation_pkey PRIMARY KEY (id),
 	CONSTRAINT recommendation_rating_score_check CHECK ((((rating_score >= (0)::numeric) AND (rating_score <= (10)::numeric)) OR (rating_score = (-1)::numeric))),
 	CONSTRAINT recommendation_tcost_check CHECK ((tcost >= (0)::numeric) OR (tcost = (-1)::numeric)),
-	CONSTRAINT recommendation_tcost_score_check CHECK (((tcost_score >= (0)::numeric) AND (tcost_score <= (10)::numeric))),
+	CONSTRAINT recommendation_tcost_score_check CHECK (((tcost_score >= (0)::numeric) AND (tcost_score <= (10)::numeric)) OR (tcost_score = (-1)::numeric)),
 	CONSTRAINT recommendation_time_score_check CHECK (((time_score >= (0)::numeric) AND (time_score <= (10)::numeric))),
 	CONSTRAINT recommendation_total_score_check CHECK (((total_score >= (0)::numeric) AND (total_score <= (10)::numeric))),
 	CONSTRAINT recommendation_currency_id_fkey FOREIGN KEY (currency_id) REFERENCES public.currency(id),
