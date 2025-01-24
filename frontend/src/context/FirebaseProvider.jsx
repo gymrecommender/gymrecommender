@@ -37,7 +37,7 @@ const FirebaseProvider = ({children}) => {
 				setUser(null);
 			}
 			setLoading(false);
-		}, 300);
+		}, 600);
 
 		const unsubscribe = onAuthStateChanged(auth, debouncedAuthHandler);
 
@@ -64,6 +64,7 @@ const FirebaseProvider = ({children}) => {
 		const result = await accountLogin(values, role)
 		setLoader(false);
 
+		console.log(result);
 		if (!result.error) {
 			navigate('/')
 		}
