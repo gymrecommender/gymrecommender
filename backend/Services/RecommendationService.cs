@@ -289,7 +289,7 @@ public class RecommendationService {
         // PriceRatingPriority (0-100) determines the balance between price-related and other criteria
         // Higher PriceRatingPriority gives more emphasis to price-related criteria
         // Convert PriceRatingPriority to a proportion (0.0 to 1.0)
-        double pricePriorityProportion = Math.Clamp(priceRatingPriority / 100.0, 0.0, 1.0);
+        double pricePriorityProportion = Math.Clamp((100 - priceRatingPriority) / 100.0, 0.0, 1.0);
         double otherPriorityProportion = 1.0 - pricePriorityProportion;
 
         _logger.LogInformation(
@@ -368,11 +368,11 @@ public class RecommendationService {
                     (scaledCongestionRatings[i] * congestionRatingWeight) +
                     (scaledTravelTimes[i] * travelTimeWeight), 2),
                 TimeRating = scaledTravelTimes[i],
-                CostRating = scaledTotalPrices[i],
+                CostRating = totalPrices[i] != null ? scaledTotalPrices[i] : -1,
                 TravellingTime = new TimeOnly(hourPart, minutePart),
                 TotalCost = totalPrices[i] ?? -1,
-                CongestionRating = congestionRatings[i] ?? -1,
-                RegularRating = externalRatings[i] ?? -1
+                CongestionRating = scaledCongestionRatings[i],
+                RegularRating = scaledExternalRatings[i]
             };
             recommendations.Add(recommendation);
         }
@@ -437,50 +437,31 @@ public class RecommendationService {
             return values.Select(v => 0.5).ToList();
         }
 
-        // Calculate mean and standard deviation for Z-score
-        double mean = nonNullValues.Average();
-        double stdDev = CalculateStandardDeviation(nonNullValues, mean);
-        _logger.LogInformation("Normalization stats - Mean: {Mean}, StdDev: {StdDev}", mean, stdDev);
+        double minValue = nonNullValues.Min();
+        double maxValue = nonNullValues.Max();
 
-        // Handle case where stdDev is zero to avoid division by zero
-        if (stdDev == 0) {
-            stdDev = 1;
-            _logger.LogWarning("Standard deviation is zero. Set to 1 to avoid division by zero.");
+        _logger.LogInformation("Value range - Min: {MinValue}, Max: {MaxValue}", minValue, maxValue);
+        
+        double range = maxValue - minValue;
+        if (range == 0) {
+            range = 1;
+            _logger.LogWarning("Value range is zero. Set to min + max to avoid division by zero.");
         }
-
-        // Compute Z-scores, assign 0 for missing values
-        List<double> zScores = values.Select(v =>
-            v.HasValue ? (v.Value - mean) / stdDev : 0
+        
+        double epsilon = maxValue - minValue != 0 ? range / (maxValue + minValue) : 1;
+        _logger.LogInformation("Epsilon calculated: {Epsilon}", epsilon);
+        
+        List<double> normalizedValues = values.Select(v =>
+                v.HasValue
+                    ? inverted
+                        // Inverted calculation: smaller is better
+                        ? ((maxValue - v.Value) / range) * (1 - epsilon) + epsilon
+                        // Regular calculation: larger is better
+                        : ((v.Value - minValue) / range) * (1 - epsilon) + epsilon
+                    : 0.5 // Default for null values
         ).ToList();
-
-        _logger.LogInformation("Z-scores computed.");
-
-        // Perform Min-Max normalization on Z-scores
-        var validZScores = zScores.Where(z => !double.IsNaN(z)).ToList();
-
-        double minZ = validZScores.Min();
-        double maxZ = validZScores.Max();
-
-        _logger.LogInformation("Z-scores range - Min: {MinZ}, Max: {MaxZ}", minZ, maxZ);
-
-        double rangeZ = maxZ - minZ;
-        if (rangeZ == 0) {
-            rangeZ = 1;
-            _logger.LogWarning("Z-score range is zero. Set to 1 to avoid division by zero.");
-        }
-
-        List<double> normalizedValues = zScores.Select(z =>
-            (z - minZ) / rangeZ
-        ).ToList();
-
-        _logger.LogInformation("Min-Max normalization completed.");
-
-        // Invert the normalized values if required
-        if (inverted) {
-            normalizedValues = normalizedValues.Select(x => 1 - x).ToList();
-            _logger.LogInformation("Normalized values inverted.");
-        }
-
+        _logger.LogInformation("Normalization with epsilon completed.");
+        
         return normalizedValues;
     }
 
