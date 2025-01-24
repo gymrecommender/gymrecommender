@@ -32,7 +32,6 @@ const GymEdit = ({data, currencies, weekdays, handleSubmit}) => {
 					label={'phone number'}
 					type={"phone"}
 					name={"phoneNumber"}
-					required={true}
 				/>
 				<Input
 					label={'address'}
@@ -44,7 +43,6 @@ const GymEdit = ({data, currencies, weekdays, handleSubmit}) => {
 					label={'website'}
 					type={"text"}
 					name={"website"}
-					required={true}
 				/>
 				<div className={"gym-prices"}>
 					<div className={"gym-prices-memberships"}>
