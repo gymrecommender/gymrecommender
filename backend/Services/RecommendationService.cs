@@ -254,10 +254,10 @@ public class RecommendationService {
                                     .ToList();
 
         List<double?> externalRatings = filteredGyms
-                                        .Select(g =>
+                                        .Select(g => (g.Gym.ExternalRating + g.Gym.InternalRating) > 0 ?
                                             (double?)(g.Gym.ExternalRating * g.Gym.ExternalRatingNumber +
                                                       g.Gym.InternalRating * g.Gym.InternalRatingNumber) /
-                                            (g.Gym.ExternalRatingNumber + g.Gym.InternalRatingNumber))
+                                            (g.Gym.ExternalRatingNumber + g.Gym.InternalRatingNumber) : null)
                                         .ToList(); // Assuming ExternalRating is non-nullable
 
         List<double?> congestionRatings = filteredGyms
@@ -432,9 +432,8 @@ public class RecommendationService {
         var nonNullValues = values.Where(v => v.HasValue).Select(v => v.Value).ToList();
 
         if (!nonNullValues.Any()) {
-            _logger.LogWarning("All values are null. Assigning default normalized value of 0.5 to all entries.");
-            // If all values are null, return a list of 0.5 (midpoint of normalization)
-            return values.Select(v => 0.5).ToList();
+            _logger.LogWarning("All values are null. Assigning 0 to all entries");
+            return values.Select(v => 0.0).ToList();
         }
 
         double minValue = nonNullValues.Min();
@@ -458,7 +457,7 @@ public class RecommendationService {
                         ? ((maxValue - v.Value) / range) * (1 - epsilon) + epsilon
                         // Regular calculation: larger is better
                         : ((v.Value - minValue) / range) * (1 - epsilon) + epsilon
-                    : 0.5 // Default for null values
+                    : 0 // Default for null values
         ).ToList();
         _logger.LogInformation("Normalization with epsilon completed.");
         

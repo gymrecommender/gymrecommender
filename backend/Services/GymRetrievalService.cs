@@ -102,7 +102,9 @@ public class GymRetrievalService {
             foreach (var dataItem in data) {
                 var gym = dataItem.Item1;
                 gym.CurrencyId = currency.Id;
-
+                
+                var gymCheck = _context.Gyms.FirstOrDefault(g => g.ExternalPlaceId == gym.ExternalPlaceId);
+                if (gymCheck != null) continue;
                 _context.Gyms.Add(gym);
 
                 var workingHours = dataItem.Item2;
