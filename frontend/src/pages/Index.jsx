@@ -121,16 +121,16 @@ const Index = () => {
 		const result = await axiosInternal("POST", "recommendation", values);
 		setShowLoader(false);
 
-		// if (result.error) {
-		// 	toast(result.error.message);
-		// 	return;
-		// }
-		// else {
-		// 	const user = getUser();
-		// 	if (user && result.data.requestId) navigate(`account/history/${result.data.requestId}`);
-		//
-		// 	setRecommendations(result.data)
-		// }
+		if (result.error) {
+			toast(result.error.message);
+			return;
+		}
+		else {
+			const user = getUser();
+			if (user && result.data.requestId) navigate(`account/history/${result.data.requestId}`);
+
+			setRecommendations(result.data)
+		}
 
 		const url = getUser()?.role === "user" ? 'useraccount/pause' : 'gym/pause';
 		const res = await axiosInternal("POST", url);
